@@ -1,553 +1,239 @@
-# DiaPet — Development Roadmap
+# DiaPet — Master Development Plan
 
 > Последнее обновление: 2026-02-20
-> Источник: Полный аудит проекта (5 агентов — Code Quality, Architecture, UX/Product, Performance+Security, DevOps)
+> Коммит: df2789b (master)
 
 ---
 
-## MVP v1.0 ✅ (реализовано)
+## ПРОГРЕСС
+
+```
+[##########----------] v1.0 MVP           ✅ DONE
+[##########----------] v1.1 Критические   ✅ DONE
+[####################] v1.1 Высокий        ✅ DONE
+[____________________] v1.2 Аудит-фиксы   ⬅ ТЕКУЩИЙ ЭТАП
+[____________________] v1.3 Средний прио   🔜
+[____________________] v1.4 UX фичи        🔜
+[____________________] v2.0 DevOps         🔜
+[____________________] v2.1 Backend        🔜
+[____________________] v3.0 AI/Smart       🔜
+```
+
+---
+
+## ЭТАП 1: v1.0 MVP ✅
 
 - [x] Онбординг (язык, питомец, расписание, ветеринар, уведомления)
-- [x] Главный экран с мини-графиком глюкозы
+- [x] Dashboard + мини-график глюкозы + тренд + бейдж времени
 - [x] Дневник глюкозы (ввод, история, редактирование, статистика)
-- [x] Лог инъекций
-- [x] Симптом-трекер с фото
+- [x] Лог инъекций + лог кормлений
+- [x] Симптом-трекер с фото (валидация размера/количества)
 - [x] Экстренный режим (гипо/гипергликемия + звонок ветеринару)
-- [x] Энциклопедия (5 статей, offline-first)
+- [x] Энциклопедия (5 статей, offline)
 - [x] Калькулятор расходов
 - [x] Профиль питомца
-- [x] Тёмная/светлая тема
-- [x] Локализация RU/EN
-- [x] SQLite база данных (9 таблиц, WAL, индексы)
-- [x] MMKV быстрое хранение
-- [x] Push-уведомления (инъекции, кормление)
+- [x] Тёмная/светлая тема, RU/EN
+- [x] SQLite + SQLCipher + MMKV (secure key via expo-secure-store)
+- [x] Push-уведомления
 - [x] Feature-based архитектура
 
 ---
 
-## v1.1 — Критические исправления 🔴
-> Цель: устранить баги и уязвимости перед первым релизом
+## ЭТАП 2: v1.1 Критические + Высокий приоритет ✅
 
-### Блок A — Безопасность (приоритет: КРИТИЧЕСКИЙ)
-
-#### A1. Включить SQLCipher — шифрование базы данных
-- **Проблема:** `app.json` → `"useSQLCipher": false`. Вся медицинская база (глюкоза, инсулин, симптомы) хранится открытым текстом на устройстве. При ADB backup данные легко извлечь.
-- **Файлы:** `app.json:49-54`
-- **Решение:**
-  ```json
-  ["expo-sqlite", { "enableFTS": true, "useSQLCipher": true }]
-  ```
-- **Эффект:** Шифрование всей SQLite базы на уровне нативного кода.
-
-#### A2. Убрать захардкоженный ключ MMKV
-- **Проблема:** `src/storage/mmkv/storage.ts:5` → `encryptionKey: 'diapet-secret-key'` — ключ виден в исходниках, любой может извлечь его из APK.
-- **Решение:** Генерировать уникальный ключ для каждого устройства и хранить в `expo-secure-store`:
-  ```typescript
-  import * as SecureStore from 'expo-secure-store';
-  import { randomUUID } from 'expo-crypto';
-
-  async function getMmkvKey(): Promise<string> {
-    let key = await SecureStore.getItemAsync('mmkv_key');
-    if (!key) {
-      key = randomUUID();
-      await SecureStore.setItemAsync('mmkv_key', key);
-    }
-    return key;
-  }
-  ```
-- **Зависимости:** Добавить `expo-secure-store`, `expo-crypto`
-
-#### A3. Ограничить загрузку фотографий
-- **Проблема:** `AddSymptomScreen.tsx:51-67` — нет ограничения размера и количества фото. Пользователь может выбрать 20 файлов по 15 MB.
-- **Решение:**
-  ```typescript
-  const result = await ImagePicker.launchImageLibraryAsync({
-    mediaTypes: ImagePicker.MediaTypeOptions.Images,
-    allowsMultipleSelection: true,
-    selectionLimit: 5,
-    quality: 0.6,
-    exif: false,
-  });
-  // Валидация размера после выбора
-  const validAssets = result.assets.filter(a => (a.fileSize ?? 0) < 5_000_000);
-  ```
-
-#### A4. Убрать .env из git
-- **Проблема:** `.env` не добавлен в `.gitignore`, попадёт в репозиторий.
-- **Решение:** Добавить в `.gitignore`:
-  ```
-  .env
-  .env.local
-  secrets/
-  google-services.json
-  ```
+- [x] A1 SQLCipher шифрование
+- [x] A2 MMKV secure key
+- [x] A3 Валидация фото (selectionLimit: 5, fileSize < 5MB)
+- [x] A4 .env в gitignore
+- [x] B1 ErrorBoundary
+- [x] B2 Кнопка кормления → LogFeedingScreen
+- [x] B3 useEffect зависимости (editId)
+- [x] B4 Non-null assertion guards
+- [x] B5 Расчёт дат (endOfMonth)
+- [x] C1 Типизированные навигационные хуки (28 файлов, 0 `<any>`)
+- [x] D1 storage/domain/types.ts — единый источник типов
+- [x] D2 Убрана зависимость shared→features
+- [x] D5 Система миграций БД
+- [x] E1 Индикатор времени с последнего замера
+- [x] E3 PDF экспорт для ветеринара
+- [x] G1 ESLint + Prettier + скрипты (lint, format, typecheck)
+- [x] G2 Jest (18 тестов, 2 тест-файла)
+- [x] G4 iOS EAS конфиг
 
 ---
 
-### Блок B — Критические баги (приоритет: ВЫСОКИЙ)
+## ЭТАП 3: v1.2 Аудит-фиксы (КРИТИЧЕСКИЕ БАГИ) ⬅ ТЕКУЩИЙ
 
-#### B1. Добавить ErrorBoundary
-- **Проблема:** `src/core/App.tsx` — нет обработчика ошибок. Любой необработанный exception крашит всё приложение без возможности восстановления.
-- **Решение:** Создать `src/shared/components/ErrorBoundary.tsx` и обернуть `<AppContent>`:
-  ```tsx
-  export default function App() {
-    return (
-      <QueryClientProvider client={queryClient}>
-        <ThemeProvider>
-          <ErrorBoundary>
-            <AppContent />
-          </ErrorBoundary>
-        </ThemeProvider>
-      </QueryClientProvider>
-    );
-  }
-  ```
+> Найдены аудитом 2026-02-20 (3 параллельных агента: структура, логика, UI)
+> Протокол: исправить → `npx tsc --noEmit` → `npm test` → git commit
 
-#### B2. Починить кнопку "Кормление" на Dashboard
-- **Проблема:** `DashboardScreen.tsx` — `QuickActionButton` для кормления имеет пустой `onPress`. Пользователь нажимает, ничего не происходит.
-- **Решение:** Реализовать экран `LogFeedingScreen` и подключить его, либо временно убрать кнопку до реализации.
+### Фаза 3A — Критические баги БД и логики
 
-#### B3. Исправить useEffect зависимости (стейл данные)
-- **Проблема:**
-  - `LogGlucoseScreen.tsx:43-55` — `useEffect` не перезапускается при смене `editId`
-  - `AddExpenseScreen.tsx:34-43` — то же самое
-- **Решение:** Добавить `editId` в dependency array:
-  ```typescript
-  useEffect(() => { loadData(); }, [editId]); // было: []
-  ```
+- [ ] **FIX-01** Миграция v2: `feeding_logs` → `feedings` (неправильное имя таблицы)
+  - Файл: `src/storage/database/migrations.ts`
+  - Действие: исправить имя таблицы в миграции
+- [ ] **FIX-02** Миграция v3: `photo_uri` уже есть в schema.ts — дублирование ALTER TABLE
+  - Файл: `src/storage/database/migrations.ts`
+  - Действие: убрать дублирующий ALTER, оставить только новые колонки
+- [ ] **FIX-03** `glucoseRepository.update()` не обновляет `insulin_type` (пропущен в SQL)
+  - Файл: `src/storage/database/repositories/glucoseRepository.ts`
+- [ ] **FIX-04** EditPetScreen не сохраняет изменения расписания в БД
+  - Файл: `src/features/pets/screens/EditPetScreen.tsx`
+  - Действие: вызывать `scheduleRepository.updateTimes()` в `handleSave()`
 
-#### B4. Убрать non-null assertion без guard
-- **Проблема:** `GlucoseListScreen.tsx:28` → `glucoseRepository.findByPetId(activePet!.id)` — упадёт при null.
-- **Решение:**
-  ```typescript
-  queryFn: () => activePet ? glucoseRepository.findByPetId(activePet.id) : Promise.resolve([]),
-  ```
+> **CHECKPOINT 3A**: `git commit -m "fix: critical DB bugs (migrations, glucose update, schedule persist)"`
 
-#### B5. Исправить расчёт дат в ExpensesRepository
-- **Проблема:** `expenseRepository.ts:37` → `end = '${year}-${month}-31'` — февраль не имеет 31 дня, SQL вернёт некорректные результаты.
-- **Решение:** Использовать `date-fns/endOfMonth`:
-  ```typescript
-  import { endOfMonth, format } from 'date-fns';
-  const end = format(endOfMonth(new Date(year, month - 1)), 'yyyy-MM-dd');
-  ```
+### Фаза 3B — Обработка ошибок
 
----
+- [ ] **FIX-05** petStore.loadPets() глушит ошибки — добавить error state
+  - Файл: `src/shared/stores/petStore.ts`
+- [ ] **FIX-06** App.tsx: initStorage() без обработки ошибок → бесконечный спиннер
+  - Файл: `src/core/App.tsx`
+- [ ] **FIX-07** Async без cleanup в useEffect (EditPet, LogGlucose, AddExpense)
+  - Действие: добавить `let cancelled = false;` паттерн или AbortController
+- [ ] **FIX-08** Пустые catch-блоки — добавить `console.error` + user-facing сообщение
+  - Файлы: LogGlucoseScreen, LogInjectionScreen, LogFeedingScreen
 
-### Блок C — Качество кода (приоритет: СРЕДНИЙ)
+> **CHECKPOINT 3B**: `git commit -m "fix: error handling (petStore, initStorage, async cleanup)"`
 
-#### C1. Заменить `useNavigation<any>()` на типизированные хуки
-- **Проблема:** `MainNavigator.tsx:126`, `DashboardScreen.tsx:27`, `LogGlucoseScreen.tsx:25` — полная потеря типобезопасности навигации.
-- **Решение:** Создать `src/navigation/hooks.ts`:
-  ```typescript
-  export const useAppNavigation = () => useNavigation<RootNavigationProp>();
-  export const useHomeNavigation = () => useNavigation<HomeStackNavigationProp>();
-  ```
+### Фаза 3C — i18n (40+ строк)
 
-#### C2. Вынести повторяющийся заголовок экрана в компонент
-- **Проблема:** Одинаковый паттерн (кнопка "Назад" + заголовок) повторяется в 5+ экранах.
-- **Решение:** Создать `src/shared/components/ui/ScreenHeader.tsx`
+- [ ] **FIX-09** Перенести все hardcoded русские строки в `ru.ts` / `en.ts`
+  - GlucoseChart: "Норма 4-9", "Вне нормы"
+  - GlucoseListScreen: "Среднее", "Мин", "Макс", "Всего"
+  - LogInjectionScreen: "Инъекция инсулина", "Тип инсулина", "Быстрый выбор", "Доза (единицы)"
+  - LogFeedingScreen: "Кормление", "Тип корма", "Количество (г)"
+  - ScheduleScreen, VetContactScreen, NotificationsScreen: подзаголовки
+  - SymptomsListScreen, SymptomDetailScreen: заголовки секций
+  - PetProfileScreen, MoreMenuScreen: "Кошка", "МЕНЮ", "Экстренный режим"
+  - ExpensesScreen: названия месяцев
+  - EmergencyScreen: дисклеймер
+  - SettingsScreen: метки тем
+  - ArticleListScreen: категории
+  - ArticleDetailScreen: "Статья не найдена"
+  - AddExpenseScreen: alert-тексты
 
-#### C3. Перенести хардкоженные строки в i18n
-- **Проблема:** Сотни строк вида `"Быстрые действия"`, `"Последняя инъекция"`, `"История"` разбросаны по компонентам вместо `t('key')`.
-- **Файлы:** `DashboardScreen.tsx:160,189`, `ExpensesScreen.tsx:98,112` и др.
+> **CHECKPOINT 3C**: `git commit -m "feat: complete i18n coverage (40+ strings migrated to locales)"`
 
-#### C4. Добавить useCallback для обработчиков
-- **Проблема:** `AddSymptomScreen.tsx:41-59` — `toggleType`, `pickPhoto`, `takePhoto` пересоздаются при каждом рендере.
-- **Решение:** Обернуть в `useCallback` с правильными зависимостями.
+### Фаза 3D — UI качество
 
-#### C5. Заменить индексные ключи в списках
-- **Проблема:** `ArticleListScreen.tsx:91`, `ArticleDetailScreen.tsx:25-49`, `AddSymptomScreen.tsx:170` используют `key={i}`.
-- **Решение:** Использовать стабильные идентификаторы: `key={article.id}`, `key={`${type}-${i}`}`
+- [ ] **FIX-10** Заменить `key={index}` на стабильные ключи (5 мест)
+  - ArticleDetailScreen (content, TOC), ScheduleScreen, EditPetScreen, QuickActionButton
+- [ ] **FIX-11** Добавить loading state в SymptomDetailScreen, PetProfileScreen
+- [ ] **FIX-12** Типизировать `useRoute<any>()` → proper ScreenProps (4 файла)
+  - LogGlucoseScreen, AddExpenseScreen, ScheduleScreen, VetContactScreen
+- [ ] **FIX-13** Лимит симптомов в PDF экспорте (cap 50)
+  - Файл: `src/shared/utils/pdfExport.ts`
+- [ ] **FIX-14** Удалить console.log из migrations.ts, оставить только ErrorBoundary
 
-#### C6. Добавить useMemo для дорогих вычислений
-- **Проблема:** `ExpensesScreen.tsx:35-38` — `byCategory` пересчитывается при каждом рендере.
-- **Решение:**
-  ```typescript
-  const byCategory = useMemo(
-    () => expenses.reduce<Record<ExpenseCategory, number>>(...),
-    [expenses]
-  );
-  ```
+> **CHECKPOINT 3D**: `git commit -m "fix: UI quality (keys, loading states, route types, PDF limit)"`
 
-#### C7. Добавить Zustand селекторы
-- **Проблема:** `DashboardScreen.tsx:30` → `const { activePet } = usePetStore()` — компонент ре-рендерится при любом изменении стора.
-- **Решение:** `const activePet = usePetStore(s => s.activePet);`
+### Фаза 3E — Cleanup
 
-#### C8. Добавить React Query конфигурацию
-- **Проблема:** Все `useQuery` без `staleTime` — данные рефетчатся при каждом фокусе экрана.
-- **Решение:**
-  ```typescript
-  {
-    staleTime: 5 * 60 * 1000,       // 5 минут
-    gcTime: 10 * 60 * 1000,         // 10 минут
-    refetchOnWindowFocus: false,
-    retry: 1,
-  }
-  ```
+- [ ] **FIX-15** Удалить неиспользуемый `useActivePet` хук или заменить petStore
+- [ ] **FIX-16** Удалить / внедрить `ScreenHeader` компонент
+- [ ] **FIX-17** Удалить пустые папки (features/*/store/, features/*/components/ и т.д.)
+- [ ] **FIX-18** GlucoseChart: импортировать GlucoseReading из `@storage/domain/types` напрямую
+
+> **CHECKPOINT 3E**: `git commit -m "chore: cleanup (unused hooks, empty dirs, direct domain imports)"`
+> **АВТОПРОВЕРКА**: `npx tsc --noEmit && npm test && npm run lint`
 
 ---
 
-## v1.2 — Архитектурный рефакторинг 🏗️
-> Цель: устранить нарушения слоёв и подготовить к масштабированию
+## ЭТАП 4: v1.3 Средний приоритет
 
-### Блок D — Нарушения архитектурных слоёв (приоритет: ВЫСОКИЙ)
+> Начинать только после полного завершения ЭТАПА 3
 
-#### D1. Создать `@storage/domain/types.ts` — единый источник типов данных
-- **Проблема:** `petRepository.ts`, `glucoseRepository.ts` и др. импортируют типы из `@features/*/types.ts`. Storage-слой не должен зависеть от Features.
-- **Текущее (неправильно):**
-  ```
-  src/storage/repositories/ → импортирует → src/features/pets/types.ts
-  ```
-- **Целевое состояние:**
-  ```
-  src/storage/domain/types.ts   ← Pet, GlucoseReading, Symptom, Expense...
-  src/features/pets/types.ts    ← только UI-модели (FormValues, ViewState...)
-  src/storage/repositories/     ← импортирует из @storage/domain
-  ```
+### Фаза 4A — Архитектура
 
-#### D2. Убрать зависимость Shared от Features
-- **Проблема:** `src/shared/components/ui/GlucoseValueBadge.tsx` импортирует `getGlucoseColor`, `getGlucoseLevel` из `@features/glucose/types`. Shared не может зависеть от Features.
-- **Решение:** Перенести утилиты глюкозы в `src/shared/domain/glucose.ts`
+- [ ] C8 React Query staleTime: 5 мин по умолчанию, refetchOnWindowFocus: false
+- [ ] D3 Консолидировать стейт питомца (Zustand → React Query)
+- [ ] D6 Нормализовать symptom_types (JSON → связующая таблица)
+- [ ] D7 Пагинация для glucose/symptoms (cursor-based, limit 50)
 
-#### D3. Консолидировать стейт питомца
-- **Проблема:** Три источника одних и тех же данных — Zustand (`activePet`), MMKV (`ACTIVE_PET_ID`), React Query (запросы с petId).
-- **Решение (вариант А — рекомендуется):** Убрать Zustand, использовать React Query как единый источник:
-  ```typescript
-  // Вместо usePetStore
-  export function useActivePet() {
-    const activePetId = storage.getString(StorageKeys.ACTIVE_PET_ID);
-    return useQuery({
-      queryKey: ['pet', 'active', activePetId],
-      queryFn: () => activePetId ? petRepository.findById(activePetId) : null,
-      staleTime: Infinity,
-    });
-  }
-  ```
+> **CHECKPOINT 4A**: commit + tsc + test
 
-#### D4. Создать `index.ts` barrel-файлы для фич
-- **Проблема:** Фичи импортируются напрямую по пути (`@features/glucose/screens/LogGlucoseScreen`), нет контроля над публичным API.
-- **Решение:** Добавить `src/features/glucose/index.ts`:
-  ```typescript
-  export { LogGlucoseScreen } from './screens/LogGlucoseScreen';
-  export { GlucoseListScreen } from './screens/GlucoseListScreen';
-  export type { GlucoseReading } from './types';
-  ```
+### Фаза 4B — Новые фичи
 
-#### D5. Добавить систему миграций базы данных
-- **Проблема:** `database.ts` просто вызывает `CREATE TABLE IF NOT EXISTS` — нет версионирования. При добавлении новой колонки нет способа запустить `ALTER TABLE` для существующих пользователей.
-- **Решение:** Создать `src/storage/database/migrations.ts`:
-  ```typescript
-  const MIGRATIONS: Record<number, string[]> = {
-    1: [CREATE_TABLES_SQL],
-    2: ['ALTER TABLE pets ADD COLUMN photo_uri TEXT'],
-    3: ['CREATE TABLE feeding_logs (...)'],
-  };
+- [ ] E2 Выбор даты/времени при вводе глюкозы (DateTimePicker)
+- [ ] E4 Связь симптомов с глюкозой (glucose_reading_id в symptoms)
+- [ ] E7 Фильтрация истории глюкозы (дата, уровень, приём пищи)
 
-  export async function runMigrations(db: SQLiteDatabase): Promise<void> {
-    const [{ user_version }] = await db.getAllAsync<{ user_version: number }>(
-      'PRAGMA user_version'
-    );
-    for (const version of Object.keys(MIGRATIONS).map(Number).sort()) {
-      if (version > user_version) {
-        for (const sql of MIGRATIONS[version]) {
-          await db.execAsync(sql);
-        }
-        await db.execAsync(`PRAGMA user_version = ${version}`);
-      }
-    }
-  }
-  ```
+> **CHECKPOINT 4B**: commit + tsc + test
 
-#### D6. Нормализовать хранение типов симптомов
-- **Проблема:** `symptoms.symptom_types` хранится как JSON-строка `'["polyuria","lethargy"]'`. Нельзя делать запросы по типу симптома через SQL.
-- **Решение:** Создать связующую таблицу:
-  ```sql
-  CREATE TABLE IF NOT EXISTS symptom_type_entries (
-    id TEXT PRIMARY KEY NOT NULL,
-    symptom_id TEXT NOT NULL,
-    type TEXT NOT NULL,
-    FOREIGN KEY (symptom_id) REFERENCES symptoms(id) ON DELETE CASCADE
-  );
-  CREATE INDEX idx_symptom_type ON symptom_type_entries(symptom_id, type);
-  ```
+### Фаза 4C — Перформанс
 
-#### D7. Добавить пагинацию для медицинских записей
-- **Проблема:** `glucoseRepository.findByPetId()` загружает ВСЕ записи в память. При 1000+ записях это критично.
-- **Решение:** Cursor-based пагинация:
-  ```typescript
-  async findByPetId(
-    petId: string,
-    limit = 50,
-    before?: string  // ISO timestamp cursor
-  ): Promise<GlucoseReading[]>
-  ```
+- [ ] C4 useCallback для обработчиков (AddSymptomScreen, и др.)
+- [ ] C5 Стабильные ключи в оставшихся списках
+- [ ] C6 useMemo для ExpensesScreen.byCategory
+- [ ] C7 Zustand селекторы (если не убран в D3)
+
+> **CHECKPOINT 4C**: commit + tsc + test
 
 ---
 
-## v1.3 — UX и функциональные улучшения 🎯
-> Цель: дать реальному владельцу диабетического кота всё необходимое
+## ЭТАП 5: v1.4 UX улучшения
 
-### Блок E — Критически важные для пользователя фичи
+- [ ] F1 Закладки в Энциклопедии (MMKV)
+- [ ] F2 Оглавление для длинных статей (парсинг ##)
+- [ ] F3 Новые статьи (4 шт: домашний замер, гипогликемия, стресс, несколько питомцев)
+- [ ] F4 Расходы: годовой вид, бюджетный лимит
+- [ ] F5 Accessibility: accessibilityLabel на все кнопки (15+), размер шрифта
+- [ ] E6 Быстрый доступ к настройкам глюкозы
 
-#### E1. Индикатор "Время с последнего замера"
-- **Проблема:** Нет визуального сигнала, если глюкоза не измерялась >12 часов — это медицински опасно.
-- **Решение:** Добавить на Dashboard бейдж:
-  - Зелёный: < 6 часов
-  - Жёлтый: 6–12 часов
-  - Красный: > 12 часов с текстом "Не измерено 18ч"
-
-#### E2. Выбор времени при вводе глюкозы
-- **Проблема:** `LogGlucoseScreen` всегда ставит текущее время. Хозяин забыл записать утренний замер.
-- **Решение:** Добавить `DateTimePicker` для ввода фактического времени замера (по умолчанию — текущее).
-
-#### E3. Экспорт данных для ветеринара (PDF)
-- **Пакеты:** `expo-print` (уже установлен), `expo-sharing` (уже установлен)
-- **Содержимое PDF:**
-  - Имя питомца, порода, дата постановки диагноза
-  - Таблица показателей глюкозы за выбранный период
-  - График глюкозы
-  - Последние 10 инъекций
-  - Симптомы за период
-- **Точки входа:** GlucoseListScreen (FAB "Экспорт") и PetProfileScreen
-
-#### E4. Связать симптомы с показателями глюкозы
-- **Проблема:** Нельзя ответить "При каком уровне глюкозы кот был вялым?"
-- **Решение:**
-  - При добавлении симптома автоматически подтягивать последний показатель глюкозы
-  - Добавить колонку `glucose_reading_id` в таблицу `symptoms`
-  - В `SymptomDetailScreen` показывать связанный показатель
-
-#### E5. Лог кормлений (реализовать кнопку)
-- **Проблема:** Кнопка "Кормление" на Dashboard есть, но не работает.
-- **Решение:** Создать `LogFeedingScreen` и таблицу `feedings`:
-  ```sql
-  CREATE TABLE IF NOT EXISTS feedings (
-    id TEXT PRIMARY KEY,
-    pet_id TEXT NOT NULL,
-    fed_at TEXT NOT NULL,
-    food_type TEXT,
-    amount_grams REAL,
-    notes TEXT,
-    created_at TEXT NOT NULL
-  );
-  ```
-
-#### E6. Быстрый доступ к настройкам
-- **Проблема:** Чтобы поменять единицу измерения глюкозы (mmol ↔ mg/dL) — нужно 4 тапа.
-- **Решение:** Вынести переключатель единиц в GlucoseListScreen header или добавить иконку шестерёнки в таб-бар.
-
-#### E7. Фильтрация и сортировка истории
-- **Проблема:** Нельзя посмотреть "только утренние замеры" или "только гипогликемии".
-- **Решение:** Добавить фильтр в `GlucoseListScreen`:
-  - По диапазону дат
-  - По уровню (норма / высокий / низкий)
-  - По приёму пищи (натощак / после еды)
-
-#### E8. Тренд глюкозы на Dashboard
-- **Решение:** Добавить стрелку-индикатор рядом с последним значением:
-  - ↓ `trending_down`: последние 3 замера снижаются
-  - ↑ `trending_up`: растут
-  - → `stable`: отклонение < 15%
-
-### Блок F — Улучшения UX
-
-#### F1. Закладки в Энциклопедии
-- MMKV: `StorageKeys.BOOKMARKED_ARTICLES = 'bookmarked_articles'`
-- Иконка закладки в `ArticleDetailScreen` header
-
-#### F2. Оглавление для длинных статей
-- Распарсить `##` заголовки из markdown
-- Показать кликабельное оглавление в начале статьи
-
-#### F3. Добавить недостающие статьи в Энциклопедию
-- "Как измерять глюкоза дома" (практическое руководство)
-- "Первая помощь при гипогликемии" (мёд, корм без инсулина)
-- "Влияние стресса на уровень глюкозы"
-- "Несколько питомцев: как не перепутать инсулин"
-
-#### F4. Счётчик расходов — расширение
-- Добавить категории: тест-полоски, ланцеты, одноразовые шприцы
-- Годовой вид (`ExpensesScreen` — переключатель Месяц/Год)
-- Бюджетный лимит с предупреждением
-
-#### F5. Настройки доступности
-- Размер шрифта (Маленький / Средний / Большой)
-- Добавить `accessibilityLabel` на все кнопки-иконки
+> **CHECKPOINT 5**: commit + tsc + test + lint
 
 ---
 
-## v2.0 — DevOps и инфраструктура ⚙️
-> Цель: настроить продакшн-пайплайн, тесты и мониторинг
+## ЭТАП 6: v2.0 DevOps
 
-### Блок G — CI/CD и качество кода
+- [ ] G3 GitHub Actions CI (tsc + lint + test + build)
+- [ ] G5 Sentry мониторинг крашей
+- [ ] G6 Удалить AsyncStorage
+- [ ] G7 Pre-commit хуки (husky + lint-staged)
+- [ ] D4 Barrel exports для фич (index.ts)
+- [ ] Расширить Jest покрытие до 70% (repositories, stores)
 
-#### G1. Настроить ESLint + Prettier
-```bash
-npm install -D eslint eslint-config-expo @typescript-eslint/eslint-plugin \
-  @typescript-eslint/parser prettier eslint-config-prettier
-```
-- Создать `.eslintrc.json` с правилом `react-hooks/exhaustive-deps: warn`
-- Создать `.prettierrc`
-- Добавить в `package.json`: `"lint": "eslint src --ext .ts,.tsx"`
-
-#### G2. Настроить Jest + React Native Testing Library
-```bash
-npm install -D jest @testing-library/react-native jest-expo
-```
-- Минимальный порог покрытия: 70% для storage/ и shared/
-- Обязательные тесты:
-  - Репозитории (glucoseRepository, expenseRepository)
-  - Утилиты (dateUtils, glucose domain)
-  - Zustand store (petStore)
-
-#### G3. GitHub Actions CI Pipeline
-Создать `.github/workflows/ci.yml`:
-```yaml
-on: [push, pull_request]
-jobs:
-  check:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
-        with: { node-version: '20', cache: 'npm' }
-      - run: npm ci
-      - run: npx tsc --noEmit          # TypeScript
-      - run: npm run lint               # ESLint
-      - run: npm run test -- --coverage # Jest
-  build:
-    needs: check
-    runs-on: ubuntu-latest
-    steps:
-      - run: eas build --platform android --profile preview --non-interactive
-```
-
-#### G4. Настроить iOS EAS сборку
-- **Проблема:** `eas.json` полностью отсутствует iOS конфиг для production/preview.
-- Добавить в `eas.json`:
-  ```json
-  "production": {
-    "android": { "buildType": "app-bundle", "versionCode": 1 },
-    "ios": { "distribution": "store", "buildNumber": "1" }
-  }
-  ```
-- Добавить в `app.json`:
-  ```json
-  "ios": {
-    "bundleIdentifier": "com.diapet.app",
-    "buildNumber": "1",
-    "minimumIosVersion": "14.0"
-  },
-  "android": {
-    "package": "com.diapet.app",
-    "versionCode": 1,
-    "minSdkVersion": 24
-  }
-  ```
-
-#### G5. Добавить Sentry (мониторинг крашей)
-```bash
-npm install @sentry/react-native
-```
-```typescript
-// src/core/App.tsx
-Sentry.init({
-  dsn: process.env.SENTRY_DSN,
-  environment: process.env.APP_ENV,
-  tracesSampleRate: 0.2,
-});
-```
-
-#### G6. Удалить лишнюю зависимость AsyncStorage
-- **Проблема:** `@react-native-async-storage/async-storage` не используется — MMKV уже есть.
-```bash
-npm uninstall @react-native-async-storage/async-storage
-```
-
-#### G7. Добавить pre-commit хуки
-```bash
-npm install -D husky lint-staged
-npx husky init
-```
-`.husky/pre-commit`:
-```bash
-npx lint-staged
-npx tsc --noEmit
-```
+> **CHECKPOINT 6**: commit + push + CI green
 
 ---
 
-## v2.1 — Backend и облако ☁️
+## ЭТАП 7: v2.1 Backend + Облако
 
-### Инфраструктура
-- [ ] REST API (Node.js / Fastify + PostgreSQL)
+- [ ] REST API (Fastify + PostgreSQL)
 - [ ] JWT аутентификация
-- [ ] Облачная синхронизация данных между устройствами
-- [ ] Резервное копирование в облако (шифрованное)
-- [ ] Кабинет ветеринара — просмотр данных питомца онлайн
-
-### Монетизация (Freemium)
-- [ ] Бесплатно: 1 питомец, история 3 месяца, базовые функции
-- [ ] Premium: неограниченная история, PDF-экспорт, синхронизация, несколько питомцев
-- [ ] Vet Plan: кабинет ветеринара (SaaS)
+- [ ] Облачная синхронизация
+- [ ] Резервное копирование (шифрованное)
+- [ ] Кабинет ветеринара
 
 ---
 
-## v3.0 — Умные функции 🤖
+## ЭТАП 8: v3.0 AI/Smart
 
-- [ ] Анализ трендов глюкозы (статистические паттерны)
-- [ ] Предупреждение о риске гипогликемии на основе истории
-- [ ] Интеграция с Bluetooth-глюкометром (FreeStyle Libre, Dexcom)
+- [ ] Анализ трендов (статистика)
+- [ ] Предупреждение о риске гипогликемии
+- [ ] Bluetooth-глюкометр (FreeStyle Libre, Dexcom)
 - [ ] Виджет на главный экран (Android/iOS)
-- [ ] Расширение на другие виды: собаки, кролики, ферреты
+- [ ] Расширение на собак, кроликов, ферретов
 
 ---
 
-## Трекер: что делать первым
+## Автопротокол работы
 
 ```
-КРИТИЧНО (делать немедленно):
-  A1 ✅ SQLCipher
-  A2 ✅ MMKV ключ
-  B1 ✅ ErrorBoundary
-  B2 ✅ Кормление
-  B3 ✅ useEffect deps
-  B4 ✅ Non-null assertion
-  B5 ✅ Дата февраль
+Для каждой фазы:
+1. Прочитать задачи фазы
+2. Запустить параллельных агентов (где возможно)
+3. После завершения: npx tsc --noEmit
+4. Если ошибки TS — исправить
+5. npm test — все тесты зелёные
+6. git add <files> && git commit (сообщение по шаблону фазы)
+7. Перейти к следующей фазе
 
-ВЫСОКИЙ приоритет (до публикации):
-  A3   Валидация фото
-  A4   .env в gitignore
-  C1   Типизация навигации
-  D1   storage/domain/types.ts
-  D2   Убрать shared → features зависимость
-  D5   Миграции БД
-  E1   Индикатор времени замера
-  E3   PDF экспорт
-  G1   ESLint + Prettier
-  G2   Jest тесты
-  G4   iOS EAS конфиг
-
-СРЕДНИЙ приоритет (v1.3):
-  C2   ScreenHeader компонент
-  C3   i18n строки
-  D3   Консолидация стейта
-  D6   Нормализация symptom_types
-  D7   Пагинация
-  E2   Время при вводе глюкозы
-  E4   Симптом ↔ Глюкоза
-  E5   Лог кормлений
-  E7   Фильтрация истории
-  E8   Тренд глюкозы
-  G3   GitHub Actions CI
-  G5   Sentry
-  G6   Удалить AsyncStorage
-
-НИЗКИЙ приоритет (v2.0+):
-  F1-F5  UX улучшения
-  G7     Pre-commit хуки
-  E6     Быстрый доступ к настройкам
-  D4     Barrel exports
+При фатальной ошибке:
+- НЕ продолжать следующую фазу
+- Зафиксировать в памяти точку останова
+- Описать проблему для следующей сессии
 ```
 
 ---
@@ -556,48 +242,31 @@ npx tsc --noEmit
 
 | Проблема | Решение |
 |---|---|
-| MMKV не работает в Expo Go | Использовать Expo Dev Client или EAS Build |
-| Victory Native peer deps | Установлен с `--legacy-peer-deps` (проверить с React 19) |
-| DateTimePicker на Android | `@react-native-community/datetimepicker` |
-| Docker для мобильной разработки | Только Metro сервер, сборка через EAS Build |
-| Несколько питомцев | DB schema готова, UI ограничен до 1 питомца в MVP |
-| SQLCipher в Expo | Требует `"useSQLCipher": true` в app.json + dev build |
-| MMKV ключ шифрования | Генерировать через expo-crypto, хранить в expo-secure-store |
-| Февраль 28/29 дней | Использовать `date-fns/endOfMonth` вместо хардкоженного -31 |
+| MMKV не работает в Expo Go | Expo Dev Client / EAS Build |
+| Victory Native peer deps | `--legacy-peer-deps` |
+| jest v30 не совместим с jest-expo | Использовать jest v29 |
+| babel-preset-expo | Должен быть в devDependencies для Jest |
+| @expo/vector-icons types | Предсуществующая проблема, не блокирует |
+| ThemeContext readonly types | Предсуществующая, косметическая |
+| SQLCipher | `"useSQLCipher": true` в app.json + dev build |
+| MMKV ключ | expo-crypto → expo-secure-store |
+| Февраль | `date-fns/endOfMonth` |
 
 ---
 
-## Команды быстрого старта
+## Команды
 
 ```bash
-# Dev (Expo Go — без MMKV/SQLite)
-npx expo start
-
-# Dev build (с нативными модулями)
-npx expo run:android
-npx expo run:ios          # macOS only
-
-# Сброс кэша
-node scripts/reset-db.js
-
-# Проверка типов
-npx tsc --noEmit
-
-# Линтер (после настройки)
-npm run lint
-
-# Тесты (после настройки)
-npm run test
-
-# Production Android APK
-eas build --platform android --profile preview
-
-# Production Android AAB (Google Play)
-eas build --platform android --profile production
-
-# Production iOS (App Store)
-eas build --platform ios --profile production
-
-# Docker Metro
-docker-compose up
+npx expo start              # Dev
+npx expo run:android        # Dev build
+npx tsc --noEmit            # Проверка типов
+npm run lint                # ESLint
+npm run lint:fix            # ESLint autofix
+npm run format              # Prettier
+npm test                    # Jest (18 тестов)
+npm test -- --coverage      # С покрытием
+node scripts/reset-db.js    # Сброс БД
+eas build --platform android --profile preview   # APK
+eas build --platform ios --profile production     # IPA
+docker-compose up            # Metro в Docker
 ```
