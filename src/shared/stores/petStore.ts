@@ -7,6 +7,7 @@ interface PetStore {
   activePet: Pet | null;
   pets: Pet[];
   isLoading: boolean;
+  error: string | null;
   loadPets: () => Promise<void>;
   setActivePet: (pet: Pet) => void;
   refreshActivePet: () => Promise<void>;
@@ -16,9 +17,10 @@ export const usePetStore = create<PetStore>((set, get) => ({
   activePet: null,
   pets: [],
   isLoading: false,
+  error: null,
 
   loadPets: async () => {
-    set({ isLoading: true });
+    set({ isLoading: true, error: null });
     try {
       const pets = await petRepository.findActive();
       const activePetId = storage.getString(StorageKeys.ACTIVE_PET_ID);
@@ -27,7 +29,8 @@ export const usePetStore = create<PetStore>((set, get) => ({
         : pets[0] ?? null;
       set({ pets, activePet, isLoading: false });
     } catch (error) {
-      set({ isLoading: false });
+      console.error('Failed to load pets:', error);
+      set({ isLoading: false, error: 'Failed to load pets' });
     }
   },
 

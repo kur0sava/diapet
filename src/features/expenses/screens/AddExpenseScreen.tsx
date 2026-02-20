@@ -33,14 +33,16 @@ export default function AddExpenseScreen() {
   };
 
   useEffect(() => {
+    let cancelled = false;
     if (editId) {
       expenseRepository.findById(editId).then(exp => {
-        if (!exp) return;
+        if (cancelled || !exp) return;
         setCategory(exp.category as ExpenseCategory);
         setAmount(exp.amount.toString());
         if (exp.description) setDescription(exp.description);
       });
     }
+    return () => { cancelled = true; };
   }, [editId]);
 
   const handleSave = async () => {

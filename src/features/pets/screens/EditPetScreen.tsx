@@ -28,10 +28,12 @@ export default function EditPetScreen() {
 
   useEffect(() => {
     if (!activePet) return;
+    let cancelled = false;
     setVetName(storage.getString('vetName') ?? '');
     setVetPhone(storage.getString('vetPhone') ?? '');
-    scheduleRepository.getInjectionTimes(activePet.id).then(s => setInjectionTimes(s.map(x => x.timeOfDay)));
-    scheduleRepository.getFeedingTimes(activePet.id).then(s => setFeedingTimes(s.map(x => x.timeOfDay)));
+    scheduleRepository.getInjectionTimes(activePet.id).then(s => { if (!cancelled) setInjectionTimes(s.map(x => x.timeOfDay)); });
+    scheduleRepository.getFeedingTimes(activePet.id).then(s => { if (!cancelled) setFeedingTimes(s.map(x => x.timeOfDay)); });
+    return () => { cancelled = true; };
   }, [activePet]);
 
   const handleSave = async () => {

@@ -40,10 +40,16 @@ export default function App() {
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
-    initStorage().then(() => {
-      restoreLanguage();
-      setReady(true);
-    });
+    initStorage()
+      .then(() => {
+        restoreLanguage();
+        setReady(true);
+      })
+      .catch((err) => {
+        console.error('Failed to initialize storage:', err);
+        // Still mark as ready so ErrorBoundary can catch downstream errors
+        setReady(true);
+      });
   }, []);
 
   if (!ready) {

@@ -42,9 +42,10 @@ export default function LogGlucoseScreen() {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
+    let cancelled = false;
     if (editId) {
       glucoseRepository.findById(editId).then(reading => {
-        if (!reading) return;
+        if (cancelled || !reading) return;
         const displayValue = unit === 'mmol/L' ? reading.valueMmol.toFixed(1) : reading.valueMgdl.toString();
         setValue(displayValue);
         setMealRelation(reading.mealRelation);
@@ -53,6 +54,7 @@ export default function LogGlucoseScreen() {
         if (reading.notes) setNotes(reading.notes);
       });
     }
+    return () => { cancelled = true; };
   }, [editId, unit]);
 
   const numValue = parseFloat(value.replace(',', '.'));
