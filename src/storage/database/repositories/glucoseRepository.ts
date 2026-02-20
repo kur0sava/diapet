@@ -61,9 +61,10 @@ export const glucoseRepository = {
     if (dto.value !== undefined && dto.unit) {
       const valueMgdl = dto.unit === 'mg/dL' ? dto.value : mmolToMgdl(dto.value);
       const valueMmol = dto.unit === 'mmol/L' ? dto.value : dto.value / 18.018;
+      // FIX-03: include insulin_type in UPDATE
       await db.runAsync(
-        'UPDATE glucose_readings SET value_mmol=?, value_mgdl=?, meal_relation=COALESCE(?,meal_relation), insulin_dose=COALESCE(?,insulin_dose), notes=COALESCE(?,notes), updated_at=? WHERE id=?',
-        [valueMmol, valueMgdl, dto.mealRelation ?? null, dto.insulinDose ?? null, dto.notes ?? null, now, id]
+        'UPDATE glucose_readings SET value_mmol=?, value_mgdl=?, meal_relation=COALESCE(?,meal_relation), insulin_dose=COALESCE(?,insulin_dose), insulin_type=COALESCE(?,insulin_type), notes=COALESCE(?,notes), updated_at=? WHERE id=?',
+        [valueMmol, valueMgdl, dto.mealRelation ?? null, dto.insulinDose ?? null, dto.insulinType ?? null, dto.notes ?? null, now, id]
       );
     }
     return this.findById(id);

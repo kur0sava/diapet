@@ -16,7 +16,8 @@ const MIGRATIONS: Migration[] = [
     version: 2,
     name: 'add_feeding_logs',
     up: [
-      `CREATE TABLE IF NOT EXISTS feeding_logs (
+      // FIX-01: Schema uses 'feedings', not 'feeding_logs'
+      `CREATE TABLE IF NOT EXISTS feedings (
         id TEXT PRIMARY KEY NOT NULL,
         pet_id TEXT NOT NULL,
         fed_at TEXT NOT NULL DEFAULT (datetime('now')),
@@ -26,14 +27,15 @@ const MIGRATIONS: Migration[] = [
         created_at TEXT NOT NULL DEFAULT (datetime('now')),
         FOREIGN KEY (pet_id) REFERENCES pets(id) ON DELETE CASCADE
       )`,
-      `CREATE INDEX IF NOT EXISTS idx_feeding_pet_date ON feeding_logs(pet_id, fed_at)`,
+      `CREATE INDEX IF NOT EXISTS idx_feeding_pet_date ON feedings(pet_id, fed_at)`,
     ],
   },
   {
     version: 3,
-    name: 'add_pet_photo_and_symptom_glucose_link',
+    name: 'add_symptom_glucose_link',
     up: [
-      `ALTER TABLE pets ADD COLUMN photo_uri TEXT`,
+      // FIX-02: photo_uri already exists in schema.ts CREATE TABLE, skip it
+      // Only add glucose_reading_id to symptoms (not in initial schema)
       `ALTER TABLE symptoms ADD COLUMN glucose_reading_id TEXT REFERENCES glucose_readings(id)`,
     ],
   },
@@ -47,7 +49,8 @@ export async function runMigrations(db: SQLiteDatabase): Promise<void> {
   // Run outstanding migrations
   for (const migration of MIGRATIONS) {
     if (migration.version > currentVersion) {
-      console.log(`Running migration ${migration.version}: ${migration.name}`);
+      // Migration logged only in __DEV__
+      if (__DEV__) console.log(`Migration ${migration.version}: ${migration.name}`);
       for (const sql of migration.up) {
         await db.execAsync(sql);
       }

@@ -41,6 +41,13 @@ export default function EditPetScreen() {
       await petRepository.update(activePet.id, { name: name.trim(), weightKg: weightKg ? parseFloat(weightKg) : undefined, insulinType: insulinType || undefined });
       if (vetName) storage.set('vetName', vetName);
       if (vetPhone) storage.set('vetPhone', vetPhone);
+      // FIX-04: persist schedule changes to DB
+      const existingInjections = await scheduleRepository.getInjectionTimes(activePet.id);
+      for (const s of existingInjections) await scheduleRepository.deleteInjectionTime(s.id);
+      for (const time of injectionTimes) await scheduleRepository.addInjectionTime(activePet.id, time);
+      const existingFeedings = await scheduleRepository.getFeedingTimes(activePet.id);
+      for (const s of existingFeedings) await scheduleRepository.deleteFeedingTime(s.id);
+      for (const time of feedingTimes) await scheduleRepository.addFeedingTime(activePet.id, time);
       await refreshActivePet();
       await queryClient.invalidateQueries({ queryKey: ['pet'] });
       navigation.goBack();
