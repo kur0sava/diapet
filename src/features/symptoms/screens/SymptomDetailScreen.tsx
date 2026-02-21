@@ -1,7 +1,8 @@
 import React from 'react';
-import { View, Text, StyleSheet, ScrollView, SafeAreaView, TouchableOpacity, Image } from 'react-native';
-import { useRoute } from '@react-navigation/native';
+import { View, Text, StyleSheet, ScrollView, SafeAreaView, TouchableOpacity, Image, ActivityIndicator } from 'react-native';
+import { useRoute, RouteProp } from '@react-navigation/native';
 import { useSymptomsNavigation } from '@navigation/hooks';
+import type { SymptomsStackParamList } from '@navigation/types';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '@shared/theme';
 import { useQuery } from '@tanstack/react-query';
@@ -12,7 +13,7 @@ import { Card } from '@shared/components/ui';
 
 export default function SymptomDetailScreen() {
   const navigation = useSymptomsNavigation();
-  const route = useRoute<any>();
+  const route = useRoute<RouteProp<SymptomsStackParamList, 'SymptomDetail'>>();
   const { t } = useTranslation();
   const { theme } = useTheme();
 
@@ -21,7 +22,13 @@ export default function SymptomDetailScreen() {
     queryFn: () => symptomRepository.findById(route.params.id),
   });
 
-  if (!symptom) return null;
+  if (!symptom) return (
+    <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.background }]}>
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <ActivityIndicator size="large" color={theme.colors.primary} />
+      </View>
+    </SafeAreaView>
+  );
 
   const severityColors = { mild: theme.colors.success, moderate: theme.colors.warning, severe: theme.colors.danger };
   const severityLabels = { mild: t('symptoms.mild'), moderate: t('symptoms.moderate'), severe: t('symptoms.severe') };

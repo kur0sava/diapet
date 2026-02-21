@@ -1,14 +1,15 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, SafeAreaView } from 'react-native';
-import { useRoute } from '@react-navigation/native';
+import { useRoute, RouteProp } from '@react-navigation/native';
 import { useOnboardingNavigation } from '@navigation/hooks';
+import type { OnboardingStackParamList } from '@navigation/types';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '@shared/theme';
 import { Button, Input } from '@shared/components/ui';
 
 export default function VetContactScreen() {
   const navigation = useOnboardingNavigation();
-  const route = useRoute<any>();
+  const route = useRoute<RouteProp<OnboardingStackParamList, 'VetContact'>>();
   const { t } = useTranslation();
   const { theme } = useTheme();
 

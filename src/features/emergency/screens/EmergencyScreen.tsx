@@ -89,7 +89,7 @@ export default function EmergencyScreen() {
         <Card style={[styles.card, { backgroundColor: 'rgba(255,255,255,0.95)' }]}>
           <Text style={[styles.cardTitle, { color: '#FF3B30' }]}>⚠️ {t('emergency.signs')}</Text>
           {signs.map((sign, i) => (
-            <View key={i} style={styles.listItem}>
+            <View key={`sign-${i}`} style={styles.listItem}>
               <View style={[styles.bullet, { backgroundColor: '#FF3B30' }]} />
               <Text style={styles.listText}>{sign}</Text>
             </View>
@@ -100,7 +100,7 @@ export default function EmergencyScreen() {
         <Card style={[styles.card, { backgroundColor: 'rgba(255,255,255,0.95)' }]}>
           <Text style={[styles.cardTitle, { color: '#1C1C1E' }]}>📋 {t('emergency.steps')}</Text>
           {steps.map((step, i) => (
-            <View key={i} style={styles.stepItem}>
+            <View key={`step-${i}`} style={styles.stepItem}>
               <View style={[styles.stepNumber, { backgroundColor: '#FF3B30' }]}>
                 <Text style={styles.stepNumberText}>{i + 1}</Text>
               </View>

@@ -60,7 +60,7 @@ export default function EditPetScreen() {
   const TimeList = ({ type, times, setTimes }: { type: string; times: string[]; setTimes: (t: string[]) => void }) => (
     <View style={{ gap: 8 }}>
       {times.map((time, i) => (
-        <View key={i} style={[styles.timeRow, { backgroundColor: theme.colors.surfaceSecondary, borderRadius: 12 }]}>
+        <View key={`time-${i}-${time}`} style={[styles.timeRow, { backgroundColor: theme.colors.surfaceSecondary, borderRadius: 12 }]}>
           <Input value={time} onChangeText={v => { const n = [...times]; n[i] = v; setTimes(n); }} containerStyle={{ flex: 1 }} />
           <TouchableOpacity onPress={() => setTimes(times.filter((_, idx) => idx !== i))} style={{ padding: 12 }}>
             <Ionicons name="close-circle" size={24} color={theme.colors.danger} />

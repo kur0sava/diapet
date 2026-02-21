@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView, SafeAreaView, TouchableOpacity, Alert, KeyboardAvoidingView, Platform } from 'react-native';
-import { useRoute } from '@react-navigation/native';
+import { useRoute, RouteProp } from '@react-navigation/native';
 import { useMoreNavigation } from '@navigation/hooks';
+import type { MoreStackParamList } from '@navigation/types';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '@shared/theme';
 import { Button, Input } from '@shared/components/ui';
@@ -14,7 +15,7 @@ const CATEGORIES: ExpenseCategory[] = ['insulin','testStrips','vetVisit','medica
 
 export default function AddExpenseScreen() {
   const navigation = useMoreNavigation();
-  const route = useRoute<any>();
+  const route = useRoute<RouteProp<MoreStackParamList, 'AddExpense'>>();
   const { t } = useTranslation();
   const { theme } = useTheme();
   const activePet = usePetStore(s => s.activePet);

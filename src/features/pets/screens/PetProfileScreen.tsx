@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, ScrollView, SafeAreaView, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, SafeAreaView, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { useMoreNavigation } from '@navigation/hooks';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '@shared/theme';
@@ -26,7 +26,13 @@ export default function PetProfileScreen() {
     enabled: !!activePet?.id,
   });
 
-  if (!activePet) return null;
+  if (!activePet) return (
+    <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.background }]}>
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <ActivityIndicator size="large" color={theme.colors.primary} />
+      </View>
+    </SafeAreaView>
+  );
 
   const diabetesLabels: Record<string, string> = { type1: t('pets.diabetesType1Short'), type2: t('pets.diabetesType2Short'), unknown: t('pets.diabetesUnknown') };
 

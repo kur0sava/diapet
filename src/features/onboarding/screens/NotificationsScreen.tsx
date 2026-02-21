@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, SafeAreaView, Alert } from 'react-native';
-import { useRoute } from '@react-navigation/native';
+import { useRoute, RouteProp } from '@react-navigation/native';
 import { useOnboardingNavigation, useRootNavigation } from '@navigation/hooks';
+import type { OnboardingStackParamList } from '@navigation/types';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '@shared/theme';
 import { Button } from '@shared/components/ui';
@@ -12,7 +13,7 @@ import { useNotifications } from '@shared/hooks/useNotifications';
 export default function NotificationsScreen() {
   const navigation = useOnboardingNavigation();
   const rootNavigation = useRootNavigation();
-  const route = useRoute<any>();
+  const route = useRoute<RouteProp<OnboardingStackParamList, 'Notifications'>>();
   const { t } = useTranslation();
   const { theme } = useTheme();
   const { requestPermissions, scheduleInjectionReminder, scheduleFeedingReminder } = useNotifications();

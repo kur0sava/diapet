@@ -3,8 +3,9 @@ import {
   View, Text, StyleSheet, ScrollView, SafeAreaView,
   TouchableOpacity, LayoutChangeEvent,
 } from 'react-native';
-import { useRoute } from '@react-navigation/native';
+import { useRoute, RouteProp } from '@react-navigation/native';
 import { useEncyclopediaNavigation } from '@navigation/hooks';
+import type { EncyclopediaStackParamList } from '@navigation/types';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '@shared/theme';
 import { Ionicons } from '@expo/vector-icons';
@@ -19,7 +20,7 @@ interface HeadingEntry {
 
 export default function ArticleDetailScreen() {
   const navigation = useEncyclopediaNavigation();
-  const route = useRoute<any>();
+  const route = useRoute<RouteProp<EncyclopediaStackParamList, 'ArticleDetail'>>();
   const { t } = useTranslation();
   const { theme } = useTheme();
   const scrollRef = useRef<ScrollView>(null);
@@ -92,7 +93,7 @@ export default function ArticleDetailScreen() {
       if (line.startsWith('## ')) {
         return (
           <Text
-            key={i}
+            key={`line-${i}`}
             style={[styles.h2, { color: theme.colors.text }]}
             onLayout={(e) => handleHeadingLayout(i, e)}
           >
@@ -103,7 +104,7 @@ export default function ArticleDetailScreen() {
       if (line.startsWith('### ')) {
         return (
           <Text
-            key={i}
+            key={`line-${i}`}
             style={[styles.h3, { color: theme.colors.text }]}
             onLayout={(e) => handleHeadingLayout(i, e)}
           >
@@ -113,21 +114,21 @@ export default function ArticleDetailScreen() {
       }
       if (line.startsWith('> ')) {
         return (
-          <View key={i} style={[styles.blockquote, { borderLeftColor: theme.colors.primary, backgroundColor: theme.colors.primaryLight }]}>
+          <View key={`line-${i}`} style={[styles.blockquote, { borderLeftColor: theme.colors.primary, backgroundColor: theme.colors.primaryLight }]}>
             <Text style={[styles.blockquoteText, { color: theme.colors.text }]}>{line.replace('> ', '')}</Text>
           </View>
         );
       }
       if (line.startsWith('---')) {
-        return <View key={i} style={[styles.divider, { backgroundColor: theme.colors.border }]} />;
+        return <View key={`line-${i}`} style={[styles.divider, { backgroundColor: theme.colors.border }]} />;
       }
       if (line.trim() === '') {
-        return <View key={i} style={{ height: 8 }} />;
+        return <View key={`line-${i}`} style={{ height: 8 }} />;
       }
       if (line.startsWith('**') && line.endsWith('**')) {
-        return <Text key={i} style={[styles.bold, { color: theme.colors.text }]}>{line.replace(/\*\*/g, '')}</Text>;
+        return <Text key={`line-${i}`} style={[styles.bold, { color: theme.colors.text }]}>{line.replace(/\*\*/g, '')}</Text>;
       }
-      return <Text key={i} style={[styles.body, { color: theme.colors.text }]}>{line}</Text>;
+      return <Text key={`line-${i}`} style={[styles.body, { color: theme.colors.text }]}>{line}</Text>;
     });
   };
 

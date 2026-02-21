@@ -72,6 +72,7 @@ function buildHtml(
 
   // Glucose table rows
   const glucoseRows = glucoseReadings
+    .slice(0, 100)
     .map(
       (r) => `
       <tr>
@@ -100,6 +101,7 @@ function buildHtml(
 
   // Symptom rows
   const symptomRows = symptoms
+    .slice(0, 50)
     .map(
       (s) => `
       <tr>

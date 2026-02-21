@@ -3,8 +3,9 @@ import {
   View, Text, StyleSheet, ScrollView, SafeAreaView,
   TouchableOpacity, Alert, KeyboardAvoidingView, Platform,
 } from 'react-native';
-import { useRoute } from '@react-navigation/native';
+import { useRoute, RouteProp } from '@react-navigation/native';
 import { useHomeNavigation } from '@navigation/hooks';
+import type { HomeStackParamList } from '@navigation/types';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '@shared/theme';
 import { Button, Input, Card } from '@shared/components/ui';
@@ -24,7 +25,7 @@ const MEAL_OPTIONS: { value: MealRelation; labelKey: string; icon: string }[] = 
 
 export default function LogGlucoseScreen() {
   const navigation = useHomeNavigation();
-  const route = useRoute<any>();
+  const route = useRoute<RouteProp<HomeStackParamList, 'LogGlucose'>>();
   const { t } = useTranslation();
   const { theme } = useTheme();
   const activePet = usePetStore(s => s.activePet);

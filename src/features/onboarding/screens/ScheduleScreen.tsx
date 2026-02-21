@@ -9,8 +9,9 @@ import {
   Platform,
   Alert,
 } from 'react-native';
-import { useRoute } from '@react-navigation/native';
+import { useRoute, RouteProp } from '@react-navigation/native';
 import { useOnboardingNavigation } from '@navigation/hooks';
+import type { OnboardingStackParamList } from '@navigation/types';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '@shared/theme';
 import { Button } from '@shared/components/ui';
@@ -19,7 +20,7 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 
 export default function ScheduleScreen() {
   const navigation = useOnboardingNavigation();
-  const route = useRoute<any>();
+  const route = useRoute<RouteProp<OnboardingStackParamList, 'Schedule'>>();
   const { t } = useTranslation();
   const { theme } = useTheme();
   const petData = route.params?.petData ?? {};
@@ -57,7 +58,7 @@ export default function ScheduleScreen() {
   const TimeList = ({ type, times }: { type: 'injection' | 'feeding'; times: string[] }) => (
     <View style={{ gap: 8 }}>
       {times.map((time, index) => (
-        <View key={index} style={[styles.timeRow, { backgroundColor: theme.colors.surfaceSecondary, borderRadius: 12 }]}>
+        <View key={`${type}-${index}-${time}`} style={[styles.timeRow, { backgroundColor: theme.colors.surfaceSecondary, borderRadius: 12 }]}>
           <Text style={{ color: theme.colors.text, fontSize: 18, fontWeight: '600', padding: 14 }}>{time}</Text>
           <TouchableOpacity onPress={() => removeTime(type, index)} style={styles.removeBtn}>
             <Ionicons name="close-circle" size={24} color={theme.colors.danger} />
