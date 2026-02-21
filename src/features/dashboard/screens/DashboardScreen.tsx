@@ -178,7 +178,7 @@ export default function DashboardScreen() {
             icon="💧"
             label={t('dashboard.lastGlucose')}
             value={latestGlucose ? `${latestGlucose.valueMmol.toFixed(1)}${trendArrow}` : '—'}
-            unit="ммоль/л"
+            unit={t('common.mmol_l')}
             color={latestGlucose ? (latestGlucose.valueMmol < 4 || latestGlucose.valueMmol > 9 ? theme.colors.danger : theme.colors.success) : theme.colors.textTertiary}
             subtitle={latestGlucose ? formatRelative(latestGlucose.recordedAt) : undefined}
           />
@@ -187,14 +187,14 @@ export default function DashboardScreen() {
             label={t('dashboard.nextInjection')}
             value={nextInjection ? nextInjection.timeOfDay : '—'}
             color={nextInjectionMinutes !== null && nextInjectionMinutes < 30 ? theme.colors.warning : theme.colors.primary}
-            subtitle={nextInjectionMinutes !== null ? `через ${formatCountdown(nextInjectionMinutes)}` : undefined}
+            subtitle={nextInjectionMinutes !== null ? t('dashboard.inTime', { time: formatCountdown(nextInjectionMinutes) }) : undefined}
           />
           <StatusCard
             icon="🍽️"
             label={t('dashboard.nextFeeding')}
             value={nextFeeding ? nextFeeding.timeOfDay : '—'}
             color={nextFeedingMinutes !== null && nextFeedingMinutes < 30 ? theme.colors.warning : theme.colors.success}
-            subtitle={nextFeedingMinutes !== null ? `через ${formatCountdown(nextFeedingMinutes)}` : undefined}
+            subtitle={nextFeedingMinutes !== null ? t('dashboard.inTime', { time: formatCountdown(nextFeedingMinutes) }) : undefined}
           />
         </View>
 

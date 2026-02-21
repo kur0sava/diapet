@@ -49,7 +49,7 @@ export default function AddExpenseScreen() {
   const handleSave = async () => {
     if (!activePet) return;
     const numAmount = parseFloat(amount.replace(',', '.'));
-    if (!amount || isNaN(numAmount) || numAmount <= 0) { Alert.alert('Ошибка', 'Введите корректную сумму'); return; }
+    if (!amount || isNaN(numAmount) || numAmount <= 0) { Alert.alert(t('common.error'), t('expenses.amountError')); return; }
     setLoading(true);
     try {
       if (editId) {
@@ -59,7 +59,7 @@ export default function AddExpenseScreen() {
       }
       await queryClient.invalidateQueries({ queryKey: ['expenses'] });
       navigation.goBack();
-    } catch { Alert.alert('Ошибка', 'Не удалось сохранить'); }
+    } catch { Alert.alert(t('common.error'), t('expenses.saveError')); }
     finally { setLoading(false); }
   };
 
@@ -82,7 +82,7 @@ export default function AddExpenseScreen() {
             ))}
           </View>
           <Input label={`${t('expenses.amount')} (₽)`} value={amount} onChangeText={setAmount} placeholder="500" keyboardType="decimal-pad" style={{ fontSize: 24, fontWeight: '700', textAlign: 'center' }} />
-          <Input label={t('expenses.notes')} value={description} onChangeText={setDescription} placeholder="Описание (опционально)" multiline numberOfLines={2} />
+          <Input label={t('expenses.notes')} value={description} onChangeText={setDescription} placeholder={t('expenses.notesPlaceholder')} multiline numberOfLines={2} />
           <Button title={t('common.save')} onPress={handleSave} fullWidth size="lg" loading={loading} style={{ marginTop: 24 }} />
         </ScrollView>
       </SafeAreaView>

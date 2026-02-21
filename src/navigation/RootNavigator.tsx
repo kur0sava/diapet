@@ -34,12 +34,12 @@ export function RootNavigator() {
 
   return (
     <NavigationContainer theme={navigationTheme}>
-      <Stack.Navigator screenOptions={{ headerShown: false }}>
-        {!isOnboardingComplete ? (
-          <Stack.Screen name="Onboarding" component={OnboardingNavigator} />
-        ) : (
-          <Stack.Screen name="Main" component={MainNavigator} />
-        )}
+      <Stack.Navigator
+        screenOptions={{ headerShown: false }}
+        initialRouteName={isOnboardingComplete ? 'Main' : 'Onboarding'}
+      >
+        <Stack.Screen name="Onboarding" component={OnboardingNavigator} />
+        <Stack.Screen name="Main" component={MainNavigator} />
         <Stack.Screen
           name="Emergency"
           component={EmergencyScreen}

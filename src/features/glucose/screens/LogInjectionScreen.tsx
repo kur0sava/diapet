@@ -12,7 +12,7 @@ import { usePetStore } from '@shared/stores/petStore';
 import { useQueryClient } from '@tanstack/react-query';
 import * as Haptics from 'expo-haptics';
 
-const COMMON_INSULINS = ['Протафан', 'Лантус', 'Лантус SoloStar', 'Левемир', 'Хумулин N', 'Актрапид'];
+// Insulin list is now i18n-driven, see below
 
 export default function LogInjectionScreen() {
   const navigation = useHomeNavigation();
@@ -25,6 +25,7 @@ export default function LogInjectionScreen() {
   const [insulinType, setInsulinType] = useState(activePet?.insulinType ?? '');
   const [notes, setNotes] = useState('');
   const [loading, setLoading] = useState(false);
+  const commonInsulins = t('injection.commonInsulins', { returnObjects: true }) as string[];
 
   const handleSave = async () => {
     if (!activePet) return;
@@ -82,12 +83,12 @@ export default function LogInjectionScreen() {
           <Input
             value={insulinType}
             onChangeText={setInsulinType}
-            placeholder="Протафан"
+            placeholder={t('glucose.insulinPlaceholder')}
           />
 
           <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>{t('injection.quickSelect')}</Text>
           <View style={styles.chips}>
-            {COMMON_INSULINS.map(ins => (
+            {commonInsulins.map(ins => (
               <TouchableOpacity
                 key={ins}
                 style={[
@@ -109,7 +110,7 @@ export default function LogInjectionScreen() {
             label={t('glucose.notes')}
             value={notes}
             onChangeText={setNotes}
-            placeholder="Опционально..."
+            placeholder={t('injection.notesPlaceholder')}
             multiline
             numberOfLines={2}
           />

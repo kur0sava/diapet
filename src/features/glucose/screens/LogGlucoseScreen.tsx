@@ -69,8 +69,8 @@ export default function LogGlucoseScreen() {
     : null;
 
   const handleSave = async () => {
-    if (!activePet) { Alert.alert('Ошибка', 'Питомец не найден'); return; }
-    if (!isValidValue) { Alert.alert('Ошибка', 'Введите корректное значение глюкозы'); return; }
+    if (!activePet) { Alert.alert(t('common.error'), t('glucose.petNotFound')); return; }
+    if (!isValidValue) { Alert.alert(t('common.error'), t('glucose.invalidValue')); return; }
 
     setLoading(true);
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
@@ -93,7 +93,7 @@ export default function LogGlucoseScreen() {
       await queryClient.invalidateQueries({ queryKey: ['glucose'] });
       navigation.goBack();
     } catch (e) {
-      Alert.alert('Ошибка', 'Не удалось сохранить данные');
+      Alert.alert(t('common.error'), t('glucose.saveError'));
     } finally {
       setLoading(false);
     }
@@ -200,7 +200,7 @@ export default function LogGlucoseScreen() {
               label={t('glucose.insulinType')}
               value={insulinType}
               onChangeText={setInsulinType}
-              placeholder="Протафан"
+              placeholder={t('glucose.insulinPlaceholder')}
               containerStyle={{ flex: 1 }}
             />
           </View>
@@ -210,7 +210,7 @@ export default function LogGlucoseScreen() {
             label={t('glucose.notes')}
             value={notes}
             onChangeText={setNotes}
-            placeholder="Дополнительные заметки..."
+            placeholder={t('glucose.notesPlaceholder')}
             multiline
             numberOfLines={3}
             style={{ height: 80, paddingTop: 12 }}

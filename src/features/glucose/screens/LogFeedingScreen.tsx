@@ -119,7 +119,7 @@ export default function LogFeedingScreen() {
             label={t('glucose.notes')}
             value={notes}
             onChangeText={setNotes}
-            placeholder="Дополнительные заметки..."
+            placeholder={t('feeding.notesPlaceholder')}
             multiline
             numberOfLines={3}
             style={{ height: 80, paddingTop: 12 }}

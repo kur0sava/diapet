@@ -4,11 +4,24 @@ import * as Crypto from 'expo-crypto';
 
 const SECURE_STORE_KEY = 'diapet-mmkv-encryption-key';
 
-// Start with an unencrypted instance so static imports don't crash.
-// initStorage() will replace this with an encrypted instance.
-export let storage = new MMKV({ id: 'diapet-storage' });
-
+let _storage: MMKV | null = null;
 let initialized = false;
+
+export function getStorage(): MMKV {
+  if (!_storage) {
+    _storage = new MMKV({ id: 'diapet-storage' });
+  }
+  return _storage;
+}
+
+// Lazy proxy so existing `storage.xxx()` calls keep working
+export const storage = new Proxy({} as MMKV, {
+  get(_target, prop) {
+    const instance = getStorage();
+    const value = (instance as any)[prop];
+    return typeof value === 'function' ? value.bind(instance) : value;
+  },
+});
 
 /**
  * Initialise MMKV with a per-device encryption key stored in the
@@ -25,7 +38,7 @@ export async function initStorage(): Promise<void> {
     await SecureStore.setItemAsync(SECURE_STORE_KEY, encryptionKey);
   }
 
-  storage = new MMKV({
+  _storage = new MMKV({
     id: 'diapet-storage',
     encryptionKey,
   });

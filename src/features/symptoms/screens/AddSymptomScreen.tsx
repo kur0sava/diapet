@@ -19,10 +19,10 @@ const ALL_SYMPTOM_TYPES: SymptomType[] = [
   'lossOfAppetite', 'behavioralChanges', 'lethargy', 'vomiting', 'diarrhea', 'other',
 ];
 
-const SEVERITY_OPTIONS: { value: SymptomSeverity; color: string; label: string }[] = [
-  { value: 'mild', color: '#34C759', label: 'Лёгкая' },
-  { value: 'moderate', color: '#FF9500', label: 'Умеренная' },
-  { value: 'severe', color: '#FF3B30', label: 'Тяжёлая' },
+const SEVERITY_OPTIONS: { value: SymptomSeverity; color: string; labelKey: string }[] = [
+  { value: 'mild', color: '#34C759', labelKey: 'symptoms.mild' },
+  { value: 'moderate', color: '#FF9500', labelKey: 'symptoms.moderate' },
+  { value: 'severe', color: '#FF3B30', labelKey: 'symptoms.severe' },
 ];
 
 export default function AddSymptomScreen() {
@@ -47,7 +47,7 @@ export default function AddSymptomScreen() {
 
   const pickPhoto = async () => {
     const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    if (!permission.granted) { Alert.alert('Нет доступа к галерее'); return; }
+    if (!permission.granted) { Alert.alert(t('symptoms.noGalleryAccess')); return; }
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsMultipleSelection: true,
@@ -63,7 +63,7 @@ export default function AddSymptomScreen() {
 
   const takePhoto = async () => {
     const permission = await ImagePicker.requestCameraPermissionsAsync();
-    if (!permission.granted) { Alert.alert('Нет доступа к камере'); return; }
+    if (!permission.granted) { Alert.alert(t('symptoms.noCameraAccess')); return; }
     const result = await ImagePicker.launchCameraAsync({ quality: 0.6, exif: false });
     if (!result.canceled && result.assets && result.assets.length > 0) {
       setPhotos(prev => [...prev, result.assets[0].uri].slice(0, 10));
@@ -72,7 +72,7 @@ export default function AddSymptomScreen() {
 
   const handleSave = async () => {
     if (!activePet) return;
-    if (selectedTypes.length === 0) { Alert.alert('Выберите хотя бы один симптом'); return; }
+    if (selectedTypes.length === 0) { Alert.alert(t('symptoms.selectAtLeastOne')); return; }
     setLoading(true);
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
     try {
@@ -86,7 +86,7 @@ export default function AddSymptomScreen() {
       await queryClient.invalidateQueries({ queryKey: ['symptoms'] });
       navigation.goBack();
     } catch {
-      Alert.alert('Ошибка', 'Не удалось сохранить');
+      Alert.alert(t('common.error'), t('symptoms.saveError'));
     } finally {
       setLoading(false);
     }
@@ -144,7 +144,7 @@ export default function AddSymptomScreen() {
                 onPress={() => setSeverity(opt.value)}
               >
                 <Text style={{ color: severity === opt.value ? '#fff' : theme.colors.text, fontWeight: '600' }}>
-                  {opt.label}
+                  {t(opt.labelKey)}
                 </Text>
               </TouchableOpacity>
             ))}
@@ -157,14 +157,14 @@ export default function AddSymptomScreen() {
               onPress={takePhoto}
             >
               <Text style={{ fontSize: 24 }}>📷</Text>
-              <Text style={{ color: theme.colors.primary, fontSize: 13, fontWeight: '600' }}>Камера</Text>
+              <Text style={{ color: theme.colors.primary, fontSize: 13, fontWeight: '600' }}>{t('symptoms.camera')}</Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={[styles.photoBtn, { backgroundColor: theme.colors.surfaceSecondary, borderRadius: 12 }]}
               onPress={pickPhoto}
             >
               <Text style={{ fontSize: 24 }}>🖼️</Text>
-              <Text style={{ color: theme.colors.primary, fontSize: 13, fontWeight: '600' }}>Галерея</Text>
+              <Text style={{ color: theme.colors.primary, fontSize: 13, fontWeight: '600' }}>{t('symptoms.gallery')}</Text>
             </TouchableOpacity>
           </View>
 
@@ -188,7 +188,7 @@ export default function AddSymptomScreen() {
             label={t('symptoms.notes')}
             value={notes}
             onChangeText={setNotes}
-            placeholder="Опишите симптомы подробнее..."
+            placeholder={t('symptoms.notesPlaceholder')}
             multiline
             numberOfLines={4}
             style={{ height: 100, paddingTop: 12 }}

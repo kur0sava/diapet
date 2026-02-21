@@ -12,7 +12,9 @@
       "resizeMode": "contain",
       "backgroundColor": "#4F8EF7"
     },
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
       "supportsTablet": false,
       "bundleIdentifier": "com.diapet.app",
@@ -45,7 +47,6 @@
     },
     "plugins": [
       "expo-notifications",
-      "expo-camera",
       "expo-image-picker",
       [
         "expo-sqlite",
@@ -56,7 +57,8 @@
       ],
       "expo-font",
       "expo-dev-client",
-      "expo-secure-store"
+      "expo-secure-store",
+      "@react-native-community/datetimepicker"
     ],
     "extra": {
       "eas": {
