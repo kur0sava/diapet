@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, Dimensions, StyleSheet } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '@shared/theme';
-import { GlucoseReading } from '@features/glucose/types';
+import { GlucoseReading } from '@storage/domain/types';
 import { format, parseISO } from 'date-fns';
 
 const { width: screenWidth } = Dimensions.get('window');
