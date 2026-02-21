@@ -1,18 +1,18 @@
 # DiaPet — Master Development Plan
 
-> Последнее обновление: 2026-02-20
-> Коммит: df2789b (master)
+> Последнее обновление: 2026-02-21
+> Коммит: 004245b (master)
 
 ---
 
 ## ПРОГРЕСС
 
 ```
-[##########----------] v1.0 MVP           ✅ DONE
-[##########----------] v1.1 Критические   ✅ DONE
+[####################] v1.0 MVP           ✅ DONE
+[####################] v1.1 Критические   ✅ DONE
 [####################] v1.1 Высокий        ✅ DONE
-[____________________] v1.2 Аудит-фиксы   ⬅ ТЕКУЩИЙ ЭТАП
-[____________________] v1.3 Средний прио   🔜
+[####################] v1.2 Аудит-фиксы   ✅ DONE
+[____________________] v1.3 Средний прио   ⬅ ТЕКУЩИЙ ЭТАП
 [____________________] v1.4 UX фичи        🔜
 [____________________] v2.0 DevOps         🔜
 [____________________] v2.1 Backend        🔜
@@ -62,81 +62,29 @@
 
 ---
 
-## ЭТАП 3: v1.2 Аудит-фиксы (КРИТИЧЕСКИЕ БАГИ) ⬅ ТЕКУЩИЙ
+## ЭТАП 3: v1.2 Аудит-фиксы ✅ DONE
 
-> Найдены аудитом 2026-02-20 (3 параллельных агента: структура, логика, UI)
-> Протокол: исправить → `npx tsc --noEmit` → `npm test` → git commit
+> Завершён 2026-02-21. 18 фиксов в 5 фазах.
+> Все проверки пройдены: tsc ✅ | jest (18/18) ✅
 
-### Фаза 3A — Критические баги БД и логики
-
-- [ ] **FIX-01** Миграция v2: `feeding_logs` → `feedings` (неправильное имя таблицы)
-  - Файл: `src/storage/database/migrations.ts`
-  - Действие: исправить имя таблицы в миграции
-- [ ] **FIX-02** Миграция v3: `photo_uri` уже есть в schema.ts — дублирование ALTER TABLE
-  - Файл: `src/storage/database/migrations.ts`
-  - Действие: убрать дублирующий ALTER, оставить только новые колонки
-- [ ] **FIX-03** `glucoseRepository.update()` не обновляет `insulin_type` (пропущен в SQL)
-  - Файл: `src/storage/database/repositories/glucoseRepository.ts`
-- [ ] **FIX-04** EditPetScreen не сохраняет изменения расписания в БД
-  - Файл: `src/features/pets/screens/EditPetScreen.tsx`
-  - Действие: вызывать `scheduleRepository.updateTimes()` в `handleSave()`
-
-> **CHECKPOINT 3A**: `git commit -m "fix: critical DB bugs (migrations, glucose update, schedule persist)"`
-
-### Фаза 3B — Обработка ошибок
-
-- [ ] **FIX-05** petStore.loadPets() глушит ошибки — добавить error state
-  - Файл: `src/shared/stores/petStore.ts`
-- [ ] **FIX-06** App.tsx: initStorage() без обработки ошибок → бесконечный спиннер
-  - Файл: `src/core/App.tsx`
-- [ ] **FIX-07** Async без cleanup в useEffect (EditPet, LogGlucose, AddExpense)
-  - Действие: добавить `let cancelled = false;` паттерн или AbortController
-- [ ] **FIX-08** Пустые catch-блоки — добавить `console.error` + user-facing сообщение
-  - Файлы: LogGlucoseScreen, LogInjectionScreen, LogFeedingScreen
-
-> **CHECKPOINT 3B**: `git commit -m "fix: error handling (petStore, initStorage, async cleanup)"`
-
-### Фаза 3C — i18n (40+ строк)
-
-- [ ] **FIX-09** Перенести все hardcoded русские строки в `ru.ts` / `en.ts`
-  - GlucoseChart: "Норма 4-9", "Вне нормы"
-  - GlucoseListScreen: "Среднее", "Мин", "Макс", "Всего"
-  - LogInjectionScreen: "Инъекция инсулина", "Тип инсулина", "Быстрый выбор", "Доза (единицы)"
-  - LogFeedingScreen: "Кормление", "Тип корма", "Количество (г)"
-  - ScheduleScreen, VetContactScreen, NotificationsScreen: подзаголовки
-  - SymptomsListScreen, SymptomDetailScreen: заголовки секций
-  - PetProfileScreen, MoreMenuScreen: "Кошка", "МЕНЮ", "Экстренный режим"
-  - ExpensesScreen: названия месяцев
-  - EmergencyScreen: дисклеймер
-  - SettingsScreen: метки тем
-  - ArticleListScreen: категории
-  - ArticleDetailScreen: "Статья не найдена"
-  - AddExpenseScreen: alert-тексты
-
-> **CHECKPOINT 3C**: `git commit -m "feat: complete i18n coverage (40+ strings migrated to locales)"`
-
-### Фаза 3D — UI качество
-
-- [ ] **FIX-10** Заменить `key={index}` на стабильные ключи (5 мест)
-  - ArticleDetailScreen (content, TOC), ScheduleScreen, EditPetScreen, QuickActionButton
-- [ ] **FIX-11** Добавить loading state в SymptomDetailScreen, PetProfileScreen
-- [ ] **FIX-12** Типизировать `useRoute<any>()` → proper ScreenProps (4 файла)
-  - LogGlucoseScreen, AddExpenseScreen, ScheduleScreen, VetContactScreen
-- [ ] **FIX-13** Лимит симптомов в PDF экспорте (cap 50)
-  - Файл: `src/shared/utils/pdfExport.ts`
-- [ ] **FIX-14** Удалить console.log из migrations.ts, оставить только ErrorBoundary
-
-> **CHECKPOINT 3D**: `git commit -m "fix: UI quality (keys, loading states, route types, PDF limit)"`
-
-### Фаза 3E — Cleanup
-
-- [ ] **FIX-15** Удалить неиспользуемый `useActivePet` хук или заменить petStore
-- [ ] **FIX-16** Удалить / внедрить `ScreenHeader` компонент
-- [ ] **FIX-17** Удалить пустые папки (features/*/store/, features/*/components/ и т.д.)
-- [ ] **FIX-18** GlucoseChart: импортировать GlucoseReading из `@storage/domain/types` напрямую
-
-> **CHECKPOINT 3E**: `git commit -m "chore: cleanup (unused hooks, empty dirs, direct domain imports)"`
-> **АВТОПРОВЕРКА**: `npx tsc --noEmit && npm test && npm run lint`
+- [x] FIX-01 Миграция v2: `feeding_logs` → `feedings`
+- [x] FIX-02 Миграция v3: убран дублирующий `photo_uri` ALTER
+- [x] FIX-03 `glucoseRepository.update()` — добавлен `insulin_type`
+- [x] FIX-04 EditPetScreen — сохранение расписания в БД
+- [x] FIX-05 petStore.loadPets() — error state
+- [x] FIX-06 App.tsx initStorage() — catch ошибок
+- [x] FIX-07 Async cleanup в useEffect (3 файла)
+- [x] FIX-08 Catch-блоки — уже имели Alert.alert (verified)
+- [x] FIX-09 i18n: 50+ строк мигрированы в ru.ts/en.ts (19 файлов)
+- [x] FIX-10 Стабильные ключи (4 файла)
+- [x] FIX-11 Loading state: SymptomDetail, PetProfile
+- [x] FIX-12 Typed useRoute в 7 файлах (0 `useRoute<any>`)
+- [x] FIX-13 PDF экспорт: cap 100 glucose + 50 symptoms
+- [x] FIX-14 console.log в migrations gated behind __DEV__
+- [x] FIX-15 Удалён useActivePet хук
+- [x] FIX-16 Удалён ScreenHeader компонент
+- [x] FIX-17 Удалены 12 пустых директорий
+- [x] FIX-18 GlucoseChart: прямой импорт из @storage/domain/types
 
 ---
 
