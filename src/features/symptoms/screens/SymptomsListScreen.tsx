@@ -36,7 +36,7 @@ export default function SymptomsListScreen() {
   };
 
   const handleDelete = (id: string) => {
-    Alert.alert('Удалить запись?', undefined, [
+    Alert.alert(t('symptoms.deleteConfirm'), undefined, [
       { text: t('common.cancel'), style: 'cancel' },
       { text: t('common.delete'), style: 'destructive', onPress: async () => {
         await symptomRepository.delete(id);
@@ -75,7 +75,7 @@ export default function SymptomsListScreen() {
         <Text style={[styles.date, { color: theme.colors.textSecondary }]}>{formatDateTime(item.recordedAt)}</Text>
         {item.notes && <Text style={[styles.notes, { color: theme.colors.textTertiary }]} numberOfLines={2}>{item.notes}</Text>}
         {item.photoUris.length > 0 && (
-          <Text style={[styles.photos, { color: theme.colors.primary }]}>📷 {item.photoUris.length} фото</Text>
+          <Text style={[styles.photos, { color: theme.colors.primary }]}>📷 {item.photoUris.length} {t('symptoms.photos')}</Text>
         )}
       </Card>
     </TouchableOpacity>
@@ -92,7 +92,7 @@ export default function SymptomsListScreen() {
           <EmptyState
             icon="🐾"
             title={t('symptoms.title')}
-            subtitle="Нет записей о симптомах"
+            subtitle={t('glucose.noSymptoms')}
             actionLabel={t('symptoms.addSymptom')}
             onAction={() => navigation.navigate('AddSymptom', {})}
           />

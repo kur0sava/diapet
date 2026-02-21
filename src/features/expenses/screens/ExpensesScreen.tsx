@@ -41,10 +41,10 @@ export default function ExpensesScreen() {
     [expenses]
   );
 
-  const monthNames = ['Янв','Фев','Мар','Апр','Май','Июн','Июл','Авг','Сен','Окт','Ноя','Дек'];
+  const monthKeys = ['jan','feb','mar','apr','may','jun','jul','aug','sep','oct','nov','dec'];
 
   const handleDelete = (id: string) => {
-    Alert.alert('Удалить расход?', undefined, [
+    Alert.alert(t('expenses.deleteConfirm'), undefined, [
       { text: t('common.cancel'), style: 'cancel' },
       { text: t('common.delete'), style: 'destructive', onPress: async () => {
         await expenseRepository.delete(id);
@@ -85,7 +85,7 @@ export default function ExpensesScreen() {
         <TouchableOpacity onPress={() => { if (month === 1) { setMonth(12); setYear(y => y-1); } else setMonth(m => m-1); }} style={styles.monthBtn}>
           <Text style={{ color: theme.colors.primary, fontSize: 20 }}>‹</Text>
         </TouchableOpacity>
-        <Text style={[styles.monthTitle, { color: theme.colors.text }]}>{monthNames[month-1]} {year}</Text>
+        <Text style={[styles.monthTitle, { color: theme.colors.text }]}>{t(`expenses.months.${monthKeys[month-1]}`)} {year}</Text>
         <TouchableOpacity onPress={() => { if (month === 12) { setMonth(1); setYear(y => y+1); } else setMonth(m => m+1); }} style={styles.monthBtn}>
           <Text style={{ color: theme.colors.primary, fontSize: 20 }}>›</Text>
         </TouchableOpacity>
@@ -117,7 +117,7 @@ export default function ExpensesScreen() {
           </>
         }
         ListEmptyComponent={
-          <EmptyState icon="💰" title={t('expenses.title')} subtitle="Нет расходов за этот месяц"
+          <EmptyState icon="💰" title={t('expenses.title')} subtitle={t('expenses.noExpenses')}
             actionLabel={t('expenses.addExpense')} onAction={() => navigation.navigate('AddExpense', {})} />
         }
       />

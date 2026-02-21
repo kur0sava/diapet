@@ -12,16 +12,16 @@ import { usePetStore } from '@shared/stores/petStore';
 import { useQueryClient } from '@tanstack/react-query';
 import * as Haptics from 'expo-haptics';
 
-const FOOD_TYPE_OPTIONS: { value: string; label: string }[] = [
-  { value: 'dry', label: 'Сухой корм' },
-  { value: 'wet', label: 'Влажный корм' },
-  { value: 'medical', label: 'Лечебный корм' },
-  { value: 'other', label: 'Другое' },
-];
-
 export default function LogFeedingScreen() {
   const navigation = useHomeNavigation();
   const { t } = useTranslation();
+
+  const FOOD_TYPE_OPTIONS: { value: string; label: string }[] = [
+    { value: 'dry', label: t('feeding.dry') },
+    { value: 'wet', label: t('feeding.wet') },
+    { value: 'medical', label: t('feeding.medical') },
+    { value: 'other', label: t('feeding.other') },
+  ];
   const { theme } = useTheme();
   const { activePet } = usePetStore();
   const queryClient = useQueryClient();
@@ -33,7 +33,7 @@ export default function LogFeedingScreen() {
 
   const handleSave = async () => {
     if (!activePet) {
-      Alert.alert('Ошибка', 'Питомец не найден');
+      Alert.alert(t('common.error'), t('glucose.petNotFound'));
       return;
     }
 
@@ -49,7 +49,7 @@ export default function LogFeedingScreen() {
       await queryClient.invalidateQueries({ queryKey: ['feeding'] });
       navigation.goBack();
     } catch (e) {
-      Alert.alert('Ошибка', 'Не удалось сохранить данные');
+      Alert.alert(t('common.error'), t('feeding.saveError'));
     } finally {
       setLoading(false);
     }
@@ -64,14 +64,14 @@ export default function LogFeedingScreen() {
             <Text style={{ color: theme.colors.primary, fontSize: 16 }}>← {t('common.back')}</Text>
           </TouchableOpacity>
           <Text style={[styles.headerTitle, { color: theme.colors.text }]}>
-            Кормление
+            {t('feeding.title')}
           </Text>
           <View style={{ width: 60 }} />
         </View>
 
         <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.content}>
           {/* Food Type */}
-          <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>Тип корма</Text>
+          <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>{t('feeding.foodType')}</Text>
           <View style={styles.chipGrid}>
             {FOOD_TYPE_OPTIONS.map(opt => (
               <TouchableOpacity
@@ -100,7 +100,7 @@ export default function LogFeedingScreen() {
           {/* Amount */}
           <Card style={styles.amountCard}>
             <Text style={[styles.amountLabel, { color: theme.colors.textSecondary }]}>
-              Количество (г)
+              {t('feeding.amountGrams')}
             </Text>
             <Input
               value={amount}
@@ -110,13 +110,13 @@ export default function LogFeedingScreen() {
               style={{ fontSize: 28, textAlign: 'center', fontWeight: '700' }}
             />
             <Text style={[styles.optionalHint, { color: theme.colors.textTertiary }]}>
-              Необязательно
+              {t('feeding.optional')}
             </Text>
           </Card>
 
           {/* Notes */}
           <Input
-            label="Заметки"
+            label={t('glucose.notes')}
             value={notes}
             onChangeText={setNotes}
             placeholder="Дополнительные заметки..."

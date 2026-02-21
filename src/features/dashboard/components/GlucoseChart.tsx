@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, Text, Dimensions, StyleSheet } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { useTheme } from '@shared/theme';
 import { GlucoseReading } from '@features/glucose/types';
 import { format, parseISO } from 'date-fns';
@@ -15,6 +16,7 @@ interface Props {
 }
 
 export function GlucoseChart({ data }: Props) {
+  const { t } = useTranslation();
   const { theme } = useTheme();
 
   if (data.length === 0) return null;
@@ -100,11 +102,11 @@ export function GlucoseChart({ data }: Props) {
       <View style={styles.legend}>
         <View style={styles.legendItem}>
           <View style={[styles.legendDot, { backgroundColor: theme.colors.success }]} />
-          <Text style={[styles.legendText, { color: theme.colors.textSecondary }]}>Норма 4-9</Text>
+          <Text style={[styles.legendText, { color: theme.colors.textSecondary }]}>{t('glucose.chartNormal')}</Text>
         </View>
         <View style={styles.legendItem}>
           <View style={[styles.legendDot, { backgroundColor: theme.colors.danger }]} />
-          <Text style={[styles.legendText, { color: theme.colors.textSecondary }]}>Вне нормы</Text>
+          <Text style={[styles.legendText, { color: theme.colors.textSecondary }]}>{t('glucose.chartOutOfRange')}</Text>
         </View>
       </View>
     </View>

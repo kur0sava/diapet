@@ -125,19 +125,19 @@ export default function GlucoseListScreen() {
           <View style={styles.statsRow}>
             <View style={styles.stat}>
               <Text style={[styles.statValue, { color: theme.colors.primary }]}>{stats.avg.toFixed(1)}</Text>
-              <Text style={[styles.statLabel, { color: theme.colors.textSecondary }]}>Среднее</Text>
+              <Text style={[styles.statLabel, { color: theme.colors.textSecondary }]}>{t('glucose.stats.average')}</Text>
             </View>
             <View style={styles.stat}>
               <Text style={[styles.statValue, { color: theme.colors.success }]}>{stats.min.toFixed(1)}</Text>
-              <Text style={[styles.statLabel, { color: theme.colors.textSecondary }]}>Мин</Text>
+              <Text style={[styles.statLabel, { color: theme.colors.textSecondary }]}>{t('glucose.stats.min')}</Text>
             </View>
             <View style={styles.stat}>
               <Text style={[styles.statValue, { color: theme.colors.danger }]}>{stats.max.toFixed(1)}</Text>
-              <Text style={[styles.statLabel, { color: theme.colors.textSecondary }]}>Макс</Text>
+              <Text style={[styles.statLabel, { color: theme.colors.textSecondary }]}>{t('glucose.stats.max')}</Text>
             </View>
             <View style={styles.stat}>
               <Text style={[styles.statValue, { color: theme.colors.text }]}>{stats.count}</Text>
-              <Text style={[styles.statLabel, { color: theme.colors.textSecondary }]}>Всего</Text>
+              <Text style={[styles.statLabel, { color: theme.colors.textSecondary }]}>{t('glucose.stats.total')}</Text>
             </View>
           </View>
         </Card>
@@ -152,7 +152,7 @@ export default function GlucoseListScreen() {
           <EmptyState
             icon="💧"
             title={t('glucose.title')}
-            subtitle="Нет записей. Добавьте первое измерение."
+            subtitle={t('glucose.noReadings')}
             actionLabel={t('glucose.addReading')}
             onAction={() => navigation.navigate('LogGlucose', {})}
           />

@@ -28,16 +28,16 @@ export default function MoreMenuScreen() {
           <View style={styles.petInfo}>
             <Text style={styles.petName}>{activePet.name}</Text>
             <Text style={styles.petDetails}>
-              {activePet.species === 'cat' ? 'Кошка' : 'Питомец'}
+              {activePet.species === 'cat' ? t('pets.cat') : t('pets.pet')}
               {activePet.weightKg ? ` · ${activePet.weightKg} кг` : ''}
-              {activePet.diabetesType !== 'unknown' ? ` · Диабет ${activePet.diabetesType === 'type1' ? '1' : '2'} тип` : ''}
+              {activePet.diabetesType !== 'unknown' ? ` · ${t('pets.diabetesType')} ${activePet.diabetesType === 'type1' ? '1' : '2'}` : ''}
             </Text>
           </View>
           <Ionicons name="chevron-forward" size={20} color="rgba(255,255,255,0.7)" />
         </TouchableOpacity>
       )}
       <ScrollView contentContainerStyle={styles.scroll}>
-        <Text style={[styles.sectionTitle, { color: theme.colors.textSecondary }]}>МЕНЮ</Text>
+        <Text style={[styles.sectionTitle, { color: theme.colors.textSecondary }]}>{t('navigation.menu')}</Text>
         {menuItems.map((item, i) => (
           <TouchableOpacity key={i} style={[styles.menuItem, { backgroundColor: theme.colors.surface, ...theme.shadows.sm }]} onPress={() => navigation.navigate(item.screen)} activeOpacity={0.8}>
             <View style={[styles.menuIcon, { backgroundColor: `${item.color}20` }]}><Text style={styles.menuEmoji}>{item.icon}</Text></View>
@@ -49,7 +49,7 @@ export default function MoreMenuScreen() {
           </TouchableOpacity>
         ))}
         <TouchableOpacity style={[styles.emergencyBtn, { marginTop: 16 }]} onPress={() => rootNavigation.navigate('Emergency')} activeOpacity={0.8}>
-          <Text style={styles.emergencyText}>🚨 Экстренный режим</Text>
+          <Text style={styles.emergencyText}>🚨 {t('emergency.emergencyMode')}</Text>
         </TouchableOpacity>
         <Text style={[styles.version, { color: theme.colors.textTertiary }]}>DiaPet v1.0.0</Text>
       </ScrollView>

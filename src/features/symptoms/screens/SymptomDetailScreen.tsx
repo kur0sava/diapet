@@ -32,7 +32,7 @@ export default function SymptomDetailScreen() {
         <TouchableOpacity onPress={() => navigation.goBack()}>
           <Text style={{ color: theme.colors.primary }}>← {t('common.back')}</Text>
         </TouchableOpacity>
-        <Text style={[styles.title, { color: theme.colors.text }]}>Запись о симптомах</Text>
+        <Text style={[styles.title, { color: theme.colors.text }]}>{t('symptoms.detailTitle')}</Text>
         <TouchableOpacity onPress={() => navigation.navigate('AddSymptom', { editId: symptom.id })}>
           <Text style={{ color: theme.colors.primary }}>{t('common.edit')}</Text>
         </TouchableOpacity>
@@ -42,7 +42,7 @@ export default function SymptomDetailScreen() {
         <Text style={[styles.date, { color: theme.colors.textSecondary }]}>{formatDateTime(symptom.recordedAt)}</Text>
 
         <Card style={styles.card}>
-          <Text style={[styles.sectionLabel, { color: theme.colors.textSecondary }]}>Тяжесть</Text>
+          <Text style={[styles.sectionLabel, { color: theme.colors.textSecondary }]}>{t('symptoms.severity')}</Text>
           <View style={[styles.severityBadge, { backgroundColor: `${severityColors[symptom.severity]}20` }]}>
             <Text style={[styles.severityText, { color: severityColors[symptom.severity] }]}>
               {severityLabels[symptom.severity]}
@@ -51,7 +51,7 @@ export default function SymptomDetailScreen() {
         </Card>
 
         <Card style={styles.card}>
-          <Text style={[styles.sectionLabel, { color: theme.colors.textSecondary }]}>Симптомы</Text>
+          <Text style={[styles.sectionLabel, { color: theme.colors.textSecondary }]}>{t('symptoms.title')}</Text>
           {symptom.symptomTypes.map(type => (
             <View key={type} style={styles.symptomRow}>
               <Text style={styles.symptomEmoji}>{SYMPTOM_ICONS[type]}</Text>
@@ -62,14 +62,14 @@ export default function SymptomDetailScreen() {
 
         {symptom.notes && (
           <Card style={styles.card}>
-            <Text style={[styles.sectionLabel, { color: theme.colors.textSecondary }]}>Заметки</Text>
+            <Text style={[styles.sectionLabel, { color: theme.colors.textSecondary }]}>{t('glucose.notes')}</Text>
             <Text style={[styles.notes, { color: theme.colors.text }]}>{symptom.notes}</Text>
           </Card>
         )}
 
         {symptom.photoUris.length > 0 && (
           <Card style={styles.card}>
-            <Text style={[styles.sectionLabel, { color: theme.colors.textSecondary }]}>Фото</Text>
+            <Text style={[styles.sectionLabel, { color: theme.colors.textSecondary }]}>{t('symptoms.photo')}</Text>
             <View style={styles.photosGrid}>
               {symptom.photoUris.map((uri, i) => (
                 <Image key={i} source={{ uri }} style={styles.photo} />

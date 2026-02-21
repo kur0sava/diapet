@@ -16,9 +16,9 @@ export default function SettingsScreen() {
   const glucoseUnit = storage.getString(StorageKeys.GLUCOSE_UNIT) ?? 'mmol/L';
 
   const handleDeleteAllData = () => {
-    Alert.alert('Удалить все данные?', 'Это действие необратимо.', [
-      { text: 'Отмена', style: 'cancel' },
-      { text: 'Удалить', style: 'destructive', onPress: () => { storageUtils.clear(); Alert.alert('Данные удалены', 'Перезапустите приложение'); }},
+    Alert.alert(t('settings.deleteDataConfirm'), t('settings.deleteDataWarning'), [
+      { text: t('common.cancel'), style: 'cancel' },
+      { text: t('common.delete'), style: 'destructive', onPress: () => { storageUtils.clear(); Alert.alert(t('settings.dataDeleted'), t('settings.restartApp')); }},
     ]);
   };
 
@@ -30,12 +30,12 @@ export default function SettingsScreen() {
         <View style={{ width: 60 }} />
       </View>
       <ScrollView contentContainerStyle={styles.content}>
-        <Text style={[styles.sectionHeader, { color: theme.colors.textSecondary }]}>ОФОРМЛЕНИЕ</Text>
+        <Text style={[styles.sectionHeader, { color: theme.colors.textSecondary }]}>{t('settings.appearance')}</Text>
         <Card style={styles.card}>
           <Text style={[styles.settingLabel, { color: theme.colors.text }]}>{t('settings.theme')}</Text>
           <View style={styles.themeRow}>
             {(['light', 'dark', 'system'] as ColorScheme[]).map(s => {
-              const labels = { light: '☀️ Светлая', dark: '🌙 Тёмная', system: '📱 Системная' };
+              const labels = { light: t('settings.lightMode'), dark: t('settings.darkMode'), system: t('settings.systemMode') };
               return (
                 <TouchableOpacity key={s} style={[styles.themeBtn, { backgroundColor: colorScheme === s ? theme.colors.primary : theme.colors.surfaceSecondary }]} onPress={() => setColorScheme(s)}>
                   <Text style={{ color: colorScheme === s ? '#fff' : theme.colors.text, fontSize: 12, fontWeight: '600' }}>{labels[s]}</Text>
@@ -44,7 +44,7 @@ export default function SettingsScreen() {
             })}
           </View>
         </Card>
-        <Text style={[styles.sectionHeader, { color: theme.colors.textSecondary }]}>ЯЗЫК</Text>
+        <Text style={[styles.sectionHeader, { color: theme.colors.textSecondary }]}>{t('settings.languageSection')}</Text>
         <Card style={styles.card}>
           <View style={styles.langRow}>
             {(['ru', 'en'] as const).map(lang => (
@@ -54,7 +54,7 @@ export default function SettingsScreen() {
             ))}
           </View>
         </Card>
-        <Text style={[styles.sectionHeader, { color: theme.colors.textSecondary }]}>ЕДИНИЦЫ ГЛЮКОЗЫ</Text>
+        <Text style={[styles.sectionHeader, { color: theme.colors.textSecondary }]}>{t('settings.glucoseUnitsSection')}</Text>
         <Card style={styles.card}>
           <View style={styles.langRow}>
             {(['mmol/L', 'mg/dL'] as const).map(unit => (
@@ -64,7 +64,7 @@ export default function SettingsScreen() {
             ))}
           </View>
         </Card>
-        <Text style={[styles.sectionHeader, { color: theme.colors.danger }]}>ОПАСНАЯ ЗОНА</Text>
+        <Text style={[styles.sectionHeader, { color: theme.colors.danger }]}>{t('settings.dangerZone')}</Text>
         <Card style={styles.card}>
           <TouchableOpacity style={[styles.dangerBtn, { borderColor: theme.colors.danger }]} onPress={handleDeleteAllData}>
             <Text style={[styles.dangerText, { color: theme.colors.danger }]}>🗑 {t('settings.deleteData')}</Text>

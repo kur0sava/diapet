@@ -82,7 +82,7 @@ export default function ArticleDetailScreen() {
   if (!article) {
     return (
       <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.background }]}>
-        <Text style={{ color: theme.colors.text, padding: 20 }}>Статья не найдена</Text>
+        <Text style={{ color: theme.colors.text, padding: 20 }}>{t('encyclopedia.articleNotFound')}</Text>
       </SafeAreaView>
     );
   }

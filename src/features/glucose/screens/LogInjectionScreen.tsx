@@ -29,11 +29,11 @@ export default function LogInjectionScreen() {
   const handleSave = async () => {
     if (!activePet) return;
     if (!dose || parseFloat(dose) <= 0) {
-      Alert.alert('Ошибка', 'Введите дозу инсулина');
+      Alert.alert(t('common.error'), t('injection.doseError'));
       return;
     }
     if (!insulinType.trim()) {
-      Alert.alert('Ошибка', 'Укажите тип инсулина');
+      Alert.alert(t('common.error'), t('injection.typeError'));
       return;
     }
     setLoading(true);
@@ -48,7 +48,7 @@ export default function LogInjectionScreen() {
       await queryClient.invalidateQueries({ queryKey: ['injection'] });
       navigation.goBack();
     } catch {
-      Alert.alert('Ошибка', 'Не удалось сохранить');
+      Alert.alert(t('common.error'), t('injection.saveError'));
     } finally {
       setLoading(false);
     }
@@ -61,7 +61,7 @@ export default function LogInjectionScreen() {
           <TouchableOpacity onPress={() => navigation.goBack()}>
             <Text style={{ color: theme.colors.primary }}>← {t('common.back')}</Text>
           </TouchableOpacity>
-          <Text style={[styles.title, { color: theme.colors.text }]}>Инъекция инсулина</Text>
+          <Text style={[styles.title, { color: theme.colors.text }]}>{t('injection.title')}</Text>
           <View style={{ width: 60 }} />
         </View>
 
@@ -69,7 +69,7 @@ export default function LogInjectionScreen() {
           <Card style={styles.mainCard}>
             <Text style={{ fontSize: 48, textAlign: 'center', marginBottom: 8 }}>💉</Text>
             <Input
-              label="Доза (единицы)"
+              label={t('injection.dose')}
               value={dose}
               onChangeText={setDose}
               placeholder="2.0"
@@ -78,14 +78,14 @@ export default function LogInjectionScreen() {
             />
           </Card>
 
-          <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>Тип инсулина</Text>
+          <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>{t('injection.insulinType')}</Text>
           <Input
             value={insulinType}
             onChangeText={setInsulinType}
             placeholder="Протафан"
           />
 
-          <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>Быстрый выбор</Text>
+          <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>{t('injection.quickSelect')}</Text>
           <View style={styles.chips}>
             {COMMON_INSULINS.map(ins => (
               <TouchableOpacity
@@ -106,7 +106,7 @@ export default function LogInjectionScreen() {
           </View>
 
           <Input
-            label="Заметки"
+            label={t('glucose.notes')}
             value={notes}
             onChangeText={setNotes}
             placeholder="Опционально..."
@@ -115,7 +115,7 @@ export default function LogInjectionScreen() {
           />
 
           <Button
-            title={loading ? 'Сохранение...' : '✓ Записать инъекцию'}
+            title={loading ? t('injection.saving') : t('injection.save')}
             onPress={handleSave}
             fullWidth
             size="lg"

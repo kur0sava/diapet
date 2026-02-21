@@ -28,7 +28,7 @@ export default function PetProfileScreen() {
 
   if (!activePet) return null;
 
-  const diabetesLabels: Record<string, string> = { type1: 'Тип 1', type2: 'Тип 2', unknown: 'Неизвестен' };
+  const diabetesLabels: Record<string, string> = { type1: t('pets.diabetesType1Short'), type2: t('pets.diabetesType2Short'), unknown: t('pets.diabetesUnknown') };
 
   const InfoRow = ({ label, value }: { label: string; value: string }) => (
     <View style={[styles.infoRow, { borderBottomColor: theme.colors.divider }]}>
@@ -55,18 +55,18 @@ export default function PetProfileScreen() {
           )}
         </View>
         <Card style={styles.card}>
-          <Text style={[styles.cardTitle, { color: theme.colors.textSecondary }]}>ОСНОВНАЯ ИНФОРМАЦИЯ</Text>
+          <Text style={[styles.cardTitle, { color: theme.colors.textSecondary }]}>{t('pets.basicInfo')}</Text>
           {activePet.weightKg && <InfoRow label={t('pets.weight')} value={`${activePet.weightKg} кг`} />}
-          {activePet.birthYear && <InfoRow label={t('pets.age')} value={`${new Date().getFullYear() - activePet.birthYear} лет`} />}
+          {activePet.birthYear && <InfoRow label={t('pets.age')} value={`${new Date().getFullYear() - activePet.birthYear} ${t('pets.years')}`} />}
           <InfoRow label={t('pets.gender')} value={activePet.gender === 'male' ? t('common.male') : activePet.gender === 'female' ? t('common.female') : t('common.unknown')} />
           <InfoRow label={t('pets.diabetesType')} value={diabetesLabels[activePet.diabetesType]} />
           {activePet.diagnosisDate && <InfoRow label={t('pets.diagnosisDate')} value={new Date(activePet.diagnosisDate).toLocaleDateString('ru-RU')} />}
         </Card>
         <Card style={styles.card}>
-          <Text style={[styles.cardTitle, { color: theme.colors.textSecondary }]}>РАСПИСАНИЕ</Text>
-          <Text style={[styles.scheduleLabel, { color: theme.colors.text }]}>💉 Инъекции</Text>
+          <Text style={[styles.cardTitle, { color: theme.colors.textSecondary }]}>{t('pets.schedule')}</Text>
+          <Text style={[styles.scheduleLabel, { color: theme.colors.text }]}>💉 {t('pets.injections')}</Text>
           <View style={styles.timeChips}>{injectionTimes.map(s => (<View key={s.id} style={[styles.timeChip, { backgroundColor: theme.colors.primaryLight }]}><Text style={[styles.timeText, { color: theme.colors.primary }]}>{s.timeOfDay}</Text></View>))}</View>
-          <Text style={[styles.scheduleLabel, { color: theme.colors.text, marginTop: 12 }]}>🍽️ Кормление</Text>
+          <Text style={[styles.scheduleLabel, { color: theme.colors.text, marginTop: 12 }]}>🍽️ {t('pets.feedings')}</Text>
           <View style={styles.timeChips}>{feedingTimes.map(s => (<View key={s.id} style={[styles.timeChip, { backgroundColor: theme.colors.successLight }]}><Text style={[styles.timeText, { color: theme.colors.success }]}>{s.timeOfDay}</Text></View>))}</View>
         </Card>
       </ScrollView>

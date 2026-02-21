@@ -82,7 +82,7 @@ export default function ScheduleScreen() {
         <View style={styles.header}>
           <Text style={[styles.title, { color: theme.colors.text }]}>{t('onboarding.injectionTime')}</Text>
           <Text style={[styles.subtitle, { color: theme.colors.textSecondary }]}>
-            Расписание поможет нам напоминать о процедурах
+            {t('onboarding.scheduleDesc')}
           </Text>
         </View>
 

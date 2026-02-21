@@ -37,7 +37,7 @@ export default function EditPetScreen() {
   }, [activePet]);
 
   const handleSave = async () => {
-    if (!activePet || !name.trim()) { Alert.alert('Введите имя'); return; }
+    if (!activePet || !name.trim()) { Alert.alert(t('pets.enterName')); return; }
     setLoading(true);
     try {
       await petRepository.update(activePet.id, { name: name.trim(), weightKg: weightKg ? parseFloat(weightKg) : undefined, insulinType: insulinType || undefined });
@@ -53,7 +53,7 @@ export default function EditPetScreen() {
       await refreshActivePet();
       await queryClient.invalidateQueries({ queryKey: ['pet'] });
       navigation.goBack();
-    } catch { Alert.alert('Ошибка сохранения'); }
+    } catch { Alert.alert(t('pets.saveError')); }
     finally { setLoading(false); }
   };
 
@@ -68,7 +68,7 @@ export default function EditPetScreen() {
         </View>
       ))}
       <TouchableOpacity style={[styles.addBtn, { borderColor: theme.colors.primary, borderRadius: 12 }]} onPress={() => setTimes([...times, '12:00'])}>
-        <Text style={{ color: theme.colors.primary, fontWeight: '600' }}>+ {type === 'injection' ? 'Добавить инъекцию' : 'Добавить кормление'}</Text>
+        <Text style={{ color: theme.colors.primary, fontWeight: '600' }}>+ {type === 'injection' ? t('pets.addInjection') : t('pets.addFeeding')}</Text>
       </TouchableOpacity>
     </View>
   );
@@ -85,13 +85,13 @@ export default function EditPetScreen() {
           <Input label={t('pets.name')} value={name} onChangeText={setName} placeholder="Барсик" />
           <Input label={`${t('pets.weight')} (кг)`} value={weightKg} onChangeText={setWeightKg} placeholder="4.5" keyboardType="decimal-pad" />
           <Input label={t('pets.insulinType')} value={insulinType} onChangeText={setInsulinType} placeholder="Протафан" />
-          <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>💉 Расписание инъекций</Text>
+          <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>💉 {t('pets.injectionSchedule')}</Text>
           <TimeList type="injection" times={injectionTimes} setTimes={setInjectionTimes} />
-          <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>🍽️ Расписание кормлений</Text>
+          <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>🍽️ {t('pets.feedingSchedule')}</Text>
           <TimeList type="feeding" times={feedingTimes} setTimes={setFeedingTimes} />
-          <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>🏥 Ветеринар</Text>
-          <Input label="Имя ветеринара" value={vetName} onChangeText={setVetName} placeholder="Др. Иванова" />
-          <Input label="Телефон" value={vetPhone} onChangeText={setVetPhone} placeholder="+7 999 000-00-00" keyboardType="phone-pad" />
+          <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>🏥 {t('pets.vetContact')}</Text>
+          <Input label={t('onboarding.vetName')} value={vetName} onChangeText={setVetName} placeholder="Др. Иванова" />
+          <Input label={t('onboarding.vetPhone')} value={vetPhone} onChangeText={setVetPhone} placeholder="+7 999 000-00-00" keyboardType="phone-pad" />
           <Button title={t('common.save')} onPress={handleSave} fullWidth size="lg" loading={loading} style={{ marginTop: 24 }} />
         </ScrollView>
       </SafeAreaView>

@@ -127,7 +127,7 @@ export default function EmergencyScreen() {
 
         {/* Disclaimer */}
         <Text style={styles.disclaimer}>
-          Эта информация носит ознакомительный характер. При любом экстренном случае — немедленно свяжитесь с ветеринаром.
+          {t('emergency.disclaimer')}
         </Text>
       </ScrollView>
     </SafeAreaView>

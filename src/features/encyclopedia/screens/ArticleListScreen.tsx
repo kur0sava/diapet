@@ -10,15 +10,6 @@ import { articles } from '../data/articles';
 import { Article, ArticleCategory } from '../types';
 import { Ionicons } from '@expo/vector-icons';
 
-const CATEGORY_LABELS: Record<ArticleCategory, string> = {
-  basics: 'Основы',
-  treatment: 'Лечение',
-  nutrition: 'Питание',
-  complications: 'Осложнения',
-  remission: 'Ремиссия',
-  tips: 'Советы',
-};
-
 const CATEGORY_ICONS: Record<ArticleCategory, string> = {
   basics: '📚',
   treatment: '💊',
@@ -34,6 +25,15 @@ export default function ArticleListScreen() {
   const { theme } = useTheme();
   const [search, setSearch] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<ArticleCategory | null>(null);
+
+  const categoryLabels: Record<ArticleCategory, string> = {
+    basics: t('encyclopedia.categories.basics'),
+    treatment: t('encyclopedia.categories.treatment'),
+    nutrition: t('encyclopedia.categories.nutrition'),
+    complications: t('encyclopedia.categories.complications'),
+    remission: t('encyclopedia.categories.remission'),
+    tips: t('encyclopedia.categories.tips'),
+  };
 
   const filtered = articles.filter(a => {
     const matchSearch = search === '' ||
@@ -55,7 +55,7 @@ export default function ArticleListScreen() {
         <View style={[styles.categoryBadge, { backgroundColor: theme.colors.primaryLight }]}>
           <Text style={styles.categoryIcon}>{CATEGORY_ICONS[item.category]}</Text>
           <Text style={[styles.categoryLabel, { color: theme.colors.primary }]}>
-            {CATEGORY_LABELS[item.category]}
+            {categoryLabels[item.category]}
           </Text>
         </View>
         <Text style={[styles.readTime, { color: theme.colors.textTertiary }]}>
@@ -87,7 +87,7 @@ export default function ArticleListScreen() {
         <Ionicons name="search" size={18} color={theme.colors.textTertiary} />
         <TextInput
           style={[styles.searchInput, { color: theme.colors.text }]}
-          placeholder="Поиск статей..."
+          placeholder={t('encyclopedia.searchPlaceholder')}
           placeholderTextColor={theme.colors.placeholder}
           value={search}
           onChangeText={setSearch}
@@ -119,7 +119,7 @@ export default function ArticleListScreen() {
           >
             <Text>{CATEGORY_ICONS[item]}</Text>
             <Text style={{ color: selectedCategory === item ? '#fff' : theme.colors.text, fontSize: 13, fontWeight: '500' }}>
-              {CATEGORY_LABELS[item]}
+              {categoryLabels[item]}
             </Text>
           </TouchableOpacity>
         )}

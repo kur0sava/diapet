@@ -66,7 +66,7 @@ export default function NotificationsScreen() {
       // Navigate to main app
       rootNavigation.reset({ index: 0, routes: [{ name: 'Main' }] });
     } catch (error) {
-      Alert.alert('Ошибка', 'Не удалось сохранить данные. Попробуйте ещё раз.');
+      Alert.alert(t('common.error'), t('onboarding.savingError'));
     } finally {
       setLoading(false);
     }
@@ -82,7 +82,7 @@ export default function NotificationsScreen() {
         </Text>
 
         <View style={styles.features}>
-          {['💉 Напоминания об инъекциях', '🍽️ Напоминания о кормлении', '📊 Напоминания об измерении глюкозы'].map((feature, i) => (
+          {[t('onboarding.notifInjections'), t('onboarding.notifFeedings'), t('onboarding.notifGlucose')].map((feature, i) => (
             <View key={i} style={[styles.featureRow, { backgroundColor: theme.colors.surface, borderRadius: 12 }]}>
               <Text style={[styles.featureText, { color: theme.colors.text }]}>{feature}</Text>
             </View>

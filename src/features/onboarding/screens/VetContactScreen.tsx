@@ -30,7 +30,7 @@ export default function VetContactScreen() {
           <Text style={styles.emoji}>🏥</Text>
           <Text style={[styles.title, { color: theme.colors.text }]}>{t('onboarding.vetContact')}</Text>
           <Text style={[styles.subtitle, { color: theme.colors.textSecondary }]}>
-            Контакт ветеринара для экстренного случая
+            {t('onboarding.vetContactDesc')}
           </Text>
 
           <View style={styles.form}>
