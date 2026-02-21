@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import {
-  View, Text, StyleSheet, ScrollView, SafeAreaView,
+  View, Text, StyleSheet, ScrollView,
   TouchableOpacity, Alert, KeyboardAvoidingView, Platform,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useHomeNavigation } from '@navigation/hooks';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '@shared/theme';

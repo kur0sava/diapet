@@ -1,5 +1,6 @@
 import React from 'react';
-import { View, Text, StyleSheet, ScrollView, SafeAreaView, TouchableOpacity, StatusBar } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, StatusBar } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useMoreNavigation, useRootNavigation } from '@navigation/hooks';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '@shared/theme';
@@ -16,6 +17,8 @@ export default function MoreMenuScreen() {
   const menuItems = [
     { icon: '🐾', label: t('pets.title'), screen: 'PetProfile' as const, color: theme.colors.primary, subtitle: activePet?.name },
     { icon: '💰', label: t('expenses.title'), screen: 'Expenses' as const, color: theme.colors.success },
+    { icon: '🩺', label: t('assessment.title'), screen: 'Assessment' as const, color: theme.colors.warning },
+    { icon: '🧮', label: t('feedCalculator.title'), screen: 'FeedCalculator' as const, color: theme.colors.secondary },
     { icon: '⚙️', label: t('settings.title'), screen: 'Settings' as const, color: theme.colors.textSecondary },
   ];
 

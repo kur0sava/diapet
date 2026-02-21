@@ -6,6 +6,7 @@ import { useRootNavigation } from '@navigation/hooks';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '@shared/theme';
 import { useTranslation } from 'react-i18next';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { MainTabParamList } from './types';
 
 // Screens
@@ -25,6 +26,8 @@ import EditPetScreen from '@features/pets/screens/EditPetScreen';
 import ExpensesScreen from '@features/expenses/screens/ExpensesScreen';
 import AddExpenseScreen from '@features/expenses/screens/AddExpenseScreen';
 import SettingsScreen from '@features/pets/screens/SettingsScreen';
+import AssessmentScreen from '@features/assessment/screens/AssessmentScreen';
+import FeedCalculatorScreen from '@features/feedCalculator/screens/FeedCalculatorScreen';
 
 const Tab = createBottomTabNavigator<MainTabParamList>();
 
@@ -46,10 +49,10 @@ function HomeStackNavigator() {
       }}
     >
       <HomeStack.Screen name="Dashboard" component={DashboardScreen} options={{ headerShown: false }} />
-      <HomeStack.Screen name="LogGlucose" component={LogGlucoseScreen} />
-      <HomeStack.Screen name="LogInjection" component={LogInjectionScreen} />
-      <HomeStack.Screen name="LogFeeding" component={LogFeedingScreen} />
-      <HomeStack.Screen name="AddSymptom" component={AddSymptomScreen} />
+      <HomeStack.Screen name="LogGlucose" component={LogGlucoseScreen} options={{ headerShown: false }} />
+      <HomeStack.Screen name="LogInjection" component={LogInjectionScreen} options={{ headerShown: false }} />
+      <HomeStack.Screen name="LogFeeding" component={LogFeedingScreen} options={{ headerShown: false }} />
+      <HomeStack.Screen name="AddSymptom" component={AddSymptomScreen} options={{ headerShown: false }} />
     </HomeStack.Navigator>
   );
 }
@@ -64,8 +67,8 @@ function GlucoseStackNavigator() {
         headerShadowVisible: false,
       }}
     >
-      <GlucoseStack.Screen name="GlucoseList" component={GlucoseListScreen} />
-      <GlucoseStack.Screen name="LogGlucose" component={LogGlucoseScreen} />
+      <GlucoseStack.Screen name="GlucoseList" component={GlucoseListScreen} options={{ headerShown: false }} />
+      <GlucoseStack.Screen name="LogGlucose" component={LogGlucoseScreen} options={{ headerShown: false }} />
     </GlucoseStack.Navigator>
   );
 }
@@ -80,9 +83,9 @@ function SymptomsStackNavigator() {
         headerShadowVisible: false,
       }}
     >
-      <SymptomsStack.Screen name="SymptomsList" component={SymptomsListScreen} />
-      <SymptomsStack.Screen name="AddSymptom" component={AddSymptomScreen} />
-      <SymptomsStack.Screen name="SymptomDetail" component={SymptomDetailScreen} />
+      <SymptomsStack.Screen name="SymptomsList" component={SymptomsListScreen} options={{ headerShown: false }} />
+      <SymptomsStack.Screen name="AddSymptom" component={AddSymptomScreen} options={{ headerShown: false }} />
+      <SymptomsStack.Screen name="SymptomDetail" component={SymptomDetailScreen} options={{ headerShown: false }} />
     </SymptomsStack.Navigator>
   );
 }
@@ -97,8 +100,8 @@ function EncyclopediaStackNavigator() {
         headerShadowVisible: false,
       }}
     >
-      <EncyclopediaStack.Screen name="ArticleList" component={ArticleListScreen} />
-      <EncyclopediaStack.Screen name="ArticleDetail" component={ArticleDetailScreen} />
+      <EncyclopediaStack.Screen name="ArticleList" component={ArticleListScreen} options={{ headerShown: false }} />
+      <EncyclopediaStack.Screen name="ArticleDetail" component={ArticleDetailScreen} options={{ headerShown: false }} />
     </EncyclopediaStack.Navigator>
   );
 }
@@ -114,11 +117,13 @@ function MoreStackNavigator() {
       }}
     >
       <MoreStack.Screen name="MoreMenu" component={MoreMenuScreen} options={{ headerShown: false }} />
-      <MoreStack.Screen name="PetProfile" component={PetProfileScreen} />
-      <MoreStack.Screen name="EditPet" component={EditPetScreen} />
-      <MoreStack.Screen name="Expenses" component={ExpensesScreen} />
-      <MoreStack.Screen name="AddExpense" component={AddExpenseScreen} />
-      <MoreStack.Screen name="Settings" component={SettingsScreen} />
+      <MoreStack.Screen name="PetProfile" component={PetProfileScreen} options={{ headerShown: false }} />
+      <MoreStack.Screen name="EditPet" component={EditPetScreen} options={{ headerShown: false }} />
+      <MoreStack.Screen name="Expenses" component={ExpensesScreen} options={{ headerShown: false }} />
+      <MoreStack.Screen name="AddExpense" component={AddExpenseScreen} options={{ headerShown: false }} />
+      <MoreStack.Screen name="Settings" component={SettingsScreen} options={{ headerShown: false }} />
+      <MoreStack.Screen name="Assessment" component={AssessmentScreen} options={{ headerShown: false }} />
+      <MoreStack.Screen name="FeedCalculator" component={FeedCalculatorScreen} options={{ headerShown: false }} />
     </MoreStack.Navigator>
   );
 }
@@ -126,9 +131,10 @@ function MoreStackNavigator() {
 // Emergency FAB Button
 function EmergencyButton() {
   const navigation = useRootNavigation();
+  const insets = useSafeAreaInsets();
   return (
     <TouchableOpacity
-      style={styles.emergencyButton}
+      style={[styles.emergencyButton, { bottom: 64 + Math.max(insets.bottom, 8) }]}
       onPress={() => navigation.navigate('Emergency')}
       activeOpacity={0.8}
     >
@@ -140,6 +146,7 @@ function EmergencyButton() {
 export default function MainNavigator() {
   const { theme } = useTheme();
   const { t } = useTranslation();
+  const insets = useSafeAreaInsets();
 
   return (
     <>
@@ -150,8 +157,8 @@ export default function MainNavigator() {
             backgroundColor: theme.colors.tabBar,
             borderTopColor: theme.colors.border,
             borderTopWidth: 1,
-            paddingBottom: 4,
-            height: 60,
+            paddingBottom: Math.max(insets.bottom, 8),
+            height: 56 + Math.max(insets.bottom, 8),
           },
           tabBarActiveTintColor: theme.colors.primary,
           tabBarInactiveTintColor: theme.colors.textTertiary,
@@ -185,7 +192,7 @@ export default function MainNavigator() {
 const styles = StyleSheet.create({
   emergencyButton: {
     position: 'absolute',
-    bottom: 70,
+    bottom: 70, // overridden inline with insets
     right: 20,
     width: 48,
     height: 48,

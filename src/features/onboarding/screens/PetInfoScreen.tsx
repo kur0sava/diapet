@@ -4,10 +4,10 @@ import {
   Text,
   StyleSheet,
   ScrollView,
-  SafeAreaView,
   TouchableOpacity,
   Platform,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useOnboardingNavigation } from '@navigation/hooks';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '@shared/theme';

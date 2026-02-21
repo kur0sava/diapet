@@ -4,9 +4,9 @@ import {
   Text,
   StyleSheet,
   TouchableOpacity,
-  SafeAreaView,
   StatusBar,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useOnboardingNavigation } from '@navigation/hooks';
 import { useTranslation } from 'react-i18next';
 import { changeLanguage } from '@shared/i18n';

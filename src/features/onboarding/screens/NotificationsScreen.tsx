@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, SafeAreaView, Alert } from 'react-native';
+import { View, Text, StyleSheet, Alert } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRoute, RouteProp } from '@react-navigation/native';
 import { useOnboardingNavigation, useRootNavigation } from '@navigation/hooks';
 import type { OnboardingStackParamList } from '@navigation/types';

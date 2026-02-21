@@ -1,8 +1,9 @@
 import React, { useState, useCallback } from 'react';
 import {
-  View, Text, StyleSheet, FlatList, SafeAreaView,
+  View, Text, StyleSheet, FlatList,
   TouchableOpacity, Alert, ActivityIndicator,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useGlucoseNavigation } from '@navigation/hooks';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '@shared/theme';

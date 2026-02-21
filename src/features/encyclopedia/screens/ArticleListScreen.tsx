@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import {
-  View, Text, StyleSheet, FlatList, SafeAreaView,
+  View, Text, StyleSheet, FlatList,
   TouchableOpacity, TextInput,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useEncyclopediaNavigation } from '@navigation/hooks';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '@shared/theme';

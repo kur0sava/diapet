@@ -1,8 +1,9 @@
 import React, { useState, useCallback, useRef, useMemo } from 'react';
 import {
-  View, Text, StyleSheet, ScrollView, SafeAreaView,
+  View, Text, StyleSheet, ScrollView,
   TouchableOpacity, LayoutChangeEvent,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRoute, RouteProp } from '@react-navigation/native';
 import { useEncyclopediaNavigation } from '@navigation/hooks';
 import type { EncyclopediaStackParamList } from '@navigation/types';

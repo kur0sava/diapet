@@ -56,6 +56,8 @@ export type MoreStackParamList = {
   Expenses: undefined;
   AddExpense: { editId?: string };
   Settings: undefined;
+  Assessment: undefined;
+  FeedCalculator: undefined;
 };
 
 // Onboarding Stack
