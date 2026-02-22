@@ -154,6 +154,10 @@ export const ru = {
     saveError: 'Не удалось сохранить',
     notesPlaceholder: 'Опционально...',
     commonInsulins: ['Протафан', 'Лантус', 'Лантус SoloStar', 'Левемир', 'Хумулин N', 'Актрапид'],
+    history: 'История инъекций',
+    noHistory: 'Нет записей об инъекциях',
+    doseChart: 'Дозы (последние 14 дней)',
+    deleteConfirm: 'Удалить эту инъекцию?',
   },
 
   feeding: {
@@ -167,6 +171,10 @@ export const ru = {
     medical: 'Лечебный корм',
     other: 'Другое',
     saveError: 'Не удалось сохранить данные',
+    history: 'История кормлений',
+    noHistory: 'Нет записей о кормлении',
+    amountChart: 'Порции (последние 14 дней)',
+    deleteConfirm: 'Удалить это кормление?',
   },
 
   symptoms: {
@@ -190,6 +198,7 @@ export const ru = {
     selectAtLeastOne: 'Выберите хотя бы один симптом',
     saveError: 'Не удалось сохранить',
     history: 'История симптомов',
+    frequencyChart: 'Частота симптомов',
     detailTitle: 'Запись о симптомах',
     deleteConfirm: 'Удалить запись?',
     types: {

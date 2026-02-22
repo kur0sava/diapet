@@ -154,6 +154,10 @@ export const en = {
     saveError: 'Failed to save',
     notesPlaceholder: 'Optional...',
     commonInsulins: ['Protaphane', 'Lantus', 'Lantus SoloStar', 'Levemir', 'Humulin N', 'Actrapid'],
+    history: 'Injection History',
+    noHistory: 'No injections recorded yet',
+    doseChart: 'Doses (last 14 days)',
+    deleteConfirm: 'Delete this injection?',
   },
 
   feeding: {
@@ -167,6 +171,10 @@ export const en = {
     medical: 'Medical food',
     other: 'Other',
     saveError: 'Failed to save data',
+    history: 'Feeding History',
+    noHistory: 'No feedings recorded yet',
+    amountChart: 'Amounts (last 14 days)',
+    deleteConfirm: 'Delete this feeding?',
   },
 
   symptoms: {
@@ -190,6 +198,7 @@ export const en = {
     selectAtLeastOne: 'Select at least one symptom',
     saveError: 'Failed to save',
     history: 'Symptom history',
+    frequencyChart: 'Symptom frequency',
     detailTitle: 'Symptom record',
     deleteConfirm: 'Delete record?',
     types: {

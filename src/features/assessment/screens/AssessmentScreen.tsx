@@ -63,7 +63,7 @@ export default function AssessmentScreen() {
   const totalQuestions = QUESTIONS.length;
   const currentQuestion: QuestionKey | undefined = QUESTIONS[currentIndex];
 
-  const totalScore = Object.values(answers).reduce((sum, v) => sum + v, 0);
+  const totalScore = Object.values(answers).reduce<number>((sum, v) => sum + v, 0);
   const stage = getStage(totalScore);
   const stageColor = STAGE_COLORS[stage];
 

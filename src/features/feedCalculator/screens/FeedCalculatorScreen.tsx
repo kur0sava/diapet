@@ -118,7 +118,7 @@ export default function FeedCalculatorScreen() {
               </View>
             </View>
             <Text style={[styles.carbsLabel, { color: theme.colors.textSecondary }]}>
-              {t('feedCalculator.carbsDM')}
+              {t('feedCalculator.carbsDryMatter')}
             </Text>
             <Text style={[styles.verdictDesc, { color: theme.colors.textSecondary }]}>
               {t(`feedCalculator.${result.verdict}Desc`)}
@@ -128,7 +128,7 @@ export default function FeedCalculatorScreen() {
 
             <View style={styles.macroRow}>
               <Text style={[styles.macroLabel, { color: theme.colors.text }]}>
-                {t('feedCalculator.proteinDM')}
+                {t('feedCalculator.proteinDryMatter')}
               </Text>
               <View style={styles.macroValue}>
                 <Text style={[styles.macroNumber, { color: theme.colors.text }]}>
@@ -144,7 +144,7 @@ export default function FeedCalculatorScreen() {
 
             <View style={styles.macroRow}>
               <Text style={[styles.macroLabel, { color: theme.colors.text }]}>
-                {t('feedCalculator.fatDM')}
+                {t('feedCalculator.fatDryMatter')}
               </Text>
               <View style={styles.macroValue}>
                 <Text style={[styles.macroNumber, { color: theme.colors.text }]}>

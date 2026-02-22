@@ -25,6 +25,8 @@ export type HomeStackParamList = {
   LogInjection: undefined;
   LogFeeding: undefined;
   AddSymptom: { editId?: string };
+  InjectionList: undefined;
+  FeedingList: undefined;
 };
 
 // Glucose Stack

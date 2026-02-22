@@ -28,6 +28,8 @@ import AddExpenseScreen from '@features/expenses/screens/AddExpenseScreen';
 import SettingsScreen from '@features/pets/screens/SettingsScreen';
 import AssessmentScreen from '@features/assessment/screens/AssessmentScreen';
 import FeedCalculatorScreen from '@features/feedCalculator/screens/FeedCalculatorScreen';
+import InjectionListScreen from '@features/glucose/screens/InjectionListScreen';
+import FeedingListScreen from '@features/glucose/screens/FeedingListScreen';
 
 const Tab = createBottomTabNavigator<MainTabParamList>();
 
@@ -53,6 +55,8 @@ function HomeStackNavigator() {
       <HomeStack.Screen name="LogInjection" component={LogInjectionScreen} options={{ headerShown: false }} />
       <HomeStack.Screen name="LogFeeding" component={LogFeedingScreen} options={{ headerShown: false }} />
       <HomeStack.Screen name="AddSymptom" component={AddSymptomScreen} options={{ headerShown: false }} />
+      <HomeStack.Screen name="InjectionList" component={InjectionListScreen} options={{ headerShown: false }} />
+      <HomeStack.Screen name="FeedingList" component={FeedingListScreen} options={{ headerShown: false }} />
     </HomeStack.Navigator>
   );
 }

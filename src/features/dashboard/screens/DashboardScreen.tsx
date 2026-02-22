@@ -247,7 +247,12 @@ export default function DashboardScreen() {
         {/* Last Injection Info */}
         {lastInjection && (
           <View style={styles.section}>
-            <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>{t('dashboard.lastInjection')}</Text>
+            <View style={styles.sectionHeader}>
+              <Text style={[styles.sectionTitle, { color: theme.colors.text, marginBottom: 0 }]}>{t('dashboard.lastInjection')}</Text>
+              <TouchableOpacity onPress={() => navigation.navigate('InjectionList')}>
+                <Text style={[styles.sectionLink, { color: theme.colors.primary }]}>{t('injection.history')}</Text>
+              </TouchableOpacity>
+            </View>
             <Card>
               <View style={styles.injectionRow}>
                 <Text style={{ fontSize: 28 }}>💉</Text>
@@ -263,6 +268,28 @@ export default function DashboardScreen() {
             </Card>
           </View>
         )}
+
+        {/* History Links */}
+        <View style={styles.section}>
+          <View style={styles.historyLinksRow}>
+            <TouchableOpacity
+              style={[styles.historyLink, { backgroundColor: theme.colors.card, borderColor: theme.colors.border }]}
+              onPress={() => navigation.navigate('InjectionList')}
+            >
+              <Text style={{ fontSize: 20 }}>💉</Text>
+              <Text style={[styles.historyLinkText, { color: theme.colors.text }]}>{t('injection.history')}</Text>
+              <Ionicons name="chevron-forward" size={16} color={theme.colors.textTertiary} />
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.historyLink, { backgroundColor: theme.colors.card, borderColor: theme.colors.border }]}
+              onPress={() => navigation.navigate('FeedingList')}
+            >
+              <Text style={{ fontSize: 20 }}>🍽️</Text>
+              <Text style={[styles.historyLinkText, { color: theme.colors.text }]}>{t('feeding.history')}</Text>
+              <Ionicons name="chevron-forward" size={16} color={theme.colors.textTertiary} />
+            </TouchableOpacity>
+          </View>
+        </View>
       </ScrollView>
     </SafeAreaView>
   );
@@ -293,7 +320,12 @@ const styles = StyleSheet.create({
   actionsGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 12 },
   noData: { padding: 32, alignItems: 'center' },
   noDataText: { fontSize: 14 },
+  sectionHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 },
+  sectionLink: { fontSize: 13, fontWeight: '600' },
   injectionRow: { flexDirection: 'row', alignItems: 'center', gap: 12 },
   injectionDose: { fontSize: 16, fontWeight: '600' },
   injectionTime: { fontSize: 13, marginTop: 2 },
+  historyLinksRow: { flexDirection: 'row', gap: 12 },
+  historyLink: { flex: 1, flexDirection: 'row', alignItems: 'center', gap: 8, padding: 14, borderRadius: 12, borderWidth: 1 },
+  historyLinkText: { flex: 1, fontSize: 13, fontWeight: '600' },
 });

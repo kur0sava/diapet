@@ -50,7 +50,7 @@ export default function AddSymptomScreen() {
     const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (!permission.granted) { Alert.alert(t('symptoms.noGalleryAccess')); return; }
     const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      mediaTypes: ['images'],
       allowsMultipleSelection: true,
       selectionLimit: 5,
       quality: 0.6,
