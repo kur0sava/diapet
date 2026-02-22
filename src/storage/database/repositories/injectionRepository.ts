@@ -1,5 +1,5 @@
 import { getDatabase } from '../database';
-import { InjectionLog, CreateInjectionDTO } from '@storage/domain/types';
+import { InjectionLog, CreateInjectionDTO, PaginatedResult } from '@storage/domain/types';
 import uuid from 'react-native-uuid';
 
 export const injectionRepository = {
@@ -31,13 +31,19 @@ export const injectionRepository = {
     return row ? mapRow(row) : null;
   },
 
-  async findByPetId(petId: string, limit = 50): Promise<InjectionLog[]> {
+  async findByPetId(petId: string, limit = 50, cursor?: string): Promise<PaginatedResult<InjectionLog>> {
     const db = await getDatabase();
     const rows = await db.getAllAsync<any>(
-      'SELECT * FROM injections WHERE pet_id = ? ORDER BY administered_at DESC LIMIT ?',
-      [petId, limit]
+      'SELECT * FROM injections WHERE pet_id = ? AND (? IS NULL OR administered_at < ?) ORDER BY administered_at DESC LIMIT ?',
+      [petId, cursor ?? null, cursor ?? null, limit + 1]
     );
-    return rows.map(mapRow);
+    const hasNextPage = rows.length > limit;
+    const items = hasNextPage ? rows.slice(0, limit) : rows;
+    const data = items.map(mapRow);
+    return {
+      data,
+      nextCursor: hasNextPage ? data[data.length - 1].administeredAt : null,
+    };
   },
 
   async delete(id: string): Promise<void> {

@@ -115,8 +115,17 @@ export const CREATE_TABLES_SQL = `
     created_at TEXT NOT NULL DEFAULT (datetime('now'))
   );
 
+  CREATE TABLE IF NOT EXISTS symptom_entry_types (
+    id TEXT PRIMARY KEY NOT NULL,
+    symptom_id TEXT NOT NULL REFERENCES symptoms(id) ON DELETE CASCADE,
+    symptom_type TEXT NOT NULL,
+    UNIQUE(symptom_id, symptom_type)
+  );
+
   CREATE INDEX IF NOT EXISTS idx_glucose_pet_date ON glucose_readings(pet_id, recorded_at);
   CREATE INDEX IF NOT EXISTS idx_symptoms_pet_date ON symptoms(pet_id, recorded_at);
   CREATE INDEX IF NOT EXISTS idx_expenses_pet_date ON expenses(pet_id, date);
   CREATE INDEX IF NOT EXISTS idx_injections_pet_date ON injections(pet_id, administered_at);
+  CREATE INDEX IF NOT EXISTS idx_symptom_entry_types_symptom ON symptom_entry_types(symptom_id);
+  CREATE INDEX IF NOT EXISTS idx_symptom_entry_types_type ON symptom_entry_types(symptom_type);
 `;

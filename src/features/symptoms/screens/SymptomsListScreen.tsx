@@ -1,10 +1,10 @@
 import React from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity, Alert } from 'react-native';
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, Alert, ActivityIndicator } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useSymptomsNavigation } from '@navigation/hooks';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '@shared/theme';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useInfiniteQuery, useQueryClient } from '@tanstack/react-query';
 import { symptomRepository } from '@storage/database';
 import { usePetStore } from '@shared/stores/petStore';
 import { SymptomEntry, SYMPTOM_ICONS } from '../types';
@@ -18,11 +18,23 @@ export default function SymptomsListScreen() {
   const activePet = usePetStore(s => s.activePet);
   const queryClient = useQueryClient();
 
-  const { data: symptoms = [] } = useQuery({
+  const {
+    data,
+    hasNextPage,
+    fetchNextPage,
+    isFetchingNextPage,
+  } = useInfiniteQuery({
     queryKey: ['symptoms', activePet?.id],
-    queryFn: () => activePet ? symptomRepository.findByPetId(activePet.id) : Promise.resolve([]),
+    queryFn: ({ pageParam }) =>
+      activePet
+        ? symptomRepository.findByPetId(activePet.id, 50, pageParam)
+        : Promise.resolve({ data: [], nextCursor: null }),
+    initialPageParam: undefined as string | undefined,
+    getNextPageParam: (lastPage) => lastPage.nextCursor ?? undefined,
     enabled: !!activePet?.id,
   });
+
+  const symptoms = data?.pages.flatMap(p => p.data) ?? [];
 
   const severityColors: Record<string, string> = {
     mild: theme.colors.success,
@@ -89,6 +101,13 @@ export default function SymptomsListScreen() {
         keyExtractor={item => item.id}
         renderItem={renderSymptom}
         contentContainerStyle={styles.list}
+        onEndReached={() => hasNextPage && fetchNextPage()}
+        onEndReachedThreshold={0.5}
+        ListFooterComponent={
+          isFetchingNextPage ? (
+            <ActivityIndicator style={styles.loadingFooter} size="small" color={theme.colors.primary} />
+          ) : null
+        }
         ListEmptyComponent={
           <EmptyState
             icon="🐾"
@@ -125,4 +144,5 @@ const styles = StyleSheet.create({
   photos: { fontSize: 13, fontWeight: '500' },
   fab: { position: 'absolute', bottom: 24, right: 20, width: 56, height: 56, borderRadius: 28, alignItems: 'center', justifyContent: 'center', elevation: 6, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.2, shadowRadius: 4 },
   fabIcon: { color: '#fff', fontSize: 28, fontWeight: '300' },
+  loadingFooter: { paddingVertical: 16 },
 });

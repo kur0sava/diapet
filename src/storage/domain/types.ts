@@ -4,6 +4,13 @@
 // Feature layers re-export from here for backward compatibility.
 // ============================================================
 
+// --------------- Pagination ---------------
+
+export interface PaginatedResult<T> {
+  data: T[];
+  nextCursor: string | null;
+}
+
 // --------------- Pet types ---------------
 
 export type PetSpecies = 'cat' | 'dog' | 'other';

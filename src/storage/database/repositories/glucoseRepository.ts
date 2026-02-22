@@ -1,5 +1,5 @@
 import { getDatabase } from '../database';
-import { GlucoseReading, CreateGlucoseDTO } from '@storage/domain/types';
+import { GlucoseReading, CreateGlucoseDTO, PaginatedResult } from '@storage/domain/types';
 import uuid from 'react-native-uuid';
 
 const mmolToMgdl = (mmol: number) => Math.round(mmol * 18.018);
@@ -27,13 +27,19 @@ export const glucoseRepository = {
     return row ? mapRowToReading(row) : null;
   },
 
-  async findByPetId(petId: string, limit = 100): Promise<GlucoseReading[]> {
+  async findByPetId(petId: string, limit = 50, cursor?: string): Promise<PaginatedResult<GlucoseReading>> {
     const db = await getDatabase();
     const rows = await db.getAllAsync<any>(
-      'SELECT * FROM glucose_readings WHERE pet_id = ? ORDER BY recorded_at DESC LIMIT ?',
-      [petId, limit]
+      'SELECT * FROM glucose_readings WHERE pet_id = ? AND (? IS NULL OR recorded_at < ?) ORDER BY recorded_at DESC LIMIT ?',
+      [petId, cursor ?? null, cursor ?? null, limit + 1]
     );
-    return rows.map(mapRowToReading);
+    const hasNextPage = rows.length > limit;
+    const items = hasNextPage ? rows.slice(0, limit) : rows;
+    const data = items.map(mapRowToReading);
+    return {
+      data,
+      nextCursor: hasNextPage ? data[data.length - 1].recordedAt : null,
+    };
   },
 
   async findLast7Days(petId: string): Promise<GlucoseReading[]> {

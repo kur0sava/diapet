@@ -7,7 +7,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useGlucoseNavigation } from '@navigation/hooks';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '@shared/theme';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useInfiniteQuery, useQuery, useQueryClient } from '@tanstack/react-query';
 import { glucoseRepository, injectionRepository, symptomRepository } from '@storage/database';
 import { usePetStore } from '@shared/stores/petStore';
 import { GlucoseReading, getGlucoseColor } from '../types';
@@ -26,11 +26,24 @@ export default function GlucoseListScreen() {
   const unit = storage.getString(StorageKeys.GLUCOSE_UNIT) ?? 'mmol/L';
   const [exporting, setExporting] = useState(false);
 
-  const { data: readings = [], isLoading } = useQuery({
+  const {
+    data,
+    isLoading,
+    hasNextPage,
+    fetchNextPage,
+    isFetchingNextPage,
+  } = useInfiniteQuery({
     queryKey: ['glucose', 'list', activePet?.id],
-    queryFn: () => activePet ? glucoseRepository.findByPetId(activePet.id) : Promise.resolve([]),
+    queryFn: ({ pageParam }) =>
+      activePet
+        ? glucoseRepository.findByPetId(activePet.id, 50, pageParam)
+        : Promise.resolve({ data: [], nextCursor: null }),
+    initialPageParam: undefined as string | undefined,
+    getNextPageParam: (lastPage) => lastPage.nextCursor ?? undefined,
     enabled: !!activePet?.id,
   });
+
+  const readings = data?.pages.flatMap(p => p.data) ?? [];
 
   const { data: stats } = useQuery({
     queryKey: ['glucose', 'stats', activePet?.id],
@@ -67,10 +80,12 @@ export default function GlucoseListScreen() {
     if (!activePet) return;
     setExporting(true);
     try {
-      const [injections, symptoms] = await Promise.all([
+      const [injectionsResult, symptomsResult] = await Promise.all([
         injectionRepository.findByPetId(activePet.id),
         symptomRepository.findByPetId(activePet.id),
       ]);
+      const injections = injectionsResult.data;
+      const symptoms = symptomsResult.data;
       await generateVetReportPdf({
         pet: activePet,
         glucoseReadings: readings,
@@ -149,6 +164,13 @@ export default function GlucoseListScreen() {
         keyExtractor={item => item.id}
         renderItem={renderReading}
         contentContainerStyle={styles.list}
+        onEndReached={() => hasNextPage && fetchNextPage()}
+        onEndReachedThreshold={0.5}
+        ListFooterComponent={
+          isFetchingNextPage ? (
+            <ActivityIndicator style={styles.loadingFooter} size="small" color={theme.colors.primary} />
+          ) : null
+        }
         ListEmptyComponent={
           <EmptyState
             icon="💧"
@@ -205,4 +227,5 @@ const styles = StyleSheet.create({
   fab: { position: 'absolute', bottom: 24, right: 20, width: 56, height: 56, borderRadius: 28, alignItems: 'center', justifyContent: 'center', elevation: 6, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.2, shadowRadius: 4 },
   fabExport: { position: 'absolute', bottom: 90, right: 20, width: 48, height: 48, borderRadius: 24, alignItems: 'center', justifyContent: 'center', elevation: 4, shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.15, shadowRadius: 3, borderWidth: 1.5 },
   fabIcon: { color: '#fff', fontSize: 28, fontWeight: '300' },
+  loadingFooter: { paddingVertical: 16 },
 });

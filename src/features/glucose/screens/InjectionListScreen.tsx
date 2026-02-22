@@ -1,10 +1,10 @@
 import React, { useMemo } from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity, Alert } from 'react-native';
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, Alert, ActivityIndicator } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useHomeNavigation } from '@navigation/hooks';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '@shared/theme';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useInfiniteQuery, useQueryClient } from '@tanstack/react-query';
 import { injectionRepository } from '@storage/database';
 import { usePetStore } from '@shared/stores/petStore';
 import { InjectionLog } from '@storage/domain/types';
@@ -20,11 +20,23 @@ export default function InjectionListScreen() {
   const activePet = usePetStore(s => s.activePet);
   const queryClient = useQueryClient();
 
-  const { data: injections = [] } = useQuery({
+  const {
+    data,
+    hasNextPage,
+    fetchNextPage,
+    isFetchingNextPage,
+  } = useInfiniteQuery({
     queryKey: ['injections', activePet?.id],
-    queryFn: () => activePet ? injectionRepository.findByPetId(activePet.id, 100) : Promise.resolve([]),
+    queryFn: ({ pageParam }) =>
+      activePet
+        ? injectionRepository.findByPetId(activePet.id, 50, pageParam)
+        : Promise.resolve({ data: [], nextCursor: null }),
+    initialPageParam: undefined as string | undefined,
+    getNextPageParam: (lastPage) => lastPage.nextCursor ?? undefined,
     enabled: !!activePet?.id,
   });
+
+  const injections = data?.pages.flatMap(p => p.data) ?? [];
 
   const chartData = useMemo((): BarData[] => {
     const cutoff = subDays(new Date(), 14);
@@ -92,6 +104,8 @@ export default function InjectionListScreen() {
         keyExtractor={item => item.id}
         renderItem={renderItem}
         contentContainerStyle={styles.list}
+        onEndReached={() => hasNextPage && fetchNextPage()}
+        onEndReachedThreshold={0.5}
         ListHeaderComponent={
           chartData.length > 0 ? (
             <Card style={styles.chartCard}>
@@ -101,6 +115,11 @@ export default function InjectionListScreen() {
                 unit={t('common.units')}
               />
             </Card>
+          ) : null
+        }
+        ListFooterComponent={
+          isFetchingNextPage ? (
+            <ActivityIndicator style={styles.loadingFooter} size="small" color={theme.colors.primary} />
           ) : null
         }
         ListEmptyComponent={
@@ -128,4 +147,5 @@ const styles = StyleSheet.create({
   type: { fontSize: 14, marginTop: 2 },
   time: { fontSize: 12, marginTop: 4 },
   notes: { fontSize: 12, marginTop: 4 },
+  loadingFooter: { paddingVertical: 16 },
 });

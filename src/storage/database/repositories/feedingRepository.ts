@@ -1,5 +1,5 @@
 import { getDatabase } from '../database';
-import { FeedingLog, CreateFeedingDTO } from '@storage/domain/types';
+import { FeedingLog, CreateFeedingDTO, PaginatedResult } from '@storage/domain/types';
 import uuid from 'react-native-uuid';
 
 export const feedingRepository = {
@@ -22,13 +22,19 @@ export const feedingRepository = {
     return row ? mapRow(row) : null;
   },
 
-  async findByPetId(petId: string, limit = 50): Promise<FeedingLog[]> {
+  async findByPetId(petId: string, limit = 50, cursor?: string): Promise<PaginatedResult<FeedingLog>> {
     const db = await getDatabase();
     const rows = await db.getAllAsync<any>(
-      'SELECT * FROM feedings WHERE pet_id = ? ORDER BY fed_at DESC LIMIT ?',
-      [petId, limit]
+      'SELECT * FROM feedings WHERE pet_id = ? AND (? IS NULL OR fed_at < ?) ORDER BY fed_at DESC LIMIT ?',
+      [petId, cursor ?? null, cursor ?? null, limit + 1]
     );
-    return rows.map(mapRow);
+    const hasNextPage = rows.length > limit;
+    const items = hasNextPage ? rows.slice(0, limit) : rows;
+    const data = items.map(mapRow);
+    return {
+      data,
+      nextCursor: hasNextPage ? data[data.length - 1].fedAt : null,
+    };
   },
 
   async findLatest(petId: string): Promise<FeedingLog | null> {
