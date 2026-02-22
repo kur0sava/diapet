@@ -14,9 +14,10 @@
 [####################] v1.2 Аудит-фиксы   ✅ DONE
 [####################] v1.3 Средний прио   ✅ DONE
 [____________________] v1.4 Корм-гид       ⬅ ТЕКУЩИЙ ЭТАП
-[____________________] v1.5 UI Redesign    🔜
-[____________________] v1.6 Pre-deploy     🔜 (Google Play)
-[____________________] v1.7 UX фичи        🔜
+[____________________] v1.5 Bug Review     🔜
+[____________________] v1.6 UI Redesign    🔜
+[____________________] v1.7 Pre-deploy     🔜 (Google Play)
+[____________________] v1.8 UX фичи        🔜
 [____________________] v2.0 DevOps         🔜
 [____________________] v2.1 Backend        🔜
 [____________________] v3.0 AI/Smart       🔜
@@ -155,11 +156,39 @@
 
 ---
 
-## ЭТАП 4.6: v1.5 UI Redesign — современный дизайн
+## ЭТАП 4.6: v1.5 Full Bug Review — полная ревизия проекта
+
+> Перед редизайном — найти и убить все баги. Параллельные агенты на каждый слой.
+
+### Фаза 4.6A — Статический анализ (параллельно)
+
+- [ ] Agent 1: Ревизия всех репозиториев (SQL injection, missing error handling, race conditions)
+- [ ] Agent 2: Ревизия всех экранов (memory leaks, missing cleanup, state bugs, edge cases)
+- [ ] Agent 3: Ревизия навигации (orphan routes, type mismatches, deep link issues)
+- [ ] Agent 4: Ревизия i18n (missing keys, mismatched params, untranslated strings)
+
+### Фаза 4.6B — Логические баги (параллельно)
+
+- [ ] Agent 5: Data flow audit (Zustand ↔ React Query ↔ SQLite sync issues, stale data)
+- [ ] Agent 6: Edge cases (empty pet, no readings, first launch, migration failures, offline)
+- [ ] Agent 7: Security audit (input validation, SQL params, MMKV key exposure, photo URIs)
+- [ ] Agent 8: Performance audit (unnecessary re-renders, large lists, heavy computations)
+
+### Фаза 4.6C — Исправление найденных багов
+
+- [ ] Приоритизация: critical → high → medium → low
+- [ ] Fix all critical + high
+- [ ] Regression test: tsc + jest + manual smoke test list
+
+> **CHECKPOINT 4.6-review**: commit + tsc + test + 0 known critical/high bugs
+
+---
+
+## ЭТАП 4.7: v1.6 UI Redesign — современный дизайн
 
 > Перед деплоем — первое впечатление решает
 
-### Фаза 4.6A — Дизайн-система
+### Фаза 4.7A — Дизайн-система
 
 - [ ] Обновить цветовую палитру (современные gradient-акценты)
 - [ ] Типографика: Inter/SF Pro или system font с правильными весами
@@ -167,7 +196,7 @@
 - [ ] Иконки: заменить emoji на Ionicons/SF Symbols где уместно
 - [ ] Spacing система (4px grid)
 
-### Фаза 4.6B — Ключевые экраны
+### Фаза 4.7B — Ключевые экраны
 
 - [ ] Dashboard: glassmorphism карточки, градиентный хедер, анимированный график
 - [ ] Онбординг: иллюстрации, плавные переходы, Lottie анимации
@@ -175,7 +204,7 @@
 - [ ] Списки: skeleton loading, swipe actions вместо long press
 - [ ] Tab bar: custom animated tab bar
 
-### Фаза 4.6C — Анимации и Polish
+### Фаза 4.7C — Анимации и Polish
 
 - [ ] React Native Reanimated для переходов между экранами
 - [ ] Shared element transitions (карточка → детальный вид)
@@ -183,11 +212,11 @@
 - [ ] Micro-interactions: кнопки, переключатели, чипы
 - [ ] Splash screen с анимацией (Lottie)
 
-> **CHECKPOINT 4.6**: commit + tsc + test + визуальное ревью
+> **CHECKPOINT 4.7**: commit + tsc + test + визуальное ревью
 
 ---
 
-## ЭТАП 4.7: v1.6 Pre-deploy — подготовка к Google Play
+## ЭТАП 4.8: v1.7 Pre-deploy — подготовка к Google Play
 
 > Финальная подготовка перед публикацией
 
