@@ -8,11 +8,11 @@ export const symptomRepository = {
     const id = uuid.v4() as string;
     const now = new Date().toISOString();
     await db.runAsync(
-      `INSERT INTO symptoms (id, pet_id, symptom_types, severity, photo_uris, notes, recorded_at, created_at, updated_at)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      `INSERT INTO symptoms (id, pet_id, symptom_types, severity, photo_uris, notes, glucose_reading_id, recorded_at, created_at, updated_at)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       [id, dto.petId, JSON.stringify(dto.symptomTypes), dto.severity ?? 'mild',
        dto.photoUris ? JSON.stringify(dto.photoUris) : null,
-       dto.notes ?? null, dto.recordedAt ?? now, now, now]
+       dto.notes ?? null, dto.glucoseReadingId ?? null, dto.recordedAt ?? now, now, now]
     );
     // Insert into junction table
     for (const symptomType of dto.symptomTypes) {
@@ -80,10 +80,11 @@ export const symptomRepository = {
     const now = new Date().toISOString();
     await db.runAsync(
       `UPDATE symptoms SET symptom_types=COALESCE(?,symptom_types), severity=COALESCE(?,severity),
-       photo_uris=COALESCE(?,photo_uris), notes=COALESCE(?,notes), updated_at=? WHERE id=?`,
+       photo_uris=COALESCE(?,photo_uris), notes=COALESCE(?,notes),
+       glucose_reading_id=COALESCE(?,glucose_reading_id), updated_at=? WHERE id=?`,
       [dto.symptomTypes ? JSON.stringify(dto.symptomTypes) : null,
        dto.severity ?? null, dto.photoUris ? JSON.stringify(dto.photoUris) : null,
-       dto.notes ?? null, now, id]
+       dto.notes ?? null, dto.glucoseReadingId ?? null, now, id]
     );
     // Update junction table if symptomTypes changed
     if (dto.symptomTypes) {
@@ -114,6 +115,7 @@ function mapRowToSymptom(row: any, types?: SymptomType[]): SymptomEntry {
     severity: row.severity,
     photoUris: row.photo_uris ? JSON.parse(row.photo_uris) : [],
     notes: row.notes,
+    glucoseReadingId: row.glucose_reading_id ?? undefined,
     recordedAt: row.recorded_at,
     createdAt: row.created_at,
     updatedAt: row.updated_at,

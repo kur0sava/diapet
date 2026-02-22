@@ -16,6 +16,8 @@ import { MealRelation, GlucoseUnit, getGlucoseLevel, getGlucoseColor } from '../
 import { useQueryClient } from '@tanstack/react-query';
 import { storage, StorageKeys } from '@storage/mmkv/storage';
 import * as Haptics from 'expo-haptics';
+import DateTimePicker from '@react-native-community/datetimepicker';
+import { format } from 'date-fns';
 
 const MEAL_OPTIONS: { value: MealRelation; labelKey: string; icon: string }[] = [
   { value: 'fasting', labelKey: 'glucose.fasting', icon: '☀️' },
@@ -42,6 +44,9 @@ export default function LogGlucoseScreen() {
   const [insulinType, setInsulinType] = useState('');
   const [notes, setNotes] = useState('');
   const [loading, setLoading] = useState(false);
+  const [recordedAt, setRecordedAt] = useState(new Date());
+  const [showDatePicker, setShowDatePicker] = useState(false);
+  const [showTimePicker, setShowTimePicker] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -54,6 +59,7 @@ export default function LogGlucoseScreen() {
         if (reading.insulinDose) setInsulinDose(reading.insulinDose.toString());
         if (reading.insulinType) setInsulinType(reading.insulinType);
         if (reading.notes) setNotes(reading.notes);
+        if (reading.recordedAt) setRecordedAt(new Date(reading.recordedAt));
       });
     }
     return () => { cancelled = true; };
@@ -82,6 +88,7 @@ export default function LogGlucoseScreen() {
           insulinDose: insulinDose ? parseFloat(insulinDose) : undefined,
           insulinType: insulinType || undefined,
           notes: notes || undefined,
+          recordedAt: recordedAt.toISOString(),
         });
       } else {
         await glucoseRepository.create({
@@ -89,6 +96,7 @@ export default function LogGlucoseScreen() {
           insulinDose: insulinDose ? parseFloat(insulinDose) : undefined,
           insulinType: insulinType || undefined,
           notes: notes || undefined,
+          recordedAt: recordedAt.toISOString(),
         });
       }
       await queryClient.invalidateQueries({ queryKey: ['glucose'] });
@@ -160,6 +168,51 @@ export default function LogGlucoseScreen() {
               </View>
             )}
           </Card>
+
+          {/* Date & Time */}
+          <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>{t('glucose.date')} & {t('glucose.time')}</Text>
+          <View style={styles.row}>
+            <TouchableOpacity
+              style={[styles.dateTimeBtn, { backgroundColor: theme.colors.surfaceSecondary }]}
+              onPress={() => setShowDatePicker(true)}
+            >
+              <Text style={{ color: theme.colors.text, fontSize: 15, fontWeight: '600' }}>
+                📅 {format(recordedAt, 'dd.MM.yyyy')}
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.dateTimeBtn, { backgroundColor: theme.colors.surfaceSecondary }]}
+              onPress={() => setShowTimePicker(true)}
+            >
+              <Text style={{ color: theme.colors.text, fontSize: 15, fontWeight: '600' }}>
+                🕐 {format(recordedAt, 'HH:mm')}
+              </Text>
+            </TouchableOpacity>
+          </View>
+
+          {showDatePicker && (
+            <DateTimePicker
+              value={recordedAt}
+              mode="date"
+              maximumDate={new Date()}
+              onChange={(_, date) => {
+                setShowDatePicker(false);
+                if (date) setRecordedAt(date);
+              }}
+            />
+          )}
+
+          {showTimePicker && (
+            <DateTimePicker
+              value={recordedAt}
+              mode="time"
+              maximumDate={new Date()}
+              onChange={(_, date) => {
+                setShowTimePicker(false);
+                if (date) setRecordedAt(date);
+              }}
+            />
+          )}
 
           {/* Meal Relation */}
           <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>{t('glucose.mealRelation')}</Text>
@@ -252,4 +305,5 @@ const styles = StyleSheet.create({
   mealIcon: { fontSize: 24 },
   mealLabel: { fontSize: 13, fontWeight: '600', textAlign: 'center' },
   row: { flexDirection: 'row', gap: 12 },
+  dateTimeBtn: { flex: 1, padding: 14, borderRadius: 12, alignItems: 'center' },
 });

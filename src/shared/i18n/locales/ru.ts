@@ -140,6 +140,12 @@ export const ru = {
       high: '9–14 ммоль/л',
       veryHigh: '> 14 ммоль/л',
     },
+    filters: 'Фильтры',
+    filterFrom: 'С',
+    filterTo: 'По',
+    clearFilters: 'Сбросить',
+    allLevels: 'Все уровни',
+    allMeals: 'Все приёмы',
   },
 
   injection: {
@@ -201,6 +207,8 @@ export const ru = {
     frequencyChart: 'Частота симптомов',
     detailTitle: 'Запись о симптомах',
     deleteConfirm: 'Удалить запись?',
+    linkGlucose: 'Привязать к замеру глюкозы',
+    recentReadings: 'Недавние замеры',
     types: {
       hindLimbWeakness: 'Слабость задних лап',
       weightLoss: 'Потеря веса',

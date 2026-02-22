@@ -24,7 +24,7 @@ export type HomeStackParamList = {
   LogGlucose: { editId?: string };
   LogInjection: undefined;
   LogFeeding: undefined;
-  AddSymptom: { editId?: string };
+  AddSymptom: { editId?: string; glucoseReadingId?: string };
   InjectionList: undefined;
   FeedingList: undefined;
 };
@@ -41,7 +41,7 @@ export type GlucoseStackParamList = {
 export type SymptomsStackParamList = {
   SymptomsList: undefined;
   SymptomDetail: { id: string };
-  AddSymptom: { editId?: string };
+  AddSymptom: { editId?: string; glucoseReadingId?: string };
 };
 
 // Encyclopedia Stack

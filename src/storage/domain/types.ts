@@ -11,6 +11,14 @@ export interface PaginatedResult<T> {
   nextCursor: string | null;
 }
 
+export interface GlucoseFilter {
+  dateFrom?: string;
+  dateTo?: string;
+  levelMin?: number;
+  levelMax?: number;
+  mealRelations?: MealRelation[];
+}
+
 // --------------- Pet types ---------------
 
 export type PetSpecies = 'cat' | 'dog' | 'other';
@@ -168,6 +176,7 @@ export interface SymptomEntry {
   severity: SymptomSeverity;
   photoUris: string[];
   notes?: string;
+  glucoseReadingId?: string;
   recordedAt: string;
   createdAt: string;
   updatedAt: string;
@@ -179,6 +188,7 @@ export interface CreateSymptomDTO {
   severity?: SymptomSeverity;
   photoUris?: string[];
   notes?: string;
+  glucoseReadingId?: string;
   recordedAt?: string;
 }
 

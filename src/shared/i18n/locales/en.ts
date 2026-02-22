@@ -140,6 +140,12 @@ export const en = {
       high: '9–14 mmol/L',
       veryHigh: '> 14 mmol/L',
     },
+    filters: 'Filters',
+    filterFrom: 'From',
+    filterTo: 'To',
+    clearFilters: 'Clear filters',
+    allLevels: 'All levels',
+    allMeals: 'All meals',
   },
 
   injection: {
@@ -201,6 +207,8 @@ export const en = {
     frequencyChart: 'Symptom frequency',
     detailTitle: 'Symptom record',
     deleteConfirm: 'Delete record?',
+    linkGlucose: 'Link to glucose reading',
+    recentReadings: 'Recent readings',
     types: {
       hindLimbWeakness: 'Hind limb weakness',
       weightLoss: 'Weight loss',

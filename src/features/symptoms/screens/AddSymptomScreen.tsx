@@ -5,13 +5,17 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useHomeNavigation } from '@navigation/hooks';
+import { useRoute, RouteProp } from '@react-navigation/native';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '@shared/theme';
 import { Button, Input } from '@shared/components/ui';
-import { symptomRepository } from '@storage/database';
+import { symptomRepository, glucoseRepository } from '@storage/database';
 import { usePetStore } from '@shared/stores/petStore';
 import { SymptomType, SymptomSeverity, SYMPTOM_ICONS } from '../types';
-import { useQueryClient } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { GlucoseReading } from '@storage/domain/types';
+import { HomeStackParamList } from '@navigation/types';
+import { formatDistanceToNow } from 'date-fns';
 import * as ImagePicker from 'expo-image-picker';
 import * as Haptics from 'expo-haptics';
 
@@ -28,6 +32,7 @@ const SEVERITY_OPTIONS: { value: SymptomSeverity; color: string; labelKey: strin
 
 export default function AddSymptomScreen() {
   const navigation = useHomeNavigation();
+  const route = useRoute<RouteProp<HomeStackParamList, 'AddSymptom'>>();
   const { t } = useTranslation();
   const { theme } = useTheme();
   const activePet = usePetStore(s => s.activePet);
@@ -38,6 +43,19 @@ export default function AddSymptomScreen() {
   const [notes, setNotes] = useState('');
   const [photos, setPhotos] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
+  const [selectedGlucoseId, setSelectedGlucoseId] = useState<string | undefined>(
+    route.params?.glucoseReadingId
+  );
+
+  const { data: recentReadings } = useQuery({
+    queryKey: ['recentGlucose', activePet?.id],
+    queryFn: async () => {
+      if (!activePet) return [];
+      const result = await glucoseRepository.findByPetId(activePet.id, 5);
+      return result.data;
+    },
+    enabled: !!activePet,
+  });
 
   const toggleType = (type: SymptomType) => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
@@ -83,6 +101,7 @@ export default function AddSymptomScreen() {
         severity,
         notes: notes || undefined,
         photoUris: photos.length > 0 ? photos : undefined,
+        glucoseReadingId: selectedGlucoseId,
       });
       await queryClient.invalidateQueries({ queryKey: ['symptoms'] });
       navigation.goBack();
@@ -185,6 +204,42 @@ export default function AddSymptomScreen() {
             </View>
           )}
 
+          {recentReadings && recentReadings.length > 0 && (
+            <>
+              <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>
+                {t('symptoms.linkGlucose')}
+              </Text>
+              <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginHorizontal: -4 }}>
+                {recentReadings.map((reading: GlucoseReading) => {
+                  const isSelected = selectedGlucoseId === reading.id;
+                  return (
+                    <TouchableOpacity
+                      key={reading.id}
+                      style={[
+                        styles.glucoseCard,
+                        {
+                          backgroundColor: isSelected ? theme.colors.primaryLight : theme.colors.surface,
+                          borderColor: isSelected ? theme.colors.primary : theme.colors.border,
+                        },
+                      ]}
+                      onPress={() => {
+                        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                        setSelectedGlucoseId(isSelected ? undefined : reading.id);
+                      }}
+                    >
+                      <Text style={[styles.glucoseValue, { color: isSelected ? theme.colors.primary : theme.colors.text }]}>
+                        {reading.valueMmol.toFixed(1)} mmol/L
+                      </Text>
+                      <Text style={[styles.glucoseTime, { color: theme.colors.textSecondary }]}>
+                        {formatDistanceToNow(new Date(reading.recordedAt), { addSuffix: true })}
+                      </Text>
+                    </TouchableOpacity>
+                  );
+                })}
+              </ScrollView>
+            </>
+          )}
+
           <Input
             label={t('symptoms.notes')}
             value={notes}
@@ -220,4 +275,7 @@ const styles = StyleSheet.create({
   photoThumbContainer: { position: 'relative' },
   photoThumb: { width: 80, height: 80, borderRadius: 8 },
   removePhotoBtn: { position: 'absolute', top: -6, right: -6, width: 22, height: 22, borderRadius: 11, backgroundColor: '#FF3B30', alignItems: 'center', justifyContent: 'center' },
+  glucoseCard: { padding: 12, borderRadius: 12, borderWidth: 2, marginHorizontal: 4, minWidth: 120, alignItems: 'center' },
+  glucoseValue: { fontSize: 16, fontWeight: '700' },
+  glucoseTime: { fontSize: 11, marginTop: 4 },
 });

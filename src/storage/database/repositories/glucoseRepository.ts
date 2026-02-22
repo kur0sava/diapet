@@ -1,5 +1,5 @@
 import { getDatabase } from '../database';
-import { GlucoseReading, CreateGlucoseDTO, PaginatedResult } from '@storage/domain/types';
+import { GlucoseReading, CreateGlucoseDTO, PaginatedResult, GlucoseFilter } from '@storage/domain/types';
 import uuid from 'react-native-uuid';
 
 const mmolToMgdl = (mmol: number) => Math.round(mmol * 18.018);
@@ -42,6 +42,58 @@ export const glucoseRepository = {
     };
   },
 
+  async findByPetIdFiltered(
+    petId: string,
+    filters: GlucoseFilter,
+    limit = 50,
+    cursor?: string,
+  ): Promise<PaginatedResult<GlucoseReading>> {
+    const db = await getDatabase();
+    const conditions: string[] = ['pet_id = ?'];
+    const params: any[] = [petId];
+
+    if (cursor) {
+      conditions.push('recorded_at < ?');
+      params.push(cursor);
+    }
+    if (filters.dateFrom) {
+      conditions.push('recorded_at >= ?');
+      params.push(filters.dateFrom);
+    }
+    if (filters.dateTo) {
+      conditions.push('recorded_at <= ?');
+      params.push(filters.dateTo);
+    }
+    if (filters.levelMin !== undefined) {
+      conditions.push('value_mmol >= ?');
+      params.push(filters.levelMin);
+    }
+    if (filters.levelMax !== undefined) {
+      conditions.push('value_mmol <= ?');
+      params.push(filters.levelMax);
+    }
+    if (filters.mealRelations && filters.mealRelations.length > 0) {
+      const placeholders = filters.mealRelations.map(() => '?').join(', ');
+      conditions.push(`meal_relation IN (${placeholders})`);
+      params.push(...filters.mealRelations);
+    }
+
+    const where = conditions.join(' AND ');
+    params.push(limit + 1);
+
+    const rows = await db.getAllAsync<any>(
+      `SELECT * FROM glucose_readings WHERE ${where} ORDER BY recorded_at DESC LIMIT ?`,
+      params,
+    );
+    const hasNextPage = rows.length > limit;
+    const items = hasNextPage ? rows.slice(0, limit) : rows;
+    const data = items.map(mapRowToReading);
+    return {
+      data,
+      nextCursor: hasNextPage ? data[data.length - 1].recordedAt : null,
+    };
+  },
+
   async findLast7Days(petId: string): Promise<GlucoseReading[]> {
     const db = await getDatabase();
     const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
@@ -69,8 +121,8 @@ export const glucoseRepository = {
       const valueMmol = dto.unit === 'mmol/L' ? dto.value : dto.value / 18.018;
       // FIX-03: include insulin_type in UPDATE
       await db.runAsync(
-        'UPDATE glucose_readings SET value_mmol=?, value_mgdl=?, meal_relation=COALESCE(?,meal_relation), insulin_dose=COALESCE(?,insulin_dose), insulin_type=COALESCE(?,insulin_type), notes=COALESCE(?,notes), updated_at=? WHERE id=?',
-        [valueMmol, valueMgdl, dto.mealRelation ?? null, dto.insulinDose ?? null, dto.insulinType ?? null, dto.notes ?? null, now, id]
+        'UPDATE glucose_readings SET value_mmol=?, value_mgdl=?, meal_relation=COALESCE(?,meal_relation), insulin_dose=COALESCE(?,insulin_dose), insulin_type=COALESCE(?,insulin_type), notes=COALESCE(?,notes), recorded_at=COALESCE(?,recorded_at), updated_at=? WHERE id=?',
+        [valueMmol, valueMgdl, dto.mealRelation ?? null, dto.insulinDose ?? null, dto.insulinType ?? null, dto.notes ?? null, dto.recordedAt ?? null, now, id]
       );
     }
     return this.findById(id);
