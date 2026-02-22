@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import {
   View, Text, StyleSheet, ScrollView,
   TouchableOpacity, Alert, KeyboardAvoidingView, Platform,
@@ -24,7 +24,7 @@ export default function LogFeedingScreen() {
     { value: 'other', label: t('feeding.other') },
   ];
   const { theme } = useTheme();
-  const { activePet } = usePetStore();
+  const activePet = usePetStore(s => s.activePet);
   const queryClient = useQueryClient();
 
   const [foodType, setFoodType] = useState<string>('dry');
@@ -32,7 +32,7 @@ export default function LogFeedingScreen() {
   const [notes, setNotes] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const handleSave = async () => {
+  const handleSave = useCallback(async () => {
     if (!activePet) {
       Alert.alert(t('common.error'), t('glucose.petNotFound'));
       return;
@@ -54,7 +54,7 @@ export default function LogFeedingScreen() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [activePet, foodType, amount, notes, queryClient, navigation, t]);
 
   return (
     <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={{ flex: 1 }}>

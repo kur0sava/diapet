@@ -15,7 +15,8 @@ export default function EditPetScreen() {
   const navigation = useMoreNavigation();
   const { t } = useTranslation();
   const { theme } = useTheme();
-  const { activePet, refreshActivePet } = usePetStore();
+  const activePet = usePetStore(s => s.activePet);
+  const refreshActivePet = usePetStore(s => s.refreshActivePet);
   const queryClient = useQueryClient();
 
   const [name, setName] = useState(activePet?.name ?? '');

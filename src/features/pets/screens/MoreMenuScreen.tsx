@@ -12,7 +12,7 @@ export default function MoreMenuScreen() {
   const rootNavigation = useRootNavigation();
   const { t } = useTranslation();
   const { theme } = useTheme();
-  const { activePet } = usePetStore();
+  const activePet = usePetStore(s => s.activePet);
 
   const menuItems = [
     { icon: '🐾', label: t('pets.title'), screen: 'PetProfile' as const, color: theme.colors.primary, subtitle: activePet?.name },
@@ -42,7 +42,7 @@ export default function MoreMenuScreen() {
       <ScrollView contentContainerStyle={styles.scroll}>
         <Text style={[styles.sectionTitle, { color: theme.colors.textSecondary }]}>{t('navigation.menu')}</Text>
         {menuItems.map((item, i) => (
-          <TouchableOpacity key={i} style={[styles.menuItem, { backgroundColor: theme.colors.surface, ...theme.shadows.sm }]} onPress={() => navigation.navigate(item.screen)} activeOpacity={0.8}>
+          <TouchableOpacity key={item.screen} style={[styles.menuItem, { backgroundColor: theme.colors.surface, ...theme.shadows.sm }]} onPress={() => navigation.navigate(item.screen)} activeOpacity={0.8}>
             <View style={[styles.menuIcon, { backgroundColor: `${item.color}20` }]}><Text style={styles.menuEmoji}>{item.icon}</Text></View>
             <View style={styles.menuText}>
               <Text style={[styles.menuLabel, { color: theme.colors.text }]}>{item.label}</Text>

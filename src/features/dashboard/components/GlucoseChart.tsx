@@ -89,7 +89,7 @@ export function GlucoseChart({ data }: Props) {
       <View style={styles.xAxis}>
         {data.length <= 7 && data.map((d, i) => (
           <Text
-            key={i}
+            key={d.id}
             style={[styles.xLabel, { color: theme.colors.textTertiary }]}
             numberOfLines={1}
           >

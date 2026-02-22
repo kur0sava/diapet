@@ -103,18 +103,18 @@ export default function GlucoseListScreen() {
 
   const hasActiveFilters = isFilterActive(computedFilters);
 
-  const toggleFilterPanel = () => {
+  const toggleFilterPanel = useCallback(() => {
     LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
     setShowFilters(prev => !prev);
-  };
+  }, []);
 
-  const toggleLevelPreset = (key: string) => {
+  const toggleLevelPreset = useCallback((key: string) => {
     setSelectedLevels(prev =>
       prev.includes(key) ? prev.filter(k => k !== key) : [...prev, key]
     );
-  };
+  }, []);
 
-  const toggleMealRelation = (meal: MealRelation) => {
+  const toggleMealRelation = useCallback((meal: MealRelation) => {
     setFilters(prev => {
       const current = prev.mealRelations ?? [];
       const updated = current.includes(meal)
@@ -122,16 +122,16 @@ export default function GlucoseListScreen() {
         : [...current, meal];
       return { ...prev, mealRelations: updated.length > 0 ? updated : undefined };
     });
-  };
+  }, []);
 
-  const handleDateFromChange = (_event: any, date?: Date) => {
+  const handleDateFromChange = useCallback((_event: any, date?: Date) => {
     setShowDateFrom(false);
     if (date) {
       setFilters(prev => ({ ...prev, dateFrom: date.toISOString() }));
     }
-  };
+  }, []);
 
-  const handleDateToChange = (_event: any, date?: Date) => {
+  const handleDateToChange = useCallback((_event: any, date?: Date) => {
     setShowDateTo(false);
     if (date) {
       // Set to end of day
@@ -139,13 +139,13 @@ export default function GlucoseListScreen() {
       endOfDay.setHours(23, 59, 59, 999);
       setFilters(prev => ({ ...prev, dateTo: endOfDay.toISOString() }));
     }
-  };
+  }, []);
 
-  const clearFilters = () => {
+  const clearFilters = useCallback(() => {
     LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
     setFilters({});
     setSelectedLevels([]);
-  };
+  }, []);
 
   const {
     data,
@@ -175,7 +175,7 @@ export default function GlucoseListScreen() {
     enabled: !!activePet?.id,
   });
 
-  const handleDelete = (id: string) => {
+  const handleDelete = useCallback((id: string) => {
     Alert.alert(
       t('glucose.deleteConfirm'),
       undefined,
@@ -191,7 +191,7 @@ export default function GlucoseListScreen() {
         },
       ]
     );
-  };
+  }, [t, queryClient]);
 
   const mealLabels: Record<string, string> = {
     before_meal: t('glucose.beforeMeal'),
@@ -223,7 +223,7 @@ export default function GlucoseListScreen() {
     }
   }, [activePet, readings, t]);
 
-  const renderReading = ({ item }: { item: GlucoseReading }) => {
+  const renderReading = useCallback(({ item }: { item: GlucoseReading }) => {
     const displayValue = unit === 'mmol/L' ? `${item.valueMmol.toFixed(1)}` : `${item.valueMgdl}`;
     const color = getGlucoseColor(item.valueMmol);
 
@@ -255,7 +255,7 @@ export default function GlucoseListScreen() {
         </Card>
       </TouchableOpacity>
     );
-  };
+  }, [unit, theme, navigation, handleDelete, mealLabels]);
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.background }]}>

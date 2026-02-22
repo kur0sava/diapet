@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useCallback } from 'react';
 import {
   View, Text, StyleSheet, ScrollView,
   TouchableOpacity, Alert, KeyboardAvoidingView, Platform,
@@ -19,7 +19,7 @@ export default function LogInjectionScreen() {
   const navigation = useHomeNavigation();
   const { t } = useTranslation();
   const { theme } = useTheme();
-  const { activePet } = usePetStore();
+  const activePet = usePetStore(s => s.activePet);
   const queryClient = useQueryClient();
 
   const [dose, setDose] = useState('');
@@ -28,7 +28,7 @@ export default function LogInjectionScreen() {
   const [loading, setLoading] = useState(false);
   const commonInsulins = t('injection.commonInsulins', { returnObjects: true }) as string[];
 
-  const handleSave = async () => {
+  const handleSave = useCallback(async () => {
     if (!activePet) return;
     if (!dose || parseFloat(dose) <= 0) {
       Alert.alert(t('common.error'), t('injection.doseError'));
@@ -54,7 +54,7 @@ export default function LogInjectionScreen() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [activePet, dose, insulinType, notes, queryClient, navigation, t]);
 
   return (
     <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={{ flex: 1 }}>

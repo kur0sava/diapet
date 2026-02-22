@@ -221,7 +221,7 @@ export default function DashboardScreen() {
           <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>{t('dashboard.quickActions')}</Text>
           <View style={styles.actionsGrid}>
             {quickActions.map((action, i) => (
-              <QuickActionButton key={i} {...action} />
+              <QuickActionButton key={action.label} {...action} />
             ))}
           </View>
         </View>

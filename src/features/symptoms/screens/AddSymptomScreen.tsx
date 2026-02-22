@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import {
   View, Text, StyleSheet, ScrollView,
   TouchableOpacity, Alert, Image, KeyboardAvoidingView, Platform,
@@ -57,14 +57,14 @@ export default function AddSymptomScreen() {
     enabled: !!activePet,
   });
 
-  const toggleType = (type: SymptomType) => {
+  const toggleType = useCallback((type: SymptomType) => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     setSelectedTypes(prev =>
       prev.includes(type) ? prev.filter(t => t !== type) : [...prev, type]
     );
-  };
+  }, []);
 
-  const pickPhoto = async () => {
+  const pickPhoto = useCallback(async () => {
     const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (!permission.granted) { Alert.alert(t('symptoms.noGalleryAccess')); return; }
     const result = await ImagePicker.launchImageLibraryAsync({
@@ -78,18 +78,18 @@ export default function AddSymptomScreen() {
       const validAssets = result.assets.filter(a => !a.fileSize || a.fileSize < 5_000_000);
       setPhotos(prev => [...prev, ...validAssets.map(a => a.uri)].slice(0, 10));
     }
-  };
+  }, [t]);
 
-  const takePhoto = async () => {
+  const takePhoto = useCallback(async () => {
     const permission = await ImagePicker.requestCameraPermissionsAsync();
     if (!permission.granted) { Alert.alert(t('symptoms.noCameraAccess')); return; }
     const result = await ImagePicker.launchCameraAsync({ quality: 0.6, exif: false });
     if (!result.canceled && result.assets && result.assets.length > 0) {
       setPhotos(prev => [...prev, result.assets[0].uri].slice(0, 10));
     }
-  };
+  }, [t]);
 
-  const handleSave = async () => {
+  const handleSave = useCallback(async () => {
     if (!activePet) return;
     if (selectedTypes.length === 0) { Alert.alert(t('symptoms.selectAtLeastOne')); return; }
     setLoading(true);
@@ -110,7 +110,7 @@ export default function AddSymptomScreen() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [activePet, selectedTypes, severity, notes, photos, selectedGlucoseId, queryClient, navigation, t]);
 
   return (
     <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={{ flex: 1 }}>
@@ -191,7 +191,7 @@ export default function AddSymptomScreen() {
           {photos.length > 0 && (
             <View style={styles.photosGrid}>
               {photos.map((uri, i) => (
-                <View key={i} style={styles.photoThumbContainer}>
+                <View key={uri} style={styles.photoThumbContainer}>
                   <Image source={{ uri }} style={styles.photoThumb} />
                   <TouchableOpacity
                     style={styles.removePhotoBtn}

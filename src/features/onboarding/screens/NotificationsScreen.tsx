@@ -85,7 +85,7 @@ export default function NotificationsScreen() {
 
         <View style={styles.features}>
           {[t('onboarding.notifInjections'), t('onboarding.notifFeedings'), t('onboarding.notifGlucose')].map((feature, i) => (
-            <View key={i} style={[styles.featureRow, { backgroundColor: theme.colors.surface, borderRadius: 12 }]}>
+            <View key={feature} style={[styles.featureRow, { backgroundColor: theme.colors.surface, borderRadius: 12 }]}>
               <Text style={[styles.featureText, { color: theme.colors.text }]}>{feature}</Text>
             </View>
           ))}

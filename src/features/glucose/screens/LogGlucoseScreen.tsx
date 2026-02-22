@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   View, Text, StyleSheet, ScrollView,
   TouchableOpacity, Alert, KeyboardAvoidingView, Platform,
@@ -75,7 +75,7 @@ export default function LogGlucoseScreen() {
       }
     : null;
 
-  const handleSave = async () => {
+  const handleSave = useCallback(async () => {
     if (!activePet) { Alert.alert(t('common.error'), t('glucose.petNotFound')); return; }
     if (!isValidValue) { Alert.alert(t('common.error'), t('glucose.invalidValue')); return; }
 
@@ -106,7 +106,7 @@ export default function LogGlucoseScreen() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [activePet, isValidValue, numValue, unit, mealRelation, insulinDose, insulinType, notes, recordedAt, editId, queryClient, navigation, t]);
 
   const levelLabels: Record<string, string> = {
     low: t('glucose.low'), normal: t('glucose.normal'),

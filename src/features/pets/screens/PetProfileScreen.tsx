@@ -13,7 +13,7 @@ export default function PetProfileScreen() {
   const navigation = useMoreNavigation();
   const { t } = useTranslation();
   const { theme } = useTheme();
-  const { activePet } = usePetStore();
+  const activePet = usePetStore(s => s.activePet);
 
   const { data: injectionTimes = [] } = useQuery({
     queryKey: ['schedule', 'injections', activePet?.id],

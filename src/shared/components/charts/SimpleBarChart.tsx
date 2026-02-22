@@ -47,7 +47,7 @@ export function SimpleBarChart({ data, title, height = 140, unit }: Props) {
             const barHeight = (item.value / maxVal) * (height - 24);
             const color = item.color ?? theme.colors.primary;
             return (
-              <View key={i} style={styles.barCol}>
+              <View key={item.label} style={styles.barCol}>
                 <View style={{ flex: 1, justifyContent: 'flex-end', alignItems: 'center' }}>
                   {item.value > 0 && (
                     <Text style={[styles.barValue, { color: theme.colors.textSecondary }]}>
@@ -108,7 +108,7 @@ export function SimpleHorizontalBarChart({ data, title }: HBarProps) {
         <Text style={[styles.title, { color: theme.colors.textSecondary }]}>{title}</Text>
       )}
       {data.map((item, i) => (
-        <View key={i} style={styles.hBarRow}>
+        <View key={item.label} style={styles.hBarRow}>
           <Text
             style={[styles.hBarLabel, { color: theme.colors.text }]}
             numberOfLines={1}
