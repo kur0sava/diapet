@@ -27,6 +27,7 @@ export type Region =
   | 'UK'    // Великобритания
   | 'US'    // США
   | 'DE'    // Германия
+  | 'MX'    // Мексика
   | 'JP'    // Япония
   | 'KR'    // Корея
   | 'BR'    // Бразилия
@@ -51,7 +52,7 @@ export interface DiabeticCatFood {
   /** Regions where available */
   regions: Region[];
   /** Where to buy (store names or URLs) */
-  whereToBuy?: Record<Region, string[]>;
+  whereToBuy?: Partial<Record<Region, string[]>>;
   /** Price range in local currency */
   priceHint?: string;
   /** Veterinary prescription required */
@@ -630,6 +631,13 @@ export function getPrescriptionFoods(region?: Region): DiabeticCatFood[] {
 export function getOtcFoods(region?: Region): DiabeticCatFood[] {
   const foods = OTC_LOW_CARB_FOODS;
   return region ? foods.filter(f => f.regions.includes(region)) : foods;
+}
+
+/** Evaluate food suitability based on carbs DM% */
+export function getFoodVerdict(carbsDM: number): 'good' | 'acceptable' | 'bad' {
+  if (carbsDM <= DIABETIC_NUTRITION_GUIDELINES.carbsIdealPercent) return 'good';
+  if (carbsDM <= DIABETIC_NUTRITION_GUIDELINES.carbsMaxPercent) return 'acceptable';
+  return 'bad';
 }
 
 // ────────────────────────────────────────────────────

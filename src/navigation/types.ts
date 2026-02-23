@@ -48,6 +48,10 @@ export type SymptomsStackParamList = {
 export type EncyclopediaStackParamList = {
   ArticleList: undefined;
   ArticleDetail: { articleId: string };
+  FeedGuide: undefined;
+  FeedGuideRegion: { region: string };
+  FeedGuideAlternatives: undefined;
+  FeedGuideNatural: undefined;
 };
 
 // More Stack

@@ -20,6 +20,10 @@ import AddSymptomScreen from '@features/symptoms/screens/AddSymptomScreen';
 import SymptomDetailScreen from '@features/symptoms/screens/SymptomDetailScreen';
 import ArticleListScreen from '@features/encyclopedia/screens/ArticleListScreen';
 import ArticleDetailScreen from '@features/encyclopedia/screens/ArticleDetailScreen';
+import FeedGuideScreen from '@features/encyclopedia/screens/FeedGuideScreen';
+import FeedGuideRegionScreen from '@features/encyclopedia/screens/FeedGuideRegionScreen';
+import FeedGuideAlternativesScreen from '@features/encyclopedia/screens/FeedGuideAlternativesScreen';
+import FeedGuideNaturalScreen from '@features/encyclopedia/screens/FeedGuideNaturalScreen';
 import MoreMenuScreen from '@features/pets/screens/MoreMenuScreen';
 import PetProfileScreen from '@features/pets/screens/PetProfileScreen';
 import EditPetScreen from '@features/pets/screens/EditPetScreen';
@@ -106,6 +110,10 @@ function EncyclopediaStackNavigator() {
     >
       <EncyclopediaStack.Screen name="ArticleList" component={ArticleListScreen} options={{ headerShown: false }} />
       <EncyclopediaStack.Screen name="ArticleDetail" component={ArticleDetailScreen} options={{ headerShown: false }} />
+      <EncyclopediaStack.Screen name="FeedGuide" component={FeedGuideScreen} options={{ headerShown: false }} />
+      <EncyclopediaStack.Screen name="FeedGuideRegion" component={FeedGuideRegionScreen} options={{ headerShown: false }} />
+      <EncyclopediaStack.Screen name="FeedGuideAlternatives" component={FeedGuideAlternativesScreen} options={{ headerShown: false }} />
+      <EncyclopediaStack.Screen name="FeedGuideNatural" component={FeedGuideNaturalScreen} options={{ headerShown: false }} />
     </EncyclopediaStack.Navigator>
   );
 }

@@ -132,6 +132,22 @@ export default function ArticleListScreen() {
         renderItem={renderArticle}
         contentContainerStyle={styles.list}
         showsVerticalScrollIndicator={false}
+        ListHeaderComponent={
+          <TouchableOpacity
+            style={[styles.feedGuideBanner, { backgroundColor: theme.colors.primary }]}
+            onPress={() => navigation.navigate('FeedGuide' as any)}
+            activeOpacity={0.8}
+          >
+            <View style={styles.feedGuideBannerIcon}>
+              <Text style={{ fontSize: 24 }}>🍽️</Text>
+            </View>
+            <View style={styles.feedGuideBannerContent}>
+              <Text style={styles.feedGuideBannerTitle}>{t('feedGuide.title')}</Text>
+              <Text style={styles.feedGuideBannerDesc}>{t('feedGuide.subtitle')}</Text>
+            </View>
+            <Ionicons name="chevron-forward" size={20} color="rgba(255,255,255,0.7)" />
+          </TouchableOpacity>
+        }
       />
     </SafeAreaView>
   );
@@ -158,4 +174,9 @@ const styles = StyleSheet.create({
   tags: { flexDirection: 'row', flexWrap: 'wrap', gap: 6 },
   tag: { paddingHorizontal: 8, paddingVertical: 3, borderRadius: 8 },
   tagText: { fontSize: 12 },
+  feedGuideBanner: { flexDirection: 'row', alignItems: 'center', gap: 12, padding: 16, borderRadius: 16, marginBottom: 14 },
+  feedGuideBannerIcon: { width: 44, height: 44, borderRadius: 12, backgroundColor: 'rgba(255,255,255,0.2)', justifyContent: 'center', alignItems: 'center' },
+  feedGuideBannerContent: { flex: 1 },
+  feedGuideBannerTitle: { fontSize: 16, fontWeight: '700', color: '#fff' },
+  feedGuideBannerDesc: { fontSize: 12, color: 'rgba(255,255,255,0.85)', marginTop: 2 },
 });
