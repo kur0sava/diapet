@@ -152,29 +152,23 @@
 
 ## ЭТАП 4.6: v1.5 Full Bug Review — полная ревизия проекта
 
-> Перед редизайном — найти и убить все баги. Параллельные агенты на каждый слой.
+> Аудит завершён 2026-02-24. Найдено 32 бага. План фиксов: `BUGFIX-PLAN.md`
 
-### Фаза 4.6A — Статический анализ (параллельно)
+### Фаза 4.6A — Аудит ✅ DONE
 
-- [ ] Agent 1: Ревизия всех репозиториев (SQL injection, missing error handling, race conditions)
-- [ ] Agent 2: Ревизия всех экранов (memory leaks, missing cleanup, state bugs, edge cases)
-- [ ] Agent 3: Ревизия навигации (orphan routes, type mismatches, deep link issues)
-- [ ] Agent 4: Ревизия i18n (missing keys, mismatched params, untranslated strings)
+- [x] Agent 1: Ревизия data layer (repositories, migrations, schema, stores, MMKV)
+- [x] Agent 2: Ревизия screens + navigation + i18n + Feed Guide
+- [x] Результат: 2 CRITICAL, 8 HIGH, 12 MEDIUM, 10 LOW → сохранено в `BUGFIX-PLAN.md`
 
-### Фаза 4.6B — Логические баги (параллельно)
+### Фаза 4.6B — Исправление найденных багов
 
-- [ ] Agent 5: Data flow audit (Zustand ↔ React Query ↔ SQLite sync issues, stale data)
-- [ ] Agent 6: Edge cases (empty pet, no readings, first launch, migration failures, offline)
-- [ ] Agent 7: Security audit (input validation, SQL params, MMKV key exposure, photo URIs)
-- [ ] Agent 8: Performance audit (unnecessary re-renders, large lists, heavy computations)
+- [ ] Fix CRITICAL (2): race condition в getDatabase(), orphan routes
+- [ ] Fix HIGH (8): атомарность репозиториев, update logic, stale queries, UX
+- [ ] Fix MEDIUM (12): PRAGMA, MMKV, фильтры, i18n, типы
+- [ ] Fix LOW (10): по возможности
+- [ ] Regression test: tsc + jest + manual smoke test
 
-### Фаза 4.6C — Исправление найденных багов
-
-- [ ] Приоритизация: critical → high → medium → low
-- [ ] Fix all critical + high
-- [ ] Regression test: tsc + jest + manual smoke test list
-
-> **CHECKPOINT 4.6-review**: commit + tsc + test + 0 known critical/high bugs
+> **CHECKPOINT 4.6**: commit + tsc + test + 0 known critical/high bugs
 
 ---
 
