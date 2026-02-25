@@ -7,21 +7,22 @@ export const symptomRepository = {
     const db = await getDatabase();
     const id = uuid.v4() as string;
     const now = new Date().toISOString();
-    await db.runAsync(
-      `INSERT INTO symptoms (id, pet_id, symptom_types, severity, photo_uris, notes, glucose_reading_id, recorded_at, created_at, updated_at)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-      [id, dto.petId, JSON.stringify(dto.symptomTypes), dto.severity ?? 'mild',
-       dto.photoUris ? JSON.stringify(dto.photoUris) : null,
-       dto.notes ?? null, dto.glucoseReadingId ?? null, dto.recordedAt ?? now, now, now]
-    );
-    // Insert into junction table
-    for (const symptomType of dto.symptomTypes) {
-      const entryId = uuid.v4() as string;
+    await db.withTransactionAsync(async () => {
       await db.runAsync(
-        'INSERT INTO symptom_entry_types (id, symptom_id, symptom_type) VALUES (?, ?, ?)',
-        [entryId, id, symptomType]
+        `INSERT INTO symptoms (id, pet_id, symptom_types, severity, photo_uris, notes, glucose_reading_id, recorded_at, created_at, updated_at)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        [id, dto.petId, JSON.stringify(dto.symptomTypes), dto.severity ?? 'mild',
+         dto.photoUris ? JSON.stringify(dto.photoUris) : null,
+         dto.notes ?? null, dto.glucoseReadingId ?? null, dto.recordedAt ?? now, now, now]
       );
-    }
+      for (const symptomType of dto.symptomTypes) {
+        const entryId = uuid.v4() as string;
+        await db.runAsync(
+          'INSERT INTO symptom_entry_types (id, symptom_id, symptom_type) VALUES (?, ?, ?)',
+          [entryId, id, symptomType]
+        );
+      }
+    });
     return this.findById(id) as Promise<SymptomEntry>;
   },
 
@@ -78,25 +79,26 @@ export const symptomRepository = {
   async update(id: string, dto: Partial<CreateSymptomDTO>): Promise<SymptomEntry | null> {
     const db = await getDatabase();
     const now = new Date().toISOString();
-    await db.runAsync(
-      `UPDATE symptoms SET symptom_types=COALESCE(?,symptom_types), severity=COALESCE(?,severity),
-       photo_uris=COALESCE(?,photo_uris), notes=COALESCE(?,notes),
-       glucose_reading_id=COALESCE(?,glucose_reading_id), updated_at=? WHERE id=?`,
-      [dto.symptomTypes ? JSON.stringify(dto.symptomTypes) : null,
-       dto.severity ?? null, dto.photoUris ? JSON.stringify(dto.photoUris) : null,
-       dto.notes ?? null, dto.glucoseReadingId ?? null, now, id]
-    );
-    // Update junction table if symptomTypes changed
-    if (dto.symptomTypes) {
-      await db.runAsync('DELETE FROM symptom_entry_types WHERE symptom_id = ?', [id]);
-      for (const symptomType of dto.symptomTypes) {
-        const entryId = uuid.v4() as string;
-        await db.runAsync(
-          'INSERT INTO symptom_entry_types (id, symptom_id, symptom_type) VALUES (?, ?, ?)',
-          [entryId, id, symptomType]
-        );
+    await db.withTransactionAsync(async () => {
+      await db.runAsync(
+        `UPDATE symptoms SET symptom_types=COALESCE(?,symptom_types), severity=COALESCE(?,severity),
+         photo_uris=COALESCE(?,photo_uris), notes=COALESCE(?,notes),
+         glucose_reading_id=COALESCE(?,glucose_reading_id), updated_at=? WHERE id=?`,
+        [dto.symptomTypes ? JSON.stringify(dto.symptomTypes) : null,
+         dto.severity ?? null, dto.photoUris ? JSON.stringify(dto.photoUris) : null,
+         dto.notes ?? null, dto.glucoseReadingId ?? null, now, id]
+      );
+      if (dto.symptomTypes) {
+        await db.runAsync('DELETE FROM symptom_entry_types WHERE symptom_id = ?', [id]);
+        for (const symptomType of dto.symptomTypes) {
+          const entryId = uuid.v4() as string;
+          await db.runAsync(
+            'INSERT INTO symptom_entry_types (id, symptom_id, symptom_type) VALUES (?, ?, ?)',
+            [entryId, id, symptomType]
+          );
+        }
       }
-    }
+    });
     return this.findById(id);
   },
 

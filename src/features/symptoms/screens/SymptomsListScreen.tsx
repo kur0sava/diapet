@@ -112,7 +112,7 @@ export default function SymptomsListScreen() {
           <EmptyState
             icon="🐾"
             title={t('symptoms.title')}
-            subtitle={t('glucose.noSymptoms')}
+            subtitle={t('symptoms.noSymptoms')}
             actionLabel={t('symptoms.addSymptom')}
             onAction={() => navigation.navigate('AddSymptom', {})}
           />

@@ -78,7 +78,7 @@ export default function DashboardScreen() {
   });
 
   const { data: lastInjection } = useQuery({
-    queryKey: ['injection', 'latest', petId],
+    queryKey: ['injections', 'latest', petId],
     queryFn: () => injectionRepository.findLatest(petId),
     enabled: !!petId,
   });
@@ -103,8 +103,12 @@ export default function DashboardScreen() {
     setRefreshing(false);
   }, [refetchGlucose, refetchHistory]);
 
-  const nextInjection = injectionTimes?.[0];
-  const nextFeeding = feedingTimes?.[0];
+  const nextInjection = injectionTimes?.length
+    ? [...injectionTimes].sort((a, b) => minutesUntil(a.timeOfDay) - minutesUntil(b.timeOfDay))[0]
+    : undefined;
+  const nextFeeding = feedingTimes?.length
+    ? [...feedingTimes].sort((a, b) => minutesUntil(a.timeOfDay) - minutesUntil(b.timeOfDay))[0]
+    : undefined;
   const nextInjectionMinutes = nextInjection ? minutesUntil(nextInjection.timeOfDay) : null;
   const nextFeedingMinutes = nextFeeding ? minutesUntil(nextFeeding.timeOfDay) : null;
 

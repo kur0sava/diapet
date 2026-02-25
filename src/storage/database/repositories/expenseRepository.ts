@@ -59,8 +59,10 @@ export const expenseRepository = {
     const now = new Date().toISOString();
     await db.runAsync(
       `UPDATE expenses SET category=COALESCE(?,category), amount=COALESCE(?,amount),
-       description=COALESCE(?,description), date=COALESCE(?,date), updated_at=? WHERE id=?`,
-      [dto.category ?? null, dto.amount ?? null, dto.description ?? null, dto.date ?? null, now, id]
+       currency=COALESCE(?,currency), description=COALESCE(?,description),
+       date=COALESCE(?,date), updated_at=? WHERE id=?`,
+      [dto.category ?? null, dto.amount ?? null, dto.currency ?? null,
+       dto.description ?? null, dto.date ?? null, now, id]
     );
     return this.findById(id);
   },

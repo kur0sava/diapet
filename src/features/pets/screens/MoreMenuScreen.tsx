@@ -32,7 +32,7 @@ export default function MoreMenuScreen() {
             <Text style={styles.petName}>{activePet.name}</Text>
             <Text style={styles.petDetails}>
               {activePet.species === 'cat' ? t('pets.cat') : t('pets.pet')}
-              {activePet.weightKg ? ` · ${activePet.weightKg} кг` : ''}
+              {activePet.weightKg ? ` · ${activePet.weightKg} ${t('common.kg')}` : ''}
               {activePet.diabetesType !== 'unknown' ? ` · ${t('pets.diabetesType')} ${activePet.diabetesType === 'type1' ? '1' : '2'}` : ''}
             </Text>
           </View>

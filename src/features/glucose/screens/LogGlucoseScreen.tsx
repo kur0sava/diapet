@@ -53,7 +53,7 @@ export default function LogGlucoseScreen() {
     if (editId) {
       glucoseRepository.findById(editId).then(reading => {
         if (cancelled || !reading) return;
-        const displayValue = unit === 'mmol/L' ? reading.valueMmol.toFixed(1) : reading.valueMgdl.toString();
+        const displayValue = savedUnit === 'mmol/L' ? reading.valueMmol.toFixed(1) : reading.valueMgdl.toString();
         setValue(displayValue);
         setMealRelation(reading.mealRelation);
         if (reading.insulinDose) setInsulinDose(reading.insulinDose.toString());
@@ -63,7 +63,7 @@ export default function LogGlucoseScreen() {
       });
     }
     return () => { cancelled = true; };
-  }, [editId, unit]);
+  }, [editId]);
 
   const numValue = parseFloat(value.replace(',', '.'));
   const isValidValue = !isNaN(numValue) && numValue > 0 && numValue < (unit === 'mmol/L' ? 50 : 900);

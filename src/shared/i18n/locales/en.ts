@@ -22,6 +22,7 @@ export const en = {
     mmol_l: 'mmol/L',
     units: 'units',
     kg: 'kg',
+    notFound: 'Not found',
     export: 'Export',
     share: 'Share',
   },

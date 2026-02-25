@@ -18,15 +18,26 @@ export default function SymptomDetailScreen() {
   const { t } = useTranslation();
   const { theme } = useTheme();
 
-  const { data: symptom } = useQuery({
+  const { data: symptom, isLoading } = useQuery({
     queryKey: ['symptom', route.params.id],
     queryFn: () => symptomRepository.findById(route.params.id),
   });
 
-  if (!symptom) return (
+  if (isLoading) return (
     <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.background }]}>
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
         <ActivityIndicator size="large" color={theme.colors.primary} />
+      </View>
+    </SafeAreaView>
+  );
+
+  if (!symptom) return (
+    <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.background }]}>
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <Text style={{ color: theme.colors.textSecondary, fontSize: 16 }}>{t('common.notFound')}</Text>
+        <TouchableOpacity onPress={() => navigation.goBack()} style={{ marginTop: 16 }}>
+          <Text style={{ color: theme.colors.primary }}>{t('common.back')}</Text>
+        </TouchableOpacity>
       </View>
     </SafeAreaView>
   );

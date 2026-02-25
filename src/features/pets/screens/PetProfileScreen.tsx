@@ -63,7 +63,7 @@ export default function PetProfileScreen() {
         </View>
         <Card style={styles.card}>
           <Text style={[styles.cardTitle, { color: theme.colors.textSecondary }]}>{t('pets.basicInfo')}</Text>
-          {activePet.weightKg && <InfoRow label={t('pets.weight')} value={`${activePet.weightKg} кг`} />}
+          {activePet.weightKg && <InfoRow label={t('pets.weight')} value={`${activePet.weightKg} ${t('common.kg')}`} />}
           {activePet.birthYear && <InfoRow label={t('pets.age')} value={`${new Date().getFullYear() - activePet.birthYear} ${t('pets.years')}`} />}
           <InfoRow label={t('pets.gender')} value={activePet.gender === 'male' ? t('common.male') : activePet.gender === 'female' ? t('common.female') : t('common.unknown')} />
           <InfoRow label={t('pets.diabetesType')} value={diabetesLabels[activePet.diabetesType]} />

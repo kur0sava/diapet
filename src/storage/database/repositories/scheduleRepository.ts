@@ -61,7 +61,7 @@ function mapRow(row: any): Schedule {
     id: row.id,
     petId: row.pet_id,
     timeOfDay: row.time_of_day,
-    daysOfWeek: row.days_of_week.split(',').map(Number),
+    daysOfWeek: row.days_of_week ? row.days_of_week.split(',').map(Number) : [0,1,2,3,4,5,6],
     isActive: !!row.is_active,
     createdAt: row.created_at,
   };

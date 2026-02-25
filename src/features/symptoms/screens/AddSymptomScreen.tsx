@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import {
   View, Text, StyleSheet, ScrollView,
   TouchableOpacity, Alert, Image, KeyboardAvoidingView, Platform,
@@ -38,6 +38,7 @@ export default function AddSymptomScreen() {
   const activePet = usePetStore(s => s.activePet);
   const queryClient = useQueryClient();
 
+  const editId = route.params?.editId;
   const [selectedTypes, setSelectedTypes] = useState<SymptomType[]>([]);
   const [severity, setSeverity] = useState<SymptomSeverity>('mild');
   const [notes, setNotes] = useState('');
@@ -46,6 +47,19 @@ export default function AddSymptomScreen() {
   const [selectedGlucoseId, setSelectedGlucoseId] = useState<string | undefined>(
     route.params?.glucoseReadingId
   );
+
+  useEffect(() => {
+    if (editId) {
+      symptomRepository.findById(editId).then(entry => {
+        if (!entry) return;
+        setSelectedTypes(entry.symptomTypes);
+        setSeverity(entry.severity);
+        setNotes(entry.notes ?? '');
+        setPhotos(entry.photoUris ?? []);
+        setSelectedGlucoseId(entry.glucoseReadingId);
+      });
+    }
+  }, [editId]);
 
   const { data: recentReadings } = useQuery({
     queryKey: ['recentGlucose', activePet?.id],
@@ -95,14 +109,25 @@ export default function AddSymptomScreen() {
     setLoading(true);
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
     try {
-      await symptomRepository.create({
-        petId: activePet.id,
-        symptomTypes: selectedTypes,
-        severity,
-        notes: notes || undefined,
-        photoUris: photos.length > 0 ? photos : undefined,
-        glucoseReadingId: selectedGlucoseId,
-      });
+      if (editId) {
+        await symptomRepository.update(editId, {
+          petId: activePet.id,
+          symptomTypes: selectedTypes,
+          severity,
+          notes: notes || undefined,
+          photoUris: photos.length > 0 ? photos : undefined,
+          glucoseReadingId: selectedGlucoseId,
+        });
+      } else {
+        await symptomRepository.create({
+          petId: activePet.id,
+          symptomTypes: selectedTypes,
+          severity,
+          notes: notes || undefined,
+          photoUris: photos.length > 0 ? photos : undefined,
+          glucoseReadingId: selectedGlucoseId,
+        });
+      }
       await queryClient.invalidateQueries({ queryKey: ['symptoms'] });
       navigation.goBack();
     } catch {
@@ -119,7 +144,7 @@ export default function AddSymptomScreen() {
           <TouchableOpacity onPress={() => navigation.goBack()}>
             <Text style={{ color: theme.colors.primary }}>← {t('common.back')}</Text>
           </TouchableOpacity>
-          <Text style={[styles.title, { color: theme.colors.text }]}>{t('symptoms.addSymptom')}</Text>
+          <Text style={[styles.title, { color: theme.colors.text }]}>{editId ? t('symptoms.editSymptom') : t('symptoms.addSymptom')}</Text>
           <View style={{ width: 60 }} />
         </View>
 

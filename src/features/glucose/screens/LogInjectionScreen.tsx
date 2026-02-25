@@ -47,7 +47,7 @@ export default function LogInjectionScreen() {
         doseUnits: parseFloat(dose),
         notes: notes || undefined,
       });
-      await queryClient.invalidateQueries({ queryKey: ['injection'] });
+      await queryClient.invalidateQueries({ queryKey: ['injections'] });
       navigation.goBack();
     } catch {
       Alert.alert(t('common.error'), t('injection.saveError'));

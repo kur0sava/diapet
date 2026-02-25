@@ -32,9 +32,7 @@ export type HomeStackParamList = {
 // Glucose Stack
 export type GlucoseStackParamList = {
   GlucoseList: undefined;
-  GlucoseDetail: { id: string };
   LogGlucose: { editId?: string };
-  GlucoseChart: undefined;
 };
 
 // Symptoms Stack

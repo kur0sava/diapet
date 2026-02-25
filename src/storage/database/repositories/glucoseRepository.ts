@@ -3,6 +3,7 @@ import { GlucoseReading, CreateGlucoseDTO, PaginatedResult, GlucoseFilter } from
 import uuid from 'react-native-uuid';
 
 const mmolToMgdl = (mmol: number) => Math.round(mmol * 18.018);
+const mgdlToMmol = (mgdl: number) => Math.round(mgdl / 18.018 * 10) / 10;
 
 export const glucoseRepository = {
   async create(dto: CreateGlucoseDTO): Promise<GlucoseReading> {
@@ -10,7 +11,7 @@ export const glucoseRepository = {
     const id = uuid.v4() as string;
     const now = new Date().toISOString();
     const valueMgdl = dto.unit === 'mg/dL' ? dto.value : mmolToMgdl(dto.value);
-    const valueMmol = dto.unit === 'mmol/L' ? dto.value : dto.value / 18.018;
+    const valueMmol = dto.unit === 'mmol/L' ? dto.value : mgdlToMmol(dto.value);
     await db.runAsync(
       `INSERT INTO glucose_readings (id, pet_id, value_mmol, value_mgdl, meal_relation, insulin_dose, insulin_type, notes, recorded_at, created_at, updated_at)
        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
@@ -116,14 +117,25 @@ export const glucoseRepository = {
   async update(id: string, dto: Partial<CreateGlucoseDTO>): Promise<GlucoseReading | null> {
     const db = await getDatabase();
     const now = new Date().toISOString();
+    const sets: string[] = [];
+    const params: any[] = [];
+
     if (dto.value !== undefined && dto.unit) {
       const valueMgdl = dto.unit === 'mg/dL' ? dto.value : mmolToMgdl(dto.value);
-      const valueMmol = dto.unit === 'mmol/L' ? dto.value : dto.value / 18.018;
-      // FIX-03: include insulin_type in UPDATE
-      await db.runAsync(
-        'UPDATE glucose_readings SET value_mmol=?, value_mgdl=?, meal_relation=COALESCE(?,meal_relation), insulin_dose=COALESCE(?,insulin_dose), insulin_type=COALESCE(?,insulin_type), notes=COALESCE(?,notes), recorded_at=COALESCE(?,recorded_at), updated_at=? WHERE id=?',
-        [valueMmol, valueMgdl, dto.mealRelation ?? null, dto.insulinDose ?? null, dto.insulinType ?? null, dto.notes ?? null, dto.recordedAt ?? null, now, id]
-      );
+      const valueMmol = dto.unit === 'mmol/L' ? dto.value : mgdlToMmol(dto.value);
+      sets.push('value_mmol=?', 'value_mgdl=?');
+      params.push(valueMmol, valueMgdl);
+    }
+    if (dto.mealRelation !== undefined) { sets.push('meal_relation=?'); params.push(dto.mealRelation); }
+    if (dto.insulinDose !== undefined) { sets.push('insulin_dose=?'); params.push(dto.insulinDose); }
+    if (dto.insulinType !== undefined) { sets.push('insulin_type=?'); params.push(dto.insulinType); }
+    if (dto.notes !== undefined) { sets.push('notes=?'); params.push(dto.notes); }
+    if (dto.recordedAt !== undefined) { sets.push('recorded_at=?'); params.push(dto.recordedAt); }
+
+    if (sets.length > 0) {
+      sets.push('updated_at=?');
+      params.push(now, id);
+      await db.runAsync(`UPDATE glucose_readings SET ${sets.join(', ')} WHERE id=?`, params);
     }
     return this.findById(id);
   },

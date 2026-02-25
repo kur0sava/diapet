@@ -22,6 +22,7 @@ export const ru = {
     mmol_l: 'ммоль/л',
     units: 'ед.',
     kg: 'кг',
+    notFound: 'Не найдено',
     export: 'Экспорт',
     share: 'Поделиться',
   },
@@ -186,7 +187,7 @@ export const ru = {
   symptoms: {
     title: 'Симптомы',
     addSymptom: 'Добавить симптом',
-    editSymptom: 'Редактировать',
+    editSymptom: 'Редактировать симптом',
     selectSymptoms: 'Выберите симптомы',
     photo: 'Добавить фото',
     photos: 'фото',

@@ -3,18 +3,32 @@ import { CREATE_TABLES_SQL, DB_NAME } from './schema';
 import { runMigrations } from './migrations';
 
 let db: SQLite.SQLiteDatabase | null = null;
+let dbInitPromise: Promise<SQLite.SQLiteDatabase> | null = null;
 
 export async function getDatabase(): Promise<SQLite.SQLiteDatabase> {
   if (db) return db;
-  db = await SQLite.openDatabaseAsync(DB_NAME);
-  await initializeDatabase(db);
-  return db;
+  if (dbInitPromise) return dbInitPromise;
+  dbInitPromise = (async () => {
+    const database = await SQLite.openDatabaseAsync(DB_NAME);
+    await initializeDatabase(database);
+    db = database;
+    return database;
+  })();
+  try {
+    return await dbInitPromise;
+  } catch (e) {
+    dbInitPromise = null;
+    throw e;
+  }
 }
 
 async function initializeDatabase(database: SQLite.SQLiteDatabase): Promise<void> {
   // Check if this is a fresh install (user_version == 0)
   const result = await database.getFirstAsync<{ user_version: number }>('PRAGMA user_version');
   const isFreshInstall = (result?.user_version ?? 0) === 0;
+
+  // Enable foreign keys (must be separate statement, not in batch)
+  await database.runAsync('PRAGMA foreign_keys = ON');
 
   // Create initial schema tables
   await database.execAsync(CREATE_TABLES_SQL);

@@ -38,16 +38,25 @@ export const petRepository = {
   async update(id: string, dto: UpdatePetDTO): Promise<Pet | null> {
     const db = await getDatabase();
     const now = new Date().toISOString();
-    await db.runAsync(
-      `UPDATE pets SET name=COALESCE(?,name), breed=COALESCE(?,breed), gender=COALESCE(?,gender),
-       birth_year=COALESCE(?,birth_year), weight_kg=COALESCE(?,weight_kg),
-       diagnosis_date=COALESCE(?,diagnosis_date), diabetes_type=COALESCE(?,diabetes_type),
-       insulin_type=COALESCE(?,insulin_type), photo_uri=COALESCE(?,photo_uri), updated_at=?
-       WHERE id=?`,
-      [dto.name ?? null, dto.breed ?? null, dto.gender ?? null, dto.birthYear ?? null,
-       dto.weightKg ?? null, dto.diagnosisDate ?? null, dto.diabetesType ?? null,
-       dto.insulinType ?? null, dto.photoUri ?? null, now, id]
-    );
+    const sets: string[] = [];
+    const params: any[] = [];
+    const fields: Array<[string, keyof UpdatePetDTO]> = [
+      ['name', 'name'], ['breed', 'breed'], ['gender', 'gender'],
+      ['birth_year', 'birthYear'], ['weight_kg', 'weightKg'],
+      ['diagnosis_date', 'diagnosisDate'], ['diabetes_type', 'diabetesType'],
+      ['insulin_type', 'insulinType'], ['photo_uri', 'photoUri'],
+    ];
+    for (const [col, key] of fields) {
+      if (key in dto) {
+        sets.push(`${col}=?`);
+        params.push(dto[key] ?? null);
+      }
+    }
+    if (sets.length > 0) {
+      sets.push('updated_at=?');
+      params.push(now, id);
+      await db.runAsync(`UPDATE pets SET ${sets.join(', ')} WHERE id=?`, params);
+    }
     return this.findById(id);
   },
 
