@@ -1,10 +1,10 @@
 import { Platform } from 'react-native';
 
 export const FontFamily = {
-  regular: Platform.OS === 'ios' ? 'System' : 'Roboto',
-  medium: Platform.OS === 'ios' ? 'System' : 'Roboto',
-  semibold: Platform.OS === 'ios' ? 'System' : 'Roboto',
-  bold: Platform.OS === 'ios' ? 'System' : 'Roboto',
+  regular: 'Inter_400Regular',
+  medium: 'Inter_500Medium',
+  semibold: 'Inter_600SemiBold',
+  bold: 'Inter_700Bold',
   mono: Platform.OS === 'ios' ? 'Courier' : 'monospace',
 };
 

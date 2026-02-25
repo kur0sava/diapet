@@ -7,6 +7,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '@shared/theme';
 import { useTranslation } from 'react-i18next';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import Animated, { useAnimatedStyle, withRepeat, withSequence, withTiming } from 'react-native-reanimated';
 import { MainTabParamList } from './types';
 
 // Screens
@@ -52,6 +53,7 @@ function HomeStackNavigator() {
         headerStyle: { backgroundColor: theme.colors.header },
         headerTintColor: theme.colors.text,
         headerShadowVisible: false,
+        animation: 'slide_from_right',
       }}
     >
       <HomeStack.Screen name="Dashboard" component={DashboardScreen} options={{ headerShown: false }} />
@@ -73,6 +75,7 @@ function GlucoseStackNavigator() {
         headerStyle: { backgroundColor: theme.colors.header },
         headerTintColor: theme.colors.text,
         headerShadowVisible: false,
+        animation: 'slide_from_right',
       }}
     >
       <GlucoseStack.Screen name="GlucoseList" component={GlucoseListScreen} options={{ headerShown: false }} />
@@ -89,6 +92,7 @@ function SymptomsStackNavigator() {
         headerStyle: { backgroundColor: theme.colors.header },
         headerTintColor: theme.colors.text,
         headerShadowVisible: false,
+        animation: 'slide_from_right',
       }}
     >
       <SymptomsStack.Screen name="SymptomsList" component={SymptomsListScreen} options={{ headerShown: false }} />
@@ -106,6 +110,7 @@ function EncyclopediaStackNavigator() {
         headerStyle: { backgroundColor: theme.colors.header },
         headerTintColor: theme.colors.text,
         headerShadowVisible: false,
+        animation: 'slide_from_right',
       }}
     >
       <EncyclopediaStack.Screen name="ArticleList" component={ArticleListScreen} options={{ headerShown: false }} />
@@ -126,6 +131,7 @@ function MoreStackNavigator() {
         headerStyle: { backgroundColor: theme.colors.header },
         headerTintColor: theme.colors.text,
         headerShadowVisible: false,
+        animation: 'slide_from_right',
       }}
     >
       <MoreStack.Screen name="MoreMenu" component={MoreMenuScreen} options={{ headerShown: false }} />
@@ -144,14 +150,24 @@ function MoreStackNavigator() {
 function EmergencyButton() {
   const navigation = useRootNavigation();
   const insets = useSafeAreaInsets();
+
+  const pulseStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: withRepeat(withSequence(
+      withTiming(1.08, { duration: 1000 }),
+      withTiming(1.0, { duration: 1000 }),
+    ), -1, true) }],
+  }));
+
   return (
-    <TouchableOpacity
-      style={[styles.emergencyButton, { bottom: 64 + Math.max(insets.bottom, 8) }]}
-      onPress={() => navigation.navigate('Emergency')}
-      activeOpacity={0.8}
-    >
-      <Ionicons name="warning" size={20} color="#fff" />
-    </TouchableOpacity>
+    <Animated.View style={[styles.emergencyButtonWrapper, { bottom: 72 + Math.max(insets.bottom, 8) }, pulseStyle]}>
+      <TouchableOpacity
+        style={styles.emergencyButton}
+        onPress={() => navigation.navigate('Emergency')}
+        activeOpacity={0.8}
+      >
+        <Ionicons name="warning" size={20} color="#fff" />
+      </TouchableOpacity>
+    </Animated.View>
   );
 }
 
@@ -167,16 +183,21 @@ export default function MainNavigator() {
           headerShown: false,
           tabBarStyle: {
             backgroundColor: theme.colors.tabBar,
-            borderTopColor: theme.colors.border,
-            borderTopWidth: 1,
+            borderTopWidth: 0,
+            shadowColor: '#000',
+            shadowOffset: { width: 0, height: -2 },
+            shadowOpacity: 0.06,
+            shadowRadius: 8,
+            elevation: 8,
             paddingBottom: Math.max(insets.bottom, 8),
-            height: 56 + Math.max(insets.bottom, 8),
+            height: 64 + Math.max(insets.bottom, 8),
           },
           tabBarActiveTintColor: theme.colors.primary,
           tabBarInactiveTintColor: theme.colors.textTertiary,
           tabBarLabelStyle: {
             fontSize: 10,
             fontWeight: '500',
+            fontFamily: 'Inter_500Medium',
           },
           tabBarIcon: ({ focused, color, size }) => {
             const icons: Record<string, string> = {
@@ -186,7 +207,20 @@ export default function MainNavigator() {
               EncyclopediaTab: focused ? 'book' : 'book-outline',
               MoreTab: focused ? 'ellipsis-horizontal-circle' : 'ellipsis-horizontal-circle-outline',
             };
-            return <Ionicons name={icons[route.name] as any} size={size} color={color} />;
+            return (
+              <View style={{ alignItems: 'center' }}>
+                <Ionicons name={icons[route.name] as any} size={size} color={color} />
+                {focused && (
+                  <View style={{
+                    width: 4,
+                    height: 4,
+                    borderRadius: 2,
+                    backgroundColor: theme.colors.primary,
+                    marginTop: 3,
+                  }} />
+                )}
+              </View>
+            );
           },
         })}
       >
@@ -202,10 +236,13 @@ export default function MainNavigator() {
 }
 
 const styles = StyleSheet.create({
-  emergencyButton: {
+  emergencyButtonWrapper: {
     position: 'absolute',
-    bottom: 70, // overridden inline with insets
+    bottom: 80,
     right: 20,
+    zIndex: 1000,
+  },
+  emergencyButton: {
     width: 48,
     height: 48,
     borderRadius: 24,
@@ -217,6 +254,5 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.4,
     shadowRadius: 8,
     elevation: 8,
-    zIndex: 1000,
   },
 });

@@ -1,16 +1,18 @@
 import React from 'react';
 import { TouchableOpacity, Text, StyleSheet, View } from 'react-native';
 import { useTheme } from '@shared/theme';
+import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
 
 interface Props {
-  icon: string;
+  iconName: keyof typeof Ionicons.glyphMap;
+  iconColor: string;
   label: string;
   color: string;
   onPress: () => void;
 }
 
-export function QuickActionButton({ icon, label, color, onPress }: Props) {
+export function QuickActionButton({ iconName, iconColor, label, color, onPress }: Props) {
   const { theme } = useTheme();
   return (
     <TouchableOpacity
@@ -19,9 +21,9 @@ export function QuickActionButton({ icon, label, color, onPress }: Props) {
       activeOpacity={0.8}
     >
       <View style={[styles.iconContainer, { backgroundColor: `${color}20` }]}>
-        <Text style={styles.icon}>{icon}</Text>
+        <Ionicons name={iconName} size={24} color={iconColor} />
       </View>
-      <Text style={[styles.label, { color: theme.colors.text }]} numberOfLines={2}>{label}</Text>
+      <Text style={[styles.label, { color: theme.colors.text, fontFamily: theme.fonts.semibold }]} numberOfLines={2}>{label}</Text>
     </TouchableOpacity>
   );
 }
@@ -29,6 +31,5 @@ export function QuickActionButton({ icon, label, color, onPress }: Props) {
 const styles = StyleSheet.create({
   btn: { width: '47%', padding: 16, alignItems: 'center', gap: 10 },
   iconContainer: { width: 48, height: 48, borderRadius: 24, alignItems: 'center', justifyContent: 'center' },
-  icon: { fontSize: 24 },
-  label: { fontSize: 13, fontWeight: '600', textAlign: 'center' },
+  label: { fontSize: 13, textAlign: 'center' },
 });

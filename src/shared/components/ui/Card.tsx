@@ -7,9 +7,10 @@ interface CardProps {
   style?: StyleProp<ViewStyle>;
   padding?: number;
   shadow?: boolean;
+  bordered?: boolean;
 }
 
-export function Card({ children, style, padding = 16, shadow = true }: CardProps) {
+export function Card({ children, style, padding = 16, shadow = true, bordered = true }: CardProps) {
   const { theme } = useTheme();
 
   return (
@@ -21,6 +22,7 @@ export function Card({ children, style, padding = 16, shadow = true }: CardProps
           borderRadius: theme.borderRadius.xl,
           padding,
           ...(shadow ? theme.shadows.md : {}),
+          ...(bordered ? { borderWidth: 1, borderColor: theme.colors.border } : {}),
         },
         style,
       ]}

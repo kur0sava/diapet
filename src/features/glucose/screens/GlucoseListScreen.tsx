@@ -14,7 +14,8 @@ import { usePetStore } from '@shared/stores/petStore';
 import { GlucoseReading, getGlucoseColor, MealRelation } from '../types';
 import { GlucoseFilter } from '@storage/domain/types';
 import { formatDateTime } from '@shared/utils/dateUtils';
-import { EmptyState, Card } from '@shared/components/ui';
+import { EmptyState, Card, AnimatedListItem } from '@shared/components/ui';
+import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { storage, StorageKeys } from '@storage/mmkv/storage';
 import { generateVetReportPdf } from '@shared/utils/pdfExport';
@@ -212,37 +213,42 @@ export default function GlucoseListScreen() {
     }
   }, [activePet, readings, t]);
 
-  const renderReading = useCallback(({ item }: { item: GlucoseReading }) => {
+  const renderReading = useCallback(({ item, index }: { item: GlucoseReading; index: number }) => {
     const displayValue = unit === 'mmol/L' ? `${item.valueMmol.toFixed(1)}` : `${item.valueMgdl}`;
     const color = getGlucoseColor(item.valueMmol);
 
     return (
-      <TouchableOpacity
-        onPress={() => navigation.navigate('LogGlucose', { editId: item.id })}
-        onLongPress={() => handleDelete(item.id)}
-        activeOpacity={0.8}
-      >
-        <Card style={styles.readingCard} shadow>
-          <View style={[styles.colorBar, { backgroundColor: color }]} />
-          <View style={styles.readingContent}>
-            <View>
-              <Text style={[styles.readingValue, { color: theme.colors.text }]}>
-                {displayValue} <Text style={{ fontSize: 14, color: theme.colors.textSecondary }}>{unit}</Text>
-              </Text>
-              <Text style={[styles.readingTime, { color: theme.colors.textSecondary }]}>
-                {formatDateTime(item.recordedAt)}
-                {item.mealRelation !== 'unspecified' ? ` · ${mealLabels[item.mealRelation]}` : ''}
-              </Text>
-              {item.insulinDose && (
-                <Text style={[styles.readingInsulin, { color: theme.colors.textTertiary }]}>
-                  💉 {item.insulinDose} ед. {item.insulinType ?? ''}
+      <AnimatedListItem index={index}>
+        <TouchableOpacity
+          onPress={() => navigation.navigate('LogGlucose', { editId: item.id })}
+          onLongPress={() => handleDelete(item.id)}
+          activeOpacity={0.8}
+        >
+          <Card style={styles.readingCard} shadow>
+            <View style={[styles.colorBar, { backgroundColor: color }]} />
+            <View style={styles.readingContent}>
+              <View>
+                <Text style={[styles.readingValue, { color: theme.colors.text, fontFamily: theme.fonts.bold }]}>
+                  {displayValue} <Text style={{ fontSize: 14, color: theme.colors.textSecondary, fontFamily: theme.fonts.regular }}>{unit}</Text>
                 </Text>
-              )}
+                <Text style={[styles.readingTime, { color: theme.colors.textSecondary, fontFamily: theme.fonts.regular }]}>
+                  {formatDateTime(item.recordedAt)}
+                  {item.mealRelation !== 'unspecified' ? ` · ${mealLabels[item.mealRelation]}` : ''}
+                </Text>
+                {item.insulinDose && (
+                  <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 4, gap: 4 }}>
+                    <Ionicons name="medkit-outline" size={12} color={theme.colors.textTertiary} />
+                    <Text style={[styles.readingInsulin, { color: theme.colors.textTertiary, fontFamily: theme.fonts.regular }]}>
+                      {item.insulinDose} ед. {item.insulinType ?? ''}
+                    </Text>
+                  </View>
+                )}
+              </View>
+              <Ionicons name="chevron-forward" size={16} color={theme.colors.textTertiary} />
             </View>
-            <Ionicons name="chevron-forward" size={16} color={theme.colors.textTertiary} />
-          </View>
-        </Card>
-      </TouchableOpacity>
+          </Card>
+        </TouchableOpacity>
+      </AnimatedListItem>
     );
   }, [unit, theme, navigation, handleDelete, mealLabels]);
 
@@ -430,7 +436,8 @@ export default function GlucoseListScreen() {
         }
         ListEmptyComponent={
           <EmptyState
-            icon="💧"
+            iconName="water-outline"
+            iconColor={theme.colors.primary}
             title={t('glucose.title')}
             subtitle={t('glucose.noReadings')}
             actionLabel={t('glucose.addReading')}
@@ -457,11 +464,17 @@ export default function GlucoseListScreen() {
 
       {/* FAB */}
       <TouchableOpacity
-        style={[styles.fab, { backgroundColor: theme.colors.primary }]}
         onPress={() => navigation.navigate('LogGlucose', {})}
         activeOpacity={0.8}
       >
-        <Text style={styles.fabIcon}>+</Text>
+        <LinearGradient
+          colors={theme.gradients.primary}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          style={[styles.fab, theme.shadows.primarySm]}
+        >
+          <Ionicons name="add" size={28} color="#fff" />
+        </LinearGradient>
       </TouchableOpacity>
     </SafeAreaView>
   );
@@ -491,13 +504,12 @@ const styles = StyleSheet.create({
   statLabel: { fontSize: 11, marginTop: 2 },
   list: { padding: 16, gap: 8, paddingBottom: 100 },
   readingCard: { padding: 0, flexDirection: 'row', overflow: 'hidden' },
-  colorBar: { width: 4 },
+  colorBar: { width: 5, borderTopLeftRadius: 16, borderBottomLeftRadius: 16 },
   readingContent: { flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', padding: 14 },
   readingValue: { fontSize: 20, fontWeight: '700' },
   readingTime: { fontSize: 13, marginTop: 2 },
   readingInsulin: { fontSize: 12, marginTop: 4 },
-  fab: { position: 'absolute', bottom: 24, right: 20, width: 56, height: 56, borderRadius: 28, alignItems: 'center', justifyContent: 'center', elevation: 6, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.2, shadowRadius: 4 },
+  fab: { position: 'absolute', bottom: 24, right: 20, width: 56, height: 56, borderRadius: 28, alignItems: 'center', justifyContent: 'center' },
   fabExport: { position: 'absolute', bottom: 90, right: 20, width: 48, height: 48, borderRadius: 24, alignItems: 'center', justifyContent: 'center', elevation: 4, shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.15, shadowRadius: 3, borderWidth: 1.5 },
-  fabIcon: { color: '#fff', fontSize: 28, fontWeight: '300' },
   loadingFooter: { paddingVertical: 16 },
 });

@@ -24,6 +24,17 @@ export const Colors = {
   glucoseHigh: '#FF9500',
   glucoseVeryHigh: '#FF3B30',
 
+  // Gradients
+  gradients: {
+    primary: ['#4F8EF7', '#6C63FF'] as readonly [string, string],
+    secondary: ['#7C5CBF', '#9B6FE3'] as readonly [string, string],
+    success: ['#34C759', '#30D158'] as readonly [string, string],
+    danger: ['#FF3B30', '#FF6259'] as readonly [string, string],
+    warm: ['#FF9500', '#FFB340'] as readonly [string, string],
+    header: ['#4F8EF7', '#6366F1'] as readonly [string, string],
+    headerDark: ['#1C1C2E', '#2D2D44'] as readonly [string, string],
+  },
+
   // Light theme
   light: {
     background: '#F8F9FA',

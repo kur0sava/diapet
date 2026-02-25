@@ -9,6 +9,7 @@ import {
   StatusBar,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { LinearGradient } from 'expo-linear-gradient';
 import { useTranslation } from 'react-i18next';
 import { useHomeNavigation, useRootNavigation } from '@navigation/hooks';
 import { useTheme } from '@shared/theme';
@@ -124,52 +125,62 @@ export default function DashboardScreen() {
 
   const quickActions = [
     {
-      icon: '💧',
+      iconName: 'water' as const,
+      iconColor: theme.colors.primary,
       label: t('dashboard.logGlucose'),
       color: theme.colors.primary,
       onPress: () => navigation.navigate('LogGlucose', {}),
     },
     {
-      icon: '💉',
+      iconName: 'medkit' as const,
+      iconColor: theme.colors.secondary,
       label: t('dashboard.logInjection'),
       color: theme.colors.secondary,
       onPress: () => navigation.navigate('LogInjection'),
     },
     {
-      icon: '🍽️',
+      iconName: 'restaurant' as const,
+      iconColor: theme.colors.success,
       label: t('dashboard.logFeeding'),
       color: theme.colors.success,
       onPress: () => navigation.navigate('LogFeeding'),
     },
     {
-      icon: '🐾',
+      iconName: 'paw' as const,
+      iconColor: theme.colors.warning,
       label: t('dashboard.logSymptom'),
       color: theme.colors.warning,
       onPress: () => navigation.navigate('AddSymptom', {}),
     },
   ];
 
+  const gradientColors = theme.isDark ? theme.gradients.headerDark : theme.gradients.header;
+
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.background }]}>
-      <StatusBar barStyle={theme.isDark ? 'light-content' : 'dark-content'} />
+      <StatusBar barStyle="light-content" />
 
-      {/* Header */}
-      <View style={[styles.header, { backgroundColor: theme.colors.background }]}>
+      {/* Gradient Header */}
+      <LinearGradient
+        colors={[...gradientColors] as [string, string]}
+        style={styles.header}
+      >
         <View>
-          <Text style={[styles.greeting, { color: theme.colors.textSecondary }]}>
+          <Text style={[styles.greeting, { color: 'rgba(255,255,255,0.8)', fontFamily: theme.fonts.medium }]}>
             {t('dashboard.title')}
           </Text>
-          <Text style={[styles.petName, { color: theme.colors.text }]}>
-            {activePet?.name ?? 'DiaPet'} 🐱
+          <Text style={[styles.petName, { color: '#FFFFFF', fontFamily: theme.fonts.bold }]}>
+            {activePet?.name ?? 'DiaPet'}
           </Text>
         </View>
         <TouchableOpacity
           onPress={() => rootNavigation.navigate('Emergency')}
-          style={[styles.sosButton, { backgroundColor: theme.colors.dangerLight }]}
+          style={[styles.sosButton, { backgroundColor: 'rgba(255,255,255,0.2)' }]}
         >
-          <Text style={[styles.sosText, { color: theme.colors.danger }]}>SOS</Text>
+          <Ionicons name="warning" size={16} color="#FFFFFF" style={{ marginRight: 4 }} />
+          <Text style={[styles.sosText, { color: '#FFFFFF', fontFamily: theme.fonts.bold }]}>SOS</Text>
         </TouchableOpacity>
-      </View>
+      </LinearGradient>
 
       <ScrollView
         showsVerticalScrollIndicator={false}
@@ -179,24 +190,27 @@ export default function DashboardScreen() {
         {/* Status Cards Row */}
         <View style={styles.statusRow}>
           <StatusCard
-            icon="💧"
+            iconName="water-outline"
+            iconColor={latestGlucose ? (latestGlucose.valueMmol < 4 || latestGlucose.valueMmol > 9 ? theme.colors.danger : theme.colors.success) : theme.colors.textTertiary}
             label={t('dashboard.lastGlucose')}
-            value={latestGlucose ? `${latestGlucose.valueMmol.toFixed(1)}${trendArrow}` : '—'}
+            value={latestGlucose ? `${latestGlucose.valueMmol.toFixed(1)}${trendArrow}` : '\u2014'}
             unit={t('common.mmol_l')}
             color={latestGlucose ? (latestGlucose.valueMmol < 4 || latestGlucose.valueMmol > 9 ? theme.colors.danger : theme.colors.success) : theme.colors.textTertiary}
             subtitle={latestGlucose ? formatRelative(latestGlucose.recordedAt) : undefined}
           />
           <StatusCard
-            icon="💉"
+            iconName="medkit-outline"
+            iconColor={nextInjectionMinutes !== null && nextInjectionMinutes < 30 ? theme.colors.warning : theme.colors.primary}
             label={t('dashboard.nextInjection')}
-            value={nextInjection ? nextInjection.timeOfDay : '—'}
+            value={nextInjection ? nextInjection.timeOfDay : '\u2014'}
             color={nextInjectionMinutes !== null && nextInjectionMinutes < 30 ? theme.colors.warning : theme.colors.primary}
             subtitle={nextInjectionMinutes !== null ? t('dashboard.inTime', { time: formatCountdown(nextInjectionMinutes) }) : undefined}
           />
           <StatusCard
-            icon="🍽️"
+            iconName="restaurant-outline"
+            iconColor={nextFeedingMinutes !== null && nextFeedingMinutes < 30 ? theme.colors.warning : theme.colors.success}
             label={t('dashboard.nextFeeding')}
-            value={nextFeeding ? nextFeeding.timeOfDay : '—'}
+            value={nextFeeding ? nextFeeding.timeOfDay : '\u2014'}
             color={nextFeedingMinutes !== null && nextFeedingMinutes < 30 ? theme.colors.warning : theme.colors.success}
             subtitle={nextFeedingMinutes !== null ? t('dashboard.inTime', { time: formatCountdown(nextFeedingMinutes) }) : undefined}
           />
@@ -205,7 +219,7 @@ export default function DashboardScreen() {
         {/* Time Since Last Glucose & Trend */}
         <View style={styles.timeSinceRow}>
           <View style={[styles.timeSinceBadge, { backgroundColor: glucoseTimeSinceColor + '20' }]}>
-            <Text style={[styles.timeSinceText, { color: glucoseTimeSinceColor }]}>
+            <Text style={[styles.timeSinceText, { color: glucoseTimeSinceColor, fontFamily: theme.fonts.semibold }]}>
               {glucoseHours !== null
                 ? t('dashboard.timeSinceGlucose', { hours: glucoseHours })
                 : t('dashboard.notMeasured')}
@@ -213,7 +227,7 @@ export default function DashboardScreen() {
           </View>
           {trend && (
             <View style={[styles.trendBadge, { backgroundColor: theme.colors.primaryLight ?? theme.colors.primary + '20' }]}>
-              <Text style={[styles.trendText, { color: theme.colors.primary }]}>
+              <Text style={[styles.trendText, { color: theme.colors.primary, fontFamily: theme.fonts.semibold }]}>
                 {getTrendArrow(trend)} {trendLabel}
               </Text>
             </View>
@@ -222,7 +236,7 @@ export default function DashboardScreen() {
 
         {/* Quick Actions */}
         <View style={styles.section}>
-          <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>{t('dashboard.quickActions')}</Text>
+          <Text style={[styles.sectionTitle, { color: theme.colors.text, fontFamily: theme.fonts.bold }]}>{t('dashboard.quickActions')}</Text>
           <View style={styles.actionsGrid}>
             {quickActions.map((action, i) => (
               <QuickActionButton key={action.label} {...action} />
@@ -232,7 +246,7 @@ export default function DashboardScreen() {
 
         {/* Glucose Chart */}
         <View style={styles.section}>
-          <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>
+          <Text style={[styles.sectionTitle, { color: theme.colors.text, fontFamily: theme.fonts.bold }]}>
             {t('dashboard.glucoseChart')}
           </Text>
           <Card>
@@ -252,16 +266,16 @@ export default function DashboardScreen() {
         {lastInjection && (
           <View style={styles.section}>
             <View style={styles.sectionHeader}>
-              <Text style={[styles.sectionTitle, { color: theme.colors.text, marginBottom: 0 }]}>{t('dashboard.lastInjection')}</Text>
+              <Text style={[styles.sectionTitle, { color: theme.colors.text, marginBottom: 0, fontFamily: theme.fonts.bold }]}>{t('dashboard.lastInjection')}</Text>
               <TouchableOpacity onPress={() => navigation.navigate('InjectionList')}>
-                <Text style={[styles.sectionLink, { color: theme.colors.primary }]}>{t('injection.history')}</Text>
+                <Text style={[styles.sectionLink, { color: theme.colors.primary, fontFamily: theme.fonts.semibold }]}>{t('injection.history')}</Text>
               </TouchableOpacity>
             </View>
             <Card>
               <View style={styles.injectionRow}>
-                <Text style={{ fontSize: 28 }}>💉</Text>
+                <Ionicons name="medkit" size={28} color={theme.colors.secondary} />
                 <View style={{ flex: 1 }}>
-                  <Text style={[styles.injectionDose, { color: theme.colors.text }]}>
+                  <Text style={[styles.injectionDose, { color: theme.colors.text, fontFamily: theme.fonts.semibold }]}>
                     {lastInjection.doseUnits} {t('common.units')} · {lastInjection.insulinType}
                   </Text>
                   <Text style={[styles.injectionTime, { color: theme.colors.textSecondary }]}>
@@ -280,16 +294,16 @@ export default function DashboardScreen() {
               style={[styles.historyLink, { backgroundColor: theme.colors.card, borderColor: theme.colors.border }]}
               onPress={() => navigation.navigate('InjectionList')}
             >
-              <Text style={{ fontSize: 20 }}>💉</Text>
-              <Text style={[styles.historyLinkText, { color: theme.colors.text }]}>{t('injection.history')}</Text>
+              <Ionicons name="medkit-outline" size={20} color={theme.colors.secondary} />
+              <Text style={[styles.historyLinkText, { color: theme.colors.text, fontFamily: theme.fonts.semibold }]}>{t('injection.history')}</Text>
               <Ionicons name="chevron-forward" size={16} color={theme.colors.textTertiary} />
             </TouchableOpacity>
             <TouchableOpacity
               style={[styles.historyLink, { backgroundColor: theme.colors.card, borderColor: theme.colors.border }]}
               onPress={() => navigation.navigate('FeedingList')}
             >
-              <Text style={{ fontSize: 20 }}>🍽️</Text>
-              <Text style={[styles.historyLinkText, { color: theme.colors.text }]}>{t('feeding.history')}</Text>
+              <Ionicons name="restaurant-outline" size={20} color={theme.colors.success} />
+              <Text style={[styles.historyLinkText, { color: theme.colors.text, fontFamily: theme.fonts.semibold }]}>{t('feeding.history')}</Text>
               <Ionicons name="chevron-forward" size={16} color={theme.colors.textTertiary} />
             </TouchableOpacity>
           </View>
@@ -307,29 +321,30 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 20,
     paddingVertical: 16,
+    paddingTop: 24,
   },
-  greeting: { fontSize: 13, fontWeight: '500', marginBottom: 2 },
-  petName: { fontSize: 24, fontWeight: '800' },
-  sosButton: { paddingHorizontal: 16, paddingVertical: 8, borderRadius: 20 },
-  sosText: { fontWeight: '800', fontSize: 14 },
+  greeting: { fontSize: 13, marginBottom: 2 },
+  petName: { fontSize: 24 },
+  sosButton: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 16, paddingVertical: 8, borderRadius: 20 },
+  sosText: { fontSize: 14 },
   scrollContent: { paddingBottom: 100 },
-  statusRow: { flexDirection: 'row', paddingHorizontal: 16, gap: 10, marginBottom: 8 },
+  statusRow: { flexDirection: 'row', paddingHorizontal: 16, gap: 10, marginBottom: 8, marginTop: 12 },
   timeSinceRow: { flexDirection: 'row', paddingHorizontal: 16, gap: 8, marginBottom: 4, flexWrap: 'wrap' },
   timeSinceBadge: { paddingHorizontal: 12, paddingVertical: 6, borderRadius: 12 },
-  timeSinceText: { fontSize: 12, fontWeight: '600' },
+  timeSinceText: { fontSize: 12 },
   trendBadge: { paddingHorizontal: 12, paddingVertical: 6, borderRadius: 12 },
-  trendText: { fontSize: 12, fontWeight: '600' },
+  trendText: { fontSize: 12 },
   section: { paddingHorizontal: 20, marginTop: 20 },
-  sectionTitle: { fontSize: 17, fontWeight: '700', marginBottom: 12 },
+  sectionTitle: { fontSize: 17, marginBottom: 12 },
   actionsGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 12 },
   noData: { padding: 32, alignItems: 'center' },
   noDataText: { fontSize: 14 },
   sectionHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 },
-  sectionLink: { fontSize: 13, fontWeight: '600' },
+  sectionLink: { fontSize: 13 },
   injectionRow: { flexDirection: 'row', alignItems: 'center', gap: 12 },
-  injectionDose: { fontSize: 16, fontWeight: '600' },
+  injectionDose: { fontSize: 16 },
   injectionTime: { fontSize: 13, marginTop: 2 },
   historyLinksRow: { flexDirection: 'row', gap: 12 },
   historyLink: { flex: 1, flexDirection: 'row', alignItems: 'center', gap: 8, padding: 14, borderRadius: 12, borderWidth: 1 },
-  historyLinkText: { flex: 1, fontSize: 13, fontWeight: '600' },
+  historyLinkText: { flex: 1, fontSize: 13 },
 });

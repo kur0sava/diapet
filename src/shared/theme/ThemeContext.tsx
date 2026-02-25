@@ -27,6 +27,7 @@ export type Theme = {
     glucoseHigh: string;
     glucoseVeryHigh: string;
   };
+  gradients: typeof Colors.gradients;
   fonts: typeof FontFamily;
   fontWeights: typeof FontWeight;
   fontSizes: typeof FontSize;
@@ -60,6 +61,7 @@ const buildTheme = (isDark: boolean): Theme => {
       glucoseHigh: Colors.glucoseHigh,
       glucoseVeryHigh: Colors.glucoseVeryHigh,
     },
+    gradients: Colors.gradients,
     fonts: FontFamily,
     fontWeights: FontWeight,
     fontSizes: FontSize,

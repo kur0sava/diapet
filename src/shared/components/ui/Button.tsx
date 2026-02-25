@@ -2,12 +2,15 @@ import React from 'react';
 import {
   TouchableOpacity,
   Text,
+  View,
   StyleSheet,
   ActivityIndicator,
   ViewStyle,
   TextStyle,
   StyleProp,
 } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
+import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '@shared/theme';
 import * as Haptics from 'expo-haptics';
 
@@ -25,6 +28,8 @@ interface ButtonProps {
   style?: StyleProp<ViewStyle>;
   textStyle?: StyleProp<TextStyle>;
   haptic?: boolean;
+  icon?: string;
+  iconPosition?: 'left' | 'right';
 }
 
 export function Button({
@@ -38,6 +43,8 @@ export function Button({
   style,
   textStyle,
   haptic = true,
+  icon,
+  iconPosition = 'left',
 }: ButtonProps) {
   const { theme } = useTheme();
 
@@ -49,7 +56,7 @@ export function Button({
   const getBackgroundColor = () => {
     if (disabled) return theme.colors.border;
     switch (variant) {
-      case 'primary': return theme.colors.primary;
+      case 'primary': return 'transparent'; // handled by gradient
       case 'secondary': return theme.colors.secondary;
       case 'outline': return 'transparent';
       case 'ghost': return 'transparent';
@@ -90,42 +97,81 @@ export function Button({
     }
   };
 
+  const iconSize = size === 'sm' ? 14 : size === 'lg' ? 20 : 16;
+  const textColor = getTextColor();
+
+  const content = (
+    <View style={styles.contentRow}>
+      {loading ? (
+        <ActivityIndicator size="small" color={textColor} />
+      ) : (
+        <>
+          {icon && iconPosition === 'left' && (
+            <Ionicons name={icon as any} size={iconSize} color={textColor} style={{ marginRight: 6 }} />
+          )}
+          <Text
+            style={[
+              styles.text,
+              {
+                color: textColor,
+                fontSize: getFontSize(),
+                fontFamily: theme.fonts.semibold,
+                fontWeight: '600',
+              },
+              textStyle,
+            ]}
+          >
+            {title}
+          </Text>
+          {icon && iconPosition === 'right' && (
+            <Ionicons name={icon as any} size={iconSize} color={textColor} style={{ marginLeft: 6 }} />
+          )}
+        </>
+      )}
+    </View>
+  );
+
+  const buttonStyle: ViewStyle[] = [
+    styles.button,
+    getPadding(),
+    {
+      backgroundColor: getBackgroundColor(),
+      borderColor: getBorderColor(),
+      borderWidth: variant === 'outline' || variant === 'danger' ? 1.5 : 0,
+      borderRadius: theme.borderRadius.xl,
+      width: fullWidth ? '100%' : undefined,
+      opacity: disabled ? 0.6 : 1,
+    } as ViewStyle,
+  ];
+
+  if (variant === 'primary' && !disabled) {
+    return (
+      <TouchableOpacity
+        onPress={handlePress}
+        disabled={disabled || loading}
+        activeOpacity={0.8}
+        style={[{ width: fullWidth ? '100%' : undefined, opacity: disabled ? 0.6 : 1 }, style]}
+      >
+        <LinearGradient
+          colors={theme.gradients.primary}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 0 }}
+          style={[styles.button, getPadding(), { borderRadius: theme.borderRadius.xl }]}
+        >
+          {content}
+        </LinearGradient>
+      </TouchableOpacity>
+    );
+  }
+
   return (
     <TouchableOpacity
       onPress={handlePress}
       disabled={disabled || loading}
       activeOpacity={0.8}
-      style={[
-        styles.button,
-        getPadding(),
-        {
-          backgroundColor: getBackgroundColor(),
-          borderColor: getBorderColor(),
-          borderWidth: variant === 'outline' || variant === 'danger' ? 1.5 : 0,
-          borderRadius: theme.borderRadius.xl,
-          width: fullWidth ? '100%' : undefined,
-          opacity: disabled ? 0.6 : 1,
-        },
-        style,
-      ]}
+      style={[...buttonStyle, style as ViewStyle]}
     >
-      {loading ? (
-        <ActivityIndicator size="small" color={getTextColor()} />
-      ) : (
-        <Text
-          style={[
-            styles.text,
-            {
-              color: getTextColor(),
-              fontSize: getFontSize(),
-              fontWeight: '600',
-            },
-            textStyle,
-          ]}
-        >
-          {title}
-        </Text>
-      )}
+      {content}
     </TouchableOpacity>
   );
 }
@@ -135,6 +181,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     flexDirection: 'row',
+  },
+  contentRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   text: {
     textAlign: 'center',
