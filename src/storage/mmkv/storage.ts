@@ -9,6 +9,8 @@ let initialized = false;
 
 export function getStorage(): MMKV {
   if (!_storage) {
+    // Will be re-created with encryption in initStorage()
+    console.warn('MMKV accessed before initStorage — using unencrypted fallback');
     _storage = new MMKV({ id: 'diapet-storage' });
   }
   return _storage;
@@ -49,7 +51,11 @@ export async function initStorage(): Promise<void> {
 // Helper to store JSON objects
 export const storageUtils = {
   setObject: <T>(key: string, value: T): void => {
-    storage.set(key, JSON.stringify(value));
+    try {
+      storage.set(key, JSON.stringify(value));
+    } catch (e) {
+      console.error('Failed to serialize object for key:', key, e);
+    }
   },
   getObject: <T>(key: string): T | null => {
     const value = storage.getString(key);

@@ -135,7 +135,7 @@ export default function ArticleListScreen() {
         ListHeaderComponent={
           <TouchableOpacity
             style={[styles.feedGuideBanner, { backgroundColor: theme.colors.primary }]}
-            onPress={() => navigation.navigate('FeedGuide' as any)}
+            onPress={() => navigation.navigate('FeedGuide')}
             activeOpacity={0.8}
           >
             <View style={styles.feedGuideBannerIcon}>

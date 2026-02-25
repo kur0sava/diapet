@@ -496,6 +496,9 @@ export const ru = {
       morning: 'Утро',
       evening: 'Вечер',
       per100g: 'на 100 г',
+      protein: 'Белок',
+      fat: 'Жир',
+      carbs: 'Углев.',
       preparation: 'Приготовление',
       warnings: 'Внимание',
       frequency: {

@@ -44,7 +44,9 @@ export default function FeedGuideNaturalScreen() {
   const sections = useMemo(() => {
     const s: { key: string; title: string; data: Array<{ type: string; food?: NaturalFood }> }[] = [
       { key: 'info', title: '', data: [{ type: 'info' }] },
-      { key: 'foods', title: t('feedGuide.naturalFood'), data: filteredFoods.map(f => ({ type: 'food', food: f })) },
+      { key: 'foods', title: t('feedGuide.naturalFood'), data: filteredFoods.length > 0
+        ? filteredFoods.map(f => ({ type: 'food', food: f }))
+        : [{ type: 'empty' }] },
       { key: 'supplements', title: t('feedGuide.natural.supplements'), data: [{ type: 'supplements' }] },
       { key: 'transition', title: t('feedGuide.natural.transitionTips'), data: [{ type: 'transition' }] },
       { key: 'menu', title: t('feedGuide.natural.sampleMenu'), data: [{ type: 'menu' }] },
@@ -79,15 +81,15 @@ export default function FeedGuideNaturalScreen() {
         <View style={styles.macroRow}>
           <View style={styles.macroItem}>
             <Text style={[styles.macroValue, { color: theme.colors.text }]}>{food.proteinPer100g}g</Text>
-            <Text style={[styles.macroLabel, { color: theme.colors.textTertiary }]}>{t('feedGuide.proteinDM').split(' ')[0]}</Text>
+            <Text style={[styles.macroLabel, { color: theme.colors.textTertiary }]}>{t('feedGuide.natural.protein')}</Text>
           </View>
           <View style={styles.macroItem}>
             <Text style={[styles.macroValue, { color: theme.colors.text }]}>{food.fatPer100g}g</Text>
-            <Text style={[styles.macroLabel, { color: theme.colors.textTertiary }]}>{t('feedGuide.fatDM').split(' ')[0]}</Text>
+            <Text style={[styles.macroLabel, { color: theme.colors.textTertiary }]}>{t('feedGuide.natural.fat')}</Text>
           </View>
           <View style={styles.macroItem}>
             <Text style={[styles.macroValue, { color: theme.colors.text }]}>{food.carbsPer100g}g</Text>
-            <Text style={[styles.macroLabel, { color: theme.colors.textTertiary }]}>{t('feedGuide.carbsDM').split(' ')[0]}</Text>
+            <Text style={[styles.macroLabel, { color: theme.colors.textTertiary }]}>{t('feedGuide.natural.carbs')}</Text>
           </View>
           <View style={styles.macroItem}>
             <Text style={[styles.macroValue, { color: theme.colors.text }]}>{food.kcalPer100g}</Text>
@@ -158,6 +160,14 @@ export default function FeedGuideNaturalScreen() {
             </Text>
           </View>
         </View>
+      );
+    }
+
+    if (item.type === 'empty') {
+      return (
+        <Text style={{ textAlign: 'center', color: theme.colors.textSecondary, paddingVertical: 20, fontSize: 14 }}>
+          {t('feedGuide.noFoodsInRegion')}
+        </Text>
       );
     }
 

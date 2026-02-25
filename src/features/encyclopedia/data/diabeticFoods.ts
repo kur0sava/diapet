@@ -33,6 +33,8 @@ export type Region =
   | 'BR'    // Бразилия
   | 'GLOBAL'; // Глобально
 
+export const VALID_REGIONS: readonly Region[] = ['RU', 'EU', 'UK', 'US', 'DE', 'MX', 'JP', 'KR', 'BR', 'GLOBAL'];
+
 export interface DiabeticCatFood {
   id: string;
   brand: string;
@@ -208,7 +210,7 @@ export const PRESCRIPTION_FOODS: DiabeticCatFood[] = [
       BR: [],
     },
     prescriptionRequired: true,
-    notes: 'Менее подходит для диабета чем m/d — углеводы выше. Чаще назначают при ожирении + диабет.',
+    notes: '⚠️ Углеводы 34% — выше рекомендуемого для диабета (<12%). Менее подходит чем m/d. Чаще назначают при ожирении + диабет.',
   },
 
   // ── Purina ──

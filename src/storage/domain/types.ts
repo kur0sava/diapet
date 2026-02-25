@@ -16,6 +16,8 @@ export interface GlucoseFilter {
   dateTo?: string;
   levelMin?: number;
   levelMax?: number;
+  /** For disjoint level ranges (e.g. low + veryHigh) */
+  levelRanges?: Array<{ min?: number; max?: number }>;
   mealRelations?: MealRelation[];
 }
 

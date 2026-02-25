@@ -86,14 +86,15 @@ export async function runMigrations(db: SQLiteDatabase): Promise<void> {
   // Run outstanding migrations
   for (const migration of MIGRATIONS) {
     if (migration.version > currentVersion) {
-      // Migration logged only in __DEV__
       if (__DEV__) console.log(`Migration ${migration.version}: ${migration.name}`);
-      for (const sql of migration.up) {
-        await db.execAsync(sql);
-      }
-      if (migration.afterSql) {
-        await migration.afterSql(db);
-      }
+      await db.withTransactionAsync(async () => {
+        for (const sql of migration.up) {
+          await db.execAsync(sql);
+        }
+        if (migration.afterSql) {
+          await migration.afterSql(db);
+        }
+      });
       await db.execAsync(`PRAGMA user_version = ${migration.version}`);
     }
   }

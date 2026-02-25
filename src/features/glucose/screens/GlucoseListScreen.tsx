@@ -48,6 +48,7 @@ function isFilterActive(filters: GlucoseFilter): boolean {
     filters.dateTo ||
     filters.levelMin !== undefined ||
     filters.levelMax !== undefined ||
+    (filters.levelRanges && filters.levelRanges.length > 0) ||
     (filters.mealRelations && filters.mealRelations.length > 0)
   );
 }
@@ -55,7 +56,7 @@ function isFilterActive(filters: GlucoseFilter): boolean {
 function countActiveFilters(filters: GlucoseFilter): number {
   let count = 0;
   if (filters.dateFrom || filters.dateTo) count++;
-  if (filters.levelMin !== undefined || filters.levelMax !== undefined) count++;
+  if (filters.levelMin !== undefined || filters.levelMax !== undefined || (filters.levelRanges && filters.levelRanges.length > 0)) count++;
   if (filters.mealRelations && filters.mealRelations.length > 0) count++;
   return count;
 }
@@ -84,19 +85,7 @@ export default function GlucoseListScreen() {
     const f = { ...filters };
     if (selectedLevels.length > 0) {
       const presets = LEVEL_PRESETS.filter(p => selectedLevels.includes(p.key));
-      const mins = presets.map(p => p.min).filter((v): v is number => v !== undefined);
-      const maxes = presets.map(p => p.max).filter((v): v is number => v !== undefined);
-      // Use the broadest range that covers all selected presets
-      f.levelMin = mins.length > 0 ? Math.min(...mins) : undefined;
-      f.levelMax = maxes.length > 0 ? Math.max(...maxes) : undefined;
-      // If "low" is selected (no min), allow from 0
-      if (presets.some(p => p.min === undefined)) {
-        f.levelMin = undefined;
-      }
-      // If "veryHigh" is selected (no max), allow unlimited
-      if (presets.some(p => p.max === undefined)) {
-        f.levelMax = undefined;
-      }
+      f.levelRanges = presets.map(p => ({ min: p.min, max: p.max }));
     }
     return f;
   }, [filters, selectedLevels]);

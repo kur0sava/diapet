@@ -496,6 +496,9 @@ export const en = {
       morning: 'Morning',
       evening: 'Evening',
       per100g: 'per 100 g',
+      protein: 'Protein',
+      fat: 'Fat',
+      carbs: 'Carbs',
       preparation: 'Preparation',
       warnings: 'Warning',
       frequency: {

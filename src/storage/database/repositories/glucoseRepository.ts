@@ -65,13 +65,25 @@ export const glucoseRepository = {
       conditions.push('recorded_at <= ?');
       params.push(filters.dateTo);
     }
-    if (filters.levelMin !== undefined) {
-      conditions.push('value_mmol >= ?');
-      params.push(filters.levelMin);
-    }
-    if (filters.levelMax !== undefined) {
-      conditions.push('value_mmol <= ?');
-      params.push(filters.levelMax);
+    if (filters.levelRanges && filters.levelRanges.length > 0) {
+      // Support disjoint ranges (e.g. low + veryHigh)
+      const rangeConds: string[] = [];
+      for (const range of filters.levelRanges) {
+        const parts: string[] = [];
+        if (range.min !== undefined) { parts.push('value_mmol >= ?'); params.push(range.min); }
+        if (range.max !== undefined) { parts.push('value_mmol <= ?'); params.push(range.max); }
+        rangeConds.push(parts.length > 0 ? `(${parts.join(' AND ')})` : '1');
+      }
+      conditions.push(`(${rangeConds.join(' OR ')})`);
+    } else {
+      if (filters.levelMin !== undefined) {
+        conditions.push('value_mmol >= ?');
+        params.push(filters.levelMin);
+      }
+      if (filters.levelMax !== undefined) {
+        conditions.push('value_mmol <= ?');
+        params.push(filters.levelMax);
+      }
     }
     if (filters.mealRelations && filters.mealRelations.length > 0) {
       const placeholders = filters.mealRelations.map(() => '?').join(', ');

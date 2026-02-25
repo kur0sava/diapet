@@ -11,7 +11,7 @@ import { useTheme } from '@shared/theme';
 import { Ionicons } from '@expo/vector-icons';
 import {
   getPrescriptionFoods, getOtcFoods, getFoodsByCarbs,
-  getFoodVerdict, type Region, type DiabeticCatFood, type FoodType,
+  getFoodVerdict, VALID_REGIONS, type Region, type DiabeticCatFood, type FoodType,
 } from '../data/diabeticFoods';
 import { getStoresForRegion } from '../data/regionStores';
 import type { StoreEntry } from '../types';
@@ -36,7 +36,8 @@ export default function FeedGuideRegionScreen() {
   const navigation = useEncyclopediaNavigation();
   const { t, i18n } = useTranslation();
   const { theme } = useTheme();
-  const region = route.params.region as Region;
+  const rawRegion = route.params.region;
+  const region: Region = (VALID_REGIONS as readonly string[]).includes(rawRegion) ? rawRegion as Region : 'GLOBAL';
   const isRu = i18n.language === 'ru';
 
   const [filter, setFilter] = useState<FilterType>('all');

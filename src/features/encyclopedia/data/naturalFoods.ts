@@ -53,7 +53,7 @@ export const NATURAL_FEEDING_GUIDE: NaturalFeedingGuide = {
       proteinPer100g: 23,
       fatPer100g: 1.2,
       carbsPer100g: 0,
-      kcalPer100g: 110,
+      kcalPer100g: 165,
       suitability: 'excellent',
       frequency: 'daily_base',
       preparationTips: {
