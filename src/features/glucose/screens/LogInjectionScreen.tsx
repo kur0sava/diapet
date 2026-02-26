@@ -40,7 +40,6 @@ export default function LogInjectionScreen() {
       return;
     }
     setLoading(true);
-    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
     try {
       await injectionRepository.create({
         petId: activePet.id,
@@ -49,6 +48,7 @@ export default function LogInjectionScreen() {
         notes: notes || undefined,
       });
       await queryClient.invalidateQueries({ queryKey: ['injections'] });
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       navigation.goBack();
     } catch {
       Alert.alert(t('common.error'), t('injection.saveError'));

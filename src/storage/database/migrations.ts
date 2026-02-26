@@ -94,8 +94,8 @@ export async function runMigrations(db: SQLiteDatabase): Promise<void> {
         if (migration.afterSql) {
           await migration.afterSql(db);
         }
+        await db.execAsync(`PRAGMA user_version = ${migration.version}`);
       });
-      await db.execAsync(`PRAGMA user_version = ${migration.version}`);
     }
   }
 }

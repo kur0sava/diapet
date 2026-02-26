@@ -1,5 +1,5 @@
 import 'react-native-gesture-handler';
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { ActivityIndicator, View, StyleSheet } from 'react-native';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -68,9 +68,9 @@ export default function App() {
       });
   }, []);
 
-  const onLayoutReady = useCallback(async () => {
+  useEffect(() => {
     if (ready && fontsLoaded) {
-      await SplashScreen.hideAsync();
+      SplashScreen.hideAsync();
     }
   }, [ready, fontsLoaded]);
 
@@ -83,7 +83,7 @@ export default function App() {
   }
 
   return (
-    <View style={{ flex: 1 }} onLayout={onLayoutReady}>
+    <View style={{ flex: 1 }}>
       <QueryClientProvider client={queryClient}>
         <ErrorBoundary>
           <ThemeProvider>

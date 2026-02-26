@@ -8,12 +8,14 @@ import { storage, StorageKeys, storageUtils } from '@storage/mmkv/storage';
 import { changeLanguage } from '@shared/i18n';
 import { Card } from '@shared/components/ui';
 import { getDatabase } from '@storage/database';
+import { usePetStore } from '@shared/stores/petStore';
 
 export default function SettingsScreen() {
   const navigation = useMoreNavigation();
   const { t } = useTranslation();
   const { theme, colorScheme, setColorScheme } = useTheme();
 
+  const currentLanguage = storage.getString(StorageKeys.LANGUAGE) ?? 'ru';
   const [glucoseUnit, setGlucoseUnit] = useState(
     () => storage.getString(StorageKeys.GLUCOSE_UNIT) ?? 'mmol/L'
   );
@@ -24,8 +26,12 @@ export default function SettingsScreen() {
       { text: t('common.delete'), style: 'destructive', onPress: async () => {
         try {
           const db = await getDatabase();
-          await db.execAsync('DELETE FROM symptom_entries; DELETE FROM glucose_readings; DELETE FROM injection_logs; DELETE FROM feeding_logs; DELETE FROM expense_entries; DELETE FROM schedule_entries; DELETE FROM pets;');
+          await db.withTransactionAsync(async () => {
+            await db.execAsync('DELETE FROM symptom_entry_types; DELETE FROM symptoms; DELETE FROM glucose_readings; DELETE FROM injection_logs; DELETE FROM feedings; DELETE FROM expenses; DELETE FROM schedule_entries; DELETE FROM pets;');
+          });
           storageUtils.clear();
+          usePetStore.getState().setActivePet(null as any);
+          usePetStore.setState({ pets: [], activePet: null });
           Alert.alert(t('settings.dataDeleted'), t('settings.restartApp'));
         } catch {
           Alert.alert(t('common.error'));

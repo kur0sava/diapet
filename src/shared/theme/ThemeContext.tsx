@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useMemo, useCallback, ReactNode } from 'react';
 import { useColorScheme } from 'react-native';
 import { Colors } from './colors';
 import { FontFamily, FontWeight, FontSize, LineHeight } from './typography';
@@ -88,18 +88,23 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     return saved ?? 'system';
   });
 
-  const setColorScheme = (scheme: ColorScheme) => {
+  const setColorScheme = useCallback((scheme: ColorScheme) => {
     setColorSchemeState(scheme);
     storage.set('colorScheme', scheme);
-  };
+  }, []);
 
   const isDark =
     colorScheme === 'system' ? systemScheme === 'dark' : colorScheme === 'dark';
 
-  const theme = buildTheme(isDark);
+  const theme = useMemo(() => buildTheme(isDark), [isDark]);
+
+  const contextValue = useMemo(
+    () => ({ theme, colorScheme, setColorScheme }),
+    [theme, colorScheme, setColorScheme]
+  );
 
   return (
-    <ThemeContext.Provider value={{ theme, colorScheme, setColorScheme }}>
+    <ThemeContext.Provider value={contextValue}>
       {children}
     </ThemeContext.Provider>
   );

@@ -44,7 +44,7 @@ export const usePetStore = create<PetStore>((set, get) => ({
     if (!activePet) return;
     try {
       const updated = await petRepository.findById(activePet.id);
-      set({ activePet: updated });
+      if (updated) set({ activePet: updated });
     } catch (error) {
       console.error('Failed to refresh active pet:', error);
     }

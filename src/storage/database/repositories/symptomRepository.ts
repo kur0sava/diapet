@@ -80,14 +80,18 @@ export const symptomRepository = {
     const db = await getDatabase();
     const now = new Date().toISOString();
     await db.withTransactionAsync(async () => {
-      await db.runAsync(
-        `UPDATE symptoms SET symptom_types=COALESCE(?,symptom_types), severity=COALESCE(?,severity),
-         photo_uris=COALESCE(?,photo_uris), notes=COALESCE(?,notes),
-         glucose_reading_id=COALESCE(?,glucose_reading_id), updated_at=? WHERE id=?`,
-        [dto.symptomTypes ? JSON.stringify(dto.symptomTypes) : null,
-         dto.severity ?? null, dto.photoUris ? JSON.stringify(dto.photoUris) : null,
-         dto.notes ?? null, dto.glucoseReadingId ?? null, now, id]
-      );
+      const sets: string[] = [];
+      const params: any[] = [];
+      if (dto.symptomTypes !== undefined) { sets.push('symptom_types=?'); params.push(JSON.stringify(dto.symptomTypes)); }
+      if (dto.severity !== undefined) { sets.push('severity=?'); params.push(dto.severity); }
+      if ('photoUris' in dto) { sets.push('photo_uris=?'); params.push(dto.photoUris ? JSON.stringify(dto.photoUris) : null); }
+      if ('notes' in dto) { sets.push('notes=?'); params.push(dto.notes ?? null); }
+      if ('glucoseReadingId' in dto) { sets.push('glucose_reading_id=?'); params.push(dto.glucoseReadingId ?? null); }
+      if (sets.length > 0) {
+        sets.push('updated_at=?');
+        params.push(now, id);
+        await db.runAsync(`UPDATE symptoms SET ${sets.join(', ')} WHERE id=?`, params);
+      }
       if (dto.symptomTypes) {
         await db.runAsync('DELETE FROM symptom_entry_types WHERE symptom_id = ?', [id]);
         for (const symptomType of dto.symptomTypes) {
@@ -109,13 +113,18 @@ export const symptomRepository = {
   },
 };
 
+function safeJsonParse<T>(json: string | null | undefined, fallback: T): T {
+  if (!json) return fallback;
+  try { return JSON.parse(json); } catch { return fallback; }
+}
+
 function mapRowToSymptom(row: any, types?: SymptomType[]): SymptomEntry {
   return {
     id: row.id,
     petId: row.pet_id,
-    symptomTypes: types ?? JSON.parse(row.symptom_types),
+    symptomTypes: types ?? safeJsonParse<SymptomType[]>(row.symptom_types, []),
     severity: row.severity,
-    photoUris: row.photo_uris ? JSON.parse(row.photo_uris) : [],
+    photoUris: safeJsonParse<string[]>(row.photo_uris, []),
     notes: row.notes,
     glucoseReadingId: row.glucose_reading_id ?? undefined,
     recordedAt: row.recorded_at,

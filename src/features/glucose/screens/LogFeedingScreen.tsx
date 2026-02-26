@@ -39,7 +39,6 @@ export default function LogFeedingScreen() {
     }
 
     setLoading(true);
-    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
     try {
       await feedingRepository.create({
         petId: activePet.id,
@@ -48,6 +47,7 @@ export default function LogFeedingScreen() {
         notes: notes || undefined,
       });
       await queryClient.invalidateQueries({ queryKey: ['feeding'] });
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       navigation.goBack();
     } catch (e) {
       Alert.alert(t('common.error'), t('feeding.saveError'));

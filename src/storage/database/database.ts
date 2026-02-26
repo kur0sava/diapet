@@ -46,5 +46,6 @@ export async function closeDatabase(): Promise<void> {
   if (db) {
     await db.closeAsync();
     db = null;
+    dbInitPromise = null;
   }
 }

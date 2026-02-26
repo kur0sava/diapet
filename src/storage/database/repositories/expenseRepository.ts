@@ -57,13 +57,18 @@ export const expenseRepository = {
   async update(id: string, dto: Partial<CreateExpenseDTO>): Promise<Expense | null> {
     const db = await getDatabase();
     const now = new Date().toISOString();
-    await db.runAsync(
-      `UPDATE expenses SET category=COALESCE(?,category), amount=COALESCE(?,amount),
-       currency=COALESCE(?,currency), description=COALESCE(?,description),
-       date=COALESCE(?,date), updated_at=? WHERE id=?`,
-      [dto.category ?? null, dto.amount ?? null, dto.currency ?? null,
-       dto.description ?? null, dto.date ?? null, now, id]
-    );
+    const sets: string[] = [];
+    const params: any[] = [];
+    if (dto.category !== undefined) { sets.push('category=?'); params.push(dto.category); }
+    if (dto.amount !== undefined) { sets.push('amount=?'); params.push(dto.amount); }
+    if (dto.currency !== undefined) { sets.push('currency=?'); params.push(dto.currency); }
+    if ('description' in dto) { sets.push('description=?'); params.push(dto.description ?? null); }
+    if (dto.date !== undefined) { sets.push('date=?'); params.push(dto.date); }
+    if (sets.length > 0) {
+      sets.push('updated_at=?');
+      params.push(now, id);
+      await db.runAsync(`UPDATE expenses SET ${sets.join(', ')} WHERE id=?`, params);
+    }
     return this.findById(id);
   },
 

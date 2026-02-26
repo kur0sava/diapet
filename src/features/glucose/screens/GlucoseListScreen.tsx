@@ -183,12 +183,12 @@ export default function GlucoseListScreen() {
     );
   }, [t, queryClient]);
 
-  const mealLabels: Record<string, string> = {
+  const mealLabels = useMemo<Record<string, string>>(() => ({
     before_meal: t('glucose.beforeMeal'),
     after_meal: t('glucose.afterMeal'),
     fasting: t('glucose.fasting'),
     unspecified: '',
-  };
+  }), [t]);
 
   const handleExportPdf = useCallback(async () => {
     if (!activePet) return;

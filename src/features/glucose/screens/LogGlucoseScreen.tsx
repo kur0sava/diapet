@@ -81,7 +81,6 @@ export default function LogGlucoseScreen() {
     if (!isValidValue) { Alert.alert(t('common.error'), t('glucose.invalidValue')); return; }
 
     setLoading(true);
-    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
     try {
       if (editId) {
         await glucoseRepository.update(editId, {
@@ -101,6 +100,7 @@ export default function LogGlucoseScreen() {
         });
       }
       await queryClient.invalidateQueries({ queryKey: ['glucose'] });
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       navigation.goBack();
     } catch (e) {
       Alert.alert(t('common.error'), t('glucose.saveError'));

@@ -49,7 +49,6 @@ export function useNotifications() {
         body: `Не забудьте сделать инъекцию инсулина!`,
         sound: true,
         data: { type: 'injection' },
-        ...(Platform.OS === 'android' && { channelId: 'injections' }),
       },
       trigger: {
         type: Notifications.SchedulableTriggerInputTypes.DAILY,
@@ -70,7 +69,6 @@ export function useNotifications() {
         body: `Пора покормить вашего питомца!`,
         sound: true,
         data: { type: 'feeding' },
-        ...(Platform.OS === 'android' && { channelId: 'feedings' }),
       },
       trigger: {
         type: Notifications.SchedulableTriggerInputTypes.DAILY,
