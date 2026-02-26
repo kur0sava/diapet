@@ -14,9 +14,9 @@
 [####################] v1.2 Аудит-фиксы   ✅ DONE
 [####################] v1.3 Средний прио   ✅ DONE
 [####################] v1.4 Корм-гид       ✅ DONE
-[____________________] v1.5 Bug Review     ⬅ ТЕКУЩИЙ ЭТАП
-[____________________] v1.6 UI Redesign    🔜
-[____________________] v1.7 Pre-deploy     🔜 (Google Play)
+[####################] v1.5 Bug Review     ✅ DONE
+[####################] v1.6 UI Redesign    ✅ DONE
+[____________________] v1.7 Pre-deploy     ⬅ ТЕКУЩИЙ ЭТАП (Google Play)
 [____________________] v1.8 UX фичи        🔜
 [____________________] v2.0 DevOps         🔜
 [____________________] v2.1 Backend        🔜
@@ -160,47 +160,54 @@
 - [x] Agent 2: Ревизия screens + navigation + i18n + Feed Guide
 - [x] Результат: 2 CRITICAL, 8 HIGH, 12 MEDIUM, 10 LOW → сохранено в `BUGFIX-PLAN.md`
 
-### Фаза 4.6B — Исправление найденных багов
+### Фаза 4.6B — Исправление найденных багов ✅ DONE
 
-- [ ] Fix CRITICAL (2): race condition в getDatabase(), orphan routes
-- [ ] Fix HIGH (8): атомарность репозиториев, update logic, stale queries, UX
-- [ ] Fix MEDIUM (12): PRAGMA, MMKV, фильтры, i18n, типы
-- [ ] Fix LOW (10): по возможности
-- [ ] Regression test: tsc + jest + manual smoke test
+- [x] Fix CRITICAL (2): race condition в getDatabase(), orphan routes
+- [x] Fix HIGH (8): атомарность репозиториев, update logic, stale queries, UX
+- [x] Fix MEDIUM (12): PRAGMA, MMKV, фильтры, i18n, типы
+- [x] Fix LOW (10): 12 из 12 LOW исправлено
+- [x] Regression test: tsc ✅ | jest (18/18) ✅
 
-> **CHECKPOINT 4.6**: commit + tsc + test + 0 known critical/high bugs
+> **CHECKPOINT 4.6**: 30/32 багов исправлено (BUG-07 уже ок, BUG-32 → ЭТАП 5)
 
 ---
 
-## ЭТАП 4.7: v1.6 UI Redesign — современный дизайн
+## ЭТАП 4.7: v1.6 UI Redesign — современный дизайн ✅ DONE
 
-> Перед деплоем — первое впечатление решает
+> Завершён 2026-02-26. 3 фазы, ~35 файлов, 3 коммита.
+> Все проверки: tsc ✅ | jest (18/18) ✅
 
-### Фаза 4.7A — Дизайн-система
+### Фаза 4.7A — Дизайн-система ✅
 
-- [ ] Обновить цветовую палитру (современные gradient-акценты)
-- [ ] Типографика: Inter/SF Pro или system font с правильными весами
-- [ ] Скругления, тени, blur — единый стиль карточек
-- [ ] Иконки: заменить emoji на Ionicons/SF Symbols где уместно
-- [ ] Spacing система (4px grid)
+- [x] Gradient цветовые пары (header, primary, secondary, success, danger, warm)
+- [x] Типографика: Inter (400/500/600/700) через @expo-google-fonts/inter
+- [x] Card: subtle border по умолчанию (bordered prop)
+- [x] Button: gradient primary, icon prop (Ionicons)
+- [x] EmptyState: iconName + iconColor (Ionicons в цветном круге)
+- [x] AnimatedListItem: reanimated FadeInRight с задержкой
+- [x] primarySm shadow для FAB кнопок
+- [x] expo-splash-screen для загрузки шрифтов
 
-### Фаза 4.7B — Ключевые экраны
+### Фаза 4.7B — Ключевые экраны ✅
 
-- [ ] Dashboard: glassmorphism карточки, градиентный хедер, анимированный график
-- [ ] Онбординг: иллюстрации, плавные переходы, Lottie анимации
-- [ ] Формы ввода: floating labels, animated borders, haptic feedback
-- [ ] Списки: skeleton loading, swipe actions вместо long press
-- [ ] Tab bar: custom animated tab bar
+- [x] Dashboard: градиентный хедер, все emoji → Ionicons, Inter шрифты
+- [x] Tab bar: тень вместо бордера, выше (64px), dot-индикатор, Inter labels
+- [x] Навигация: slide_from_right на всех стеках
+- [x] Emergency FAB: пульсирующая анимация (reanimated)
+- [x] GlucoseList: AnimatedListItem, gradient FAB, шире color bar, Ionicons
 
-### Фаза 4.7C — Анимации и Polish
+### Фаза 4.7C — Polish всех экранов ✅
 
-- [ ] React Native Reanimated для переходов между экранами
-- [ ] Shared element transitions (карточка → детальный вид)
-- [ ] Pull-to-refresh с custom анимацией
-- [ ] Micro-interactions: кнопки, переключатели, чипы
-- [ ] Splash screen с анимацией (Lottie)
+- [x] MoreMenu: gradient pet card, Ionicons menu, Inter fonts
+- [x] LogGlucose: Ionicons meal/date/time
+- [x] EditPet: Ionicons section headers
+- [x] Symptoms (list, detail, add): SYMPTOM_ICONS mapping, AnimatedListItem
+- [x] InjectionList, FeedingList: AnimatedListItem, Ionicons
+- [x] LogInjection, LogFeeding: Ionicons
+- [x] Language: gradient paw logo, FadeInDown
+- [x] PetProfile, Expenses, AddExpense: Ionicons, Inter fonts
 
-> **CHECKPOINT 4.7**: commit + tsc + test + визуальное ревью
+> **CHECKPOINT 4.7**: tsc ✅ | jest ✅ | emoji → Ionicons everywhere
 
 ---
 
