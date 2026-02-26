@@ -76,6 +76,9 @@ export default function FeedGuideRegionScreen() {
     if (otcFoods.length > 0) {
       s.push({ key: 'otc', title: t('feedGuide.otcFoods'), data: otcFoods.map(f => ({ type: 'food' as const, food: f })) });
     }
+    if (prescriptionFoods.length === 0 && otcFoods.length === 0) {
+      s.push({ key: 'empty', title: '', data: [{ type: 'empty' as const }] });
+    }
     return s;
   }, [regionStoreInfo, prescriptionFoods, otcFoods, t]);
 
@@ -172,6 +175,13 @@ export default function FeedGuideRegionScreen() {
     }
     if (item.type === 'food' && item.food) {
       return renderFoodCard(item.food);
+    }
+    if (item.type === 'empty') {
+      return (
+        <Text style={[styles.emptyText, { color: theme.colors.textSecondary }]}>
+          {t('feedGuide.noFoodsInRegion')}
+        </Text>
+      );
     }
     return null;
   };

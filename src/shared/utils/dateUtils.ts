@@ -41,15 +41,19 @@ export function getNextOccurrence(timeOfDay: string): Date {
 }
 
 export function minutesUntil(timeOfDay: string): number {
+  const [hours, minutes] = timeOfDay.split(':').map(Number);
+  if (isNaN(hours) || isNaN(minutes)) return Infinity;
   const next = getNextOccurrence(timeOfDay);
   return differenceInMinutes(next, new Date());
 }
 
 export function formatCountdown(minutes: number): string {
-  if (minutes < 60) return `${minutes} мин`;
+  const isRu = i18n.language === 'ru';
+  if (minutes < 60) return isRu ? `${minutes} мин` : `${minutes} min`;
   const h = Math.floor(minutes / 60);
   const m = minutes % 60;
-  return m > 0 ? `${h}ч ${m}мин` : `${h}ч`;
+  if (isRu) return m > 0 ? `${h}ч ${m}мин` : `${h}ч`;
+  return m > 0 ? `${h}h ${m}min` : `${h}h`;
 }
 
 export function hoursSince(dateString: string): number {

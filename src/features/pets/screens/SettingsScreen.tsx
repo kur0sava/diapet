@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useMoreNavigation } from '@navigation/hooks';
@@ -7,19 +7,30 @@ import { useTheme, ColorScheme } from '@shared/theme';
 import { storage, StorageKeys, storageUtils } from '@storage/mmkv/storage';
 import { changeLanguage } from '@shared/i18n';
 import { Card } from '@shared/components/ui';
+import { getDatabase } from '@storage/database';
 
 export default function SettingsScreen() {
   const navigation = useMoreNavigation();
   const { t } = useTranslation();
   const { theme, colorScheme, setColorScheme } = useTheme();
 
-  const currentLanguage = storage.getString(StorageKeys.LANGUAGE) ?? 'ru';
-  const glucoseUnit = storage.getString(StorageKeys.GLUCOSE_UNIT) ?? 'mmol/L';
+  const [glucoseUnit, setGlucoseUnit] = useState(
+    () => storage.getString(StorageKeys.GLUCOSE_UNIT) ?? 'mmol/L'
+  );
 
   const handleDeleteAllData = () => {
     Alert.alert(t('settings.deleteDataConfirm'), t('settings.deleteDataWarning'), [
       { text: t('common.cancel'), style: 'cancel' },
-      { text: t('common.delete'), style: 'destructive', onPress: () => { storageUtils.clear(); Alert.alert(t('settings.dataDeleted'), t('settings.restartApp')); }},
+      { text: t('common.delete'), style: 'destructive', onPress: async () => {
+        try {
+          const db = await getDatabase();
+          await db.execAsync('DELETE FROM symptom_entries; DELETE FROM glucose_readings; DELETE FROM injection_logs; DELETE FROM feeding_logs; DELETE FROM expense_entries; DELETE FROM schedule_entries; DELETE FROM pets;');
+          storageUtils.clear();
+          Alert.alert(t('settings.dataDeleted'), t('settings.restartApp'));
+        } catch {
+          Alert.alert(t('common.error'));
+        }
+      }},
     ]);
   };
 
@@ -59,7 +70,7 @@ export default function SettingsScreen() {
         <Card style={styles.card}>
           <View style={styles.langRow}>
             {(['mmol/L', 'mg/dL'] as const).map(unit => (
-              <TouchableOpacity key={unit} style={[styles.langBtn, { backgroundColor: glucoseUnit === unit ? theme.colors.primary : theme.colors.surfaceSecondary, flex: 1 }]} onPress={() => storage.set(StorageKeys.GLUCOSE_UNIT, unit)}>
+              <TouchableOpacity key={unit} style={[styles.langBtn, { backgroundColor: glucoseUnit === unit ? theme.colors.primary : theme.colors.surfaceSecondary, flex: 1 }]} onPress={() => { storage.set(StorageKeys.GLUCOSE_UNIT, unit); setGlucoseUnit(unit); }}>
                 <Text style={{ color: glucoseUnit === unit ? '#fff' : theme.colors.text, fontWeight: '600' }}>{unit}</Text>
               </TouchableOpacity>
             ))}

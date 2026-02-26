@@ -2,6 +2,8 @@ import * as Print from 'expo-print';
 import * as Sharing from 'expo-sharing';
 import { format } from 'date-fns';
 import { ru } from 'date-fns/locale';
+import { enUS } from 'date-fns/locale';
+import i18n from '@shared/i18n';
 import type {
   Pet,
   GlucoseReading,
@@ -19,44 +21,172 @@ const TEXT_SEC = '#6D6D72';
 const BORDER = '#E5E5EA';
 const BG = '#F8F9FA';
 
-const mealLabels: Record<MealRelation, string> = {
-  before_meal: 'До еды',
-  after_meal: 'После еды',
-  fasting: 'Натощак',
-  unspecified: '—',
-};
+function isRu(): boolean {
+  return i18n.language?.startsWith('ru') ?? true;
+}
 
-const symptomLabels: Record<SymptomType, string> = {
-  hindLimbWeakness: 'Слабость задних лап',
-  weightLoss: 'Потеря веса',
-  polyuria: 'Полиурия',
-  polydipsia: 'Полидипсия',
-  lossOfAppetite: 'Потеря аппетита',
-  behavioralChanges: 'Поведенческие изменения',
-  lethargy: 'Вялость',
-  vomiting: 'Рвота',
-  diarrhea: 'Диарея',
-  other: 'Другое',
-};
+function getDateLocale() {
+  return isRu() ? ru : enUS;
+}
 
-const severityLabels: Record<SymptomSeverity, string> = {
-  mild: 'Лёгкая',
-  moderate: 'Умеренная',
-  severe: 'Тяжёлая',
-};
+interface Labels {
+  mealLabels: Record<MealRelation, string>;
+  symptomLabels: Record<SymptomType, string>;
+  severityLabels: Record<SymptomSeverity, string>;
+  title: string;
+  subtitle: string;
+  labelName: string;
+  labelBreed: string;
+  labelDiagnosisDate: string;
+  labelDiabetesType: string;
+  labelInsulin: string;
+  diabetesType1: string;
+  diabetesType2: string;
+  diabetesTypeUnknown: string;
+  sectionGlucose: (count: number) => string;
+  sectionInjections: string;
+  sectionSymptoms: (count: number) => string;
+  colDateTime: string;
+  colMmol: string;
+  colMgdl: string;
+  colMeal: string;
+  colNotes: string;
+  colDose: string;
+  colInsulinType: string;
+  colSymptoms: string;
+  colSeverity: string;
+  emptyGlucose: string;
+  emptyInjections: string;
+  emptySymptoms: string;
+  footer: string;
+  doseUnit: string;
+  dialogTitle: string;
+}
+
+function getLabels(): Labels {
+  if (isRu()) {
+    return {
+      mealLabels: {
+        before_meal: 'До еды',
+        after_meal: 'После еды',
+        fasting: 'Натощак',
+        unspecified: '—',
+      },
+      symptomLabels: {
+        hindLimbWeakness: 'Слабость задних лап',
+        weightLoss: 'Потеря веса',
+        polyuria: 'Полиурия',
+        polydipsia: 'Полидипсия',
+        lossOfAppetite: 'Потеря аппетита',
+        behavioralChanges: 'Поведенческие изменения',
+        lethargy: 'Вялость',
+        vomiting: 'Рвота',
+        diarrhea: 'Диарея',
+        other: 'Другое',
+      },
+      severityLabels: {
+        mild: 'Лёгкая',
+        moderate: 'Умеренная',
+        severe: 'Тяжёлая',
+      },
+      title: 'DiaPet \u2014 Медицинский отчёт',
+      subtitle: 'Дневник диабета для ветеринара',
+      labelName: 'Имя',
+      labelBreed: 'Порода',
+      labelDiagnosisDate: 'Дата диагноза',
+      labelDiabetesType: 'Тип диабета',
+      labelInsulin: 'Инсулин',
+      diabetesType1: 'Тип 1',
+      diabetesType2: 'Тип 2',
+      diabetesTypeUnknown: 'Неизвестен',
+      sectionGlucose: (count) => `Показания глюкозы (${count} записей)`,
+      sectionInjections: 'Последние инъекции (до 10)',
+      sectionSymptoms: (count) => `Симптомы (${count} записей)`,
+      colDateTime: 'Дата / время',
+      colMmol: 'ммоль/л',
+      colMgdl: 'мг/дл',
+      colMeal: 'Приём пищи',
+      colNotes: 'Заметки',
+      colDose: 'Доза',
+      colInsulinType: 'Тип инсулина',
+      colSymptoms: 'Симптомы',
+      colSeverity: 'Тяжесть',
+      emptyGlucose: 'Нет данных за выбранный период',
+      emptyInjections: 'Нет данных об инъекциях',
+      emptySymptoms: 'Нет записей о симптомах',
+      footer: 'Сгенерировано в DiaPet',
+      doseUnit: 'ед.',
+      dialogTitle: 'DiaPet \u2014 Медицинский отчёт',
+    };
+  }
+
+  return {
+    mealLabels: {
+      before_meal: 'Before meal',
+      after_meal: 'After meal',
+      fasting: 'Fasting',
+      unspecified: '\u2014',
+    },
+    symptomLabels: {
+      hindLimbWeakness: 'Hind limb weakness',
+      weightLoss: 'Weight loss',
+      polyuria: 'Polyuria',
+      polydipsia: 'Polydipsia',
+      lossOfAppetite: 'Loss of appetite',
+      behavioralChanges: 'Behavioral changes',
+      lethargy: 'Lethargy',
+      vomiting: 'Vomiting',
+      diarrhea: 'Diarrhea',
+      other: 'Other',
+    },
+    severityLabels: {
+      mild: 'Mild',
+      moderate: 'Moderate',
+      severe: 'Severe',
+    },
+    title: 'DiaPet \u2014 Medical Report',
+    subtitle: 'Diabetes diary for veterinarian',
+    labelName: 'Name',
+    labelBreed: 'Breed',
+    labelDiagnosisDate: 'Diagnosis date',
+    labelDiabetesType: 'Diabetes type',
+    labelInsulin: 'Insulin',
+    diabetesType1: 'Type 1',
+    diabetesType2: 'Type 2',
+    diabetesTypeUnknown: 'Unknown',
+    sectionGlucose: (count) => `Glucose readings (${count} records)`,
+    sectionInjections: 'Recent injections (up to 10)',
+    sectionSymptoms: (count) => `Symptoms (${count} records)`,
+    colDateTime: 'Date / time',
+    colMmol: 'mmol/L',
+    colMgdl: 'mg/dL',
+    colMeal: 'Meal relation',
+    colNotes: 'Notes',
+    colDose: 'Dose',
+    colInsulinType: 'Insulin type',
+    colSymptoms: 'Symptoms',
+    colSeverity: 'Severity',
+    emptyGlucose: 'No data for selected period',
+    emptyInjections: 'No injection records',
+    emptySymptoms: 'No symptom records',
+    footer: 'Generated by DiaPet',
+    doseUnit: 'u.',
+    dialogTitle: 'DiaPet \u2014 Medical Report',
+  };
+}
 
 function formatDate(iso: string): string {
   try {
-    return format(new Date(iso), 'dd.MM.yyyy HH:mm', { locale: ru });
+    return format(new Date(iso), 'dd.MM.yyyy HH:mm', { locale: getDateLocale() });
   } catch {
     return iso;
   }
 }
 
 function formatDateShort(iso: string | undefined): string {
-  if (!iso) return '—';
+  if (!iso) return '\u2014';
   try {
-    return format(new Date(iso), 'dd.MM.yyyy', { locale: ru });
+    return format(new Date(iso), 'dd.MM.yyyy', { locale: getDateLocale() });
   } catch {
     return iso;
   }
@@ -68,7 +198,16 @@ function buildHtml(
   injections: InjectionLog[],
   symptoms: SymptomEntry[],
 ): string {
-  const now = format(new Date(), 'dd MMMM yyyy, HH:mm', { locale: ru });
+  const L = getLabels();
+  const lang = isRu() ? 'ru' : 'en';
+  const now = format(new Date(), 'dd MMMM yyyy, HH:mm', { locale: getDateLocale() });
+
+  const diabetesTypeLabel =
+    pet.diabetesType === 'type1'
+      ? L.diabetesType1
+      : pet.diabetesType === 'type2'
+        ? L.diabetesType2
+        : L.diabetesTypeUnknown;
 
   // Glucose table rows
   const glucoseRows = glucoseReadings
@@ -79,7 +218,7 @@ function buildHtml(
         <td>${formatDate(r.recordedAt)}</td>
         <td><strong>${r.valueMmol.toFixed(1)}</strong></td>
         <td>${r.valueMgdl}</td>
-        <td>${mealLabels[r.mealRelation]}</td>
+        <td>${L.mealLabels[r.mealRelation]}</td>
         <td>${r.notes ?? ''}</td>
       </tr>`,
     )
@@ -92,7 +231,7 @@ function buildHtml(
       (inj) => `
       <tr>
         <td>${formatDate(inj.administeredAt)}</td>
-        <td>${inj.doseUnits} ед.</td>
+        <td>${inj.doseUnits} ${L.doseUnit}</td>
         <td>${inj.insulinType}</td>
         <td>${inj.notes ?? ''}</td>
       </tr>`,
@@ -106,15 +245,15 @@ function buildHtml(
       (s) => `
       <tr>
         <td>${formatDate(s.recordedAt)}</td>
-        <td>${s.symptomTypes.map((t) => symptomLabels[t] ?? t).join(', ')}</td>
-        <td>${severityLabels[s.severity]}</td>
+        <td>${s.symptomTypes.map((t) => L.symptomLabels[t] ?? t).join(', ')}</td>
+        <td>${L.severityLabels[s.severity]}</td>
         <td>${s.notes ?? ''}</td>
       </tr>`,
     )
     .join('');
 
   return `<!DOCTYPE html>
-<html lang="ru">
+<html lang="${lang}">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -215,93 +354,93 @@ function buildHtml(
 </head>
 <body>
   <div class="header">
-    <h1>DiaPet &mdash; Медицинский отчёт</h1>
-    <div class="subtitle">Дневник диабета для ветеринара</div>
+    <h1>${L.title}</h1>
+    <div class="subtitle">${L.subtitle}</div>
   </div>
 
   <div class="pet-info">
     <div class="col">
-      <div class="label">Имя</div>
+      <div class="label">${L.labelName}</div>
       <div class="value">${pet.name}</div>
     </div>
     <div class="col">
-      <div class="label">Порода</div>
-      <div class="value">${pet.breed ?? '—'}</div>
+      <div class="label">${L.labelBreed}</div>
+      <div class="value">${pet.breed ?? '\u2014'}</div>
     </div>
     <div class="col">
-      <div class="label">Дата диагноза</div>
+      <div class="label">${L.labelDiagnosisDate}</div>
       <div class="value">${formatDateShort(pet.diagnosisDate)}</div>
     </div>
     <div class="col">
-      <div class="label">Тип диабета</div>
-      <div class="value">${pet.diabetesType === 'type1' ? 'Тип 1' : pet.diabetesType === 'type2' ? 'Тип 2' : 'Неизвестен'}</div>
+      <div class="label">${L.labelDiabetesType}</div>
+      <div class="value">${diabetesTypeLabel}</div>
     </div>
     <div class="col">
-      <div class="label">Инсулин</div>
-      <div class="value">${pet.insulinType ?? '—'}</div>
+      <div class="label">${L.labelInsulin}</div>
+      <div class="value">${pet.insulinType ?? '\u2014'}</div>
     </div>
   </div>
 
   <div class="section">
-    <h2>Показания глюкозы (${glucoseReadings.length} записей)</h2>
+    <h2>${L.sectionGlucose(glucoseReadings.length)}</h2>
     ${
       glucoseReadings.length > 0
         ? `<table>
         <thead>
           <tr>
-            <th>Дата / время</th>
-            <th>ммоль/л</th>
-            <th>мг/дл</th>
-            <th>Приём пищи</th>
-            <th>Заметки</th>
+            <th>${L.colDateTime}</th>
+            <th>${L.colMmol}</th>
+            <th>${L.colMgdl}</th>
+            <th>${L.colMeal}</th>
+            <th>${L.colNotes}</th>
           </tr>
         </thead>
         <tbody>${glucoseRows}</tbody>
       </table>`
-        : '<p class="empty">Нет данных за выбранный период</p>'
+        : `<p class="empty">${L.emptyGlucose}</p>`
     }
   </div>
 
   <div class="section">
-    <h2>Последние инъекции (до 10)</h2>
+    <h2>${L.sectionInjections}</h2>
     ${
       injections.length > 0
         ? `<table>
         <thead>
           <tr>
-            <th>Дата / время</th>
-            <th>Доза</th>
-            <th>Тип инсулина</th>
-            <th>Заметки</th>
+            <th>${L.colDateTime}</th>
+            <th>${L.colDose}</th>
+            <th>${L.colInsulinType}</th>
+            <th>${L.colNotes}</th>
           </tr>
         </thead>
         <tbody>${injectionRows}</tbody>
       </table>`
-        : '<p class="empty">Нет данных об инъекциях</p>'
+        : `<p class="empty">${L.emptyInjections}</p>`
     }
   </div>
 
   <div class="section">
-    <h2>Симптомы (${symptoms.length} записей)</h2>
+    <h2>${L.sectionSymptoms(symptoms.length)}</h2>
     ${
       symptoms.length > 0
         ? `<table>
         <thead>
           <tr>
-            <th>Дата / время</th>
-            <th>Симптомы</th>
-            <th>Тяжесть</th>
-            <th>Заметки</th>
+            <th>${L.colDateTime}</th>
+            <th>${L.colSymptoms}</th>
+            <th>${L.colSeverity}</th>
+            <th>${L.colNotes}</th>
           </tr>
         </thead>
         <tbody>${symptomRows}</tbody>
       </table>`
-        : '<p class="empty">Нет записей о симптомах</p>'
+        : `<p class="empty">${L.emptySymptoms}</p>`
     }
   </div>
 
   <div class="footer">
-    Сгенерировано в DiaPet &bull; ${now}
+    ${L.footer} &bull; ${now}
   </div>
 </body>
 </html>`;
@@ -324,9 +463,10 @@ export async function generateVetReportPdf(data: VetReportData): Promise<void> {
 
   const { uri } = await Print.printToFileAsync({ html });
 
+  const L = getLabels();
   await Sharing.shareAsync(uri, {
     mimeType: 'application/pdf',
-    dialogTitle: 'DiaPet — Медицинский отчёт',
+    dialogTitle: L.dialogTitle,
     UTI: 'com.adobe.pdf',
   });
 }

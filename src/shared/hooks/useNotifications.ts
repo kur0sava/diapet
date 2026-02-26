@@ -42,17 +42,20 @@ export function useNotifications() {
 
   const scheduleInjectionReminder = async (time: string, petName: string): Promise<string> => {
     const [hours, minutes] = time.split(':').map(Number);
+    if (isNaN(hours) || isNaN(minutes)) return '';
     const id = await Notifications.scheduleNotificationAsync({
       content: {
         title: `💉 Время укола для ${petName}`,
         body: `Не забудьте сделать инъекцию инсулина!`,
         sound: true,
         data: { type: 'injection' },
+        ...(Platform.OS === 'android' && { channelId: 'injections' }),
       },
       trigger: {
         type: Notifications.SchedulableTriggerInputTypes.DAILY,
         hour: hours,
         minute: minutes,
+        channelId: 'injections',
       },
     });
     return id;
@@ -60,17 +63,20 @@ export function useNotifications() {
 
   const scheduleFeedingReminder = async (time: string, petName: string): Promise<string> => {
     const [hours, minutes] = time.split(':').map(Number);
+    if (isNaN(hours) || isNaN(minutes)) return '';
     const id = await Notifications.scheduleNotificationAsync({
       content: {
         title: `🍽️ Время кормления ${petName}`,
         body: `Пора покормить вашего питомца!`,
         sound: true,
         data: { type: 'feeding' },
+        ...(Platform.OS === 'android' && { channelId: 'feedings' }),
       },
       trigger: {
         type: Notifications.SchedulableTriggerInputTypes.DAILY,
         hour: hours,
         minute: minutes,
+        channelId: 'feedings',
       },
     });
     return id;

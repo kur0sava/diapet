@@ -8,11 +8,11 @@ export const petRepository = {
     const id = uuid.v4() as string;
     const now = new Date().toISOString();
     await db.runAsync(
-      `INSERT INTO pets (id, name, species, breed, gender, birth_year, weight_kg, diagnosis_date, diabetes_type, insulin_type, is_active, created_at, updated_at)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1, ?, ?)`,
+      `INSERT INTO pets (id, name, species, breed, gender, birth_year, weight_kg, diagnosis_date, diabetes_type, insulin_type, photo_uri, is_active, created_at, updated_at)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1, ?, ?)`,
       [id, dto.name, dto.species ?? 'cat', dto.breed ?? null, dto.gender, dto.birthYear ?? null,
        dto.weightKg ?? null, dto.diagnosisDate ?? null, dto.diabetesType ?? 'unknown',
-       dto.insulinType ?? null, now, now]
+       dto.insulinType ?? null, dto.photoUri ?? null, now, now]
     );
     return this.findById(id) as Promise<Pet>;
   },

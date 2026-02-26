@@ -54,16 +54,27 @@ export default function EditPetScreen() {
       for (const time of feedingTimes) await scheduleRepository.addFeedingTime(activePet.id, time);
       await refreshActivePet();
       await queryClient.invalidateQueries({ queryKey: ['pet'] });
+      await queryClient.invalidateQueries({ queryKey: ['schedule'] });
       navigation.goBack();
     } catch { Alert.alert(t('pets.saveError')); }
     finally { setLoading(false); }
   };
 
-  const TimeList = ({ type, times, setTimes }: { type: string; times: string[]; setTimes: (t: string[]) => void }) => (
+  const validateTime = (value: string): string => {
+    const clean = value.replace(/[^0-9:]/g, '');
+    const match = clean.match(/^(\d{1,2}):?(\d{0,2})$/);
+    if (!match) return clean.slice(0, 5);
+    let h = match[1], m = match[2];
+    if (parseInt(h) > 23) h = '23';
+    if (m && parseInt(m) > 59) m = '59';
+    return m !== undefined && m !== '' ? `${h}:${m}` : `${h}:`;
+  };
+
+  const renderTimeList = (type: string, times: string[], setTimes: (t: string[]) => void) => (
     <View style={{ gap: 8 }}>
       {times.map((time, i) => (
         <View key={`time-${i}-${time}`} style={[styles.timeRow, { backgroundColor: theme.colors.surfaceSecondary, borderRadius: 12 }]}>
-          <Input value={time} onChangeText={v => { const n = [...times]; n[i] = v; setTimes(n); }} containerStyle={{ flex: 1 }} />
+          <Input value={time} onChangeText={v => { const n = [...times]; n[i] = validateTime(v); setTimes(n); }} placeholder="HH:MM" maxLength={5} containerStyle={{ flex: 1 }} />
           <TouchableOpacity onPress={() => setTimes(times.filter((_, idx) => idx !== i))} style={{ padding: 12 }}>
             <Ionicons name="close-circle" size={24} color={theme.colors.danger} />
           </TouchableOpacity>
@@ -91,12 +102,12 @@ export default function EditPetScreen() {
             <Ionicons name="medkit-outline" size={20} color={theme.colors.primary} style={{ marginRight: 8 }} />
             <Text style={[styles.sectionTitle, { color: theme.colors.text, fontFamily: theme.fonts.bold }]}>{t('pets.injectionSchedule')}</Text>
           </View>
-          <TimeList type="injection" times={injectionTimes} setTimes={setInjectionTimes} />
+          {renderTimeList('injection', injectionTimes, setInjectionTimes)}
           <View style={styles.sectionHeader}>
             <Ionicons name="restaurant-outline" size={20} color={theme.colors.warning} style={{ marginRight: 8 }} />
             <Text style={[styles.sectionTitle, { color: theme.colors.text, fontFamily: theme.fonts.bold }]}>{t('pets.feedingSchedule')}</Text>
           </View>
-          <TimeList type="feeding" times={feedingTimes} setTimes={setFeedingTimes} />
+          {renderTimeList('feeding', feedingTimes, setFeedingTimes)}
           <View style={styles.sectionHeader}>
             <Ionicons name="medical-outline" size={20} color={theme.colors.success} style={{ marginRight: 8 }} />
             <Text style={[styles.sectionTitle, { color: theme.colors.text, fontFamily: theme.fonts.bold }]}>{t('pets.vetContact')}</Text>
