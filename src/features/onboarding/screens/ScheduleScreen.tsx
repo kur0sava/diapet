@@ -55,7 +55,7 @@ export default function ScheduleScreen() {
     });
   };
 
-  const TimeList = ({ type, times }: { type: 'injection' | 'feeding'; times: string[] }) => (
+  const renderTimeList = (type: 'injection' | 'feeding', times: string[]) => (
     <View style={{ gap: 8 }}>
       {times.map((time, index) => (
         <View key={`${type}-${index}-${time}`} style={[styles.timeRow, { backgroundColor: theme.colors.surfaceSecondary, borderRadius: 12 }]}>
@@ -92,7 +92,7 @@ export default function ScheduleScreen() {
             <Text style={styles.sectionIcon}>💉</Text>
             <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>{t('onboarding.injectionTime')}</Text>
           </View>
-          <TimeList type="injection" times={injectionTimes} />
+          {renderTimeList('injection', injectionTimes)}
         </View>
 
         <View style={styles.section}>
@@ -100,7 +100,7 @@ export default function ScheduleScreen() {
             <Text style={styles.sectionIcon}>🍽️</Text>
             <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>{t('onboarding.feedingTime')}</Text>
           </View>
-          <TimeList type="feeding" times={feedingTimes} />
+          {renderTimeList('feeding', feedingTimes)}
         </View>
 
         <Button title={t('onboarding.next')} onPress={handleContinue} fullWidth size="lg" style={{ margin: 24 }} />

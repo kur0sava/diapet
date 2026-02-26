@@ -39,7 +39,7 @@ export default function PetProfileScreen() {
 
   const diabetesLabels: Record<string, string> = { type1: t('pets.diabetesType1Short'), type2: t('pets.diabetesType2Short'), unknown: t('pets.diabetesUnknown') };
 
-  const InfoRow = ({ label, value }: { label: string; value: string }) => (
+  const renderInfoRow = (label: string, value: string) => (
     <View style={[styles.infoRow, { borderBottomColor: theme.colors.divider }]}>
       <Text style={[styles.infoLabel, { color: theme.colors.textSecondary, fontFamily: theme.fonts.regular }]}>{label}</Text>
       <Text style={[styles.infoValue, { color: theme.colors.text, fontFamily: theme.fonts.semibold }]}>{value}</Text>
@@ -76,11 +76,11 @@ export default function PetProfileScreen() {
         </View>
         <Card style={styles.card}>
           <Text style={[styles.cardTitle, { color: theme.colors.textSecondary, fontFamily: theme.fonts.bold }]}>{t('pets.basicInfo')}</Text>
-          {activePet.weightKg && <InfoRow label={t('pets.weight')} value={`${activePet.weightKg} ${t('common.kg')}`} />}
-          {activePet.birthYear && <InfoRow label={t('pets.age')} value={`${new Date().getFullYear() - activePet.birthYear} ${t('pets.years')}`} />}
-          <InfoRow label={t('pets.gender')} value={activePet.gender === 'male' ? t('common.male') : activePet.gender === 'female' ? t('common.female') : t('common.unknown')} />
-          <InfoRow label={t('pets.diabetesType')} value={diabetesLabels[activePet.diabetesType]} />
-          {activePet.diagnosisDate && <InfoRow label={t('pets.diagnosisDate')} value={new Date(activePet.diagnosisDate).toLocaleDateString('ru-RU')} />}
+          {activePet.weightKg && renderInfoRow(t('pets.weight'), `${activePet.weightKg} ${t('common.kg')}`)}
+          {activePet.birthYear && renderInfoRow(t('pets.age'), `${new Date().getFullYear() - activePet.birthYear} ${t('pets.years')}`)}
+          {renderInfoRow(t('pets.gender'), activePet.gender === 'male' ? t('common.male') : activePet.gender === 'female' ? t('common.female') : t('common.unknown'))}
+          {renderInfoRow(t('pets.diabetesType'), diabetesLabels[activePet.diabetesType])}
+          {activePet.diagnosisDate && renderInfoRow(t('pets.diagnosisDate'), new Date(activePet.diagnosisDate).toLocaleDateString('ru-RU'))}
         </Card>
         <Card style={styles.card}>
           <Text style={[styles.cardTitle, { color: theme.colors.textSecondary, fontFamily: theme.fonts.bold }]}>{t('pets.schedule')}</Text>

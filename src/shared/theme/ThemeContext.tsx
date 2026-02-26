@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import React, { createContext, useContext, useState, ReactNode } from 'react';
 import { useColorScheme } from 'react-native';
 import { Colors } from './colors';
 import { FontFamily, FontWeight, FontSize, LineHeight } from './typography';
@@ -83,12 +83,10 @@ const ThemeContext = createContext<ThemeContextType | null>(null);
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
   const systemScheme = useColorScheme();
-  const [colorScheme, setColorSchemeState] = useState<ColorScheme>('system');
-
-  useEffect(() => {
+  const [colorScheme, setColorSchemeState] = useState<ColorScheme>(() => {
     const saved = storage.getString('colorScheme') as ColorScheme | undefined;
-    if (saved) setColorSchemeState(saved);
-  }, []);
+    return saved ?? 'system';
+  });
 
   const setColorScheme = (scheme: ColorScheme) => {
     setColorSchemeState(scheme);
