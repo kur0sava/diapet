@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Privacy Policy - DiaPet</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px 30px;
+            text-align: center;
+        }
+
+        header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        header p {
+            font-size: 1.1em;
+            opacity: 0.95;
+            font-weight: 300;
+        }
+
+        .language-toggle {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            gap: 10px;
+            z-index: 100;
+        }
+
+        .language-toggle button {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            background: white;
+            color: #667eea;
+        }
+
+        .language-toggle button.active {
+            background: #667eea;
+            color: white;
+        }
+
+        .language-toggle button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .content {
+            padding: 40px 30px;
+        }
+
+        .language-section {
+            display: none;
+        }
+
+        .language-section.active {
+            display: block;
+        }
+
+        h2 {
+            color: #667eea;
+            margin-top: 35px;
+            margin-bottom: 15px;
+            font-size: 1.5em;
+            border-bottom: 2px solid #e0e0e0;
+            padding-bottom: 10px;
+        }
+
+        h2:first-of-type {
+            margin-top: 0;
+        }
+
+        h3 {
+            color: #764ba2;
+            margin-top: 20px;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+
+        p {
+            margin-bottom: 15px;
+            text-align: justify;
+        }
+
+        ul, ol {
+            margin-left: 25px;
+            margin-bottom: 15px;
+        }
+
+        li {
+            margin-bottom: 10px;
+        }
+
+        .highlight {
+            background: #f0f4ff;
+            padding: 20px;
+            border-left: 4px solid #667eea;
+            margin: 20px 0;
+            border-radius: 6px;
+        }
+
+        .highlight strong {
+            color: #667eea;
+        }
+
+        footer {
+            background: #f8f9fa;
+            padding: 30px;
+            text-align: center;
+            border-top: 1px solid #e0e0e0;
+            color: #666;
+            font-size: 0.95em;
+        }
+
+        footer p {
+            margin-bottom: 10px;
+        }
+
+        .contact-info {
+            background: #fff3cd;
+            padding: 20px;
+            border-radius: 6px;
+            margin: 20px 0;
+            border-left: 4px solid #ffc107;
+        }
+
+        .contact-info strong {
+            color: #856404;
+        }
+
+        a {
+            color: #667eea;
+            text-decoration: none;
+            border-bottom: 1px solid #667eea;
+        }
+
+        a:hover {
+            color: #764ba2;
+            border-bottom-color: #764ba2;
+        }
+
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 1.8em;
+            }
+
+            .content {
+                padding: 25px 20px;
+            }
+
+            h2 {
+                font-size: 1.2em;
+            }
+
+            .language-toggle {
+                top: 10px;
+                right: 10px;
+            }
+
+            .language-toggle button {
+                padding: 6px 12px;
+                font-size: 0.9em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="language-toggle">
+        <button class="lang-btn active" data-lang="en">English</button>
+        <button class="lang-btn" data-lang="ru">Русский</button>
+    </div>
+
+    <div class="container">
+        <header>
+            <h1>Privacy Policy</h1>
+            <p>DiaPet — Feline Diabetes Management</p>
+        </header>
+
+        <div class="content">
+            <!-- ENGLISH VERSION -->
+            <div class="language-section active" data-lang="en">
+                <h2>Privacy Policy for DiaPet</h2>
+                <p><strong>Last Updated:</strong> February 2026</p>
+
+                <h3>1. Introduction</h3>
+                <p>DiaPet is a mobile application designed to help cat owners manage their pet's diabetes. We are committed to protecting your privacy and ensuring you have a positive experience with our app.</p>
+
+                <div class="highlight">
+                    <strong>Key Privacy Principle:</strong> DiaPet stores all data locally on your device only. We do not collect, store, or share any of your data with external servers or third parties.
+                </div>
+
+                <h3>2. What Data We Store</h3>
+                <p>DiaPet allows you to store and manage the following information on your device:</p>
+                <ul>
+                    <li><strong>Pet Information:</strong> Your cat's name, breed, age, weight, and medical history</li>
+                    <li><strong>Glucose Readings:</strong> Blood glucose measurements and measurement times</li>
+                    <li><strong>Medication Records:</strong> Insulin doses, injection times, and medication schedules</li>
+                    <li><strong>Symptom Logs:</strong> Recorded symptoms and their severity</li>
+                    <li><strong>Symptom Photos:</strong> Photos attached to symptom records (stored on your device)</li>
+                    <li><strong>Feeding Records:</strong> Food type, feeding time, and portion size</li>
+                    <li><strong>Expense Tracking:</strong> Veterinary and medication costs</li>
+                    <li><strong>Reminder Settings:</strong> Your custom medication and feeding reminder preferences</li>
+                </ul>
+
+                <p><strong>All of this data is stored exclusively on your device.</strong> Nothing is sent to our servers, the cloud, or any third-party services.</p>
+
+                <h3>3. Permissions & Data Access</h3>
+
+                <h4>Camera & Photo Library</h4>
+                <p>DiaPet may request access to your device's camera and photo library to allow you to attach photos to symptom records. This feature helps you document your pet's condition visually.</p>
+                <ul>
+                    <li><strong>Why We Need It:</strong> To enable you to capture or select photos from your device</li>
+                    <li><strong>How We Use It:</strong> Photos are stored locally within the app, attached to symptom entries</li>
+                    <li><strong>Data Storage:</strong> All photos remain on your device; they are never uploaded or shared</li>
+                </ul>
+
+                <h4>Notifications</h4>
+                <p>DiaPet uses local notifications to remind you about medication doses and feeding schedules.</p>
+                <ul>
+                    <li><strong>Why We Need It:</strong> To send timely reminders for your pet's care</li>
+                    <li><strong>How They Work:</strong> All reminders are generated and processed locally on your device</li>
+                    <li><strong>Data Storage:</strong> Notification data is not stored on external servers</li>
+                </ul>
+
+                <h3>4. No Data Collection or Tracking</h3>
+                <p>DiaPet does <strong>not</strong>:</p>
+                <ul>
+                    <li>Collect analytics or usage data</li>
+                    <li>Track your behavior or interactions within the app</li>
+                    <li>Use cookies or tracking technologies</li>
+                    <li>Share data with advertising networks or marketing partners</li>
+                    <li>Sell or monetize your personal data</li>
+                    <li>Require an internet connection for core functionality</li>
+                </ul>
+
+                <h3>5. Data Deletion</h3>
+                <p>Your data is completely private and remains on your device. To permanently delete all your data:</p>
+                <ul>
+                    <li><strong>Option 1:</strong> Use the app's data export/deletion feature if available</li>
+                    <li><strong>Option 2:</strong> Uninstall the app from your device — all associated data will be removed</li>
+                    <li><strong>Option 3:</strong> Clear the app's cache and data through your device settings</li>
+                </ul>
+                <p>Once deleted, we have no ability to recover or access your data, as it was never stored on our servers.</p>
+
+                <h3>6. Children's Privacy</h3>
+                <p>DiaPet is not directed to children under 13. However, parents and guardians may use DiaPet to manage their cat's health. If you are a parent or guardian and believe your child has accessed DiaPet without permission, please contact us immediately.</p>
+
+                <h3>7. No Account or Authentication</h3>
+                <p>DiaPet requires <strong>no user account, login, or registration</strong>. You can use the app immediately upon installation without providing any personal information.</p>
+
+                <h3>8. Third-Party Services</h3>
+                <p>DiaPet does not integrate with third-party analytics, cloud services, or data brokers. Your data is never shared with external parties.</p>
+
+                <h3>9. Data Security</h3>
+                <p>Since all your data is stored locally on your device, the security of your data depends on your device's built-in security features:</p>
+                <ul>
+                    <li>Keep your device updated with the latest OS patches</li>
+                    <li>Use a strong device lock code or biometric authentication</li>
+                    <li>Avoid jailbreaking or rooting your device</li>
+                </ul>
+
+                <h3>10. Changes to This Privacy Policy</h3>
+                <p>We may update this privacy policy occasionally. Changes will be reflected in the app and on this page with an updated "Last Updated" date. Your continued use of DiaPet indicates acceptance of any changes.</p>
+
+                <h3>11. Contact Us</h3>
+                <p>If you have questions or concerns about this privacy policy or DiaPet's data practices, please contact us:</p>
+                <div class="contact-info">
+                    <strong>Email:</strong> <a href="mailto:giwoder@gmail.com">giwoder@gmail.com</a><br>
+                    <strong>Developer:</strong> DiaPet Team
+                </div>
+
+                <h3>12. Summary</h3>
+                <p>Your privacy matters to us. DiaPet is designed to keep your pet's health data private, secure, and completely under your control on your device. We do not collect, track, share, or monetize any information. Your data is yours alone.</p>
+
+            </div>
+
+            <!-- RUSSIAN VERSION -->
+            <div class="language-section" data-lang="ru">
+                <h2>Политика конфиденциальности DiaPet</h2>
+                <p><strong>Последнее обновление:</strong> Февраль 2026</p>
+
+                <h3>1. Введение</h3>
+                <p>DiaPet — это мобильное приложение, разработанное для помощи владельцам кошек в управлении диабетом их питомцев. Мы обязуемся защищать вашу конфиденциальность и обеспечивать позитивный опыт использования приложения.</p>
+
+                <div class="highlight">
+                    <strong>Основной принцип конфиденциальности:</strong> DiaPet хранит все данные исключительно локально на вашем устройстве. Мы не собираем, не храним и не передаем ваши данные внешним серверам или третьим лицам.
+                </div>
+
+                <h3>2. Какие данные мы храним</h3>
+                <p>DiaPet позволяет вам сохранять и управлять следующей информацией на вашем устройстве:</p>
+                <ul>
+                    <li><strong>Информация о питомце:</strong> имя, порода, возраст, вес и история болезни вашей кошки</li>
+                    <li><strong>Измерения глюкозы:</strong> уровни глюкозы в крови и время измерения</li>
+                    <li><strong>Запись о лекарствах:</strong> дозы инсулина, время инъекций и расписание лекарств</li>
+                    <li><strong>Журнал симптомов:</strong> записанные симптомы и их тяжесть</li>
+                    <li><strong>Фотографии симптомов:</strong> фотографии, прикрепленные к записям о симптомах (хранятся на вашем устройстве)</li>
+                    <li><strong>Записи о кормлении:</strong> тип корма, время кормления и размер порции</li>
+                    <li><strong>Отслеживание расходов:</strong> ветеринарные и лекарственные расходы</li>
+                    <li><strong>Параметры напоминаний:</strong> ваши пользовательские напоминания о лекарствах и кормлении</li>
+                </ul>
+
+                <p><strong>Все эти данные хранятся исключительно на вашем устройстве.</strong> Ничто не отправляется на наши серверы, в облако или третьим сторонам.</p>
+
+                <h3>3. Разрешения и доступ к данным</h3>
+
+                <h4>Камера и галерея фотографий</h4>
+                <p>DiaPet может запросить доступ к камере вашего устройства и галерее фотографий, чтобы вы могли прикреплять фотографии к записям о симптомах. Эта функция помогает вам визуально документировать состояние вашего питомца.</p>
+                <ul>
+                    <li><strong>Зачем нам это нужно:</strong> для того, чтобы вы могли делать фотографии или выбирать их со своего устройства</li>
+                    <li><strong>Как мы это используем:</strong> фотографии хранятся локально в приложении, прикреплены к записям о симптомах</li>
+                    <li><strong>Хранение данных:</strong> все фотографии остаются на вашем устройстве; они никогда не загружаются и не передаются</li>
+                </ul>
+
+                <h4>Уведомления</h4>
+                <p>DiaPet использует локальные уведомления для напоминания о приеме лекарств и расписании кормления.</p>
+                <ul>
+                    <li><strong>Зачем нам это нужно:</strong> для отправки своевременных напоминаний по уходу за вашим питомцем</li>
+                    <li><strong>Как они работают:</strong> все напоминания генерируются и обрабатываются локально на вашем устройстве</li>
+                    <li><strong>Хранение данных:</strong> данные уведомлений не хранятся на внешних серверах</li>
+                </ul>
+
+                <h3>4. Отсутствие сбора данных или отслеживания</h3>
+                <p>DiaPet <strong>НЕ</strong>:</p>
+                <ul>
+                    <li>Собирает аналитику или данные об использовании</li>
+                    <li>Отслеживает ваше поведение или взаимодействия в приложении</li>
+                    <li>Использует cookies или технологии отслеживания</li>
+                    <li>Передает данные рекламным сетям или маркетинговым партнерам</li>
+                    <li>Продает или монетизирует ваши личные данные</li>
+                    <li>Требует подключения к Интернету для основного функционала</li>
+                </ul>
+
+                <h3>5. Удаление данных</h3>
+                <p>Ваши данные полностью приватны и остаются на вашем устройстве. Чтобы навсегда удалить все ваши данные:</p>
+                <ul>
+                    <li><strong>Способ 1:</strong> используйте функцию экспорта/удаления данных приложения, если она доступна</li>
+                    <li><strong>Способ 2:</strong> удалите приложение со своего устройства — все связанные данные будут удалены</li>
+                    <li><strong>Способ 3:</strong> очистите кэш и данные приложения через параметры устройства</li>
+                </ul>
+                <p>После удаления мы не имеем возможности восстановить или получить доступ к вашим данным, так как они никогда не хранились на наших серверах.</p>
+
+                <h3>6. Конфиденциальность детей</h3>
+                <p>DiaPet не ориентирован на детей младше 13 лет. Однако родители и опекуны могут использовать DiaPet для управления здоровьем своей кошки. Если вы родитель или опекун и считаете, что ваш ребенок получил доступ к DiaPet без разрешения, немедленно свяжитесь с нами.</p>
+
+                <h3>7. Отсутствие учетной записи или аутентификации</h3>
+                <p>DiaPet <strong>не требует</strong> учетную запись пользователя, вход или регистрацию. Вы можете использовать приложение сразу после установки, не предоставляя никакую личную информацию.</p>
+
+                <h3>8. Сторонние сервисы</h3>
+                <p>DiaPet не интегрируется со сторонней аналитикой, облачными сервисами или броkers данных. Ваши данные никогда не передаются третьим сторонам.</p>
+
+                <h3>9. Безопасность данных</h3>
+                <p>Так как все ваши данные хранятся локально на вашем устройстве, безопасность ваших данных зависит от встроенных функций безопасности вашего устройства:</p>
+                <ul>
+                    <li>Держите ваше устройство в актуальном состоянии с последними исправлениями ОС</li>
+                    <li>Используйте надежный код блокировки устройства или биометрическую аутентификацию</li>
+                    <li>Избегайте джейлбрейка или рутирования вашего устройства</li>
+                </ul>
+
+                <h3>10. Изменения в политике конфиденциальности</h3>
+                <p>Мы можем периодически обновлять эту политику конфиденциальности. Изменения будут отражены в приложении и на этой странице с обновленной датой "Последнее обновление". Ваше продолжение использования DiaPet указывает на согласие с любыми изменениями.</p>
+
+                <h3>11. Свяжитесь с нами</h3>
+                <p>Если у вас есть вопросы или проблемы относительно этой политики конфиденциальности или практики работы с данными DiaPet, пожалуйста, свяжитесь с нами:</p>
+                <div class="contact-info">
+                    <strong>Электронная почта:</strong> <a href="mailto:giwoder@gmail.com">giwoder@gmail.com</a><br>
+                    <strong>Разработчик:</strong> DiaPet Team
+                </div>
+
+                <h3>12. Резюме</h3>
+                <p>Ваша конфиденциальность важна для нас. DiaPet разработан для того, чтобы держать данные о здоровье вашего питомца конфиденциальными, защищенными и полностью под вашим контролем на вашем устройстве. Мы не собираем, не отслеживаем, не передаем и не монетизируем никакую информацию. Ваши данные принадлежат только вам.</p>
+
+            </div>
+        </div>
+
+        <footer>
+            <p><strong>DiaPet Privacy Policy</strong> — Protecting Your Pet's Health Data</p>
+            <p>Last Updated: February 2026 | Version 1.0</p>
+            <p>For questions, contact: <a href="mailto:giwoder@gmail.com">giwoder@gmail.com</a></p>
+        </footer>
+    </div>
+
+    <script>
+        // Language toggle functionality
+        const languageButtons = document.querySelectorAll('.lang-btn');
+        const languageSections = document.querySelectorAll('.language-section');
+
+        languageButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const selectedLang = button.getAttribute('data-lang');
+
+                // Update button active state
+                languageButtons.forEach(btn => btn.classList.remove('active'));
+                button.classList.add('active');
+
+                // Update visible section
+                languageSections.forEach(section => {
+                    section.classList.remove('active');
+                    if (section.getAttribute('data-lang') === selectedLang) {
+                        section.classList.add('active');
+                    }
+                });
+
+                // Save preference to localStorage
+                localStorage.setItem('preferredLanguage', selectedLang);
+            });
+        });
+
+        // Load saved language preference on page load
+        window.addEventListener('DOMContentLoaded', () => {
+            const savedLanguage = localStorage.getItem('preferredLanguage') || 'en';
+            const savedButton = document.querySelector(`[data-lang="${savedLanguage}"]`);
+            if (savedButton) {
+                savedButton.click();
+            }
+        });
+    </script>
+</body>
+</html>
