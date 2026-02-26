@@ -1,6 +1,7 @@
 import React, { useMemo } from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity, Alert, ActivityIndicator } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { Ionicons } from '@expo/vector-icons';
 import { useHomeNavigation } from '@navigation/hooks';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '@shared/theme';
@@ -9,7 +10,7 @@ import { injectionRepository } from '@storage/database';
 import { usePetStore } from '@shared/stores/petStore';
 import { InjectionLog } from '@storage/domain/types';
 import { formatDateTime } from '@shared/utils/dateUtils';
-import { EmptyState, Card } from '@shared/components/ui';
+import { EmptyState, Card, AnimatedListItem } from '@shared/components/ui';
 import { SimpleBarChart, BarData } from '@shared/components/charts/SimpleBarChart';
 import { format, parseISO, subDays, isAfter } from 'date-fns';
 
@@ -63,30 +64,35 @@ export default function InjectionListScreen() {
     ]);
   };
 
-  const renderItem = ({ item }: { item: InjectionLog }) => (
-    <TouchableOpacity onLongPress={() => handleDelete(item.id)} activeOpacity={0.8}>
-      <Card style={styles.card} shadow>
-        <View style={[styles.colorBar, { backgroundColor: theme.colors.primary }]} />
-        <View style={styles.cardContent}>
-          <View style={{ flex: 1 }}>
-            <Text style={[styles.dose, { color: theme.colors.text }]}>
-              💉 {item.doseUnits} {t('common.units')}
-            </Text>
-            <Text style={[styles.type, { color: theme.colors.textSecondary }]}>
-              {item.insulinType}
-            </Text>
-            <Text style={[styles.time, { color: theme.colors.textTertiary }]}>
-              {formatDateTime(item.administeredAt)}
-            </Text>
+  const renderItem = ({ item, index }: { item: InjectionLog; index: number }) => (
+    <AnimatedListItem index={index}>
+      <TouchableOpacity onLongPress={() => handleDelete(item.id)} activeOpacity={0.8}>
+        <Card style={styles.card} shadow>
+          <View style={[styles.colorBar, { backgroundColor: theme.colors.primary }]} />
+          <View style={styles.cardContent}>
+            <View style={{ flex: 1 }}>
+              <View style={styles.doseRow}>
+                <Ionicons name="medkit-outline" size={18} color={theme.colors.primary} />
+                <Text style={[styles.dose, { color: theme.colors.text, fontFamily: theme.fonts.bold }]}>
+                  {item.doseUnits} {t('common.units')}
+                </Text>
+              </View>
+              <Text style={[styles.type, { color: theme.colors.textSecondary }]}>
+                {item.insulinType}
+              </Text>
+              <Text style={[styles.time, { color: theme.colors.textTertiary }]}>
+                {formatDateTime(item.administeredAt)}
+              </Text>
+            </View>
+            {item.notes && (
+              <Text style={[styles.notes, { color: theme.colors.textTertiary }]} numberOfLines={1}>
+                {item.notes}
+              </Text>
+            )}
           </View>
-          {item.notes && (
-            <Text style={[styles.notes, { color: theme.colors.textTertiary }]} numberOfLines={1}>
-              {item.notes}
-            </Text>
-          )}
-        </View>
-      </Card>
-    </TouchableOpacity>
+        </Card>
+      </TouchableOpacity>
+    </AnimatedListItem>
   );
 
   return (
@@ -95,7 +101,7 @@ export default function InjectionListScreen() {
         <TouchableOpacity onPress={() => navigation.goBack()}>
           <Text style={{ color: theme.colors.primary }}>{'← '}{t('common.back')}</Text>
         </TouchableOpacity>
-        <Text style={[styles.headerTitle, { color: theme.colors.text }]}>{t('injection.history')}</Text>
+        <Text style={[styles.headerTitle, { color: theme.colors.text, fontFamily: theme.fonts.bold }]}>{t('injection.history')}</Text>
         <View style={{ width: 60 }} />
       </View>
 
@@ -124,7 +130,8 @@ export default function InjectionListScreen() {
         }
         ListEmptyComponent={
           <EmptyState
-            icon="💉"
+            iconName="medkit-outline"
+            iconColor={theme.colors.secondary}
             title={t('injection.history')}
             subtitle={t('injection.noHistory')}
           />
@@ -143,6 +150,7 @@ const styles = StyleSheet.create({
   card: { padding: 0, flexDirection: 'row', overflow: 'hidden' },
   colorBar: { width: 4 },
   cardContent: { flex: 1, padding: 14, gap: 2 },
+  doseRow: { flexDirection: 'row', alignItems: 'center', gap: 6 },
   dose: { fontSize: 18, fontWeight: '700' },
   type: { fontSize: 14, marginTop: 2 },
   time: { fontSize: 12, marginTop: 4 },

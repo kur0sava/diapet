@@ -18,12 +18,13 @@ import { storage, StorageKeys } from '@storage/mmkv/storage';
 import * as Haptics from 'expo-haptics';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { format } from 'date-fns';
+import { Ionicons } from '@expo/vector-icons';
 
-const MEAL_OPTIONS: { value: MealRelation; labelKey: string; icon: string }[] = [
-  { value: 'fasting', labelKey: 'glucose.fasting', icon: '☀️' },
-  { value: 'before_meal', labelKey: 'glucose.beforeMeal', icon: '🍽️' },
-  { value: 'after_meal', labelKey: 'glucose.afterMeal', icon: '✅' },
-  { value: 'unspecified', labelKey: 'glucose.unspecified', icon: '❓' },
+const MEAL_OPTIONS: { value: MealRelation; labelKey: string; iconName: keyof typeof Ionicons.glyphMap; iconColor: string }[] = [
+  { value: 'fasting', labelKey: 'glucose.fasting', iconName: 'sunny-outline', iconColor: '#FF9500' },
+  { value: 'before_meal', labelKey: 'glucose.beforeMeal', iconName: 'restaurant-outline', iconColor: '#FF6B6B' },
+  { value: 'after_meal', labelKey: 'glucose.afterMeal', iconName: 'checkmark-circle-outline', iconColor: '#34C759' },
+  { value: 'unspecified', labelKey: 'glucose.unspecified', iconName: 'help-circle-outline', iconColor: '#8E8E93' },
 ];
 
 export default function LogGlucoseScreen() {
@@ -121,7 +122,7 @@ export default function LogGlucoseScreen() {
           <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backBtn}>
             <Text style={{ color: theme.colors.primary, fontSize: 16 }}>← {t('common.back')}</Text>
           </TouchableOpacity>
-          <Text style={[styles.headerTitle, { color: theme.colors.text }]}>
+          <Text style={[styles.headerTitle, { color: theme.colors.text, fontFamily: theme.fonts.semibold }]}>
             {editId ? t('glucose.editReading') : t('glucose.addReading')}
           </Text>
           <View style={{ width: 60 }} />
@@ -145,7 +146,7 @@ export default function LogGlucoseScreen() {
                   ]}
                   onPress={() => setUnit(u)}
                 >
-                  <Text style={{ color: unit === u ? '#fff' : theme.colors.text, fontWeight: '600', fontSize: 13 }}>
+                  <Text style={{ color: unit === u ? '#fff' : theme.colors.text, fontFamily: theme.fonts.semibold, fontSize: 13 }}>
                     {u}
                   </Text>
                 </TouchableOpacity>
@@ -157,12 +158,12 @@ export default function LogGlucoseScreen() {
               onChangeText={setValue}
               placeholder={unit === 'mmol/L' ? '6.5' : '117'}
               keyboardType="decimal-pad"
-              style={{ fontSize: 32, textAlign: 'center', fontWeight: '700' }}
+              style={{ fontSize: 32, textAlign: 'center', fontFamily: theme.fonts.bold }}
             />
 
             {glucosePreview && (
               <View style={[styles.levelBadge, { backgroundColor: `${glucosePreview.color}20` }]}>
-                <Text style={[styles.levelText, { color: glucosePreview.color }]}>
+                <Text style={[styles.levelText, { color: glucosePreview.color, fontFamily: theme.fonts.bold }]}>
                   ● {levelLabels[glucosePreview.level]}
                 </Text>
               </View>
@@ -170,23 +171,29 @@ export default function LogGlucoseScreen() {
           </Card>
 
           {/* Date & Time */}
-          <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>{t('glucose.date')} & {t('glucose.time')}</Text>
+          <Text style={[styles.sectionTitle, { color: theme.colors.text, fontFamily: theme.fonts.bold }]}>{t('glucose.date')} & {t('glucose.time')}</Text>
           <View style={styles.row}>
             <TouchableOpacity
               style={[styles.dateTimeBtn, { backgroundColor: theme.colors.surfaceSecondary }]}
               onPress={() => setShowDatePicker(true)}
             >
-              <Text style={{ color: theme.colors.text, fontSize: 15, fontWeight: '600' }}>
-                📅 {format(recordedAt, 'dd.MM.yyyy')}
-              </Text>
+              <View style={styles.dateTimeContent}>
+                <Ionicons name="calendar-outline" size={18} color={theme.colors.primary} style={{ marginRight: 6 }} />
+                <Text style={{ color: theme.colors.text, fontSize: 15, fontFamily: theme.fonts.semibold }}>
+                  {format(recordedAt, 'dd.MM.yyyy')}
+                </Text>
+              </View>
             </TouchableOpacity>
             <TouchableOpacity
               style={[styles.dateTimeBtn, { backgroundColor: theme.colors.surfaceSecondary }]}
               onPress={() => setShowTimePicker(true)}
             >
-              <Text style={{ color: theme.colors.text, fontSize: 15, fontWeight: '600' }}>
-                🕐 {format(recordedAt, 'HH:mm')}
-              </Text>
+              <View style={styles.dateTimeContent}>
+                <Ionicons name="time-outline" size={18} color={theme.colors.primary} style={{ marginRight: 6 }} />
+                <Text style={{ color: theme.colors.text, fontSize: 15, fontFamily: theme.fonts.semibold }}>
+                  {format(recordedAt, 'HH:mm')}
+                </Text>
+              </View>
             </TouchableOpacity>
           </View>
 
@@ -215,7 +222,7 @@ export default function LogGlucoseScreen() {
           )}
 
           {/* Meal Relation */}
-          <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>{t('glucose.mealRelation')}</Text>
+          <Text style={[styles.sectionTitle, { color: theme.colors.text, fontFamily: theme.fonts.bold }]}>{t('glucose.mealRelation')}</Text>
           <View style={styles.mealGrid}>
             {MEAL_OPTIONS.map(opt => (
               <TouchableOpacity
@@ -231,8 +238,8 @@ export default function LogGlucoseScreen() {
                 ]}
                 onPress={() => setMealRelation(opt.value)}
               >
-                <Text style={styles.mealIcon}>{opt.icon}</Text>
-                <Text style={[styles.mealLabel, { color: mealRelation === opt.value ? theme.colors.primary : theme.colors.text }]}>
+                <Ionicons name={opt.iconName} size={24} color={mealRelation === opt.value ? theme.colors.primary : opt.iconColor} />
+                <Text style={[styles.mealLabel, { color: mealRelation === opt.value ? theme.colors.primary : theme.colors.text, fontFamily: theme.fonts.semibold }]}>
                   {t(opt.labelKey)}
                 </Text>
               </TouchableOpacity>
@@ -240,7 +247,7 @@ export default function LogGlucoseScreen() {
           </View>
 
           {/* Insulin */}
-          <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>{t('glucose.insulinOptional')}</Text>
+          <Text style={[styles.sectionTitle, { color: theme.colors.text, fontFamily: theme.fonts.bold }]}>{t('glucose.insulinOptional')}</Text>
           <View style={styles.row}>
             <Input
               label={t('glucose.insulinDose')}
@@ -291,19 +298,19 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16, paddingVertical: 12, borderBottomWidth: 0.5,
   },
   backBtn: { width: 60 },
-  headerTitle: { fontSize: 17, fontWeight: '600' },
+  headerTitle: { fontSize: 17 },
   content: { padding: 20, gap: 16, paddingBottom: 40 },
   mainCard: { alignItems: 'center', paddingVertical: 24 },
   mainLabel: { fontSize: 13, fontWeight: '500', marginBottom: 12 },
   unitRow: { flexDirection: 'row', gap: 8, marginBottom: 16 },
   unitBtn: { paddingHorizontal: 16, paddingVertical: 8, borderRadius: 20 },
   levelBadge: { paddingHorizontal: 16, paddingVertical: 8, borderRadius: 20, marginTop: 12 },
-  levelText: { fontWeight: '700', fontSize: 14 },
-  sectionTitle: { fontSize: 16, fontWeight: '700', marginTop: 4 },
+  levelText: { fontSize: 14 },
+  sectionTitle: { fontSize: 16, marginTop: 4 },
   mealGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 10 },
   mealBtn: { width: '47%', padding: 14, borderRadius: 14, alignItems: 'center', gap: 6 },
-  mealIcon: { fontSize: 24 },
-  mealLabel: { fontSize: 13, fontWeight: '600', textAlign: 'center' },
+  mealLabel: { fontSize: 13, textAlign: 'center' },
   row: { flexDirection: 'row', gap: 12 },
   dateTimeBtn: { flex: 1, padding: 14, borderRadius: 12, alignItems: 'center' },
+  dateTimeContent: { flexDirection: 'row', alignItems: 'center' },
 });

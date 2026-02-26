@@ -7,14 +7,18 @@ export {
 
 // Feature-specific UI constants stay here
 import type { ExpenseCategory } from '@storage/domain/types';
+import type { ComponentProps } from 'react';
+import type { Ionicons } from '@expo/vector-icons';
 
-export const EXPENSE_ICONS: Record<ExpenseCategory, string> = {
-  insulin: '💉',
-  testStrips: '🩸',
-  vetVisit: '🏥',
-  medication: '💊',
-  food: '🥩',
-  other: '📦',
+export type IonIconName = ComponentProps<typeof Ionicons>['name'];
+
+export const EXPENSE_ICON_NAMES: Record<ExpenseCategory, IonIconName> = {
+  insulin: 'fitness-outline',
+  testStrips: 'water-outline',
+  vetVisit: 'medkit-outline',
+  medication: 'medical-outline',
+  food: 'fast-food-outline',
+  other: 'cube-outline',
 };
 
 export const EXPENSE_COLORS: Record<ExpenseCategory, string> = {

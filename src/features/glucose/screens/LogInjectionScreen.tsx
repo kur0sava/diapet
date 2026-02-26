@@ -4,6 +4,7 @@ import {
   TouchableOpacity, Alert, KeyboardAvoidingView, Platform,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { Ionicons } from '@expo/vector-icons';
 import { useHomeNavigation } from '@navigation/hooks';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '@shared/theme';
@@ -61,7 +62,7 @@ export default function LogInjectionScreen() {
       <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.background }]}>
         <View style={[styles.navHeader, { borderBottomColor: theme.colors.border }]}>
           <TouchableOpacity onPress={() => navigation.goBack()}>
-            <Text style={{ color: theme.colors.primary }}>← {t('common.back')}</Text>
+            <Text style={{ color: theme.colors.primary }}>{'\u2190 '}{t('common.back')}</Text>
           </TouchableOpacity>
           <Text style={[styles.title, { color: theme.colors.text }]}>{t('injection.title')}</Text>
           <View style={{ width: 60 }} />
@@ -69,7 +70,7 @@ export default function LogInjectionScreen() {
 
         <ScrollView contentContainerStyle={styles.content}>
           <Card style={styles.mainCard}>
-            <Text style={{ fontSize: 48, textAlign: 'center', marginBottom: 8 }}>💉</Text>
+            <Ionicons name="medkit-outline" size={48} color={theme.colors.primary} style={{ marginBottom: 8 }} />
             <Input
               label={t('injection.dose')}
               value={dose}

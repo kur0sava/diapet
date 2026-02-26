@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { Ionicons } from '@expo/vector-icons';
 import { useMoreNavigation } from '@navigation/hooks';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '@shared/theme';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { expenseRepository } from '@storage/database';
 import { usePetStore } from '@shared/stores/petStore';
-import { Expense, EXPENSE_ICONS, EXPENSE_COLORS, ExpenseCategory } from '../types';
+import { Expense, EXPENSE_ICON_NAMES, EXPENSE_COLORS, ExpenseCategory } from '../types';
 import { Card, EmptyState } from '@shared/components/ui';
 
 export default function ExpensesScreen() {
@@ -68,14 +69,14 @@ export default function ExpensesScreen() {
     >
       <Card style={styles.expenseCard}>
         <View style={[styles.expenseIcon, { backgroundColor: `${EXPENSE_COLORS[item.category as ExpenseCategory]}20` }]}>
-          <Text style={styles.expenseEmoji}>{EXPENSE_ICONS[item.category as ExpenseCategory]}</Text>
+          <Ionicons name={EXPENSE_ICON_NAMES[item.category as ExpenseCategory]} size={22} color={EXPENSE_COLORS[item.category as ExpenseCategory]} />
         </View>
         <View style={styles.expenseInfo}>
-          <Text style={[styles.expenseCategory, { color: theme.colors.text }]}>{categoryLabels[item.category as ExpenseCategory]}</Text>
+          <Text style={[styles.expenseCategory, { color: theme.colors.text, fontFamily: theme.fonts.semibold }]}>{categoryLabels[item.category as ExpenseCategory]}</Text>
           {item.description && <Text style={[styles.expenseDesc, { color: theme.colors.textSecondary }]} numberOfLines={1}>{item.description}</Text>}
           <Text style={[styles.expenseDate, { color: theme.colors.textTertiary }]}>{item.date}</Text>
         </View>
-        <Text style={[styles.expenseAmount, { color: theme.colors.text }]}>{item.amount.toLocaleString('ru-RU')} ₽</Text>
+        <Text style={[styles.expenseAmount, { color: theme.colors.text, fontFamily: theme.fonts.bold }]}>{item.amount.toLocaleString('ru-RU')} ₽</Text>
       </Card>
     </TouchableOpacity>
   );
@@ -84,11 +85,11 @@ export default function ExpensesScreen() {
     <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.background }]}>
       <View style={[styles.monthRow, { backgroundColor: theme.colors.surface, borderBottomColor: theme.colors.border }]}>
         <TouchableOpacity onPress={() => { if (month === 1) { setMonth(12); setYear(y => y-1); } else setMonth(m => m-1); }} style={styles.monthBtn}>
-          <Text style={{ color: theme.colors.primary, fontSize: 20 }}>‹</Text>
+          <Ionicons name="chevron-back" size={20} color={theme.colors.primary} />
         </TouchableOpacity>
-        <Text style={[styles.monthTitle, { color: theme.colors.text }]}>{t(`expenses.months.${monthKeys[month-1]}`)} {year}</Text>
+        <Text style={[styles.monthTitle, { color: theme.colors.text, fontFamily: theme.fonts.bold }]}>{t(`expenses.months.${monthKeys[month-1]}`)} {year}</Text>
         <TouchableOpacity onPress={() => { if (month === 12) { setMonth(1); setYear(y => y+1); } else setMonth(m => m+1); }} style={styles.monthBtn}>
-          <Text style={{ color: theme.colors.primary, fontSize: 20 }}>›</Text>
+          <Ionicons name="chevron-forward" size={20} color={theme.colors.primary} />
         </TouchableOpacity>
       </View>
 
@@ -107,23 +108,23 @@ export default function ExpensesScreen() {
               <View style={styles.categoryStats}>
                 {Object.entries(byCategory).map(([cat, amount]) => (
                   <View key={cat} style={[styles.categoryStat, { backgroundColor: theme.colors.surface, ...theme.shadows.sm }]}>
-                    <Text style={styles.catEmoji}>{EXPENSE_ICONS[cat as ExpenseCategory]}</Text>
+                    <Ionicons name={EXPENSE_ICON_NAMES[cat as ExpenseCategory]} size={20} color={EXPENSE_COLORS[cat as ExpenseCategory]} />
                     <Text style={[styles.catLabel, { color: theme.colors.textSecondary }]} numberOfLines={1}>{categoryLabels[cat as ExpenseCategory]}</Text>
-                    <Text style={[styles.catAmount, { color: theme.colors.text }]}>{amount.toLocaleString('ru-RU')} ₽</Text>
+                    <Text style={[styles.catAmount, { color: theme.colors.text, fontFamily: theme.fonts.bold }]}>{amount.toLocaleString('ru-RU')} ₽</Text>
                   </View>
                 ))}
               </View>
             )}
-            {expenses.length > 0 && <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>{t('expenses.history')}</Text>}
+            {expenses.length > 0 && <Text style={[styles.sectionTitle, { color: theme.colors.text, fontFamily: theme.fonts.bold }]}>{t('expenses.history')}</Text>}
           </>
         }
         ListEmptyComponent={
-          <EmptyState icon="💰" title={t('expenses.title')} subtitle={t('expenses.noExpenses')}
+          <EmptyState iconName="wallet-outline" iconColor={theme.colors.primary} title={t('expenses.title')} subtitle={t('expenses.noExpenses')}
             actionLabel={t('expenses.addExpense')} onAction={() => navigation.navigate('AddExpense', {})} />
         }
       />
       <TouchableOpacity style={[styles.fab, { backgroundColor: theme.colors.primary }]} onPress={() => navigation.navigate('AddExpense', {})}>
-        <Text style={styles.fabIcon}>+</Text>
+        <Ionicons name="add" size={28} color="#fff" />
       </TouchableOpacity>
     </SafeAreaView>
   );
@@ -133,25 +134,22 @@ const styles = StyleSheet.create({
   container: { flex: 1 },
   monthRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: 8, borderBottomWidth: 0.5 },
   monthBtn: { padding: 12, paddingHorizontal: 20 },
-  monthTitle: { fontSize: 17, fontWeight: '700' },
+  monthTitle: { fontSize: 17 },
   list: { padding: 16, gap: 10, paddingBottom: 100 },
   totalCard: { padding: 24, borderRadius: 16, alignItems: 'center', marginBottom: 8 },
   totalLabel: { color: 'rgba(255,255,255,0.8)', fontSize: 13, fontWeight: '500' },
   totalAmount: { color: '#fff', fontSize: 36, fontWeight: '800', marginTop: 4 },
   categoryStats: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginBottom: 16 },
   categoryStat: { width: '47%', flexDirection: 'row', alignItems: 'center', padding: 12, borderRadius: 12, gap: 8 },
-  catEmoji: { fontSize: 20 },
   catLabel: { fontSize: 12, flex: 1 },
-  catAmount: { fontSize: 13, fontWeight: '700' },
-  sectionTitle: { fontSize: 16, fontWeight: '700', marginBottom: 4 },
+  catAmount: { fontSize: 13 },
+  sectionTitle: { fontSize: 16, marginBottom: 4 },
   expenseCard: { flexDirection: 'row', alignItems: 'center', gap: 12 },
   expenseIcon: { width: 44, height: 44, borderRadius: 22, alignItems: 'center', justifyContent: 'center' },
-  expenseEmoji: { fontSize: 22 },
   expenseInfo: { flex: 1, gap: 2 },
-  expenseCategory: { fontSize: 15, fontWeight: '600' },
+  expenseCategory: { fontSize: 15 },
   expenseDesc: { fontSize: 13 },
   expenseDate: { fontSize: 12 },
-  expenseAmount: { fontSize: 16, fontWeight: '700' },
+  expenseAmount: { fontSize: 16 },
   fab: { position: 'absolute', bottom: 24, right: 20, width: 56, height: 56, borderRadius: 28, alignItems: 'center', justifyContent: 'center', elevation: 6 },
-  fabIcon: { color: '#fff', fontSize: 28, fontWeight: '300' },
 });

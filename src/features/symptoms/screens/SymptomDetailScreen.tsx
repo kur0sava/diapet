@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image, ActivityIndicator } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { Ionicons } from '@expo/vector-icons';
 import { useRoute, RouteProp } from '@react-navigation/native';
 import { useSymptomsNavigation } from '@navigation/hooks';
 import type { SymptomsStackParamList } from '@navigation/types';
@@ -8,7 +9,7 @@ import { useTranslation } from 'react-i18next';
 import { useTheme } from '@shared/theme';
 import { useQuery } from '@tanstack/react-query';
 import { symptomRepository } from '@storage/database';
-import { SYMPTOM_ICONS } from '../types';
+import { SYMPTOM_ICONS, SYMPTOM_COLORS } from '../types';
 import { formatDateTime } from '@shared/utils/dateUtils';
 import { Card } from '@shared/components/ui';
 
@@ -48,10 +49,11 @@ export default function SymptomDetailScreen() {
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.background }]}>
       <View style={[styles.navHeader, { borderBottomColor: theme.colors.border }]}>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Text style={{ color: theme.colors.primary }}>← {t('common.back')}</Text>
+        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.navBtn}>
+          <Ionicons name="chevron-back" size={22} color={theme.colors.primary} />
+          <Text style={{ color: theme.colors.primary }}>{t('common.back')}</Text>
         </TouchableOpacity>
-        <Text style={[styles.title, { color: theme.colors.text }]}>{t('symptoms.detailTitle')}</Text>
+        <Text style={[styles.title, { color: theme.colors.text, fontFamily: theme.fonts.semibold }]}>{t('symptoms.detailTitle')}</Text>
         <TouchableOpacity onPress={() => navigation.navigate('AddSymptom', { editId: symptom.id })}>
           <Text style={{ color: theme.colors.primary }}>{t('common.edit')}</Text>
         </TouchableOpacity>
@@ -73,7 +75,9 @@ export default function SymptomDetailScreen() {
           <Text style={[styles.sectionLabel, { color: theme.colors.textSecondary }]}>{t('symptoms.title')}</Text>
           {symptom.symptomTypes.map(type => (
             <View key={type} style={styles.symptomRow}>
-              <Text style={styles.symptomEmoji}>{SYMPTOM_ICONS[type]}</Text>
+              <View style={[styles.symptomIconCircle, { backgroundColor: `${SYMPTOM_COLORS[type]}15` }]}>
+                <Ionicons name={SYMPTOM_ICONS[type]} size={20} color={SYMPTOM_COLORS[type]} />
+              </View>
               <Text style={[styles.symptomText, { color: theme.colors.text }]}>{t(`symptoms.types.${type}`)}</Text>
             </View>
           ))}
@@ -104,7 +108,8 @@ export default function SymptomDetailScreen() {
 const styles = StyleSheet.create({
   container: { flex: 1 },
   navHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', padding: 16, borderBottomWidth: 0.5 },
-  title: { fontSize: 17, fontWeight: '600' },
+  navBtn: { flexDirection: 'row', alignItems: 'center', gap: 2 },
+  title: { fontSize: 17 },
   content: { padding: 20, gap: 14, paddingBottom: 40 },
   date: { fontSize: 14, textAlign: 'center', marginBottom: 4 },
   card: { gap: 12 },
@@ -112,7 +117,7 @@ const styles = StyleSheet.create({
   severityBadge: { alignSelf: 'flex-start', paddingHorizontal: 14, paddingVertical: 8, borderRadius: 20 },
   severityText: { fontWeight: '700', fontSize: 15 },
   symptomRow: { flexDirection: 'row', alignItems: 'center', gap: 12, paddingVertical: 6 },
-  symptomEmoji: { fontSize: 22 },
+  symptomIconCircle: { width: 36, height: 36, borderRadius: 18, alignItems: 'center', justifyContent: 'center' },
   symptomText: { fontSize: 15 },
   notes: { fontSize: 15, lineHeight: 22 },
   photosGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },

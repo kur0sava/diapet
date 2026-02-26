@@ -70,7 +70,7 @@ export default function EditPetScreen() {
         </View>
       ))}
       <TouchableOpacity style={[styles.addBtn, { borderColor: theme.colors.primary, borderRadius: 12 }]} onPress={() => setTimes([...times, '12:00'])}>
-        <Text style={{ color: theme.colors.primary, fontWeight: '600' }}>+ {type === 'injection' ? t('pets.addInjection') : t('pets.addFeeding')}</Text>
+        <Text style={{ color: theme.colors.primary, fontFamily: theme.fonts.semibold }}>+ {type === 'injection' ? t('pets.addInjection') : t('pets.addFeeding')}</Text>
       </TouchableOpacity>
     </View>
   );
@@ -80,18 +80,27 @@ export default function EditPetScreen() {
       <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.background }]}>
         <View style={[styles.navHeader, { borderBottomColor: theme.colors.border }]}>
           <TouchableOpacity onPress={() => navigation.goBack()}><Text style={{ color: theme.colors.primary }}>← {t('common.back')}</Text></TouchableOpacity>
-          <Text style={[{ fontSize: 17, fontWeight: '600', color: theme.colors.text }]}>{t('pets.editPet')}</Text>
+          <Text style={[{ fontSize: 17, fontFamily: theme.fonts.semibold, color: theme.colors.text }]}>{t('pets.editPet')}</Text>
           <View style={{ width: 60 }} />
         </View>
         <ScrollView contentContainerStyle={styles.content}>
           <Input label={t('pets.name')} value={name} onChangeText={setName} placeholder="Барсик" />
           <Input label={`${t('pets.weight')} (${t('common.kg')})`} value={weightKg} onChangeText={setWeightKg} placeholder="4.5" keyboardType="decimal-pad" />
           <Input label={t('pets.insulinType')} value={insulinType} onChangeText={setInsulinType} placeholder="Протафан" />
-          <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>💉 {t('pets.injectionSchedule')}</Text>
+          <View style={styles.sectionHeader}>
+            <Ionicons name="medkit-outline" size={20} color={theme.colors.primary} style={{ marginRight: 8 }} />
+            <Text style={[styles.sectionTitle, { color: theme.colors.text, fontFamily: theme.fonts.bold }]}>{t('pets.injectionSchedule')}</Text>
+          </View>
           <TimeList type="injection" times={injectionTimes} setTimes={setInjectionTimes} />
-          <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>🍽️ {t('pets.feedingSchedule')}</Text>
+          <View style={styles.sectionHeader}>
+            <Ionicons name="restaurant-outline" size={20} color={theme.colors.warning} style={{ marginRight: 8 }} />
+            <Text style={[styles.sectionTitle, { color: theme.colors.text, fontFamily: theme.fonts.bold }]}>{t('pets.feedingSchedule')}</Text>
+          </View>
           <TimeList type="feeding" times={feedingTimes} setTimes={setFeedingTimes} />
-          <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>🏥 {t('pets.vetContact')}</Text>
+          <View style={styles.sectionHeader}>
+            <Ionicons name="medical-outline" size={20} color={theme.colors.success} style={{ marginRight: 8 }} />
+            <Text style={[styles.sectionTitle, { color: theme.colors.text, fontFamily: theme.fonts.bold }]}>{t('pets.vetContact')}</Text>
+          </View>
           <Input label={t('onboarding.vetName')} value={vetName} onChangeText={setVetName} placeholder="Др. Иванова" />
           <Input label={t('onboarding.vetPhone')} value={vetPhone} onChangeText={setVetPhone} placeholder="+7 999 000-00-00" keyboardType="phone-pad" />
           <Button title={t('common.save')} onPress={handleSave} fullWidth size="lg" loading={loading} style={{ marginTop: 24 }} />
@@ -105,7 +114,8 @@ const styles = StyleSheet.create({
   container: { flex: 1 },
   navHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', padding: 16, borderBottomWidth: 0.5 },
   content: { padding: 20, gap: 14, paddingBottom: 40 },
-  sectionTitle: { fontSize: 16, fontWeight: '700', marginTop: 8 },
+  sectionHeader: { flexDirection: 'row', alignItems: 'center', marginTop: 8 },
+  sectionTitle: { fontSize: 16 },
   timeRow: { flexDirection: 'row', alignItems: 'center' },
   addBtn: { padding: 14, borderWidth: 1.5, borderStyle: 'dashed', alignItems: 'center' },
 });

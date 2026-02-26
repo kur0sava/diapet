@@ -4,6 +4,7 @@ import {
   TouchableOpacity, Alert, Image, KeyboardAvoidingView, Platform,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { Ionicons } from '@expo/vector-icons';
 import { useHomeNavigation } from '@navigation/hooks';
 import { useRoute, RouteProp } from '@react-navigation/native';
 import { useTranslation } from 'react-i18next';
@@ -142,7 +143,7 @@ export default function AddSymptomScreen() {
       <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.background }]}>
         <View style={[styles.navHeader, { borderBottomColor: theme.colors.border }]}>
           <TouchableOpacity onPress={() => navigation.goBack()}>
-            <Text style={{ color: theme.colors.primary }}>← {t('common.back')}</Text>
+            <Text style={{ color: theme.colors.primary }}>{'\u2190 '}{t('common.back')}</Text>
           </TouchableOpacity>
           <Text style={[styles.title, { color: theme.colors.text }]}>{editId ? t('symptoms.editSymptom') : t('symptoms.addSymptom')}</Text>
           <View style={{ width: 60 }} />
@@ -167,7 +168,7 @@ export default function AddSymptomScreen() {
                   ]}
                   onPress={() => toggleType(type)}
                 >
-                  <Text style={styles.symptomEmoji}>{SYMPTOM_ICONS[type]}</Text>
+                  <Ionicons name={SYMPTOM_ICONS[type] as any} size={24} color={selected ? theme.colors.primary : theme.colors.textSecondary} />
                   <Text style={[styles.symptomLabel, { color: selected ? theme.colors.primary : theme.colors.text }]}
                     numberOfLines={2}>
                     {t(`symptoms.types.${type}`)}
@@ -201,14 +202,14 @@ export default function AddSymptomScreen() {
               style={[styles.photoBtn, { backgroundColor: theme.colors.surfaceSecondary, borderRadius: 12 }]}
               onPress={takePhoto}
             >
-              <Text style={{ fontSize: 24 }}>📷</Text>
+              <Ionicons name="camera-outline" size={24} color={theme.colors.primary} />
               <Text style={{ color: theme.colors.primary, fontSize: 13, fontWeight: '600' }}>{t('symptoms.camera')}</Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={[styles.photoBtn, { backgroundColor: theme.colors.surfaceSecondary, borderRadius: 12 }]}
               onPress={pickPhoto}
             >
-              <Text style={{ fontSize: 24 }}>🖼️</Text>
+              <Ionicons name="images-outline" size={24} color={theme.colors.primary} />
               <Text style={{ color: theme.colors.primary, fontSize: 13, fontWeight: '600' }}>{t('symptoms.gallery')}</Text>
             </TouchableOpacity>
           </View>
@@ -222,7 +223,7 @@ export default function AddSymptomScreen() {
                     style={styles.removePhotoBtn}
                     onPress={() => setPhotos(photos.filter((_, idx) => idx !== i))}
                   >
-                    <Text style={{ color: '#fff', fontSize: 12 }}>✕</Text>
+                    <Ionicons name="close" size={12} color="#fff" />
                   </TouchableOpacity>
                 </View>
               ))}

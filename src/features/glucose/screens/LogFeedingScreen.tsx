@@ -62,7 +62,7 @@ export default function LogFeedingScreen() {
         {/* Header */}
         <View style={[styles.navHeader, { borderBottomColor: theme.colors.border }]}>
           <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backBtn}>
-            <Text style={{ color: theme.colors.primary, fontSize: 16 }}>← {t('common.back')}</Text>
+            <Text style={{ color: theme.colors.primary, fontSize: 16 }}>{'\u2190 '}{t('common.back')}</Text>
           </TouchableOpacity>
           <Text style={[styles.headerTitle, { color: theme.colors.text }]}>
             {t('feeding.title')}

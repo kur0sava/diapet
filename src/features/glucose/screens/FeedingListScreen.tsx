@@ -1,6 +1,7 @@
 import React, { useMemo } from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity, Alert, ActivityIndicator } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { Ionicons } from '@expo/vector-icons';
 import { useHomeNavigation } from '@navigation/hooks';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '@shared/theme';
@@ -9,15 +10,15 @@ import { feedingRepository } from '@storage/database';
 import { usePetStore } from '@shared/stores/petStore';
 import { FeedingLog } from '@storage/domain/types';
 import { formatDateTime } from '@shared/utils/dateUtils';
-import { EmptyState, Card } from '@shared/components/ui';
+import { EmptyState, Card, AnimatedListItem } from '@shared/components/ui';
 import { SimpleBarChart, BarData } from '@shared/components/charts/SimpleBarChart';
 import { format, parseISO, subDays, isAfter } from 'date-fns';
 
-const FOOD_TYPE_ICONS: Record<string, string> = {
-  dry: '🥣',
-  wet: '🥫',
-  medical: '💊',
-  other: '🍽️',
+const FOOD_TYPE_ICONS: Record<string, keyof typeof Ionicons.glyphMap> = {
+  dry: 'nutrition-outline',
+  wet: 'flask-outline',
+  medical: 'medical-outline',
+  other: 'restaurant-outline',
 };
 
 export default function FeedingListScreen() {
@@ -76,32 +77,41 @@ export default function FeedingListScreen() {
     return t(key);
   };
 
-  const renderItem = ({ item }: { item: FeedingLog }) => (
-    <TouchableOpacity onLongPress={() => handleDelete(item.id)} activeOpacity={0.8}>
-      <Card style={styles.card} shadow>
-        <View style={[styles.colorBar, { backgroundColor: theme.colors.success }]} />
-        <View style={styles.cardContent}>
-          <View style={{ flex: 1 }}>
-            <Text style={[styles.foodType, { color: theme.colors.text }]}>
-              {FOOD_TYPE_ICONS[item.foodType ?? 'other'] ?? '🍽️'} {foodLabel(item.foodType)}
-            </Text>
-            {item.amountGrams != null && (
-              <Text style={[styles.amount, { color: theme.colors.textSecondary }]}>
-                {item.amountGrams} {t('feeding.amountGrams').replace(/\(.*\)/, '').trim()}
+  const renderItem = ({ item, index }: { item: FeedingLog; index: number }) => (
+    <AnimatedListItem index={index}>
+      <TouchableOpacity onLongPress={() => handleDelete(item.id)} activeOpacity={0.8}>
+        <Card style={styles.card} shadow>
+          <View style={[styles.colorBar, { backgroundColor: theme.colors.success }]} />
+          <View style={styles.cardContent}>
+            <View style={{ flex: 1 }}>
+              <View style={styles.foodTypeRow}>
+                <Ionicons
+                  name={FOOD_TYPE_ICONS[item.foodType ?? 'other'] ?? 'restaurant-outline'}
+                  size={18}
+                  color={theme.colors.success}
+                />
+                <Text style={[styles.foodType, { color: theme.colors.text, fontFamily: theme.fonts.bold }]}>
+                  {foodLabel(item.foodType)}
+                </Text>
+              </View>
+              {item.amountGrams != null && (
+                <Text style={[styles.amount, { color: theme.colors.textSecondary }]}>
+                  {item.amountGrams} {t('feeding.amountGrams').replace(/\(.*\)/, '').trim()}
+                </Text>
+              )}
+              <Text style={[styles.time, { color: theme.colors.textTertiary }]}>
+                {formatDateTime(item.fedAt)}
+              </Text>
+            </View>
+            {item.notes && (
+              <Text style={[styles.notes, { color: theme.colors.textTertiary }]} numberOfLines={1}>
+                {item.notes}
               </Text>
             )}
-            <Text style={[styles.time, { color: theme.colors.textTertiary }]}>
-              {formatDateTime(item.fedAt)}
-            </Text>
           </View>
-          {item.notes && (
-            <Text style={[styles.notes, { color: theme.colors.textTertiary }]} numberOfLines={1}>
-              {item.notes}
-            </Text>
-          )}
-        </View>
-      </Card>
-    </TouchableOpacity>
+        </Card>
+      </TouchableOpacity>
+    </AnimatedListItem>
   );
 
   return (
@@ -110,7 +120,7 @@ export default function FeedingListScreen() {
         <TouchableOpacity onPress={() => navigation.goBack()}>
           <Text style={{ color: theme.colors.primary }}>{'← '}{t('common.back')}</Text>
         </TouchableOpacity>
-        <Text style={[styles.headerTitle, { color: theme.colors.text }]}>{t('feeding.history')}</Text>
+        <Text style={[styles.headerTitle, { color: theme.colors.text, fontFamily: theme.fonts.bold }]}>{t('feeding.history')}</Text>
         <View style={{ width: 60 }} />
       </View>
 
@@ -139,7 +149,8 @@ export default function FeedingListScreen() {
         }
         ListEmptyComponent={
           <EmptyState
-            icon="🍽️"
+            iconName="restaurant-outline"
+            iconColor={theme.colors.success}
             title={t('feeding.history')}
             subtitle={t('feeding.noHistory')}
           />
@@ -158,6 +169,7 @@ const styles = StyleSheet.create({
   card: { padding: 0, flexDirection: 'row', overflow: 'hidden' },
   colorBar: { width: 4 },
   cardContent: { flex: 1, padding: 14, gap: 2 },
+  foodTypeRow: { flexDirection: 'row', alignItems: 'center', gap: 6 },
   foodType: { fontSize: 16, fontWeight: '700' },
   amount: { fontSize: 14, marginTop: 2 },
   time: { fontSize: 12, marginTop: 4 },

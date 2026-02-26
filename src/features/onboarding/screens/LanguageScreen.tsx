@@ -7,6 +7,9 @@ import {
   StatusBar,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { LinearGradient } from 'expo-linear-gradient';
+import { Ionicons } from '@expo/vector-icons';
+import Animated, { FadeInDown } from 'react-native-reanimated';
 import { useOnboardingNavigation } from '@navigation/hooks';
 import { useTranslation } from 'react-i18next';
 import { changeLanguage } from '@shared/i18n';
@@ -32,11 +35,16 @@ export default function LanguageScreen() {
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.background }]}>
       <StatusBar barStyle={theme.isDark ? 'light-content' : 'dark-content'} />
-      <View style={styles.content}>
+      <Animated.View entering={FadeInDown.duration(600)} style={styles.content}>
         <View style={styles.header}>
-          <Text style={styles.logo}>🐱</Text>
-          <Text style={[styles.title, { color: theme.colors.text }]}>DiaPet</Text>
-          <Text style={[styles.subtitle, { color: theme.colors.textSecondary }]}>
+          <LinearGradient
+            colors={theme.gradients.primary as [string, string]}
+            style={styles.logoGradient}
+          >
+            <Ionicons name="paw" size={40} color="#fff" />
+          </LinearGradient>
+          <Text style={[styles.title, { color: theme.colors.text, fontFamily: theme.fonts.bold }]}>DiaPet</Text>
+          <Text style={[styles.subtitle, { color: theme.colors.textSecondary, fontFamily: theme.fonts.medium }]}>
             {t('onboarding.selectLanguage')}
           </Text>
         </View>
@@ -59,12 +67,12 @@ export default function LanguageScreen() {
             >
               <Text style={styles.flag}>{lang.flag}</Text>
               <View>
-                <Text style={[styles.langLabel, { color: theme.colors.text }]}>{lang.label}</Text>
-                <Text style={[styles.langSub, { color: theme.colors.textSecondary }]}>{lang.subtitle}</Text>
+                <Text style={[styles.langLabel, { color: theme.colors.text, fontFamily: theme.fonts.semibold }]}>{lang.label}</Text>
+                <Text style={[styles.langSub, { color: theme.colors.textSecondary, fontFamily: theme.fonts.regular }]}>{lang.subtitle}</Text>
               </View>
               {selected === lang.code && (
                 <View style={[styles.check, { backgroundColor: theme.colors.primary }]}>
-                  <Text style={styles.checkIcon}>✓</Text>
+                  <Ionicons name="checkmark" size={18} color="#fff" />
                 </View>
               )}
             </TouchableOpacity>
@@ -78,7 +86,7 @@ export default function LanguageScreen() {
           size="lg"
           style={{ marginTop: 32 }}
         />
-      </View>
+      </Animated.View>
     </SafeAreaView>
   );
 }
@@ -87,9 +95,16 @@ const styles = StyleSheet.create({
   container: { flex: 1 },
   content: { flex: 1, padding: 24, justifyContent: 'center' },
   header: { alignItems: 'center', marginBottom: 48 },
-  logo: { fontSize: 64, marginBottom: 12 },
-  title: { fontSize: 32, fontWeight: '800', marginBottom: 8 },
-  subtitle: { fontSize: 18, fontWeight: '500' },
+  logoGradient: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 16,
+  },
+  title: { fontSize: 32, marginBottom: 8 },
+  subtitle: { fontSize: 18 },
   languages: { gap: 12 },
   langCard: {
     flexDirection: 'row',
@@ -99,7 +114,7 @@ const styles = StyleSheet.create({
     gap: 16,
   },
   flag: { fontSize: 36 },
-  langLabel: { fontSize: 18, fontWeight: '600' },
+  langLabel: { fontSize: 18 },
   langSub: { fontSize: 13, marginTop: 2 },
   check: {
     marginLeft: 'auto',
@@ -109,5 +124,4 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  checkIcon: { color: '#fff', fontWeight: '700', fontSize: 16 },
 });

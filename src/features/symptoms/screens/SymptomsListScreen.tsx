@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity, Alert, ActivityIndicator } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { Ionicons } from '@expo/vector-icons';
 import { useSymptomsNavigation } from '@navigation/hooks';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '@shared/theme';
@@ -9,7 +10,7 @@ import { symptomRepository } from '@storage/database';
 import { usePetStore } from '@shared/stores/petStore';
 import { SymptomEntry, SYMPTOM_ICONS } from '../types';
 import { formatDateTime } from '@shared/utils/dateUtils';
-import { EmptyState, Card } from '@shared/components/ui';
+import { EmptyState, Card, AnimatedListItem } from '@shared/components/ui';
 
 export default function SymptomsListScreen() {
   const navigation = useSymptomsNavigation();
@@ -58,40 +59,47 @@ export default function SymptomsListScreen() {
     ]);
   };
 
-  const renderSymptom = ({ item }: { item: SymptomEntry }) => (
-    <TouchableOpacity
-      onPress={() => navigation.navigate('SymptomDetail', { id: item.id })}
-      onLongPress={() => handleDelete(item.id)}
-      activeOpacity={0.8}
-    >
-      <Card style={styles.card}>
-        <View style={styles.cardHeader}>
-          <View style={styles.iconsRow}>
-            {item.symptomTypes.slice(0, 4).map(type => (
-              <Text key={type} style={styles.symptomIcon}>{SYMPTOM_ICONS[type]}</Text>
-            ))}
-            {item.symptomTypes.length > 4 && (
-              <Text style={[styles.moreCount, { color: theme.colors.textSecondary }]}>
-                +{item.symptomTypes.length - 4}
+  const renderSymptom = ({ item, index }: { item: SymptomEntry; index: number }) => (
+    <AnimatedListItem index={index}>
+      <TouchableOpacity
+        onPress={() => navigation.navigate('SymptomDetail', { id: item.id })}
+        onLongPress={() => handleDelete(item.id)}
+        activeOpacity={0.8}
+      >
+        <Card style={styles.card}>
+          <View style={styles.cardHeader}>
+            <View style={styles.iconsRow}>
+              {item.symptomTypes.slice(0, 4).map(type => (
+                <Ionicons key={type} name={SYMPTOM_ICONS[type] as any} size={18} color={theme.colors.textSecondary} style={{ marginRight: 4 }} />
+              ))}
+              {item.symptomTypes.length > 4 && (
+                <Text style={[styles.moreCount, { color: theme.colors.textSecondary }]}>
+                  +{item.symptomTypes.length - 4}
+                </Text>
+              )}
+            </View>
+            <View style={[styles.severityBadge, { backgroundColor: `${severityColors[item.severity]}20` }]}>
+              <Text style={[styles.severityText, { color: severityColors[item.severity], fontFamily: theme.fonts.bold }]}>
+                {severityLabels[item.severity]}
               </Text>
-            )}
+            </View>
           </View>
-          <View style={[styles.severityBadge, { backgroundColor: `${severityColors[item.severity]}20` }]}>
-            <Text style={[styles.severityText, { color: severityColors[item.severity] }]}>
-              {severityLabels[item.severity]}
-            </Text>
-          </View>
-        </View>
-        <Text style={[styles.symptomsText, { color: theme.colors.text }]}>
-          {item.symptomTypes.map(s => t(`symptoms.types.${s}`)).join(', ')}
-        </Text>
-        <Text style={[styles.date, { color: theme.colors.textSecondary }]}>{formatDateTime(item.recordedAt)}</Text>
-        {item.notes && <Text style={[styles.notes, { color: theme.colors.textTertiary }]} numberOfLines={2}>{item.notes}</Text>}
-        {item.photoUris.length > 0 && (
-          <Text style={[styles.photos, { color: theme.colors.primary }]}>📷 {item.photoUris.length} {t('symptoms.photos')}</Text>
-        )}
-      </Card>
-    </TouchableOpacity>
+          <Text style={[styles.symptomsText, { color: theme.colors.text, fontFamily: theme.fonts.bold }]}>
+            {item.symptomTypes.map(s => t(`symptoms.types.${s}`)).join(', ')}
+          </Text>
+          <Text style={[styles.date, { color: theme.colors.textSecondary }]}>{formatDateTime(item.recordedAt)}</Text>
+          {item.notes && <Text style={[styles.notes, { color: theme.colors.textTertiary }]} numberOfLines={2}>{item.notes}</Text>}
+          {item.photoUris.length > 0 && (
+            <View style={styles.photosRow}>
+              <Ionicons name="camera-outline" size={15} color={theme.colors.primary} />
+              <Text style={[styles.photos, { color: theme.colors.primary }]}>
+                {item.photoUris.length} {t('symptoms.photos')}
+              </Text>
+            </View>
+          )}
+        </Card>
+      </TouchableOpacity>
+    </AnimatedListItem>
   );
 
   return (
@@ -110,7 +118,8 @@ export default function SymptomsListScreen() {
         }
         ListEmptyComponent={
           <EmptyState
-            icon="🐾"
+            iconName="paw-outline"
+            iconColor={theme.colors.warning}
             title={t('symptoms.title')}
             subtitle={t('symptoms.noSymptoms')}
             actionLabel={t('symptoms.addSymptom')}
@@ -122,7 +131,7 @@ export default function SymptomsListScreen() {
         style={[styles.fab, { backgroundColor: theme.colors.primary }]}
         onPress={() => navigation.navigate('AddSymptom', {})}
       >
-        <Text style={styles.fabIcon}>+</Text>
+        <Ionicons name="add" size={28} color="#fff" />
       </TouchableOpacity>
     </SafeAreaView>
   );
@@ -141,8 +150,8 @@ const styles = StyleSheet.create({
   symptomsText: { fontSize: 14, fontWeight: '500', lineHeight: 20 },
   date: { fontSize: 12 },
   notes: { fontSize: 13 },
+  photosRow: { flexDirection: 'row', alignItems: 'center', gap: 4 },
   photos: { fontSize: 13, fontWeight: '500' },
   fab: { position: 'absolute', bottom: 24, right: 20, width: 56, height: 56, borderRadius: 28, alignItems: 'center', justifyContent: 'center', elevation: 6, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.2, shadowRadius: 4 },
-  fabIcon: { color: '#fff', fontSize: 28, fontWeight: '300' },
   loadingFooter: { paddingVertical: 16 },
 });
