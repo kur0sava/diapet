@@ -33,6 +33,9 @@ export const Colors = {
     warm: ['#FF9500', '#FFB340'] as readonly [string, string],
     header: ['#4F8EF7', '#6366F1'] as readonly [string, string],
     headerDark: ['#1C1C2E', '#2D2D44'] as readonly [string, string],
+    headerRich: ['#4F8EF7', '#6366F1', '#7C5CBF'] as readonly [string, string, string],
+    headerRichDark: ['#1C1C2E', '#2D2D44', '#3D2D5C'] as readonly [string, string, string],
+    cardAccent: ['#4F8EF7', '#6C63FF'] as readonly [string, string],
   },
 
   // Light theme

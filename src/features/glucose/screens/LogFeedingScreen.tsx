@@ -12,6 +12,7 @@ import { feedingRepository } from '@storage/database';
 import { usePetStore } from '@shared/stores/petStore';
 import { useQueryClient } from '@tanstack/react-query';
 import * as Haptics from 'expo-haptics';
+import { LinearGradient } from 'expo-linear-gradient';
 
 export default function LogFeedingScreen() {
   const navigation = useHomeNavigation();
@@ -60,14 +61,17 @@ export default function LogFeedingScreen() {
     <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={{ flex: 1 }}>
       <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.background }]}>
         {/* Header */}
-        <View style={[styles.navHeader, { borderBottomColor: theme.colors.border }]}>
-          <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backBtn}>
-            <Text style={{ color: theme.colors.primary, fontSize: 16 }}>{'\u2190 '}{t('common.back')}</Text>
-          </TouchableOpacity>
-          <Text style={[styles.headerTitle, { color: theme.colors.text }]}>
-            {t('feeding.title')}
-          </Text>
-          <View style={{ width: 60 }} />
+        <View>
+          <View style={[styles.navHeader, { borderBottomColor: theme.colors.border }]}>
+            <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backBtn}>
+              <Text style={{ color: theme.colors.primary, fontSize: 16 }}>{'\u2190 '}{t('common.back')}</Text>
+            </TouchableOpacity>
+            <Text style={[styles.headerTitle, { color: theme.colors.text }]}>
+              {t('feeding.title')}
+            </Text>
+            <View style={{ width: 60 }} />
+          </View>
+          <LinearGradient colors={[...theme.gradients.success] as [string, string]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} style={{ height: 3 }} />
         </View>
 
         <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.content}>

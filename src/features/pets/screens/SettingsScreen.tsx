@@ -27,10 +27,9 @@ export default function SettingsScreen() {
         try {
           const db = await getDatabase();
           await db.withTransactionAsync(async () => {
-            await db.execAsync('DELETE FROM symptom_entry_types; DELETE FROM symptoms; DELETE FROM glucose_readings; DELETE FROM injection_logs; DELETE FROM feedings; DELETE FROM expenses; DELETE FROM schedule_entries; DELETE FROM pets;');
+            await db.execAsync('DELETE FROM symptom_entry_types; DELETE FROM symptoms; DELETE FROM glucose_readings; DELETE FROM injections; DELETE FROM feedings; DELETE FROM expenses; DELETE FROM injection_schedule; DELETE FROM feeding_schedule; DELETE FROM vet_contacts; DELETE FROM pets;');
           });
           storageUtils.clear();
-          usePetStore.getState().setActivePet(null as any);
           usePetStore.setState({ pets: [], activePet: null });
           Alert.alert(t('settings.dataDeleted'), t('settings.restartApp'));
         } catch {

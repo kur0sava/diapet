@@ -5,6 +5,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
+import { LinearGradient } from 'expo-linear-gradient';
 import { useHomeNavigation } from '@navigation/hooks';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '@shared/theme';
@@ -31,7 +32,7 @@ export default function LogInjectionScreen() {
 
   const handleSave = useCallback(async () => {
     if (!activePet) return;
-    if (!dose || parseFloat(dose) <= 0) {
+    if (!dose || parseFloat(dose.replace(',', '.')) <= 0) {
       Alert.alert(t('common.error'), t('injection.doseError'));
       return;
     }
@@ -44,7 +45,7 @@ export default function LogInjectionScreen() {
       await injectionRepository.create({
         petId: activePet.id,
         insulinType: insulinType.trim(),
-        doseUnits: parseFloat(dose),
+        doseUnits: parseFloat(dose.replace(',', '.')),
         notes: notes || undefined,
       });
       await queryClient.invalidateQueries({ queryKey: ['injections'] });
@@ -60,12 +61,15 @@ export default function LogInjectionScreen() {
   return (
     <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={{ flex: 1 }}>
       <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.background }]}>
-        <View style={[styles.navHeader, { borderBottomColor: theme.colors.border }]}>
-          <TouchableOpacity onPress={() => navigation.goBack()}>
-            <Text style={{ color: theme.colors.primary }}>{'\u2190 '}{t('common.back')}</Text>
-          </TouchableOpacity>
-          <Text style={[styles.title, { color: theme.colors.text }]}>{t('injection.title')}</Text>
-          <View style={{ width: 60 }} />
+        <View>
+          <View style={[styles.navHeader, { borderBottomColor: theme.colors.border }]}>
+            <TouchableOpacity onPress={() => navigation.goBack()}>
+              <Text style={{ color: theme.colors.primary }}>{'\u2190 '}{t('common.back')}</Text>
+            </TouchableOpacity>
+            <Text style={[styles.title, { color: theme.colors.text }]}>{t('injection.title')}</Text>
+            <View style={{ width: 60 }} />
+          </View>
+          <LinearGradient colors={[...theme.gradients.secondary] as [string, string]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} style={{ height: 3 }} />
         </View>
 
         <ScrollView contentContainerStyle={styles.content}>

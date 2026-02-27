@@ -31,7 +31,7 @@ interface GlucoseReading {
 
 function calculateTrend(readings: GlucoseReading[]): 'up' | 'down' | 'stable' | null {
   if (!readings || readings.length < 3) return null;
-  const last3 = readings.slice(0, 3); // Already sorted by date DESC
+  const last3 = readings.slice(-3); // Last 3 = newest (sorted ASC)
   const [a, b, c] = last3.map(r => r.valueMmol);
   if (a > b && b > c) return 'up';
   if (a < b && b < c) return 'down';
@@ -154,67 +154,81 @@ export default function DashboardScreen() {
     },
   ];
 
-  const gradientColors = theme.isDark ? theme.gradients.headerDark : theme.gradients.header;
+  const gradientColors = theme.isDark ? theme.gradients.headerRichDark : theme.gradients.headerRich;
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.background }]}>
+    <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.background }]} edges={['left', 'right']}>
       <StatusBar barStyle="light-content" />
-
-      {/* Gradient Header */}
-      <LinearGradient
-        colors={[...gradientColors] as [string, string]}
-        style={styles.header}
-      >
-        <View>
-          <Text style={[styles.greeting, { color: 'rgba(255,255,255,0.8)', fontFamily: theme.fonts.medium }]}>
-            {t('dashboard.title')}
-          </Text>
-          <Text style={[styles.petName, { color: '#FFFFFF', fontFamily: theme.fonts.bold }]}>
-            {activePet?.name ?? 'DiaPet'}
-          </Text>
-        </View>
-        <TouchableOpacity
-          onPress={() => rootNavigation.navigate('Emergency')}
-          style={[styles.sosButton, { backgroundColor: 'rgba(255,255,255,0.2)' }]}
-        >
-          <Ionicons name="warning" size={16} color="#FFFFFF" style={{ marginRight: 4 }} />
-          <Text style={[styles.sosText, { color: '#FFFFFF', fontFamily: theme.fonts.bold }]}>SOS</Text>
-        </TouchableOpacity>
-      </LinearGradient>
 
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.scrollContent}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={theme.colors.primary} />}
       >
-        {/* Status Cards Row */}
-        <View style={styles.statusRow}>
-          <StatusCard
-            iconName="water-outline"
-            iconColor={latestGlucose ? (latestGlucose.valueMmol < 4 || latestGlucose.valueMmol > 9 ? theme.colors.danger : theme.colors.success) : theme.colors.textTertiary}
-            label={t('dashboard.lastGlucose')}
-            value={latestGlucose ? `${latestGlucose.valueMmol.toFixed(1)}${trendArrow}` : '\u2014'}
-            unit={t('common.mmol_l')}
-            color={latestGlucose ? (latestGlucose.valueMmol < 4 || latestGlucose.valueMmol > 9 ? theme.colors.danger : theme.colors.success) : theme.colors.textTertiary}
-            subtitle={latestGlucose ? formatRelative(latestGlucose.recordedAt) : undefined}
-          />
-          <StatusCard
-            iconName="medkit-outline"
-            iconColor={nextInjectionMinutes !== null && nextInjectionMinutes < 30 ? theme.colors.warning : theme.colors.primary}
-            label={t('dashboard.nextInjection')}
-            value={nextInjection ? nextInjection.timeOfDay : '\u2014'}
-            color={nextInjectionMinutes !== null && nextInjectionMinutes < 30 ? theme.colors.warning : theme.colors.primary}
-            subtitle={nextInjectionMinutes !== null ? t('dashboard.inTime', { time: formatCountdown(nextInjectionMinutes) }) : undefined}
-          />
-          <StatusCard
-            iconName="restaurant-outline"
-            iconColor={nextFeedingMinutes !== null && nextFeedingMinutes < 30 ? theme.colors.warning : theme.colors.success}
-            label={t('dashboard.nextFeeding')}
-            value={nextFeeding ? nextFeeding.timeOfDay : '\u2014'}
-            color={nextFeedingMinutes !== null && nextFeedingMinutes < 30 ? theme.colors.warning : theme.colors.success}
-            subtitle={nextFeedingMinutes !== null ? t('dashboard.inTime', { time: formatCountdown(nextFeedingMinutes) }) : undefined}
-          />
-        </View>
+        {/* Hero Gradient Header */}
+        <LinearGradient
+          colors={[...gradientColors] as [string, string, string]}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          style={styles.heroGradient}
+        >
+          <SafeAreaView edges={['top']} style={styles.heroContent}>
+            <View style={styles.heroTop}>
+              <View style={styles.heroLeft}>
+                <View style={styles.petAvatar}>
+                  <Ionicons name="paw" size={20} color="#FFFFFF" />
+                </View>
+                <View>
+                  <Text style={[styles.greeting, { fontFamily: theme.fonts.medium }]}>
+                    {t('dashboard.title')}
+                  </Text>
+                  <Text style={[styles.petName, { fontFamily: theme.fonts.bold }]}>
+                    {activePet?.name ?? 'DiaPet'}
+                  </Text>
+                </View>
+              </View>
+              <TouchableOpacity
+                onPress={() => rootNavigation.navigate('Emergency')}
+                style={styles.sosButton}
+              >
+                <Ionicons name="warning" size={16} color="#FFFFFF" style={{ marginRight: 4 }} />
+                <Text style={[styles.sosText, { fontFamily: theme.fonts.bold }]}>SOS</Text>
+              </TouchableOpacity>
+            </View>
+
+            {/* Status Cards inside gradient */}
+            <View style={styles.statusRow}>
+              <StatusCard
+                iconName="water-outline"
+                iconColor={latestGlucose ? (latestGlucose.valueMmol < 4 || latestGlucose.valueMmol > 9 ? theme.colors.danger : theme.colors.success) : theme.colors.textTertiary}
+                label={t('dashboard.lastGlucose')}
+                value={latestGlucose ? `${latestGlucose.valueMmol.toFixed(1)}${trendArrow}` : '\u2014'}
+                unit={t('common.mmol_l')}
+                color={latestGlucose ? (latestGlucose.valueMmol < 4 || latestGlucose.valueMmol > 9 ? theme.colors.danger : theme.colors.success) : theme.colors.textTertiary}
+                subtitle={latestGlucose ? formatRelative(latestGlucose.recordedAt) : undefined}
+                index={0}
+              />
+              <StatusCard
+                iconName="medkit-outline"
+                iconColor={nextInjectionMinutes !== null && nextInjectionMinutes < 30 ? theme.colors.warning : theme.colors.primary}
+                label={t('dashboard.nextInjection')}
+                value={nextInjection ? nextInjection.timeOfDay : '\u2014'}
+                color={nextInjectionMinutes !== null && nextInjectionMinutes < 30 ? theme.colors.warning : theme.colors.primary}
+                subtitle={nextInjectionMinutes !== null ? t('dashboard.inTime', { time: formatCountdown(nextInjectionMinutes) }) : undefined}
+                index={1}
+              />
+              <StatusCard
+                iconName="restaurant-outline"
+                iconColor={nextFeedingMinutes !== null && nextFeedingMinutes < 30 ? theme.colors.warning : theme.colors.success}
+                label={t('dashboard.nextFeeding')}
+                value={nextFeeding ? nextFeeding.timeOfDay : '\u2014'}
+                color={nextFeedingMinutes !== null && nextFeedingMinutes < 30 ? theme.colors.warning : theme.colors.success}
+                subtitle={nextFeedingMinutes !== null ? t('dashboard.inTime', { time: formatCountdown(nextFeedingMinutes) }) : undefined}
+                index={2}
+              />
+            </View>
+          </SafeAreaView>
+        </LinearGradient>
 
         {/* Time Since Last Glucose & Trend */}
         <View style={styles.timeSinceRow}>
@@ -238,7 +252,7 @@ export default function DashboardScreen() {
         <View style={styles.section}>
           <Text style={[styles.sectionTitle, { color: theme.colors.text, fontFamily: theme.fonts.bold }]}>{t('dashboard.quickActions')}</Text>
           <View style={styles.actionsGrid}>
-            {quickActions.map((action, i) => (
+            {quickActions.map((action) => (
               <QuickActionButton key={action.label} {...action} />
             ))}
           </View>
@@ -254,6 +268,7 @@ export default function DashboardScreen() {
               <GlucoseChart data={glucoseHistory} />
             ) : (
               <View style={styles.noData}>
+                <Ionicons name="analytics-outline" size={32} color={theme.colors.textTertiary} style={{ marginBottom: 8 }} />
                 <Text style={[styles.noDataText, { color: theme.colors.textSecondary }]}>
                   {t('dashboard.noGlucoseData')}
                 </Text>
@@ -273,7 +288,9 @@ export default function DashboardScreen() {
             </View>
             <Card>
               <View style={styles.injectionRow}>
-                <Ionicons name="medkit" size={28} color={theme.colors.secondary} />
+                <View style={[styles.injectionIcon, { backgroundColor: theme.colors.secondaryLight }]}>
+                  <Ionicons name="medkit" size={24} color={theme.colors.secondary} />
+                </View>
                 <View style={{ flex: 1 }}>
                   <Text style={[styles.injectionDose, { color: theme.colors.text, fontFamily: theme.fonts.semibold }]}>
                     {lastInjection.doseUnits} {t('common.units')} · {lastInjection.insulinType}
@@ -291,18 +308,24 @@ export default function DashboardScreen() {
         <View style={styles.section}>
           <View style={styles.historyLinksRow}>
             <TouchableOpacity
-              style={[styles.historyLink, { backgroundColor: theme.colors.card, borderColor: theme.colors.border }]}
+              style={[styles.historyLink, { backgroundColor: theme.colors.surface, ...theme.shadows.sm }]}
               onPress={() => navigation.navigate('InjectionList')}
+              activeOpacity={0.8}
             >
-              <Ionicons name="medkit-outline" size={20} color={theme.colors.secondary} />
+              <View style={[styles.historyIcon, { backgroundColor: theme.colors.secondaryLight }]}>
+                <Ionicons name="medkit-outline" size={18} color={theme.colors.secondary} />
+              </View>
               <Text style={[styles.historyLinkText, { color: theme.colors.text, fontFamily: theme.fonts.semibold }]}>{t('injection.history')}</Text>
               <Ionicons name="chevron-forward" size={16} color={theme.colors.textTertiary} />
             </TouchableOpacity>
             <TouchableOpacity
-              style={[styles.historyLink, { backgroundColor: theme.colors.card, borderColor: theme.colors.border }]}
+              style={[styles.historyLink, { backgroundColor: theme.colors.surface, ...theme.shadows.sm }]}
               onPress={() => navigation.navigate('FeedingList')}
+              activeOpacity={0.8}
             >
-              <Ionicons name="restaurant-outline" size={20} color={theme.colors.success} />
+              <View style={[styles.historyIcon, { backgroundColor: theme.colors.successLight }]}>
+                <Ionicons name="restaurant-outline" size={18} color={theme.colors.success} />
+              </View>
               <Text style={[styles.historyLinkText, { color: theme.colors.text, fontFamily: theme.fonts.semibold }]}>{t('feeding.history')}</Text>
               <Ionicons name="chevron-forward" size={16} color={theme.colors.textTertiary} />
             </TouchableOpacity>
@@ -315,21 +338,48 @@ export default function DashboardScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
-  header: {
+  scrollContent: { paddingBottom: 100 },
+  // Hero
+  heroGradient: {
+    paddingBottom: 20,
+  },
+  heroContent: {
+    paddingHorizontal: 20,
+  },
+  heroTop: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingHorizontal: 20,
-    paddingVertical: 16,
-    paddingTop: 24,
+    paddingTop: 8,
+    paddingBottom: 20,
   },
-  greeting: { fontSize: 13, marginBottom: 2 },
-  petName: { fontSize: 24 },
-  sosButton: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 16, paddingVertical: 8, borderRadius: 20 },
-  sosText: { fontSize: 14 },
-  scrollContent: { paddingBottom: 100 },
-  statusRow: { flexDirection: 'row', paddingHorizontal: 16, gap: 10, marginBottom: 8, marginTop: 12 },
-  timeSinceRow: { flexDirection: 'row', paddingHorizontal: 16, gap: 8, marginBottom: 4, flexWrap: 'wrap' },
+  heroLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  },
+  petAvatar: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: 'rgba(255,255,255,0.25)',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  greeting: { fontSize: 13, color: 'rgba(255,255,255,0.7)' },
+  petName: { fontSize: 28, color: '#FFFFFF' },
+  sosButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+    borderRadius: 20,
+    backgroundColor: 'rgba(255,255,255,0.2)',
+  },
+  sosText: { fontSize: 14, color: '#FFFFFF' },
+  statusRow: { flexDirection: 'row', gap: 10, marginTop: 4 },
+  // Content
+  timeSinceRow: { flexDirection: 'row', paddingHorizontal: 16, gap: 8, marginTop: 16, marginBottom: 4, flexWrap: 'wrap' },
   timeSinceBadge: { paddingHorizontal: 12, paddingVertical: 6, borderRadius: 12 },
   timeSinceText: { fontSize: 12 },
   trendBadge: { paddingHorizontal: 12, paddingVertical: 6, borderRadius: 12 },
@@ -342,9 +392,11 @@ const styles = StyleSheet.create({
   sectionHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 },
   sectionLink: { fontSize: 13 },
   injectionRow: { flexDirection: 'row', alignItems: 'center', gap: 12 },
+  injectionIcon: { width: 44, height: 44, borderRadius: 22, alignItems: 'center', justifyContent: 'center' },
   injectionDose: { fontSize: 16 },
   injectionTime: { fontSize: 13, marginTop: 2 },
   historyLinksRow: { flexDirection: 'row', gap: 12 },
-  historyLink: { flex: 1, flexDirection: 'row', alignItems: 'center', gap: 8, padding: 14, borderRadius: 12, borderWidth: 1 },
+  historyLink: { flex: 1, flexDirection: 'row', alignItems: 'center', gap: 10, padding: 14, borderRadius: 16 },
+  historyIcon: { width: 34, height: 34, borderRadius: 17, alignItems: 'center', justifyContent: 'center' },
   historyLinkText: { flex: 1, fontSize: 13 },
 });

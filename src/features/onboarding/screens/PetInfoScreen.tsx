@@ -41,7 +41,7 @@ export default function PetInfoScreen() {
       petData: {
         name: name.trim(),
         gender,
-        weightKg: weightKg ? parseFloat(weightKg) : undefined,
+        weightKg: weightKg ? parseFloat(weightKg.replace(',', '.')) : undefined,
         birthYear: birthYear ? parseInt(birthYear) : undefined,
         diabetesType,
         diagnosisDate: diagnosisDate?.toISOString().split('T')[0],
@@ -114,7 +114,7 @@ export default function PetInfoScreen() {
               containerStyle={{ flex: 1 }}
             />
             <Input
-              label={t('onboarding.petAge') + ' (год рожд.)'}
+              label={t('onboarding.petAge')}
               value={birthYear}
               onChangeText={setBirthYear}
               placeholder="2020"

@@ -239,7 +239,7 @@ export default function GlucoseListScreen() {
                   <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 4, gap: 4 }}>
                     <Ionicons name="medkit-outline" size={12} color={theme.colors.textTertiary} />
                     <Text style={[styles.readingInsulin, { color: theme.colors.textTertiary, fontFamily: theme.fonts.regular }]}>
-                      {item.insulinDose} ед. {item.insulinType ?? ''}
+                      {item.insulinDose} {t('common.units')} {item.insulinType ?? ''}
                     </Text>
                   </View>
                 )}

@@ -76,7 +76,7 @@ export default function ExpensesScreen() {
           {item.description && <Text style={[styles.expenseDesc, { color: theme.colors.textSecondary }]} numberOfLines={1}>{item.description}</Text>}
           <Text style={[styles.expenseDate, { color: theme.colors.textTertiary }]}>{item.date}</Text>
         </View>
-        <Text style={[styles.expenseAmount, { color: theme.colors.text, fontFamily: theme.fonts.bold }]}>{item.amount.toLocaleString('ru-RU')} ₽</Text>
+        <Text style={[styles.expenseAmount, { color: theme.colors.text, fontFamily: theme.fonts.bold }]}>{item.amount.toLocaleString()} {t('expenses.currency')}</Text>
       </Card>
     </TouchableOpacity>
   );
@@ -102,7 +102,7 @@ export default function ExpensesScreen() {
           <>
             <Card style={[styles.totalCard, { backgroundColor: theme.colors.primary }]} shadow={false}>
               <Text style={styles.totalLabel}>{t('expenses.totalForMonth')}</Text>
-              <Text style={styles.totalAmount}>{total.toLocaleString('ru-RU')} ₽</Text>
+              <Text style={styles.totalAmount}>{total.toLocaleString()} {t('expenses.currency')}</Text>
             </Card>
             {Object.entries(byCategory).length > 0 && (
               <View style={styles.categoryStats}>
@@ -110,7 +110,7 @@ export default function ExpensesScreen() {
                   <View key={cat} style={[styles.categoryStat, { backgroundColor: theme.colors.surface, ...theme.shadows.sm }]}>
                     <Ionicons name={EXPENSE_ICON_NAMES[cat as ExpenseCategory]} size={20} color={EXPENSE_COLORS[cat as ExpenseCategory]} />
                     <Text style={[styles.catLabel, { color: theme.colors.textSecondary }]} numberOfLines={1}>{categoryLabels[cat as ExpenseCategory]}</Text>
-                    <Text style={[styles.catAmount, { color: theme.colors.text, fontFamily: theme.fonts.bold }]}>{amount.toLocaleString('ru-RU')} ₽</Text>
+                    <Text style={[styles.catAmount, { color: theme.colors.text, fontFamily: theme.fonts.bold }]}>{amount.toLocaleString()} {t('expenses.currency')}</Text>
                   </View>
                 ))}
               </View>

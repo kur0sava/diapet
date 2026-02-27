@@ -19,6 +19,7 @@ import * as Haptics from 'expo-haptics';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { format } from 'date-fns';
 import { Ionicons } from '@expo/vector-icons';
+import { LinearGradient } from 'expo-linear-gradient';
 
 const MEAL_OPTIONS: { value: MealRelation; labelKey: string; iconName: keyof typeof Ionicons.glyphMap; iconColor: string }[] = [
   { value: 'fasting', labelKey: 'glucose.fasting', iconName: 'sunny-outline', iconColor: '#FF9500' },
@@ -118,14 +119,17 @@ export default function LogGlucoseScreen() {
     <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={{ flex: 1 }}>
       <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.background }]}>
         {/* Header */}
-        <View style={[styles.navHeader, { borderBottomColor: theme.colors.border }]}>
-          <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backBtn}>
-            <Text style={{ color: theme.colors.primary, fontSize: 16 }}>← {t('common.back')}</Text>
-          </TouchableOpacity>
-          <Text style={[styles.headerTitle, { color: theme.colors.text, fontFamily: theme.fonts.semibold }]}>
-            {editId ? t('glucose.editReading') : t('glucose.addReading')}
-          </Text>
-          <View style={{ width: 60 }} />
+        <View>
+          <View style={[styles.navHeader, { borderBottomColor: theme.colors.border }]}>
+            <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backBtn}>
+              <Text style={{ color: theme.colors.primary, fontSize: 16 }}>← {t('common.back')}</Text>
+            </TouchableOpacity>
+            <Text style={[styles.headerTitle, { color: theme.colors.text, fontFamily: theme.fonts.semibold }]}>
+              {editId ? t('glucose.editReading') : t('glucose.addReading')}
+            </Text>
+            <View style={{ width: 60 }} />
+          </View>
+          <LinearGradient colors={[...theme.gradients.primary] as [string, string]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} style={{ height: 3 }} />
         </View>
 
         <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.content}>

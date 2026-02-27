@@ -42,9 +42,9 @@ export default function EditPetScreen() {
     if (!activePet || !name.trim()) { Alert.alert(t('pets.enterName')); return; }
     setLoading(true);
     try {
-      await petRepository.update(activePet.id, { name: name.trim(), weightKg: weightKg ? parseFloat(weightKg) : undefined, insulinType: insulinType || undefined });
-      if (vetName) storage.set('vetName', vetName);
-      if (vetPhone) storage.set('vetPhone', vetPhone);
+      await petRepository.update(activePet.id, { name: name.trim(), weightKg: weightKg ? parseFloat(weightKg.replace(',', '.')) : undefined, insulinType: insulinType || undefined });
+      vetName ? storage.set('vetName', vetName) : storage.delete('vetName');
+      vetPhone ? storage.set('vetPhone', vetPhone) : storage.delete('vetPhone');
       // FIX-04: persist schedule changes to DB
       const existingInjections = await scheduleRepository.getInjectionTimes(activePet.id);
       for (const s of existingInjections) await scheduleRepository.deleteInjectionTime(s.id);

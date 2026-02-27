@@ -108,7 +108,6 @@ export default function AddSymptomScreen() {
     if (!activePet) return;
     if (selectedTypes.length === 0) { Alert.alert(t('symptoms.selectAtLeastOne')); return; }
     setLoading(true);
-    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
     try {
       if (editId) {
         await symptomRepository.update(editId, {
@@ -130,6 +129,7 @@ export default function AddSymptomScreen() {
         });
       }
       await queryClient.invalidateQueries({ queryKey: ['symptoms'] });
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       navigation.goBack();
     } catch {
       Alert.alert(t('common.error'), t('symptoms.saveError'));

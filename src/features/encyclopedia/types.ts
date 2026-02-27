@@ -1,13 +1,18 @@
 import type { Region, FoodType } from './data/diabeticFoods';
 
+export interface BilingualText {
+  ru: string;
+  en: string;
+}
+
 export interface Article {
   id: string;
-  titleKey: string;
-  summaryKey: string;
-  contentKey: string;
+  titleKey: BilingualText;
+  summaryKey: BilingualText;
+  contentKey: BilingualText;
   category: ArticleCategory;
   readingTimeMinutes: number;
-  tags: string[];
+  tags: BilingualText[];
   imageSource?: string;
 }
 

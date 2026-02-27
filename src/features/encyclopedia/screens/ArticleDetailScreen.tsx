@@ -11,7 +11,13 @@ import { useTranslation } from 'react-i18next';
 import { useTheme } from '@shared/theme';
 import { Ionicons } from '@expo/vector-icons';
 import { articles } from '../data/articles';
+import { BilingualText } from '../types';
 import { storageUtils, StorageKeys } from '@storage/mmkv/storage';
+
+const useLang = () => {
+  const { i18n } = useTranslation();
+  return (text: BilingualText) => text[i18n.language as 'ru' | 'en'] ?? text.en;
+};
 
 interface HeadingEntry {
   level: 2 | 3;
@@ -24,6 +30,7 @@ export default function ArticleDetailScreen() {
   const route = useRoute<RouteProp<EncyclopediaStackParamList, 'ArticleDetail'>>();
   const { t } = useTranslation();
   const { theme } = useTheme();
+  const lang = useLang();
   const scrollRef = useRef<ScrollView>(null);
 
   const article = articles.find(a => a.id === route.params.articleId);
@@ -57,7 +64,7 @@ export default function ArticleDetailScreen() {
   const headings: HeadingEntry[] = useMemo(() => {
     if (!article) return [];
     const result: HeadingEntry[] = [];
-    article.contentKey.split('\n').forEach((line, i) => {
+    lang(article.contentKey).split('\n').forEach((line, i) => {
       if (line.startsWith('### ')) {
         result.push({ level: 3, text: line.replace('### ', ''), lineIndex: i });
       } else if (line.startsWith('## ')) {
@@ -152,14 +159,14 @@ export default function ArticleDetailScreen() {
       </View>
 
       <ScrollView ref={scrollRef} showsVerticalScrollIndicator={false} contentContainerStyle={styles.content}>
-        <Text style={[styles.articleTitle, { color: theme.colors.text }]}>{article.titleKey}</Text>
+        <Text style={[styles.articleTitle, { color: theme.colors.text }]}>{lang(article.titleKey)}</Text>
         <View style={styles.meta}>
           <Text style={[styles.metaText, { color: theme.colors.textSecondary }]}>
             ⏱ {article.readingTimeMinutes} {t('encyclopedia.minutesRead')}
           </Text>
         </View>
         <Text style={[styles.summary, { color: theme.colors.textSecondary, backgroundColor: theme.colors.primaryLight }]}>
-          {article.summaryKey}
+          {lang(article.summaryKey)}
         </Text>
 
         {showToc && (
@@ -208,7 +215,7 @@ export default function ArticleDetailScreen() {
         )}
 
         <View style={styles.articleContent}>
-          {renderContent(article.contentKey)}
+          {renderContent(lang(article.contentKey))}
         </View>
       </ScrollView>
     </SafeAreaView>

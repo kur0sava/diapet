@@ -8,22 +8,28 @@ import { useEncyclopediaNavigation } from '@navigation/hooks';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '@shared/theme';
 import { articles } from '../data/articles';
-import { Article, ArticleCategory } from '../types';
+import { Article, ArticleCategory, BilingualText } from '../types';
 import { Ionicons } from '@expo/vector-icons';
 
-const CATEGORY_ICONS: Record<ArticleCategory, string> = {
-  basics: '📚',
-  treatment: '💊',
-  nutrition: '🥩',
-  complications: '⚠️',
-  remission: '✨',
-  tips: '💡',
+const useLang = () => {
+  const { i18n } = useTranslation();
+  return (text: BilingualText) => text[i18n.language as 'ru' | 'en'] ?? text.en;
+};
+
+const CATEGORY_ICONS: Record<ArticleCategory, { name: string; color: string }> = {
+  basics: { name: 'book-outline', color: '#4F8EF7' },
+  treatment: { name: 'medical-outline', color: '#7C5CBF' },
+  nutrition: { name: 'nutrition-outline', color: '#34C759' },
+  complications: { name: 'alert-circle-outline', color: '#FF9500' },
+  remission: { name: 'sparkles-outline', color: '#5AC8FA' },
+  tips: { name: 'bulb-outline', color: '#FFB340' },
 };
 
 export default function ArticleListScreen() {
   const navigation = useEncyclopediaNavigation();
   const { t } = useTranslation();
   const { theme } = useTheme();
+  const lang = useLang();
   const [search, setSearch] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<ArticleCategory | null>(null);
 
@@ -38,8 +44,8 @@ export default function ArticleListScreen() {
 
   const filtered = articles.filter(a => {
     const matchSearch = search === '' ||
-      a.titleKey.toLowerCase().includes(search.toLowerCase()) ||
-      a.summaryKey.toLowerCase().includes(search.toLowerCase());
+      lang(a.titleKey).toLowerCase().includes(search.toLowerCase()) ||
+      lang(a.summaryKey).toLowerCase().includes(search.toLowerCase());
     const matchCategory = !selectedCategory || a.category === selectedCategory;
     return matchSearch && matchCategory;
   });
@@ -53,9 +59,9 @@ export default function ArticleListScreen() {
       activeOpacity={0.8}
     >
       <View style={styles.articleHeader}>
-        <View style={[styles.categoryBadge, { backgroundColor: theme.colors.primaryLight }]}>
-          <Text style={styles.categoryIcon}>{CATEGORY_ICONS[item.category]}</Text>
-          <Text style={[styles.categoryLabel, { color: theme.colors.primary }]}>
+        <View style={[styles.categoryBadge, { backgroundColor: CATEGORY_ICONS[item.category].color + '15' }]}>
+          <Ionicons name={CATEGORY_ICONS[item.category].name as any} size={14} color={CATEGORY_ICONS[item.category].color} />
+          <Text style={[styles.categoryLabel, { color: CATEGORY_ICONS[item.category].color }]}>
             {categoryLabels[item.category]}
           </Text>
         </View>
@@ -63,14 +69,14 @@ export default function ArticleListScreen() {
           {item.readingTimeMinutes} {t('encyclopedia.minutesRead')}
         </Text>
       </View>
-      <Text style={[styles.articleTitle, { color: theme.colors.text }]}>{item.titleKey}</Text>
+      <Text style={[styles.articleTitle, { color: theme.colors.text }]}>{lang(item.titleKey)}</Text>
       <Text style={[styles.articleSummary, { color: theme.colors.textSecondary }]} numberOfLines={2}>
-        {item.summaryKey}
+        {lang(item.summaryKey)}
       </Text>
       <View style={styles.tags}>
         {item.tags.slice(0, 3).map(tag => (
-          <View key={tag} style={[styles.tag, { backgroundColor: theme.colors.surfaceSecondary }]}>
-            <Text style={[styles.tagText, { color: theme.colors.textSecondary }]}>#{tag}</Text>
+          <View key={lang(tag)} style={[styles.tag, { backgroundColor: theme.colors.surfaceSecondary }]}>
+            <Text style={[styles.tagText, { color: theme.colors.textSecondary }]}>#{lang(tag)}</Text>
           </View>
         ))}
       </View>
@@ -118,7 +124,7 @@ export default function ArticleListScreen() {
             ]}
             onPress={() => setSelectedCategory(selectedCategory === item ? null : item)}
           >
-            <Text>{CATEGORY_ICONS[item]}</Text>
+            <Ionicons name={CATEGORY_ICONS[item].name as any} size={16} color={selectedCategory === item ? '#fff' : CATEGORY_ICONS[item].color} />
             <Text style={{ color: selectedCategory === item ? '#fff' : theme.colors.text, fontSize: 13, fontWeight: '500' }}>
               {categoryLabels[item]}
             </Text>
@@ -139,7 +145,7 @@ export default function ArticleListScreen() {
             activeOpacity={0.8}
           >
             <View style={styles.feedGuideBannerIcon}>
-              <Text style={{ fontSize: 24 }}>🍽️</Text>
+              <Ionicons name="restaurant" size={24} color="#FFFFFF" />
             </View>
             <View style={styles.feedGuideBannerContent}>
               <Text style={styles.feedGuideBannerTitle}>{t('feedGuide.title')}</Text>

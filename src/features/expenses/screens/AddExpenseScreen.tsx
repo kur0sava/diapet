@@ -27,6 +27,7 @@ export default function AddExpenseScreen() {
   const [category, setCategory] = useState<ExpenseCategory>('insulin');
   const [amount, setAmount] = useState('');
   const [description, setDescription] = useState('');
+  const [originalDate, setOriginalDate] = useState<string | undefined>();
   const [loading, setLoading] = useState(false);
 
   const categoryLabels: Record<ExpenseCategory, string> = {
@@ -43,6 +44,7 @@ export default function AddExpenseScreen() {
         setCategory(exp.category as ExpenseCategory);
         setAmount(exp.amount.toString());
         if (exp.description) setDescription(exp.description);
+        if (exp.date) setOriginalDate(exp.date);
       });
     }
     return () => { cancelled = true; };
@@ -55,7 +57,7 @@ export default function AddExpenseScreen() {
     setLoading(true);
     try {
       if (editId) {
-        await expenseRepository.update(editId, { category, amount: numAmount, description: description || undefined });
+        await expenseRepository.update(editId, { category, amount: numAmount, description: description || undefined, date: originalDate });
       } else {
         await expenseRepository.create({ petId: activePet.id, category, amount: numAmount, description: description || undefined, currency: 'RUB' });
       }
