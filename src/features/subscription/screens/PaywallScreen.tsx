@@ -13,7 +13,7 @@ import { useNavigation } from '@react-navigation/native';
 import * as Haptics from 'expo-haptics';
 
 const PRIVACY_URL = 'https://kur0sava.github.io/diapet/assets/privacy-policy.html';
-const TERMS_URL = 'https://kur0sava.github.io/diapet/assets/privacy-policy.html';
+const TERMS_URL = 'https://kur0sava.github.io/diapet/assets/terms-of-service.html';
 
 const FEATURES: { icon: string; titleKey: string; descKey: string }[] = [
   { icon: 'paw', titleKey: 'subscription.features.unlimitedPets', descKey: 'subscription.features.unlimitedPetsDesc' },

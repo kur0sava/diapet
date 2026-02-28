@@ -1,5 +1,5 @@
-import React from 'react';
-import { View, TouchableOpacity, StyleSheet } from 'react-native';
+import React, { useEffect } from 'react';
+import { View, TouchableOpacity, StyleSheet, AppState } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { useRootNavigation } from '@navigation/hooks';
@@ -7,7 +7,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '@shared/theme';
 import { useTranslation } from 'react-i18next';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import Animated, { useAnimatedStyle, withRepeat, withSequence, withTiming } from 'react-native-reanimated';
+import Animated, { useAnimatedStyle, useSharedValue, withRepeat, withSequence, withTiming, cancelAnimation } from 'react-native-reanimated';
 import { MainTabParamList } from './types';
 
 // Screens
@@ -152,12 +152,28 @@ function MoreStackNavigator() {
 function EmergencyButton() {
   const navigation = useRootNavigation();
   const insets = useSafeAreaInsets();
+  const scale = useSharedValue(1.0);
+
+  useEffect(() => {
+    const startPulse = () => {
+      scale.value = withRepeat(withSequence(
+        withTiming(1.08, { duration: 1000 }),
+        withTiming(1.0, { duration: 1000 }),
+      ), 20, true); // L001: finite 20 repeats (~40s) to avoid indefinite UI-thread animation
+    };
+    startPulse();
+    const sub = AppState.addEventListener('change', state => {
+      if (state === 'active') startPulse();
+      else cancelAnimation(scale);
+    });
+    return () => {
+      cancelAnimation(scale);
+      sub.remove();
+    };
+  }, [scale]);
 
   const pulseStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: withRepeat(withSequence(
-      withTiming(1.08, { duration: 1000 }),
-      withTiming(1.0, { duration: 1000 }),
-    ), -1, true) }],
+    transform: [{ scale: scale.value }],
   }));
 
   return (
