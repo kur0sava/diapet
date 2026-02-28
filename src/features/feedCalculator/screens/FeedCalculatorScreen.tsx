@@ -105,6 +105,12 @@ export default function FeedCalculatorScreen() {
           </Text>
         )}
 
+        {allFilled && parseFloat(ash) === 0 && (
+          <Text style={[styles.errorText, { color: theme.colors.warning }]}>
+            {t('feedCalculator.ashZeroWarning')}
+          </Text>
+        )}
+
         {result && (
           <Card style={styles.resultCard}>
             <View style={styles.carbsRow}>

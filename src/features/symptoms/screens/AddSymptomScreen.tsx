@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback, useEffect, useRef } from 'react';
 import {
   View, Text, StyleSheet, ScrollView,
   TouchableOpacity, Alert, Image, KeyboardAvoidingView, Platform,
@@ -18,6 +18,8 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { GlucoseReading } from '@storage/domain/types';
 import { HomeStackParamList } from '@navigation/types';
 import { formatDistanceToNow } from 'date-fns';
+import { ru as ruLocale } from 'date-fns/locale';
+import * as FileSystem from 'expo-file-system/legacy';
 import * as ImagePicker from 'expo-image-picker';
 import * as Haptics from 'expo-haptics';
 import { useUnsavedChangesGuard } from '@shared/hooks/useUnsavedChangesGuard';
@@ -44,11 +46,14 @@ export default function AddSymptomScreen() {
   const editId = route.params?.editId;
   // H004: respect glucose unit preference
   const glucoseUnit = storage.getString(StorageKeys.GLUCOSE_UNIT) ?? 'mmol/L';
+  const dateFnsLocale = (storage.getString(StorageKeys.LANGUAGE) ?? 'ru') === 'ru' ? ruLocale : undefined;
   const [selectedTypes, setSelectedTypes] = useState<SymptomType[]>([]);
   const [severity, setSeverity] = useState<SymptomSeverity>('mild');
   const [notes, setNotes] = useState('');
   const [photos, setPhotos] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
+  // ARCH005: prevent duplicate symptom save on double-tap
+  const savingRef = useRef(false);
   const [selectedGlucoseId, setSelectedGlucoseId] = useState<string | undefined>(
     route.params?.glucoseReadingId
   );
@@ -96,7 +101,16 @@ export default function AddSymptomScreen() {
     });
     if (!result.canceled && result.assets) {
       const validAssets = result.assets.filter(a => !a.fileSize || a.fileSize < 5_000_000);
-      setPhotos(prev => [...prev, ...validAssets.map(a => a.uri)].slice(0, 10));
+      const dir = `${FileSystem.documentDirectory}symptom_photos/`;
+      await FileSystem.makeDirectoryAsync(dir, { intermediates: true });
+      const savedUris = await Promise.all(
+        validAssets.map(async a => {
+          const dest = `${dir}${Date.now()}_${Math.random().toString(36).slice(2)}.jpg`;
+          await FileSystem.copyAsync({ from: a.uri, to: dest });
+          return dest;
+        })
+      );
+      setPhotos(prev => [...prev, ...savedUris].slice(0, 10));
     }
   }, [t]);
 
@@ -105,13 +119,18 @@ export default function AddSymptomScreen() {
     if (!permission.granted) { Alert.alert(t('symptoms.noCameraAccess')); return; }
     const result = await ImagePicker.launchCameraAsync({ quality: 0.6, exif: false });
     if (!result.canceled && result.assets && result.assets.length > 0) {
-      setPhotos(prev => [...prev, result.assets[0].uri].slice(0, 10));
+      const dir = `${FileSystem.documentDirectory}symptom_photos/`;
+      await FileSystem.makeDirectoryAsync(dir, { intermediates: true });
+      const dest = `${dir}${Date.now()}_${Math.random().toString(36).slice(2)}.jpg`;
+      await FileSystem.copyAsync({ from: result.assets[0].uri, to: dest });
+      setPhotos(prev => [...prev, dest].slice(0, 10));
     }
   }, [t]);
 
   const handleSave = useCallback(async () => {
-    if (!activePet) return;
+    if (savingRef.current || !activePet) return;
     if (selectedTypes.length === 0) { Alert.alert(t('symptoms.selectAtLeastOne')); return; }
+    savingRef.current = true;
     setLoading(true);
     try {
       if (editId) {
@@ -139,6 +158,7 @@ export default function AddSymptomScreen() {
     } catch {
       Alert.alert(t('common.error'), t('symptoms.saveError'));
     } finally {
+      savingRef.current = false;
       setLoading(false);
     }
   }, [activePet, selectedTypes, severity, notes, photos, selectedGlucoseId, queryClient, navigation, t]);
@@ -264,7 +284,7 @@ export default function AddSymptomScreen() {
                           : `${reading.valueMmol.toFixed(1)} ${t('common.mmol_l')}`}
                       </Text>
                       <Text style={[styles.glucoseTime, { color: theme.colors.textSecondary }]}>
-                        {formatDistanceToNow(new Date(reading.recordedAt), { addSuffix: true })}
+                        {formatDistanceToNow(new Date(reading.recordedAt), { addSuffix: true, locale: dateFnsLocale })}
                       </Text>
                     </TouchableOpacity>
                   );

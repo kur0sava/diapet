@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useRef } from 'react';
 import {
   View, Text, StyleSheet, ScrollView,
   TouchableOpacity, Alert, KeyboardAvoidingView, Platform,
@@ -30,10 +30,12 @@ export default function LogInjectionScreen() {
   const [notes, setNotes] = useState('');
   const [loading, setLoading] = useState(false);
   const commonInsulins = t('injection.commonInsulins', { returnObjects: true }) as string[];
+  // ARCH005: prevent duplicate injection on double-tap
+  const savingRef = useRef(false);
   useUnsavedChangesGuard(!!dose || !!notes);
 
   const handleSave = useCallback(async () => {
-    if (!activePet) return;
+    if (savingRef.current || !activePet) return;
     if (!dose || parseFloat(dose.replace(',', '.')) <= 0) {
       Alert.alert(t('common.error'), t('injection.doseError'));
       return;
@@ -62,7 +64,8 @@ export default function LogInjectionScreen() {
   }, [activePet, dose, insulinType, notes, queryClient, navigation, t]);
 
   const doSaveInjection = useCallback(async () => {
-    if (!activePet) return;
+    if (!activePet || savingRef.current) return;
+    savingRef.current = true;
     setLoading(true);
     try {
       await injectionRepository.create({
@@ -77,6 +80,7 @@ export default function LogInjectionScreen() {
     } catch {
       Alert.alert(t('common.error'), t('injection.saveError'));
     } finally {
+      savingRef.current = false;
       setLoading(false);
     }
   }, [activePet, dose, insulinType, notes, queryClient, navigation, t]);

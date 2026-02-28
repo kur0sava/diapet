@@ -9,6 +9,7 @@ import { usePetStore } from '@shared/stores/petStore';
 import { Ionicons } from '@expo/vector-icons';
 import { useSubscription } from '@features/subscription/hooks/useSubscription';
 import { ProBadge } from '@features/subscription/components/ProBadge';
+import Constants from 'expo-constants';
 
 export default function MoreMenuScreen() {
   const navigation = useMoreNavigation();
@@ -92,7 +93,7 @@ export default function MoreMenuScreen() {
           <Ionicons name="warning" size={20} color="#fff" style={{ marginRight: 8 }} />
           <Text style={[styles.emergencyText, { fontFamily: theme.fonts.bold }]}>{t('emergency.emergencyMode')}</Text>
         </TouchableOpacity>
-        <Text style={[styles.version, { color: theme.colors.textTertiary }]}>DiaPet v1.0.0</Text>
+        <Text style={[styles.version, { color: theme.colors.textTertiary }]}>DiaPet v{Constants.expoConfig?.version ?? '1.0.0'}</Text>
       </ScrollView>
     </SafeAreaView>
   );

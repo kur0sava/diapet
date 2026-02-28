@@ -11,6 +11,7 @@ import { getDatabase } from '@storage/database';
 import { usePetStore } from '@shared/stores/petStore';
 import * as Notifications from 'expo-notifications';
 import { useQueryClient } from '@tanstack/react-query';
+import Constants from 'expo-constants';
 
 export default function SettingsScreen() {
   const navigation = useMoreNavigation();
@@ -108,7 +109,7 @@ export default function SettingsScreen() {
             <Text style={[styles.dangerText, { color: theme.colors.danger }]}>🗑 {t('settings.deleteData')}</Text>
           </TouchableOpacity>
         </Card>
-        <Text style={[styles.version, { color: theme.colors.textTertiary }]}>DiaPet v1.0.0 · React Native + Expo</Text>
+        <Text style={[styles.version, { color: theme.colors.textTertiary }]}>DiaPet v{Constants.expoConfig?.version ?? '1.0.0'} · React Native + Expo</Text>
       </ScrollView>
     </SafeAreaView>
   );

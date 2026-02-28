@@ -283,7 +283,7 @@ Continue measuring glucose once every 1–2 months even during remission.`,
 
 **Что помогает:**
 - Нормализация глюкозы (основа лечения)
-- Витамин B12 (метилкобаламин) — 0.5–1 мг/кг
+- Витамин B12 (метилкобаламин) — 0.5–1 мг/кошку/день PO
 - Физиотерапия (мягкий массаж лап)
 - Удобная мягкая подстилка
 - Миски и лоток с низкими бортиками
@@ -323,7 +323,7 @@ Recovery takes **1 to 6 months** once good glycemic control is achieved.
 
 **What helps:**
 - Glucose normalization (the foundation of treatment)
-- Vitamin B12 (methylcobalamin) — 0.5–1 mg/kg
+- Vitamin B12 (methylcobalamin) — 0.5–1 mg/cat/day PO
 - Physiotherapy (gentle paw massage)
 - Comfortable soft bedding
 - Bowls and litter box with low sides

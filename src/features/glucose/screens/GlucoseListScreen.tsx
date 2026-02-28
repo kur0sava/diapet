@@ -219,7 +219,7 @@ export default function GlucoseListScreen() {
     } finally {
       setExporting(false);
     }
-  }, [activePet, readings, t]);
+  }, [activePet, readings, t, rootNav, canExportPDF]);
 
   const renderReading = useCallback(({ item, index }: { item: GlucoseReading; index: number }) => {
     const displayValue = unit === 'mmol/L' ? `${item.valueMmol.toFixed(1)}` : `${item.valueMgdl}`;

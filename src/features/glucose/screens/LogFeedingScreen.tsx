@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useRef } from 'react';
 import {
   View, Text, StyleSheet, ScrollView,
   TouchableOpacity, Alert, KeyboardAvoidingView, Platform,
@@ -33,14 +33,17 @@ export default function LogFeedingScreen() {
   const [amount, setAmount] = useState('');
   const [notes, setNotes] = useState('');
   const [loading, setLoading] = useState(false);
+  // ARCH005: prevent duplicate feeding on double-tap
+  const savingRef = useRef(false);
   useUnsavedChangesGuard(!!amount || !!notes);
 
   const handleSave = useCallback(async () => {
-    if (!activePet) {
+    if (savingRef.current || !activePet) {
       Alert.alert(t('common.error'), t('glucose.petNotFound'));
       return;
     }
 
+    savingRef.current = true;
     setLoading(true);
     try {
       await feedingRepository.create({
@@ -55,6 +58,7 @@ export default function LogFeedingScreen() {
     } catch (e) {
       Alert.alert(t('common.error'), t('feeding.saveError'));
     } finally {
+      savingRef.current = false;
       setLoading(false);
     }
   }, [activePet, foodType, amount, notes, queryClient, navigation, t]);

@@ -82,7 +82,8 @@ export default function LogGlucoseScreen() {
   }, [editId]);
 
   const numValue = parseFloat(value.replace(',', '.'));
-  const isValidValue = !isNaN(numValue) && numValue > 0 && numValue < (unit === 'mmol/L' ? 35 : 600);
+  // MM001: use consistent max — 35 mmol/L = 630 mg/dL (was 600 mg/dL, mismatched)
+  const isValidValue = !isNaN(numValue) && numValue > 0 && numValue < (unit === 'mmol/L' ? 35 : 630);
 
   const glucosePreview = isValidValue
     ? {
@@ -90,6 +91,41 @@ export default function LogGlucoseScreen() {
         color: getGlucoseColor(unit === 'mmol/L' ? numValue : numValue / 18.018),
       }
     : null;
+
+  // M011: doSave defined first so handleSave can include it in deps (stale closure fix)
+  const doSave = useCallback(async () => {
+    if (!activePet || savingRef.current) return;
+    savingRef.current = true;
+    setLoading(true);
+    try {
+      if (editId) {
+        await glucoseRepository.update(editId, {
+          petId: activePet.id, value: numValue, unit, mealRelation,
+          // M003: replace comma so "2,5" parses correctly
+          insulinDose: insulinDose ? parseFloat(insulinDose.replace(',', '.')) : undefined,
+          insulinType: insulinType || undefined,
+          notes: notes || undefined,
+          recordedAt: recordedAt.toISOString(),
+        });
+      } else {
+        await glucoseRepository.create({
+          petId: activePet.id, value: numValue, unit, mealRelation,
+          insulinDose: insulinDose ? parseFloat(insulinDose.replace(',', '.')) : undefined,
+          insulinType: insulinType || undefined,
+          notes: notes || undefined,
+          recordedAt: recordedAt.toISOString(),
+        });
+      }
+      await queryClient.invalidateQueries({ queryKey: ['glucose'] });
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+      navigation.goBack();
+    } catch (e) {
+      Alert.alert(t('common.error'), t('glucose.saveError'));
+    } finally {
+      savingRef.current = false;
+      setLoading(false);
+    }
+  }, [activePet, numValue, unit, mealRelation, insulinDose, insulinType, notes, recordedAt, editId, queryClient, navigation, t]);
 
   const handleSave = useCallback(async () => {
     if (savingRef.current) return;
@@ -112,40 +148,7 @@ export default function LogGlucoseScreen() {
       return;
     }
     doSave();
-  }, [activePet, isValidValue, numValue, unit, mealRelation, insulinDose, insulinType, notes, recordedAt, editId, queryClient, navigation, t]);
-
-  const doSave = useCallback(async () => {
-    if (!activePet || savingRef.current) return;
-    savingRef.current = true;
-    setLoading(true);
-    try {
-      if (editId) {
-        await glucoseRepository.update(editId, {
-          petId: activePet.id, value: numValue, unit, mealRelation,
-          insulinDose: insulinDose ? parseFloat(insulinDose) : undefined,
-          insulinType: insulinType || undefined,
-          notes: notes || undefined,
-          recordedAt: recordedAt.toISOString(),
-        });
-      } else {
-        await glucoseRepository.create({
-          petId: activePet.id, value: numValue, unit, mealRelation,
-          insulinDose: insulinDose ? parseFloat(insulinDose) : undefined,
-          insulinType: insulinType || undefined,
-          notes: notes || undefined,
-          recordedAt: recordedAt.toISOString(),
-        });
-      }
-      await queryClient.invalidateQueries({ queryKey: ['glucose'] });
-      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-      navigation.goBack();
-    } catch (e) {
-      Alert.alert(t('common.error'), t('glucose.saveError'));
-    } finally {
-      savingRef.current = false;
-      setLoading(false);
-    }
-  }, [activePet, isValidValue, numValue, unit, mealRelation, insulinDose, insulinType, notes, recordedAt, editId, queryClient, navigation, t]);
+  }, [activePet, isValidValue, insulinDose, doSave, t]);
 
   const levelLabels: Record<string, string> = {
     severe_low: t('glucose.severeLow'),

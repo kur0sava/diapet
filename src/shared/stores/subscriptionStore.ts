@@ -24,7 +24,7 @@ function checkPro(info: CustomerInfo): boolean {
 function getCachedPro(): boolean {
   const cached = storage.getBoolean(StorageKeys.SUBSCRIPTION_CACHED_PRO) ?? false;
   if (!cached) return false;
-  // If cache is stale (>24h), don't trust it
+  // If cache is stale (>30 days), don't trust it
   const cachedAt = storage.getNumber(CACHE_TIMESTAMP_KEY) ?? 0;
   if (Date.now() - cachedAt > CACHE_TTL_MS) return false;
   return true;
