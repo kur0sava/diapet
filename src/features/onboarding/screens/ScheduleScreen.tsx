@@ -59,7 +59,10 @@ export default function ScheduleScreen() {
     <View style={{ gap: 8 }}>
       {times.map((time, index) => (
         <View key={`${type}-${index}-${time}`} style={[styles.timeRow, { backgroundColor: theme.colors.surfaceSecondary, borderRadius: 12 }]}>
-          <Text style={{ color: theme.colors.text, fontSize: 18, fontWeight: '600', padding: 14 }}>{time}</Text>
+          {/* H008: tap time to edit via DateTimePicker */}
+          <TouchableOpacity onPress={() => setShowPicker({ type, index })} style={{ flex: 1 }}>
+            <Text style={{ color: theme.colors.text, fontSize: 18, fontWeight: '600', padding: 14 }}>{time}</Text>
+          </TouchableOpacity>
           <TouchableOpacity onPress={() => removeTime(type, index)} style={styles.removeBtn}>
             <Ionicons name="close-circle" size={24} color={theme.colors.danger} />
           </TouchableOpacity>
@@ -108,6 +111,34 @@ export default function ScheduleScreen() {
 
         <Button title={t('onboarding.next')} onPress={handleContinue} fullWidth size="lg" style={{ margin: 24 }} />
       </ScrollView>
+
+      {/* H008: DateTimePicker for editing existing time slots */}
+      {showPicker && (
+        <DateTimePicker
+          value={(() => {
+            const list = showPicker.type === 'injection' ? injectionTimes : feedingTimes;
+            const [h, m] = list[showPicker.index].split(':').map(Number);
+            const d = new Date();
+            d.setHours(h, m, 0, 0);
+            return d;
+          })()}
+          mode="time"
+          is24Hour={true}
+          onChange={(_, date) => {
+            if (date) {
+              const hh = date.getHours().toString().padStart(2, '0');
+              const mm = date.getMinutes().toString().padStart(2, '0');
+              const newTime = `${hh}:${mm}`;
+              if (showPicker.type === 'injection') {
+                setInjectionTimes(prev => prev.map((t, i) => i === showPicker.index ? newTime : t));
+              } else {
+                setFeedingTimes(prev => prev.map((t, i) => i === showPicker.index ? newTime : t));
+              }
+            }
+            setShowPicker(null);
+          }}
+        />
+      )}
     </SafeAreaView>
   );
 }

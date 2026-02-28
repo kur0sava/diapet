@@ -129,7 +129,9 @@ export const ru = {
     history: 'История',
     chart: 'График',
     exportPDF: 'Экспорт PDF',
+    severeLow: 'Тяжёлая гипо',
     low: 'Низкий',
+    belowTarget: 'Ниже цели',
     normal: 'Норма',
     high: 'Высокий',
     veryHigh: 'Очень высокий',
@@ -585,7 +587,7 @@ export const ru = {
     norms: 'Нормы для диабетических кошек',
     normsCarbs: 'Углеводы СВ: <10% идеально, 10-15% допустимо',
     normsProtein: 'Белок СВ: >40% рекомендуется',
-    normsFat: 'Жир СВ: 25-45% умеренно',
+    normsFat: 'Жир СВ: 20–40% (ISFM)',
   },
 
   subscription: {

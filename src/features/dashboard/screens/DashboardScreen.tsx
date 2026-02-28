@@ -16,6 +16,7 @@ import { useTheme } from '@shared/theme';
 import { useQuery } from '@tanstack/react-query';
 import { glucoseRepository, injectionRepository, scheduleRepository } from '@storage/database';
 import { storage, StorageKeys } from '@storage/mmkv/storage';
+import { GlucoseUnit } from '@storage/domain/types';
 import { Card, GlucoseValueBadge } from '@shared/components/ui';
 import { GlucoseChart } from '../components/GlucoseChart';
 import { StatusCard } from '../components/StatusCard';
@@ -67,6 +68,8 @@ export default function DashboardScreen() {
   const activePet = usePetStore(s => s.activePet);
   const { isPro } = useSubscription();
   const petId = activePet?.id ?? '';
+  // H004: respect the user's glucose unit preference
+  const glucoseUnit = (storage.getString(StorageKeys.GLUCOSE_UNIT) ?? 'mmol/L') as GlucoseUnit;
 
   const { data: latestGlucose, refetch: refetchGlucose } = useQuery({
     queryKey: ['glucose', 'latest', petId],
@@ -204,8 +207,12 @@ export default function DashboardScreen() {
                 iconName="water-outline"
                 iconColor={latestGlucose ? (latestGlucose.valueMmol < 4 || latestGlucose.valueMmol > 9 ? theme.colors.danger : theme.colors.success) : theme.colors.textTertiary}
                 label={t('dashboard.lastGlucose')}
-                value={latestGlucose ? `${latestGlucose.valueMmol.toFixed(1)}${trendArrow}` : '\u2014'}
-                unit={t('common.mmol_l')}
+                value={latestGlucose
+                  ? glucoseUnit === 'mg/dL'
+                    ? `${latestGlucose.valueMgdl}${trendArrow}`
+                    : `${latestGlucose.valueMmol.toFixed(1)}${trendArrow}`
+                  : '\u2014'}
+                unit={glucoseUnit === 'mg/dL' ? t('common.mg_dl') : t('common.mmol_l')}
                 color={latestGlucose ? (latestGlucose.valueMmol < 4 || latestGlucose.valueMmol > 9 ? theme.colors.danger : theme.colors.success) : theme.colors.textTertiary}
                 subtitle={latestGlucose ? formatRelative(latestGlucose.recordedAt) : undefined}
                 index={0}

@@ -73,7 +73,16 @@ export interface UpdatePetDTO extends Partial<CreatePetDTO> {}
 
 export type MealRelation = 'before_meal' | 'after_meal' | 'fasting' | 'unspecified';
 export type GlucoseUnit = 'mmol/L' | 'mg/dL';
-export type GlucoseLevel = 'low' | 'normal' | 'high' | 'very_high';
+/**
+ * MH001: 4-level clinical glucose scale for cats (ISFM)
+ * severe_low: < 2.8 mmol/L — clinical emergency hypoglycemia
+ * low:        2.8–3.3 mmol/L — hypoglycemia, treat immediately
+ * below_target: 3.3–4.0 mmol/L — below target range but not hypo
+ * normal:     4.0–9.0 mmol/L — target range
+ * high:       9.0–14.0 mmol/L — hyperglycemia
+ * very_high:  > 14.0 mmol/L — severe hyperglycemia
+ */
+export type GlucoseLevel = 'severe_low' | 'low' | 'below_target' | 'normal' | 'high' | 'very_high';
 
 /**
  * Glucose unit conversion factor based on glucose molar mass (180.156 g/mol):
@@ -145,10 +154,12 @@ export interface CreateFeedingDTO {
 }
 
 export const GLUCOSE_RANGES = {
-  low: { max: 4.0, color: '#FF3B30' },
-  normal: { min: 4.0, max: 9.0, color: '#34C759' },
-  high: { min: 9.0, max: 14.0, color: '#FF9500' },
-  very_high: { min: 14.0, color: '#FF3B30' },
+  severe_low:   { max: 2.8,  color: '#CC0000' }, // Deep red — emergency
+  low:          { min: 2.8,  max: 3.3,  color: '#FF3B30' }, // Red — hypoglycemia
+  below_target: { min: 3.3,  max: 4.0,  color: '#FF9500' }, // Orange — below target
+  normal:       { min: 4.0,  max: 9.0,  color: '#34C759' }, // Green — target
+  high:         { min: 9.0,  max: 14.0, color: '#FF9500' }, // Orange — hyperglycemia
+  very_high:    { min: 14.0, color: '#FF3B30' },            // Red — severe hyper
 };
 
 export function mmolToMgdl(valueMmol: number): number {
@@ -165,7 +176,9 @@ export function convertGlucoseValue(value: number, from: GlucoseUnit, to: Glucos
 }
 
 export function getGlucoseLevel(valueMmol: number): GlucoseLevel {
-  if (valueMmol < 4.0) return 'low';
+  if (valueMmol < 2.8) return 'severe_low';
+  if (valueMmol < 3.3) return 'low';
+  if (valueMmol < 4.0) return 'below_target';
   if (valueMmol <= 9.0) return 'normal';
   if (valueMmol <= 14.0) return 'high';
   return 'very_high';

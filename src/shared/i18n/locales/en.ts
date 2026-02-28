@@ -129,7 +129,9 @@ export const en = {
     history: 'History',
     chart: 'Chart',
     exportPDF: 'Export PDF',
+    severeLow: 'Severe Low',
     low: 'Low',
+    belowTarget: 'Below Target',
     normal: 'Normal',
     high: 'High',
     veryHigh: 'Very High',
@@ -171,7 +173,7 @@ export const en = {
     typeError: 'Specify insulin type',
     saveError: 'Failed to save',
     notesPlaceholder: 'Optional...',
-    commonInsulins: ['Protaphane', 'Lantus', 'Lantus SoloStar', 'Levemir', 'Humulin N', 'Actrapid'],
+    commonInsulins: ['Protaphane', 'Lantus', 'Lantus SoloStar', 'Levemir', 'Humulin N', 'Actrapid', 'ProZinc (PZI)', 'Caninsulin', 'Vetsulin'],
     history: 'Injection History',
     noHistory: 'No injections recorded yet',
     doseChart: 'Doses (last 14 days)',
@@ -585,7 +587,7 @@ export const en = {
     norms: 'Norms for diabetic cats',
     normsCarbs: 'Carbs DM: <10% ideal, 10-15% acceptable',
     normsProtein: 'Protein DM: >40% recommended',
-    normsFat: 'Fat DM: 25-45% moderate',
+    normsFat: 'Fat DM: 20–40% (ISFM)',
   },
 
   subscription: {

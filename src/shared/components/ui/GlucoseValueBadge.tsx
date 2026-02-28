@@ -24,7 +24,9 @@ export function GlucoseValueBadge({ valueMmol, size = 'md', showLabel = true }: 
   const level = getGlucoseLevel(valueMmol);
 
   const levelLabels: Record<string, string> = {
+    severe_low: t('glucose.severeLow'),
     low: t('glucose.low'),
+    below_target: t('glucose.belowTarget'),
     normal: t('glucose.normal'),
     high: t('glucose.high'),
     very_high: t('glucose.veryHigh'),

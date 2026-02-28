@@ -87,6 +87,8 @@ export async function runMigrations(db: SQLiteDatabase): Promise<void> {
   for (const migration of MIGRATIONS) {
     if (migration.version > currentVersion) {
       if (__DEV__) console.log(`Migration ${migration.version}: ${migration.name}`);
+      // H005: run DDL+data inside transaction; set user_version AFTER commit
+      // so a failed migration keeps old version and retries next launch
       await db.withTransactionAsync(async () => {
         for (const sql of migration.up) {
           await db.execAsync(sql);
@@ -94,8 +96,8 @@ export async function runMigrations(db: SQLiteDatabase): Promise<void> {
         if (migration.afterSql) {
           await migration.afterSql(db);
         }
-        await db.execAsync(`PRAGMA user_version = ${migration.version}`);
       });
+      await db.execAsync(`PRAGMA user_version = ${migration.version}`);
     }
   }
 }

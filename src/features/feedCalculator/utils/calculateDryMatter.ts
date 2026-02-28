@@ -48,6 +48,6 @@ export function calculateDryMatter(input: MacroInput): DryMatterResult | null {
     fatDM,
     verdict,
     proteinOk: proteinDM >= 40,
-    fatOk: fatDM <= 45,
+    fatOk: fatDM <= 40, // MH005: ISFM fat upper limit 40% DM (was 45)
   };
 }

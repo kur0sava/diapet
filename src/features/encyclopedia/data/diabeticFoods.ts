@@ -70,10 +70,10 @@ export interface DiabeticCatFood {
 // ────────────────────────────────────────────────────
 
 export const DIABETIC_NUTRITION_GUIDELINES = {
-  carbsMaxPercent: 12,
+  carbsMaxPercent: 15,   // MH003: aligned with calculator (was 12, causing conflict)
   carbsIdealPercent: 7,
   proteinMinPercent: 40,
-  fatRangePercent: { min: 15, max: 25 },
+  fatRangePercent: { min: 20, max: 40 }, // MH005: ISFM guideline 20-40% DM (was 15-25)
   sugarMaxPercent: 1,
   remissionChanceLowCarb: 68, // % cats achieving remission on low-carb diet
   remissionChanceMedCarb: 41, // % on medium-carb diet

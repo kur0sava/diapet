@@ -169,7 +169,7 @@ When insulin is insufficient:
 ### Как подтвердить ремиссию
 
 1. Дозу инсулина постепенно снижают под контролем кривых глюкозы
-2. Если глюкоза остаётся < 8 ммоль/л без инсулина в течение 4 недель — **ремиссия подтверждена**
+2. Если глюкоза остаётся < 7 ммоль/л (126 мг/дл) без инсулина в течение 4 недель — **ремиссия подтверждена** (критерий ISFM)
 3. Продолжайте диету и мониторинг!
 
 ### Важно помнить
@@ -221,7 +221,7 @@ Long-acting insulin analogs (Glargine/Lantus, Detemir/Levemir) yield higher remi
 ### How to Confirm Remission
 
 1. Gradually reduce the insulin dose while monitoring glucose curves
-2. If glucose remains < 8 mmol/L without insulin for 4 weeks — **remission is confirmed**
+2. If glucose remains < 7 mmol/L (126 mg/dL) without insulin for 4 weeks — **remission is confirmed** (ISFM criterion)
 3. Continue the diet and monitoring!
 
 ### Important to Remember

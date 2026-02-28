@@ -12,6 +12,7 @@ import { useTheme } from '@shared/theme';
 import { Button, Input } from '@shared/components/ui';
 import { symptomRepository, glucoseRepository } from '@storage/database';
 import { usePetStore } from '@shared/stores/petStore';
+import { storage, StorageKeys } from '@storage/mmkv/storage';
 import { SymptomType, SymptomSeverity, SYMPTOM_ICONS } from '../types';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { GlucoseReading } from '@storage/domain/types';
@@ -41,6 +42,8 @@ export default function AddSymptomScreen() {
   const queryClient = useQueryClient();
 
   const editId = route.params?.editId;
+  // H004: respect glucose unit preference
+  const glucoseUnit = storage.getString(StorageKeys.GLUCOSE_UNIT) ?? 'mmol/L';
   const [selectedTypes, setSelectedTypes] = useState<SymptomType[]>([]);
   const [severity, setSeverity] = useState<SymptomSeverity>('mild');
   const [notes, setNotes] = useState('');
@@ -256,7 +259,9 @@ export default function AddSymptomScreen() {
                       }}
                     >
                       <Text style={[styles.glucoseValue, { color: isSelected ? theme.colors.primary : theme.colors.text }]}>
-                        {reading.valueMmol.toFixed(1)} mmol/L
+                        {glucoseUnit === 'mg/dL'
+                          ? `${reading.valueMgdl} ${t('common.mg_dl')}`
+                          : `${reading.valueMmol.toFixed(1)} ${t('common.mmol_l')}`}
                       </Text>
                       <Text style={[styles.glucoseTime, { color: theme.colors.textSecondary }]}>
                         {formatDistanceToNow(new Date(reading.recordedAt), { addSuffix: true })}

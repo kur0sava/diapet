@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import {
   View, Text, StyleSheet, ScrollView,
   TouchableOpacity, Alert, KeyboardAvoidingView, Platform,
@@ -50,7 +50,15 @@ export default function LogGlucoseScreen() {
   const [recordedAt, setRecordedAt] = useState(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [showTimePicker, setShowTimePicker] = useState(false);
-  useUnsavedChangesGuard(!!value || !!insulinDose || !!notes);
+  // H003: prevent double-tap save
+  const savingRef = useRef(false);
+  // H002: track initial values to avoid false dirty-guard on edit load
+  const initialValuesRef = useRef({ value: '', insulinDose: '', notes: '' });
+  useUnsavedChangesGuard(
+    value !== initialValuesRef.current.value ||
+    insulinDose !== initialValuesRef.current.insulinDose ||
+    notes !== initialValuesRef.current.notes
+  );
 
   useEffect(() => {
     let cancelled = false;
@@ -58,12 +66,16 @@ export default function LogGlucoseScreen() {
       glucoseRepository.findById(editId).then(reading => {
         if (cancelled || !reading) return;
         const displayValue = savedUnit === 'mmol/L' ? reading.valueMmol.toFixed(1) : reading.valueMgdl.toString();
+        const loadedDose = reading.insulinDose ? reading.insulinDose.toString() : '';
+        const loadedNotes = reading.notes ?? '';
         setValue(displayValue);
         setMealRelation(reading.mealRelation);
-        if (reading.insulinDose) setInsulinDose(reading.insulinDose.toString());
+        if (reading.insulinDose) setInsulinDose(loadedDose);
         if (reading.insulinType) setInsulinType(reading.insulinType);
-        if (reading.notes) setNotes(reading.notes);
+        if (reading.notes) setNotes(loadedNotes);
         if (reading.recordedAt) setRecordedAt(new Date(reading.recordedAt));
+        // H002: set baseline so guard doesn't fire immediately after load
+        initialValuesRef.current = { value: displayValue, insulinDose: loadedDose, notes: loadedNotes };
       });
     }
     return () => { cancelled = true; };
@@ -80,6 +92,7 @@ export default function LogGlucoseScreen() {
     : null;
 
   const handleSave = useCallback(async () => {
+    if (savingRef.current) return;
     if (!activePet) { Alert.alert(t('common.error'), t('glucose.petNotFound')); return; }
     if (!isValidValue) { Alert.alert(t('common.error'), t('glucose.invalidValue')); return; }
     // MC002: Warn on unusually high insulin dose (typical cat range: 1–4 units)
@@ -102,7 +115,8 @@ export default function LogGlucoseScreen() {
   }, [activePet, isValidValue, numValue, unit, mealRelation, insulinDose, insulinType, notes, recordedAt, editId, queryClient, navigation, t]);
 
   const doSave = useCallback(async () => {
-    if (!activePet) return;
+    if (!activePet || savingRef.current) return;
+    savingRef.current = true;
     setLoading(true);
     try {
       if (editId) {
@@ -128,13 +142,18 @@ export default function LogGlucoseScreen() {
     } catch (e) {
       Alert.alert(t('common.error'), t('glucose.saveError'));
     } finally {
+      savingRef.current = false;
       setLoading(false);
     }
   }, [activePet, isValidValue, numValue, unit, mealRelation, insulinDose, insulinType, notes, recordedAt, editId, queryClient, navigation, t]);
 
   const levelLabels: Record<string, string> = {
-    low: t('glucose.low'), normal: t('glucose.normal'),
-    high: t('glucose.high'), very_high: t('glucose.veryHigh'),
+    severe_low: t('glucose.severeLow'),
+    low: t('glucose.low'),
+    below_target: t('glucose.belowTarget'),
+    normal: t('glucose.normal'),
+    high: t('glucose.high'),
+    very_high: t('glucose.veryHigh'),
   };
 
   return (
