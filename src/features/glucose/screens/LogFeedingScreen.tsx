@@ -52,7 +52,7 @@ export default function LogFeedingScreen() {
         amountGrams: amount ? parseFloat(amount.replace(',', '.')) : undefined,
         notes: notes || undefined,
       });
-      await queryClient.invalidateQueries({ queryKey: ['feeding'] });
+      await queryClient.invalidateQueries({ queryKey: ['feedings'] });
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       navigation.goBack();
     } catch (e) {

@@ -139,7 +139,7 @@ export const en = {
     average: 'Average',
     readings: 'readings',
     deleteConfirm: 'Delete this reading?',
-    chartNormal: 'Normal 4-9',
+    chartNormal: 'Normal 4–9 mmol/L',
     chartOutOfRange: 'Out of range',
     saveError: 'Failed to save data',
     petNotFound: 'Pet not found',

@@ -104,16 +104,6 @@ export const CREATE_TABLES_SQL = `
     FOREIGN KEY (pet_id) REFERENCES pets(id) ON DELETE CASCADE
   );
 
-  CREATE TABLE IF NOT EXISTS vet_contacts (
-    id TEXT PRIMARY KEY NOT NULL,
-    pet_id TEXT,
-    name TEXT NOT NULL,
-    phone TEXT NOT NULL,
-    clinic TEXT,
-    is_primary INTEGER NOT NULL DEFAULT 0,
-    created_at TEXT NOT NULL DEFAULT (datetime('now'))
-  );
-
   CREATE TABLE IF NOT EXISTS symptom_entry_types (
     id TEXT PRIMARY KEY NOT NULL,
     symptom_id TEXT NOT NULL REFERENCES symptoms(id) ON DELETE CASCADE,

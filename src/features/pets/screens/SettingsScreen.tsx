@@ -36,7 +36,7 @@ export default function SettingsScreen() {
             try {
               const db = await getDatabase();
               await db.withTransactionAsync(async () => {
-                await db.execAsync('DELETE FROM symptom_entry_types; DELETE FROM symptoms; DELETE FROM glucose_readings; DELETE FROM injections; DELETE FROM feedings; DELETE FROM expenses; DELETE FROM injection_schedule; DELETE FROM feeding_schedule; DELETE FROM vet_contacts; DELETE FROM pets;');
+                await db.execAsync('DELETE FROM symptom_entry_types; DELETE FROM symptoms; DELETE FROM glucose_readings; DELETE FROM injections; DELETE FROM feedings; DELETE FROM expenses; DELETE FROM injection_schedule; DELETE FROM feeding_schedule; DELETE FROM pets;');
               });
               // C001: delete only data keys, preserve user preferences (language, theme, glucose unit)
               storage.delete(StorageKeys.ACTIVE_PET_ID);
