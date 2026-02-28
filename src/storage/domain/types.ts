@@ -67,7 +67,7 @@ export interface CreatePetDTO {
   photoUri?: string;
 }
 
-export interface UpdatePetDTO extends Partial<CreatePetDTO> {}
+export type UpdatePetDTO = Partial<CreatePetDTO>;
 
 // --------------- Glucose types ---------------
 

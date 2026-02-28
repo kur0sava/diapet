@@ -98,7 +98,9 @@ export type MoreStackScreenProps<T extends keyof MoreStackParamList> =
   NativeStackScreenProps<MoreStackParamList, T>;
 
 declare global {
+  // eslint-disable-next-line @typescript-eslint/no-namespace
   namespace ReactNavigation {
+    // eslint-disable-next-line @typescript-eslint/no-empty-object-type
     interface RootParamList extends RootStackParamList {}
   }
 }

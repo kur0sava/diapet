@@ -37,7 +37,9 @@ export function QuickActionButton({ iconName, iconColor, label, color, onPress }
   return (
     <AnimatedPressable
       style={[styles.btn, { backgroundColor: theme.colors.surface, ...theme.shadows.md, borderRadius: 20 }, animatedStyle]}
+      // eslint-disable-next-line react-hooks/immutability
       onPressIn={() => { scale.value = withSpring(0.95, { damping: 15 }); }}
+      // eslint-disable-next-line react-hooks/immutability
       onPressOut={() => { scale.value = withSpring(1, { damping: 15 }); }}
       onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); onPress(); }}
     >

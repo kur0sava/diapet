@@ -60,8 +60,8 @@ export default function EditPetScreen() {
     setLoading(true);
     try {
       await petRepository.update(activePet.id, { name: name.trim(), weightKg: weightKg ? parseFloat(weightKg.replace(',', '.')) : undefined, insulinType: insulinType || undefined });
-      vetName ? storage.set('vetName', vetName) : storage.delete('vetName');
-      vetPhone ? storage.set('vetPhone', vetPhone) : storage.delete('vetPhone');
+      if (vetName) { storage.set('vetName', vetName); } else { storage.delete('vetName'); }
+      if (vetPhone) { storage.set('vetPhone', vetPhone); } else { storage.delete('vetPhone'); }
       // UX-017: Wrap schedule updates in transaction to prevent partial writes
       const db = await getDatabase();
       await db.withTransactionAsync(async () => {

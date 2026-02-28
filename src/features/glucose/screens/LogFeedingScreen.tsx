@@ -38,7 +38,8 @@ export default function LogFeedingScreen() {
   useUnsavedChangesGuard(!!amount || !!notes);
 
   const handleSave = useCallback(async () => {
-    if (savingRef.current || !activePet) {
+    if (savingRef.current) return; // silent guard against double-tap
+    if (!activePet) {
       Alert.alert(t('common.error'), t('glucose.petNotFound'));
       return;
     }

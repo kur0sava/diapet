@@ -72,7 +72,7 @@ export default function ArticleDetailScreen() {
       }
     });
     return result;
-  }, [article]);
+  }, [article, lang]);
 
   const showToc = headings.length >= 3;
 
