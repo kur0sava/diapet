@@ -1,9 +1,13 @@
 import { getDatabase } from '../database';
-import { GlucoseReading, CreateGlucoseDTO, PaginatedResult, GlucoseFilter } from '@storage/domain/types';
+import {
+  GlucoseReading,
+  CreateGlucoseDTO,
+  PaginatedResult,
+  GlucoseFilter,
+  mmolToMgdl,
+  mgdlToMmol,
+} from '@storage/domain/types';
 import uuid from 'react-native-uuid';
-
-const mmolToMgdl = (mmol: number) => Math.round(mmol * 18.018);
-const mgdlToMmol = (mgdl: number) => Math.round(mgdl / 18.018 * 10) / 10;
 
 export const glucoseRepository = {
   async create(dto: CreateGlucoseDTO): Promise<GlucoseReading> {

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRoute, RouteProp } from '@react-navigation/native';
 import { useOnboardingNavigation } from '@navigation/hooks';
@@ -7,6 +7,7 @@ import type { OnboardingStackParamList } from '@navigation/types';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '@shared/theme';
 import { Button, Input } from '@shared/components/ui';
+import { Ionicons } from '@expo/vector-icons';
 
 export default function VetContactScreen() {
   const navigation = useOnboardingNavigation();
@@ -28,8 +29,11 @@ export default function VetContactScreen() {
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.background }]}>
       <ScrollView showsVerticalScrollIndicator={false}>
+        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backBtn}>
+          <Text style={{ color: theme.colors.primary, fontSize: 16 }}>← {t('common.back')}</Text>
+        </TouchableOpacity>
         <View style={styles.content}>
-          <Text style={styles.emoji}>🏥</Text>
+          <Ionicons name="medical-outline" size={64} color={theme.colors.success} style={{ marginBottom: 16, marginTop: 40 }} />
           <Text style={[styles.title, { color: theme.colors.text }]}>{t('onboarding.vetContact')}</Text>
           <Text style={[styles.subtitle, { color: theme.colors.textSecondary }]}>
             {t('onboarding.vetContactDesc')}
@@ -67,8 +71,8 @@ export default function VetContactScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
+  backBtn: { paddingHorizontal: 24, paddingTop: 16 },
   content: { padding: 24, alignItems: 'center' },
-  emoji: { fontSize: 64, marginBottom: 16, marginTop: 40 },
   title: { fontSize: 28, fontWeight: '800', marginBottom: 8, textAlign: 'center' },
   subtitle: { fontSize: 15, lineHeight: 22, textAlign: 'center', marginBottom: 32 },
   form: { width: '100%', gap: 16 },

@@ -75,6 +75,14 @@ export type MealRelation = 'before_meal' | 'after_meal' | 'fasting' | 'unspecifi
 export type GlucoseUnit = 'mmol/L' | 'mg/dL';
 export type GlucoseLevel = 'low' | 'normal' | 'high' | 'very_high';
 
+/**
+ * Glucose unit conversion factor based on glucose molar mass (180.156 g/mol):
+ * 1 mmol/L ~= 18.0156 mg/dL
+ */
+export const MGDL_PER_MMOLL = 18.0156;
+export const MAX_REASONABLE_GLUCOSE_MMOL = 35;
+export const MAX_REASONABLE_GLUCOSE_MGDL = Math.round(MAX_REASONABLE_GLUCOSE_MMOL * MGDL_PER_MMOLL);
+
 export interface GlucoseReading {
   id: string;
   petId: string;
@@ -142,6 +150,19 @@ export const GLUCOSE_RANGES = {
   high: { min: 9.0, max: 14.0, color: '#FF9500' },
   very_high: { min: 14.0, color: '#FF3B30' },
 };
+
+export function mmolToMgdl(valueMmol: number): number {
+  return Math.round(valueMmol * MGDL_PER_MMOLL);
+}
+
+export function mgdlToMmol(valueMgdl: number): number {
+  return valueMgdl / MGDL_PER_MMOLL;
+}
+
+export function convertGlucoseValue(value: number, from: GlucoseUnit, to: GlucoseUnit): number {
+  if (from === to) return value;
+  return to === 'mg/dL' ? mmolToMgdl(value) : mgdlToMmol(value);
+}
 
 export function getGlucoseLevel(valueMmol: number): GlucoseLevel {
   if (valueMmol < 4.0) return 'low';

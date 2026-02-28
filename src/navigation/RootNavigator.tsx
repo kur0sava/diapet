@@ -7,6 +7,7 @@ import { RootStackParamList } from './types';
 import OnboardingNavigator from './OnboardingNavigator';
 import MainNavigator from './MainNavigator';
 import EmergencyScreen from '@features/emergency/screens/EmergencyScreen';
+import PaywallScreen from '@features/subscription/screens/PaywallScreen';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -43,6 +44,14 @@ export function RootNavigator() {
         <Stack.Screen
           name="Emergency"
           component={EmergencyScreen}
+          options={{
+            presentation: 'modal',
+            animation: 'slide_from_bottom',
+          }}
+        />
+        <Stack.Screen
+          name="Paywall"
+          component={PaywallScreen}
           options={{
             presentation: 'modal',
             animation: 'slide_from_bottom',

@@ -5,7 +5,9 @@ import {
   TouchableOpacity,
   StyleSheet,
   ScrollView,
+  Appearance,
 } from 'react-native';
+import i18n from '@shared/i18n';
 
 interface ErrorBoundaryProps {
   children: ReactNode;
@@ -61,17 +63,18 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
 
       const { error, errorInfo, showDetails } = this.state;
 
+      const isDark = Appearance.getColorScheme() === 'dark';
       return (
-        <View style={styles.container}>
+        <View style={[styles.container, { backgroundColor: isDark ? '#1C1C1E' : '#FFFFFF' }]}>
           <View style={styles.content}>
             <Text style={styles.icon}>⚠</Text>
-            <Text style={styles.title}>Произошла ошибка</Text>
-            <Text style={styles.subtitle}>
-              Приложение столкнулось с неожиданной ошибкой
+            <Text style={[styles.title, { color: isDark ? '#FFFFFF' : '#1A1A1A' }]}>{i18n.t('errors.title')}</Text>
+            <Text style={[styles.subtitle, { color: isDark ? '#AEAEB2' : '#666666' }]}>
+              {i18n.t('errors.subtitle')}
             </Text>
 
             <TouchableOpacity style={styles.button} onPress={this.handleReset}>
-              <Text style={styles.buttonText}>Попробовать снова</Text>
+              <Text style={styles.buttonText}>{i18n.t('errors.retry')}</Text>
             </TouchableOpacity>
 
             <TouchableOpacity
@@ -79,7 +82,7 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
               onPress={this.toggleDetails}
             >
               <Text style={styles.detailsToggleText}>
-                {showDetails ? 'Скрыть детали' : 'Показать детали'}
+                {showDetails ? i18n.t('errors.hideDetails') : i18n.t('errors.showDetails')}
               </Text>
             </TouchableOpacity>
 
@@ -107,7 +110,6 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
     justifyContent: 'center',
     alignItems: 'center',
     padding: 24,

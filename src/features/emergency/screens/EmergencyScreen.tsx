@@ -4,6 +4,7 @@ import {
   TouchableOpacity, Linking, Alert, StatusBar,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { Ionicons } from '@expo/vector-icons';
 import { useRootNavigation } from '@navigation/hooks';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '@shared/theme';
@@ -24,7 +25,11 @@ export default function EmergencyScreen() {
 
   const callVet = () => {
     if (!vetPhone) {
-      Alert.alert(t('emergency.noVetContact'), t('emergency.addVetContact'));
+      // UX-013: Navigate to edit pet screen to add vet contact
+      Alert.alert(t('emergency.noVetContact'), t('emergency.addVetContact'), [
+        { text: t('common.cancel'), style: 'cancel' },
+        { text: t('emergency.goToSettings'), onPress: () => navigation.navigate('Main', { screen: 'More', params: { screen: 'EditPet' } } as any) },
+      ]);
       return;
     }
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
@@ -39,23 +44,51 @@ export default function EmergencyScreen() {
   const signs = activeTab === 'hypoglycemia' ? hypoSigns : hyperSigns;
   const steps = activeTab === 'hypoglycemia' ? hypoSteps : hyperSteps;
 
+  // UX-014: Use theme-aware colors for dark mode support
+  const cardBg = theme.colors.surface;
+  const cardText = theme.colors.text;
+  const cardTextSecondary = theme.colors.textSecondary;
+
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: '#FF3B30' }]}>
       <StatusBar barStyle="light-content" />
 
-      {/* Header */}
+      {/* Header — UX-012: emoji → Ionicons */}
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.closeBtn}>
-          <Text style={styles.closeText}>✕</Text>
+          <Ionicons name="close" size={20} color="#fff" />
         </TouchableOpacity>
         <View style={styles.headerCenter}>
-          <Text style={styles.headerIcon}>🚨</Text>
+          <Ionicons name="warning" size={28} color="#fff" style={{ marginBottom: 2 }} />
           <Text style={styles.headerTitle}>{t('emergency.title')}</Text>
         </View>
         <View style={{ width: 44 }} />
       </View>
 
-      {/* Tab selector */}
+      {/* UX-011: Call Vet Button at TOP — most critical action */}
+      <TouchableOpacity
+        style={[styles.callButton, { marginHorizontal: 16, marginBottom: 12 }]}
+        onPress={callVet}
+        activeOpacity={0.85}
+      >
+        <View style={styles.callButtonContent}>
+          <View style={styles.callIconCircle}>
+            <Ionicons name="call" size={28} color="#FF3B30" />
+          </View>
+          <View style={{ flex: 1 }}>
+            <Text style={styles.callButtonTitle}>{t('emergency.callVet')}</Text>
+            {vetName && <Text style={styles.callButtonSub}>{vetName}</Text>}
+            {vetPhone ? (
+              <Text style={styles.callButtonPhone}>{vetPhone}</Text>
+            ) : (
+              <Text style={styles.callButtonNoVet}>{t('emergency.tapToAddVet')}</Text>
+            )}
+          </View>
+          <Ionicons name="chevron-forward" size={20} color="#FF3B30" />
+        </View>
+      </TouchableOpacity>
+
+      {/* Tab selector — UX-012: emoji → Ionicons */}
       <View style={styles.tabRow}>
         <TouchableOpacity
           style={[
@@ -64,8 +97,9 @@ export default function EmergencyScreen() {
           ]}
           onPress={() => setActiveTab('hypoglycemia')}
         >
+          <Ionicons name="trending-down" size={16} color="#fff" style={{ marginRight: 4 }} />
           <Text style={[styles.tabText, { fontWeight: activeTab === 'hypoglycemia' ? '700' : '400' }]}>
-            📉 {t('emergency.hypoglycemia')}
+            {t('emergency.hypoglycemia')}
           </Text>
         </TouchableOpacity>
         <TouchableOpacity
@@ -75,8 +109,9 @@ export default function EmergencyScreen() {
           ]}
           onPress={() => setActiveTab('hyperglycemia')}
         >
+          <Ionicons name="trending-up" size={16} color="#fff" style={{ marginRight: 4 }} />
           <Text style={[styles.tabText, { fontWeight: activeTab === 'hyperglycemia' ? '700' : '400' }]}>
-            📈 {t('emergency.hyperglycemia')}
+            {t('emergency.hyperglycemia')}
           </Text>
         </TouchableOpacity>
       </View>
@@ -86,45 +121,35 @@ export default function EmergencyScreen() {
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
-        {/* Signs */}
-        <Card style={[styles.card, { backgroundColor: 'rgba(255,255,255,0.95)' }]}>
-          <Text style={[styles.cardTitle, { color: '#FF3B30' }]}>⚠️ {t('emergency.signs')}</Text>
+        {/* Signs — UX-014: theme colors */}
+        <Card style={[styles.card, { backgroundColor: cardBg }]}>
+          <View style={styles.cardTitleRow}>
+            <Ionicons name="alert-circle" size={20} color="#FF3B30" />
+            <Text style={[styles.cardTitle, { color: '#FF3B30' }]}>{t('emergency.signs')}</Text>
+          </View>
           {signs.map((sign, i) => (
             <View key={`sign-${i}`} style={styles.listItem}>
               <View style={[styles.bullet, { backgroundColor: '#FF3B30' }]} />
-              <Text style={styles.listText}>{sign}</Text>
+              <Text style={[styles.listText, { color: cardText }]}>{sign}</Text>
             </View>
           ))}
         </Card>
 
-        {/* Steps */}
-        <Card style={[styles.card, { backgroundColor: 'rgba(255,255,255,0.95)' }]}>
-          <Text style={[styles.cardTitle, { color: '#1C1C1E' }]}>📋 {t('emergency.steps')}</Text>
+        {/* Steps — UX-014: theme colors */}
+        <Card style={[styles.card, { backgroundColor: cardBg }]}>
+          <View style={styles.cardTitleRow}>
+            <Ionicons name="list" size={20} color={cardText} />
+            <Text style={[styles.cardTitle, { color: cardText }]}>{t('emergency.steps')}</Text>
+          </View>
           {steps.map((step, i) => (
             <View key={`step-${i}`} style={styles.stepItem}>
               <View style={[styles.stepNumber, { backgroundColor: '#FF3B30' }]}>
                 <Text style={styles.stepNumberText}>{i + 1}</Text>
               </View>
-              <Text style={styles.stepText}>{step}</Text>
+              <Text style={[styles.stepText, { color: cardText }]}>{step}</Text>
             </View>
           ))}
         </Card>
-
-        {/* Call Vet Button */}
-        <TouchableOpacity
-          style={styles.callButton}
-          onPress={callVet}
-          activeOpacity={0.85}
-        >
-          <View style={styles.callButtonContent}>
-            <Text style={styles.callButtonIcon}>📞</Text>
-            <View>
-              <Text style={styles.callButtonTitle}>{t('emergency.callVet')}</Text>
-              {vetName && <Text style={styles.callButtonSub}>{vetName}</Text>}
-              {vetPhone && <Text style={styles.callButtonPhone}>{vetPhone}</Text>}
-            </View>
-          </View>
-        </TouchableOpacity>
 
         {/* Disclaimer */}
         <Text style={styles.disclaimer}>
@@ -152,9 +177,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  closeText: { color: '#fff', fontSize: 18, fontWeight: '600' },
   headerCenter: { alignItems: 'center' },
-  headerIcon: { fontSize: 28, marginBottom: 2 },
   headerTitle: { color: '#fff', fontSize: 18, fontWeight: '800' },
   tabRow: {
     flexDirection: 'row',
@@ -165,15 +188,16 @@ const styles = StyleSheet.create({
     padding: 4,
     gap: 4,
   },
-  tab: { flex: 1, paddingVertical: 10, borderRadius: 8, alignItems: 'center' },
+  tab: { flex: 1, paddingVertical: 10, borderRadius: 8, alignItems: 'center', flexDirection: 'row', justifyContent: 'center' },
   tabText: { color: '#fff', fontSize: 13 },
   scroll: { flex: 1 },
   scrollContent: { paddingHorizontal: 16, paddingBottom: 40, gap: 16 },
   card: { gap: 12, borderRadius: 16 },
-  cardTitle: { fontSize: 16, fontWeight: '800', marginBottom: 4 },
+  cardTitleRow: { flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 4 },
+  cardTitle: { fontSize: 16, fontWeight: '800' },
   listItem: { flexDirection: 'row', alignItems: 'center', gap: 10 },
   bullet: { width: 8, height: 8, borderRadius: 4 },
-  listText: { flex: 1, fontSize: 15, color: '#1C1C1E', lineHeight: 22 },
+  listText: { flex: 1, fontSize: 15, lineHeight: 22 },
   stepItem: { flexDirection: 'row', alignItems: 'flex-start', gap: 12 },
   stepNumber: {
     width: 28,
@@ -185,21 +209,29 @@ const styles = StyleSheet.create({
     marginTop: 2,
   },
   stepNumberText: { color: '#fff', fontWeight: '700', fontSize: 14 },
-  stepText: { flex: 1, fontSize: 15, color: '#1C1C1E', lineHeight: 22 },
+  stepText: { flex: 1, fontSize: 15, lineHeight: 22 },
   callButton: {
     backgroundColor: '#fff',
     borderRadius: 16,
-    padding: 20,
+    padding: 16,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.2,
     shadowRadius: 8,
     elevation: 6,
   },
-  callButtonContent: { flexDirection: 'row', alignItems: 'center', gap: 16 },
-  callButtonIcon: { fontSize: 40 },
+  callButtonContent: { flexDirection: 'row', alignItems: 'center', gap: 12 },
+  callIconCircle: {
+    width: 52,
+    height: 52,
+    borderRadius: 26,
+    backgroundColor: '#FFE5E5',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   callButtonTitle: { fontSize: 18, fontWeight: '800', color: '#FF3B30' },
   callButtonSub: { fontSize: 14, color: '#1C1C1E', marginTop: 2 },
   callButtonPhone: { fontSize: 16, color: '#4F8EF7', fontWeight: '600', marginTop: 2 },
+  callButtonNoVet: { fontSize: 13, color: '#8E8E93', marginTop: 2, fontStyle: 'italic' },
   disclaimer: { fontSize: 12, color: 'rgba(255,255,255,0.7)', textAlign: 'center', lineHeight: 18 },
 });

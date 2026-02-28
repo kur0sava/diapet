@@ -14,6 +14,7 @@ import { injectionRepository } from '@storage/database';
 import { usePetStore } from '@shared/stores/petStore';
 import { useQueryClient } from '@tanstack/react-query';
 import * as Haptics from 'expo-haptics';
+import { useUnsavedChangesGuard } from '@shared/hooks/useUnsavedChangesGuard';
 
 // Insulin list is now i18n-driven, see below
 
@@ -29,6 +30,7 @@ export default function LogInjectionScreen() {
   const [notes, setNotes] = useState('');
   const [loading, setLoading] = useState(false);
   const commonInsulins = t('injection.commonInsulins', { returnObjects: true }) as string[];
+  useUnsavedChangesGuard(!!dose || !!notes);
 
   const handleSave = useCallback(async () => {
     if (!activePet) return;
@@ -40,6 +42,27 @@ export default function LogInjectionScreen() {
       Alert.alert(t('common.error'), t('injection.typeError'));
       return;
     }
+    // MC002: Warn on unusually high dose (typical cat range: 1–4 units)
+    const doseNum = parseFloat(dose.replace(',', '.'));
+    if (doseNum > 10) {
+      Alert.alert(t('glucose.veryHighDoseWarning'), t('glucose.veryHighDoseWarningDesc', { dose: doseNum }), [
+        { text: t('common.cancel'), style: 'cancel' },
+        { text: t('common.confirm'), style: 'destructive', onPress: () => doSaveInjection() },
+      ]);
+      return;
+    }
+    if (doseNum > 6) {
+      Alert.alert(t('glucose.highDoseWarning'), t('glucose.highDoseWarningDesc', { dose: doseNum }), [
+        { text: t('common.cancel'), style: 'cancel' },
+        { text: t('common.confirm'), onPress: () => doSaveInjection() },
+      ]);
+      return;
+    }
+    doSaveInjection();
+  }, [activePet, dose, insulinType, notes, queryClient, navigation, t]);
+
+  const doSaveInjection = useCallback(async () => {
+    if (!activePet) return;
     setLoading(true);
     try {
       await injectionRepository.create({

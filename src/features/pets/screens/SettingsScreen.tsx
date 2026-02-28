@@ -4,16 +4,19 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useMoreNavigation } from '@navigation/hooks';
 import { useTranslation } from 'react-i18next';
 import { useTheme, ColorScheme } from '@shared/theme';
-import { storage, StorageKeys, storageUtils } from '@storage/mmkv/storage';
+import { storage, StorageKeys } from '@storage/mmkv/storage';
 import { changeLanguage } from '@shared/i18n';
 import { Card } from '@shared/components/ui';
 import { getDatabase } from '@storage/database';
 import { usePetStore } from '@shared/stores/petStore';
+import * as Notifications from 'expo-notifications';
+import { useQueryClient } from '@tanstack/react-query';
 
 export default function SettingsScreen() {
   const navigation = useMoreNavigation();
   const { t } = useTranslation();
   const { theme, colorScheme, setColorScheme } = useTheme();
+  const queryClient = useQueryClient();
 
   const currentLanguage = storage.getString(StorageKeys.LANGUAGE) ?? 'ru';
   const [glucoseUnit, setGlucoseUnit] = useState(
@@ -21,20 +24,38 @@ export default function SettingsScreen() {
   );
 
   const handleDeleteAllData = () => {
+    // UX-015: First confirmation
     Alert.alert(t('settings.deleteDataConfirm'), t('settings.deleteDataWarning'), [
       { text: t('common.cancel'), style: 'cancel' },
-      { text: t('common.delete'), style: 'destructive', onPress: async () => {
-        try {
-          const db = await getDatabase();
-          await db.withTransactionAsync(async () => {
-            await db.execAsync('DELETE FROM symptom_entry_types; DELETE FROM symptoms; DELETE FROM glucose_readings; DELETE FROM injections; DELETE FROM feedings; DELETE FROM expenses; DELETE FROM injection_schedule; DELETE FROM feeding_schedule; DELETE FROM vet_contacts; DELETE FROM pets;');
-          });
-          storageUtils.clear();
-          usePetStore.setState({ pets: [], activePet: null });
-          Alert.alert(t('settings.dataDeleted'), t('settings.restartApp'));
-        } catch {
-          Alert.alert(t('common.error'));
-        }
+      { text: t('common.delete'), style: 'destructive', onPress: () => {
+        // UX-015: Second confirmation — double confirm for irreversible action
+        Alert.alert(t('settings.deleteDataFinal'), t('settings.deleteDataFinalWarning'), [
+          { text: t('common.cancel'), style: 'cancel' },
+          { text: t('settings.deleteForever'), style: 'destructive', onPress: async () => {
+            try {
+              const db = await getDatabase();
+              await db.withTransactionAsync(async () => {
+                await db.execAsync('DELETE FROM symptom_entry_types; DELETE FROM symptoms; DELETE FROM glucose_readings; DELETE FROM injections; DELETE FROM feedings; DELETE FROM expenses; DELETE FROM injection_schedule; DELETE FROM feeding_schedule; DELETE FROM vet_contacts; DELETE FROM pets;');
+              });
+              // C001: delete only data keys, preserve user preferences (language, theme, glucose unit)
+              storage.delete(StorageKeys.ACTIVE_PET_ID);
+              storage.delete(StorageKeys.NOTIFICATIONS_ENABLED);
+              storage.delete(StorageKeys.VET_NAME);
+              storage.delete(StorageKeys.VET_PHONE);
+              storage.delete(StorageKeys.LAST_BACKUP);
+              storage.delete(StorageKeys.BOOKMARKED_ARTICLES);
+              storage.delete(StorageKeys.SUBSCRIPTION_CACHED_PRO);
+              // H006: cancel all scheduled notifications for deleted pets
+              await Notifications.cancelAllScheduledNotificationsAsync();
+              // H007: clear React Query cache so stale data is not shown
+              queryClient.clear();
+              usePetStore.setState({ pets: [], activePet: null });
+              Alert.alert(t('settings.dataDeleted'), t('settings.restartApp'));
+            } catch {
+              Alert.alert(t('common.error'));
+            }
+          }},
+        ]);
       }},
     ]);
   };

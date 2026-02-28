@@ -80,6 +80,9 @@ export default function ScheduleScreen() {
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.background }]}>
       <ScrollView style={styles.scroll} showsVerticalScrollIndicator={false}>
+        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backBtn}>
+          <Text style={{ color: theme.colors.primary, fontSize: 16 }}>← {t('common.back')}</Text>
+        </TouchableOpacity>
         <View style={styles.header}>
           <Text style={[styles.title, { color: theme.colors.text }]}>{t('onboarding.injectionTime')}</Text>
           <Text style={[styles.subtitle, { color: theme.colors.textSecondary }]}>
@@ -89,7 +92,7 @@ export default function ScheduleScreen() {
 
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
-            <Text style={styles.sectionIcon}>💉</Text>
+            <Ionicons name="medkit-outline" size={22} color={theme.colors.primary} />
             <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>{t('onboarding.injectionTime')}</Text>
           </View>
           {renderTimeList('injection', injectionTimes)}
@@ -97,7 +100,7 @@ export default function ScheduleScreen() {
 
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
-            <Text style={styles.sectionIcon}>🍽️</Text>
+            <Ionicons name="restaurant-outline" size={22} color={theme.colors.warning} />
             <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>{t('onboarding.feedingTime')}</Text>
           </View>
           {renderTimeList('feeding', feedingTimes)}
@@ -112,12 +115,12 @@ export default function ScheduleScreen() {
 const styles = StyleSheet.create({
   container: { flex: 1 },
   scroll: { flex: 1 },
+  backBtn: { paddingHorizontal: 24, paddingTop: 16 },
   header: { padding: 24, paddingBottom: 0 },
   title: { fontSize: 28, fontWeight: '800', marginBottom: 8 },
   subtitle: { fontSize: 15, lineHeight: 22 },
   section: { padding: 24, paddingTop: 16, gap: 12 },
   sectionHeader: { flexDirection: 'row', alignItems: 'center', gap: 10, marginBottom: 4 },
-  sectionIcon: { fontSize: 24 },
   sectionTitle: { fontSize: 18, fontWeight: '700' },
   timeRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
   removeBtn: { padding: 14 },

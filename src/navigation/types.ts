@@ -7,6 +7,7 @@ export type RootStackParamList = {
   Onboarding: undefined;
   Main: undefined;
   Emergency: undefined;
+  Paywall: { feature?: string } | undefined;
 };
 
 // Tab Navigator
@@ -62,6 +63,7 @@ export type MoreStackParamList = {
   Settings: undefined;
   Assessment: undefined;
   FeedCalculator: undefined;
+  Subscription: undefined;
 };
 
 // Onboarding Stack

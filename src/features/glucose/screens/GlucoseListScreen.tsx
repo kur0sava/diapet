@@ -21,6 +21,8 @@ import { storage, StorageKeys } from '@storage/mmkv/storage';
 import { generateVetReportPdf } from '@shared/utils/pdfExport';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { format } from 'date-fns';
+import { useSubscription } from '@features/subscription/hooks/useSubscription';
+import { useRootNavigation } from '@navigation/hooks';
 
 if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
   UIManager.setLayoutAnimationEnabledExperimental(true);
@@ -70,6 +72,8 @@ export default function GlucoseListScreen() {
   const queryClient = useQueryClient();
   const unit = storage.getString(StorageKeys.GLUCOSE_UNIT) ?? 'mmol/L';
   const [exporting, setExporting] = useState(false);
+  const { canExportPDF } = useSubscription();
+  const rootNav = useRootNavigation();
 
   // Filter state
   const [showFilters, setShowFilters] = useState(false);
@@ -192,6 +196,10 @@ export default function GlucoseListScreen() {
 
   const handleExportPdf = useCallback(async () => {
     if (!activePet) return;
+    if (!canExportPDF()) {
+      rootNav.navigate('Paywall');
+      return;
+    }
     setExporting(true);
     try {
       const [injectionsResult, symptomsResult] = await Promise.all([
@@ -429,20 +437,36 @@ export default function GlucoseListScreen() {
         contentContainerStyle={styles.list}
         onEndReached={() => hasNextPage && fetchNextPage()}
         onEndReachedThreshold={0.5}
+        ListHeaderComponent={
+          readings.length > 0 ? (
+            <Text style={[styles.hintText, { color: theme.colors.textTertiary }]}>{t('common.longPressToDelete')}</Text>
+          ) : null
+        }
         ListFooterComponent={
           isFetchingNextPage ? (
             <ActivityIndicator style={styles.loadingFooter} size="small" color={theme.colors.primary} />
           ) : null
         }
         ListEmptyComponent={
-          <EmptyState
-            iconName="water-outline"
-            iconColor={theme.colors.primary}
-            title={t('glucose.title')}
-            subtitle={t('glucose.noReadings')}
-            actionLabel={t('glucose.addReading')}
-            onAction={() => navigation.navigate('LogGlucose', {})}
-          />
+          hasActiveFilters ? (
+            <EmptyState
+              iconName="filter-outline"
+              iconColor={theme.colors.textTertiary}
+              title={t('glucose.noFilterResults')}
+              subtitle={t('glucose.tryDifferentFilters')}
+              actionLabel={t('glucose.clearFilters')}
+              onAction={clearFilters}
+            />
+          ) : (
+            <EmptyState
+              iconName="water-outline"
+              iconColor={theme.colors.primary}
+              title={t('glucose.title')}
+              subtitle={t('glucose.noReadings')}
+              actionLabel={t('glucose.addReading')}
+              onAction={() => navigation.navigate('LogGlucose', {})}
+            />
+          )
         }
       />
 
@@ -512,4 +536,5 @@ const styles = StyleSheet.create({
   fab: { position: 'absolute', bottom: 24, right: 20, width: 56, height: 56, borderRadius: 28, alignItems: 'center', justifyContent: 'center' },
   fabExport: { position: 'absolute', bottom: 90, right: 20, width: 48, height: 48, borderRadius: 24, alignItems: 'center', justifyContent: 'center', elevation: 4, shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.15, shadowRadius: 3, borderWidth: 1.5 },
   loadingFooter: { paddingVertical: 16 },
+  hintText: { fontSize: 12, textAlign: 'center', marginBottom: 8 },
 });

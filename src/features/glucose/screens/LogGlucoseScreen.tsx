@@ -20,6 +20,7 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import { format } from 'date-fns';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
+import { useUnsavedChangesGuard } from '@shared/hooks/useUnsavedChangesGuard';
 
 const MEAL_OPTIONS: { value: MealRelation; labelKey: string; iconName: keyof typeof Ionicons.glyphMap; iconColor: string }[] = [
   { value: 'fasting', labelKey: 'glucose.fasting', iconName: 'sunny-outline', iconColor: '#FF9500' },
@@ -49,6 +50,7 @@ export default function LogGlucoseScreen() {
   const [recordedAt, setRecordedAt] = useState(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [showTimePicker, setShowTimePicker] = useState(false);
+  useUnsavedChangesGuard(!!value || !!insulinDose || !!notes);
 
   useEffect(() => {
     let cancelled = false;
@@ -68,7 +70,7 @@ export default function LogGlucoseScreen() {
   }, [editId]);
 
   const numValue = parseFloat(value.replace(',', '.'));
-  const isValidValue = !isNaN(numValue) && numValue > 0 && numValue < (unit === 'mmol/L' ? 50 : 900);
+  const isValidValue = !isNaN(numValue) && numValue > 0 && numValue < (unit === 'mmol/L' ? 35 : 600);
 
   const glucosePreview = isValidValue
     ? {
@@ -80,7 +82,27 @@ export default function LogGlucoseScreen() {
   const handleSave = useCallback(async () => {
     if (!activePet) { Alert.alert(t('common.error'), t('glucose.petNotFound')); return; }
     if (!isValidValue) { Alert.alert(t('common.error'), t('glucose.invalidValue')); return; }
+    // MC002: Warn on unusually high insulin dose (typical cat range: 1–4 units)
+    const doseNum = insulinDose ? parseFloat(insulinDose.replace(',', '.')) : 0;
+    if (doseNum > 10) {
+      Alert.alert(t('glucose.veryHighDoseWarning'), t('glucose.veryHighDoseWarningDesc', { dose: doseNum }), [
+        { text: t('common.cancel'), style: 'cancel' },
+        { text: t('common.confirm'), style: 'destructive', onPress: () => doSave() },
+      ]);
+      return;
+    }
+    if (doseNum > 6) {
+      Alert.alert(t('glucose.highDoseWarning'), t('glucose.highDoseWarningDesc', { dose: doseNum }), [
+        { text: t('common.cancel'), style: 'cancel' },
+        { text: t('common.confirm'), onPress: () => doSave() },
+      ]);
+      return;
+    }
+    doSave();
+  }, [activePet, isValidValue, numValue, unit, mealRelation, insulinDose, insulinType, notes, recordedAt, editId, queryClient, navigation, t]);
 
+  const doSave = useCallback(async () => {
+    if (!activePet) return;
     setLoading(true);
     try {
       if (editId) {
@@ -148,7 +170,16 @@ export default function LogGlucoseScreen() {
                     styles.unitBtn,
                     { backgroundColor: unit === u ? theme.colors.primary : theme.colors.surfaceSecondary },
                   ]}
-                  onPress={() => setUnit(u)}
+                  onPress={() => {
+                    if (u === unit) return;
+                    // UX-001: Convert value when switching units
+                    const num = parseFloat(value.replace(',', '.'));
+                    if (!isNaN(num) && num > 0) {
+                      const converted = u === 'mg/dL' ? (num * 18.018).toFixed(0) : (num / 18.018).toFixed(1);
+                      setValue(converted);
+                    }
+                    setUnit(u);
+                  }}
                 >
                   <Text style={{ color: unit === u ? '#fff' : theme.colors.text, fontFamily: theme.fonts.semibold, fontSize: 13 }}>
                     {u}
@@ -217,7 +248,6 @@ export default function LogGlucoseScreen() {
             <DateTimePicker
               value={recordedAt}
               mode="time"
-              maximumDate={new Date()}
               onChange={(_, date) => {
                 setShowTimePicker(false);
                 if (date) setRecordedAt(date);

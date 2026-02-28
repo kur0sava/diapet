@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, Alert } from 'react-native';
+import { View, Text, StyleSheet, Alert, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRoute, RouteProp } from '@react-navigation/native';
 import { useOnboardingNavigation, useRootNavigation } from '@navigation/hooks';
@@ -7,6 +7,7 @@ import type { OnboardingStackParamList } from '@navigation/types';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '@shared/theme';
 import { Button } from '@shared/components/ui';
+import { Ionicons } from '@expo/vector-icons';
 import { storage, StorageKeys } from '@storage/mmkv/storage';
 import { petRepository, scheduleRepository } from '@storage/database';
 import { useNotifications } from '@shared/hooks/useNotifications';
@@ -76,8 +77,11 @@ export default function NotificationsScreen() {
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.background }]}>
+      <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backBtn}>
+        <Text style={{ color: theme.colors.primary, fontSize: 16 }}>← {t('common.back')}</Text>
+      </TouchableOpacity>
       <View style={styles.content}>
-        <Text style={styles.emoji}>🔔</Text>
+        <Ionicons name="notifications-outline" size={72} color={theme.colors.primary} style={{ marginBottom: 24 }} />
         <Text style={[styles.title, { color: theme.colors.text }]}>{t('onboarding.setupNotifications')}</Text>
         <Text style={[styles.subtitle, { color: theme.colors.textSecondary }]}>
           {t('onboarding.notificationsDesc')}
@@ -113,8 +117,8 @@ export default function NotificationsScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
+  backBtn: { paddingHorizontal: 24, paddingTop: 16 },
   content: { flex: 1, padding: 24, alignItems: 'center', justifyContent: 'center' },
-  emoji: { fontSize: 72, marginBottom: 24 },
   title: { fontSize: 28, fontWeight: '800', textAlign: 'center', marginBottom: 12 },
   subtitle: { fontSize: 15, lineHeight: 22, textAlign: 'center', marginBottom: 40 },
   features: { width: '100%', gap: 10, marginBottom: 40 },

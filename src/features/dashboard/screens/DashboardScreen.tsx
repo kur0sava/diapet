@@ -23,6 +23,7 @@ import { QuickActionButton } from '../components/QuickActionButton';
 import { formatRelative, minutesUntil, formatCountdown, hoursSince } from '@shared/utils/dateUtils';
 import { Ionicons } from '@expo/vector-icons';
 import { usePetStore } from '@shared/stores/petStore';
+import { useSubscription } from '@features/subscription/hooks/useSubscription';
 
 interface GlucoseReading {
   valueMmol: number;
@@ -33,8 +34,8 @@ function calculateTrend(readings: GlucoseReading[]): 'up' | 'down' | 'stable' | 
   if (!readings || readings.length < 3) return null;
   const last3 = readings.slice(-3); // Last 3 = newest (sorted ASC)
   const [a, b, c] = last3.map(r => r.valueMmol);
-  if (a > b && b > c) return 'up';
-  if (a < b && b < c) return 'down';
+  if (a < b && b < c) return 'up';
+  if (a > b && b > c) return 'down';
   const avg = (a + b + c) / 3;
   const maxDev = Math.max(Math.abs(a - avg), Math.abs(b - avg), Math.abs(c - avg));
   return maxDev / avg < 0.15 ? 'stable' : null;
@@ -64,6 +65,7 @@ export default function DashboardScreen() {
   const { t } = useTranslation();
   const { theme } = useTheme();
   const activePet = usePetStore(s => s.activePet);
+  const { isPro } = useSubscription();
   const petId = activePet?.id ?? '';
 
   const { data: latestGlucose, refetch: refetchGlucose } = useQuery({
@@ -304,6 +306,28 @@ export default function DashboardScreen() {
           </View>
         )}
 
+        {/* Upgrade prompt for free users */}
+        {!isPro && (
+          <TouchableOpacity
+            style={[styles.upgradeCard, { backgroundColor: theme.colors.surface, ...theme.shadows.sm }]}
+            onPress={() => rootNavigation.navigate('Paywall')}
+            activeOpacity={0.8}
+          >
+            <LinearGradient
+              colors={['#FFB340', '#FF9500']}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 0 }}
+              style={styles.upgradeIconCircle}
+            >
+              <Ionicons name="star" size={16} color="#fff" />
+            </LinearGradient>
+            <Text style={[styles.upgradeText, { color: theme.colors.text, fontFamily: theme.fonts.semibold }]}>
+              {t('subscription.upgradePrompt')}
+            </Text>
+            <Ionicons name="chevron-forward" size={16} color={theme.colors.textTertiary} />
+          </TouchableOpacity>
+        )}
+
         {/* History Links */}
         <View style={styles.section}>
           <View style={styles.historyLinksRow}>
@@ -374,7 +398,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 10,
     borderRadius: 20,
-    backgroundColor: 'rgba(255,255,255,0.2)',
+    backgroundColor: '#FF3B30',
+    borderWidth: 2,
+    borderColor: 'rgba(255,255,255,0.4)',
   },
   sosText: { fontSize: 14, color: '#FFFFFF' },
   statusRow: { flexDirection: 'row', gap: 10, marginTop: 4 },
@@ -399,4 +425,7 @@ const styles = StyleSheet.create({
   historyLink: { flex: 1, flexDirection: 'row', alignItems: 'center', gap: 10, padding: 14, borderRadius: 16 },
   historyIcon: { width: 34, height: 34, borderRadius: 17, alignItems: 'center', justifyContent: 'center' },
   historyLinkText: { flex: 1, fontSize: 13 },
+  upgradeCard: { flexDirection: 'row', alignItems: 'center', gap: 12, marginHorizontal: 20, marginTop: 20, padding: 14, borderRadius: 16 },
+  upgradeIconCircle: { width: 32, height: 32, borderRadius: 16, alignItems: 'center', justifyContent: 'center' },
+  upgradeText: { flex: 1, fontSize: 13 },
 });

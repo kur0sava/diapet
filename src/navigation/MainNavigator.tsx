@@ -35,6 +35,7 @@ import AssessmentScreen from '@features/assessment/screens/AssessmentScreen';
 import FeedCalculatorScreen from '@features/feedCalculator/screens/FeedCalculatorScreen';
 import InjectionListScreen from '@features/glucose/screens/InjectionListScreen';
 import FeedingListScreen from '@features/glucose/screens/FeedingListScreen';
+import SubscriptionScreen from '@features/subscription/screens/SubscriptionScreen';
 
 const Tab = createBottomTabNavigator<MainTabParamList>();
 
@@ -142,6 +143,7 @@ function MoreStackNavigator() {
       <MoreStack.Screen name="Settings" component={SettingsScreen} options={{ headerShown: false }} />
       <MoreStack.Screen name="Assessment" component={AssessmentScreen} options={{ headerShown: false }} />
       <MoreStack.Screen name="FeedCalculator" component={FeedCalculatorScreen} options={{ headerShown: false }} />
+      <MoreStack.Screen name="Subscription" component={SubscriptionScreen} options={{ headerShown: false }} />
     </MoreStack.Navigator>
   );
 }

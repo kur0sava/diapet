@@ -89,4 +89,5 @@ export const StorageKeys = {
   VET_PHONE: 'vetPhone',
   LAST_BACKUP: 'lastBackup',
   BOOKMARKED_ARTICLES: 'bookmarkedArticles',
+  SUBSCRIPTION_CACHED_PRO: 'subscriptionCachedPro',
 } as const;

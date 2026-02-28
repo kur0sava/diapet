@@ -7,6 +7,8 @@ import { useTranslation } from 'react-i18next';
 import { useTheme } from '@shared/theme';
 import { usePetStore } from '@shared/stores/petStore';
 import { Ionicons } from '@expo/vector-icons';
+import { useSubscription } from '@features/subscription/hooks/useSubscription';
+import { ProBadge } from '@features/subscription/components/ProBadge';
 
 export default function MoreMenuScreen() {
   const navigation = useMoreNavigation();
@@ -14,12 +16,22 @@ export default function MoreMenuScreen() {
   const { t } = useTranslation();
   const { theme } = useTheme();
   const activePet = usePetStore(s => s.activePet);
+  const { isPro, canAccessAdvanced } = useSubscription();
+
+  const handleProScreen = (screen: string) => {
+    if (canAccessAdvanced()) {
+      navigation.navigate(screen as any);
+    } else {
+      rootNavigation.navigate('Paywall');
+    }
+  };
 
   const menuItems = [
+    { iconName: 'star-outline' as const, label: t('subscription.title'), screen: 'Subscription' as const, iconColor: '#FFB340', badge: !isPro ? 'upgrade' : 'active' },
     { iconName: 'paw-outline' as const, label: t('pets.title'), screen: 'PetProfile' as const, iconColor: theme.colors.primary, subtitle: activePet?.name },
     { iconName: 'wallet-outline' as const, label: t('expenses.title'), screen: 'Expenses' as const, iconColor: theme.colors.warning },
-    { iconName: 'fitness-outline' as const, label: t('assessment.title'), screen: 'Assessment' as const, iconColor: theme.colors.success },
-    { iconName: 'calculator-outline' as const, label: t('feedCalculator.title'), screen: 'FeedCalculator' as const, iconColor: theme.colors.secondary },
+    { iconName: 'fitness-outline' as const, label: t('assessment.title'), screen: 'Assessment' as const, iconColor: theme.colors.success, proGated: true },
+    { iconName: 'calculator-outline' as const, label: t('feedCalculator.title'), screen: 'FeedCalculator' as const, iconColor: theme.colors.secondary, proGated: true },
     { iconName: 'settings-outline' as const, label: t('settings.title'), screen: 'Settings' as const, iconColor: theme.colors.textSecondary },
   ];
 
@@ -52,13 +64,26 @@ export default function MoreMenuScreen() {
       <ScrollView contentContainerStyle={styles.scroll}>
         <Text style={[styles.sectionTitle, { color: theme.colors.textSecondary, fontFamily: theme.fonts.semibold }]}>{t('navigation.menu')}</Text>
         {menuItems.map((item) => (
-          <TouchableOpacity key={item.screen} style={[styles.menuItem, { backgroundColor: theme.colors.surface, ...theme.shadows.sm }]} onPress={() => navigation.navigate(item.screen)} activeOpacity={0.8}>
+          <TouchableOpacity
+            key={item.screen}
+            style={[styles.menuItem, { backgroundColor: theme.colors.surface, ...theme.shadows.sm }]}
+            onPress={() => (item as any).proGated ? handleProScreen(item.screen) : navigation.navigate(item.screen as any)}
+            activeOpacity={0.8}
+          >
             <View style={[styles.menuIcon, { backgroundColor: `${item.iconColor}20` }]}>
               <Ionicons name={item.iconName} size={22} color={item.iconColor ?? theme.colors.primary} />
             </View>
             <View style={styles.menuText}>
-              <Text style={[styles.menuLabel, { color: theme.colors.text, fontFamily: theme.fonts.semibold }]}>{item.label}</Text>
-              {item.subtitle && <Text style={[styles.menuSub, { color: theme.colors.textSecondary }]}>{item.subtitle}</Text>}
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+                <Text style={[styles.menuLabel, { color: theme.colors.text, fontFamily: theme.fonts.semibold }]}>{item.label}</Text>
+                {(item as any).proGated && !isPro && <ProBadge />}
+                {(item as any).badge === 'upgrade' && !isPro && (
+                  <View style={[styles.upgradePill, { backgroundColor: `${theme.colors.primary}15` }]}>
+                    <Text style={{ color: theme.colors.primary, fontSize: 11, fontWeight: '600' }}>{t('subscription.upgrade')}</Text>
+                  </View>
+                )}
+              </View>
+              {(item as any).subtitle && <Text style={[styles.menuSub, { color: theme.colors.textSecondary }]}>{(item as any).subtitle}</Text>}
             </View>
             <Ionicons name="chevron-forward" size={18} color={theme.colors.textTertiary} />
           </TouchableOpacity>
@@ -90,4 +115,5 @@ const styles = StyleSheet.create({
   emergencyBtn: { backgroundColor: '#FF3B30', padding: 18, borderRadius: 16, alignItems: 'center', flexDirection: 'row', justifyContent: 'center' },
   emergencyText: { color: '#fff', fontSize: 16 },
   version: { textAlign: 'center', fontSize: 12, marginTop: 32, marginBottom: 20 },
+  upgradePill: { paddingHorizontal: 8, paddingVertical: 2, borderRadius: 8 },
 });

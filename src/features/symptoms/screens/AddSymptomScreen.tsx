@@ -19,6 +19,7 @@ import { HomeStackParamList } from '@navigation/types';
 import { formatDistanceToNow } from 'date-fns';
 import * as ImagePicker from 'expo-image-picker';
 import * as Haptics from 'expo-haptics';
+import { useUnsavedChangesGuard } from '@shared/hooks/useUnsavedChangesGuard';
 
 const ALL_SYMPTOM_TYPES: SymptomType[] = [
   'hindLimbWeakness', 'weightLoss', 'polyuria', 'polydipsia',
@@ -48,6 +49,7 @@ export default function AddSymptomScreen() {
   const [selectedGlucoseId, setSelectedGlucoseId] = useState<string | undefined>(
     route.params?.glucoseReadingId
   );
+  useUnsavedChangesGuard(selectedTypes.length > 0 || !!notes);
 
   useEffect(() => {
     if (editId) {

@@ -111,6 +111,11 @@ export default function SymptomsListScreen() {
         contentContainerStyle={styles.list}
         onEndReached={() => hasNextPage && fetchNextPage()}
         onEndReachedThreshold={0.5}
+        ListHeaderComponent={
+          symptoms.length > 0 ? (
+            <Text style={[styles.hintText, { color: theme.colors.textTertiary }]}>{t('common.longPressToDelete')}</Text>
+          ) : null
+        }
         ListFooterComponent={
           isFetchingNextPage ? (
             <ActivityIndicator style={styles.loadingFooter} size="small" color={theme.colors.primary} />
@@ -154,4 +159,5 @@ const styles = StyleSheet.create({
   photos: { fontSize: 13, fontWeight: '500' },
   fab: { position: 'absolute', bottom: 24, right: 20, width: 56, height: 56, borderRadius: 28, alignItems: 'center', justifyContent: 'center', elevation: 6, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.2, shadowRadius: 4 },
   loadingFooter: { paddingVertical: 16 },
+  hintText: { fontSize: 12, textAlign: 'center', marginBottom: 8 },
 });

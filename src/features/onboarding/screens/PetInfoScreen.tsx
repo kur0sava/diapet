@@ -63,6 +63,9 @@ export default function PetInfoScreen() {
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.background }]}>
       <ScrollView style={styles.scroll} showsVerticalScrollIndicator={false}>
+        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backBtn}>
+          <Text style={{ color: theme.colors.primary, fontSize: 16 }}>← {t('common.back')}</Text>
+        </TouchableOpacity>
         <View style={styles.header}>
           <Text style={[styles.title, { color: theme.colors.text }]}>{t('onboarding.addPet')}</Text>
           <Text style={[styles.subtitle, { color: theme.colors.textSecondary }]}>
@@ -185,6 +188,7 @@ export default function PetInfoScreen() {
 const styles = StyleSheet.create({
   container: { flex: 1 },
   scroll: { flex: 1 },
+  backBtn: { paddingHorizontal: 24, paddingTop: 16 },
   header: { padding: 24, paddingBottom: 0 },
   title: { fontSize: 28, fontWeight: '800', marginBottom: 8 },
   subtitle: { fontSize: 15, lineHeight: 22 },

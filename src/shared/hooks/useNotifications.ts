@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import * as Notifications from 'expo-notifications';
 import { Platform } from 'react-native';
+import i18n from '@shared/i18n';
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -45,8 +46,8 @@ export function useNotifications() {
     if (isNaN(hours) || isNaN(minutes)) return '';
     const id = await Notifications.scheduleNotificationAsync({
       content: {
-        title: `💉 Время укола для ${petName}`,
-        body: `Не забудьте сделать инъекцию инсулина!`,
+        title: i18n.t('notifications.injectionTitle', { petName }),
+        body: i18n.t('notifications.injectionBody'),
         sound: true,
         data: { type: 'injection' },
       },
@@ -65,8 +66,8 @@ export function useNotifications() {
     if (isNaN(hours) || isNaN(minutes)) return '';
     const id = await Notifications.scheduleNotificationAsync({
       content: {
-        title: `🍽️ Время кормления ${petName}`,
-        body: `Пора покормить вашего питомца!`,
+        title: i18n.t('notifications.feedingTitle', { petName }),
+        body: i18n.t('notifications.feedingBody'),
         sound: true,
         data: { type: 'feeding' },
       },

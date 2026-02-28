@@ -25,6 +25,16 @@ function isRu(): boolean {
   return i18n.language?.startsWith('ru') ?? true;
 }
 
+function escapeHtml(str: string | null | undefined): string {
+  if (!str) return '';
+  return str
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+}
+
 function getDateLocale() {
   return isRu() ? ru : enUS;
 }
@@ -219,7 +229,7 @@ function buildHtml(
         <td><strong>${r.valueMmol.toFixed(1)}</strong></td>
         <td>${r.valueMgdl}</td>
         <td>${L.mealLabels[r.mealRelation]}</td>
-        <td>${r.notes ?? ''}</td>
+        <td>${escapeHtml(r.notes)}</td>
       </tr>`,
     )
     .join('');
@@ -232,8 +242,8 @@ function buildHtml(
       <tr>
         <td>${formatDate(inj.administeredAt)}</td>
         <td>${inj.doseUnits} ${L.doseUnit}</td>
-        <td>${inj.insulinType}</td>
-        <td>${inj.notes ?? ''}</td>
+        <td>${escapeHtml(inj.insulinType)}</td>
+        <td>${escapeHtml(inj.notes)}</td>
       </tr>`,
     )
     .join('');
@@ -247,7 +257,7 @@ function buildHtml(
         <td>${formatDate(s.recordedAt)}</td>
         <td>${s.symptomTypes.map((t) => L.symptomLabels[t] ?? t).join(', ')}</td>
         <td>${L.severityLabels[s.severity]}</td>
-        <td>${s.notes ?? ''}</td>
+        <td>${escapeHtml(s.notes)}</td>
       </tr>`,
     )
     .join('');
@@ -361,11 +371,11 @@ function buildHtml(
   <div class="pet-info">
     <div class="col">
       <div class="label">${L.labelName}</div>
-      <div class="value">${pet.name}</div>
+      <div class="value">${escapeHtml(pet.name)}</div>
     </div>
     <div class="col">
       <div class="label">${L.labelBreed}</div>
-      <div class="value">${pet.breed ?? '\u2014'}</div>
+      <div class="value">${escapeHtml(pet.breed) || '\u2014'}</div>
     </div>
     <div class="col">
       <div class="label">${L.labelDiagnosisDate}</div>
@@ -377,7 +387,7 @@ function buildHtml(
     </div>
     <div class="col">
       <div class="label">${L.labelInsulin}</div>
-      <div class="value">${pet.insulinType ?? '\u2014'}</div>
+      <div class="value">${escapeHtml(pet.insulinType) || '\u2014'}</div>
     </div>
   </div>
 

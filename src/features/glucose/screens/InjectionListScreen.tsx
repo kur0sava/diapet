@@ -113,15 +113,20 @@ export default function InjectionListScreen() {
         onEndReached={() => hasNextPage && fetchNextPage()}
         onEndReachedThreshold={0.5}
         ListHeaderComponent={
-          chartData.length > 0 ? (
-            <Card style={styles.chartCard}>
-              <SimpleBarChart
-                data={chartData}
-                title={t('injection.doseChart')}
-                unit={t('common.units')}
-              />
-            </Card>
-          ) : null
+          <>
+            {chartData.length > 0 && (
+              <Card style={styles.chartCard}>
+                <SimpleBarChart
+                  data={chartData}
+                  title={t('injection.doseChart')}
+                  unit={t('common.units')}
+                />
+              </Card>
+            )}
+            {injections.length > 0 && (
+              <Text style={[styles.hintText, { color: theme.colors.textTertiary }]}>{t('common.longPressToDelete')}</Text>
+            )}
+          </>
         }
         ListFooterComponent={
           isFetchingNextPage ? (
@@ -156,4 +161,5 @@ const styles = StyleSheet.create({
   time: { fontSize: 12, marginTop: 4 },
   notes: { fontSize: 12, marginTop: 4 },
   loadingFooter: { paddingVertical: 16 },
+  hintText: { fontSize: 12, textAlign: 'center', marginBottom: 8 },
 });

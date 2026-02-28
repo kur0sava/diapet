@@ -1,15 +1,16 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert, KeyboardAvoidingView, Platform } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useMoreNavigation } from '@navigation/hooks';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '@shared/theme';
 import { Button, Input } from '@shared/components/ui';
-import { petRepository, scheduleRepository } from '@storage/database';
+import { petRepository, scheduleRepository, getDatabase } from '@storage/database';
 import { usePetStore } from '@shared/stores/petStore';
 import { useQueryClient } from '@tanstack/react-query';
 import { Ionicons } from '@expo/vector-icons';
 import { storage } from '@storage/mmkv/storage';
+import { useUnsavedChangesGuard } from '@shared/hooks/useUnsavedChangesGuard';
 
 export default function EditPetScreen() {
   const navigation = useMoreNavigation();
@@ -27,14 +28,30 @@ export default function EditPetScreen() {
   const [injectionTimes, setInjectionTimes] = useState<string[]>([]);
   const [feedingTimes, setFeedingTimes] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
+  const [isDirty, setIsDirty] = useState(false);
+  const initialLoaded = useRef(false);
+  useUnsavedChangesGuard(isDirty);
+
+  // Track changes after initial load
+  useEffect(() => {
+    if (initialLoaded.current) setIsDirty(true);
+  }, [name, weightKg, insulinType, vetName, vetPhone, injectionTimes, feedingTimes]);
 
   useEffect(() => {
     if (!activePet) return;
     let cancelled = false;
     setVetName(storage.getString('vetName') ?? '');
     setVetPhone(storage.getString('vetPhone') ?? '');
-    scheduleRepository.getInjectionTimes(activePet.id).then(s => { if (!cancelled) setInjectionTimes(s.map(x => x.timeOfDay)); });
-    scheduleRepository.getFeedingTimes(activePet.id).then(s => { if (!cancelled) setFeedingTimes(s.map(x => x.timeOfDay)); });
+    Promise.all([
+      scheduleRepository.getInjectionTimes(activePet.id),
+      scheduleRepository.getFeedingTimes(activePet.id),
+    ]).then(([inj, feed]) => {
+      if (cancelled) return;
+      setInjectionTimes(inj.map(x => x.timeOfDay));
+      setFeedingTimes(feed.map(x => x.timeOfDay));
+      // Mark initial load done so dirty tracking starts after this
+      setTimeout(() => { initialLoaded.current = true; }, 0);
+    });
     return () => { cancelled = true; };
   }, [activePet]);
 
@@ -45,13 +62,16 @@ export default function EditPetScreen() {
       await petRepository.update(activePet.id, { name: name.trim(), weightKg: weightKg ? parseFloat(weightKg.replace(',', '.')) : undefined, insulinType: insulinType || undefined });
       vetName ? storage.set('vetName', vetName) : storage.delete('vetName');
       vetPhone ? storage.set('vetPhone', vetPhone) : storage.delete('vetPhone');
-      // FIX-04: persist schedule changes to DB
-      const existingInjections = await scheduleRepository.getInjectionTimes(activePet.id);
-      for (const s of existingInjections) await scheduleRepository.deleteInjectionTime(s.id);
-      for (const time of injectionTimes) await scheduleRepository.addInjectionTime(activePet.id, time);
-      const existingFeedings = await scheduleRepository.getFeedingTimes(activePet.id);
-      for (const s of existingFeedings) await scheduleRepository.deleteFeedingTime(s.id);
-      for (const time of feedingTimes) await scheduleRepository.addFeedingTime(activePet.id, time);
+      // UX-017: Wrap schedule updates in transaction to prevent partial writes
+      const db = await getDatabase();
+      await db.withTransactionAsync(async () => {
+        const existingInjections = await scheduleRepository.getInjectionTimes(activePet.id);
+        for (const s of existingInjections) await scheduleRepository.deleteInjectionTime(s.id);
+        for (const time of injectionTimes) await scheduleRepository.addInjectionTime(activePet.id, time);
+        const existingFeedings = await scheduleRepository.getFeedingTimes(activePet.id);
+        for (const s of existingFeedings) await scheduleRepository.deleteFeedingTime(s.id);
+        for (const time of feedingTimes) await scheduleRepository.addFeedingTime(activePet.id, time);
+      });
       await refreshActivePet();
       await queryClient.invalidateQueries({ queryKey: ['pet'] });
       await queryClient.invalidateQueries({ queryKey: ['schedule'] });

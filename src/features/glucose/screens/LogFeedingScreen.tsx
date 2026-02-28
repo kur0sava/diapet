@@ -13,6 +13,7 @@ import { usePetStore } from '@shared/stores/petStore';
 import { useQueryClient } from '@tanstack/react-query';
 import * as Haptics from 'expo-haptics';
 import { LinearGradient } from 'expo-linear-gradient';
+import { useUnsavedChangesGuard } from '@shared/hooks/useUnsavedChangesGuard';
 
 export default function LogFeedingScreen() {
   const navigation = useHomeNavigation();
@@ -32,6 +33,7 @@ export default function LogFeedingScreen() {
   const [amount, setAmount] = useState('');
   const [notes, setNotes] = useState('');
   const [loading, setLoading] = useState(false);
+  useUnsavedChangesGuard(!!amount || !!notes);
 
   const handleSave = useCallback(async () => {
     if (!activePet) {
