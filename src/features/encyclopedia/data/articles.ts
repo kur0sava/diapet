@@ -684,4 +684,393 @@ Home monitoring provides:
       { ru: 'инсулин', en: 'insulin' },
     ],
   },
+  {
+    id: 'insulin_types',
+    titleKey: {
+      ru: 'Инсулины для кошек',
+      en: 'Insulin Types for Cats',
+    },
+    summaryKey: {
+      ru: 'Разные инсулины работают по-разному у кошек. Узнайте об основных препаратах, их продолжительности действия, концентрациях и правилах хранения.',
+      en: 'Different insulins behave differently in cats. Learn about the main preparations, their duration of action, concentrations, and storage rules.',
+    },
+    contentKey: {
+      ru: `## Инсулины для кошек
+
+Не все инсулины одинаково эффективны у кошек. Фармакокинетика (начало действия, пик, продолжительность) у кошек существенно отличается от человека. Выбор инсулина — решение ветеринара.
+
+### Основные инсулины
+
+#### Гларгин (Lantus) — предпочтительный выбор
+
+- **Концентрация:** U-100 (100 ЕД/мл)
+- **Начало / Пик / Длительность:** 1–3 ч / 4–8 ч / 10–16 ч
+- **Режим:** 2 раза в сутки (каждые 12 ч)
+- **Особенности:** Наибольший процент ремиссии при совместном применении с низкоуглеводной диетой
+- **Хранение:** Вскрытый флакон 28 дней при комнатной температуре
+
+#### Детемир (Levemir)
+
+- **Концентрация:** U-100
+- **Начало / Пик / Длительность:** 0.5–2 ч / 3–6 ч / 10–16 ч
+- **Особенности:** Мощный инсулин, начинают с очень низких доз
+- **Хранение:** Вскрытый флакон 42 дня
+
+#### ProZinc (PZI) — ветеринарный
+
+- **Концентрация:** U-40 (40 ЕД/мл) — требует шприцев U-40!
+- **Начало / Пик / Длительность:** 1–4 ч / 4–8 ч / 8–14 ч
+- **Особенности:** Единственный FDA-одобренный инсулин для кошек (США)
+- **Хранение:** 28 дней в холодильнике
+
+#### Caninsulin / Vetsulin — ветеринарный
+
+- **Концентрация:** U-40 — требует шприцев U-40!
+- **Начало / Пик / Длительность:** 0.5–2 ч / 2–6 ч / 6–12 ч
+- **Особенности:** Зарегистрирован для кошек в ЕС, Австралии, Канаде
+- **Хранение:** 28 дней в холодильнике
+
+#### Протафан / НПХ (NPH)
+
+- **Концентрация:** U-100
+- **Длительность:** 6–10 ч — слишком короткое у большинства кошек
+- **Особенности:** Не является препаратом первого выбора (ISFM 2023)
+
+### U-40 против U-100 — критическое различие
+
+| Концентрация | ЕД на 1 мл | Нужный шприц |
+|---|---|---|
+| U-40 | 40 единиц | Шприц U-40 |
+| U-100 | 100 единиц | Шприц U-100 |
+
+> **ВНИМАНИЕ:** Использование шприца U-100 с инсулином U-40 = передозировка в 2.5 раза. Всегда уточняйте у ветеринара, какой шприц использовать.
+
+### Правила хранения
+
+- Невскрытый флакон: в холодильнике при +2...+8°C
+- Никогда не замораживать, беречь от солнца и нагрева
+- ProZinc и Caninsulin — осторожно перекатывать между ладонями перед набором (не встряхивать)
+- Перед инъекцией — дать нагреться до комнатной температуры (1–2 мин в руках)
+
+> **Важно:** Никогда не меняйте тип инсулина, дозу или режим без согласования с ветеринаром.`,
+      en: `## Insulin Types for Cats
+
+Not all insulins work equally well in cats. Pharmacokinetics (onset, peak, duration) in cats differ substantially from humans. The choice of insulin is your veterinarian's decision.
+
+### Main Insulins
+
+#### Glargine (Lantus) — Preferred Choice
+
+- **Concentration:** U-100 (100 units/mL)
+- **Onset / Peak / Duration:** 1–3 h / 4–8 h / 10–16 h
+- **Schedule:** Twice daily (every 12 hours)
+- **Notes:** Highest remission rates when combined with low-carbohydrate diet
+- **Storage:** Opened vial 28 days at room temperature
+
+#### Detemir (Levemir)
+
+- **Concentration:** U-100
+- **Onset / Peak / Duration:** 0.5–2 h / 3–6 h / 10–16 h
+- **Notes:** Potent insulin — start at very low doses
+- **Storage:** Opened vial 42 days
+
+#### ProZinc (PZI) — Veterinary
+
+- **Concentration:** U-40 (40 units/mL) — requires U-40 syringes!
+- **Onset / Peak / Duration:** 1–4 h / 4–8 h / 8–14 h
+- **Notes:** Only FDA-approved insulin specifically for cats (USA)
+- **Storage:** 28 days refrigerated after opening
+
+#### Caninsulin / Vetsulin — Veterinary
+
+- **Concentration:** U-40 — requires U-40 syringes!
+- **Onset / Peak / Duration:** 0.5–2 h / 2–6 h / 6–12 h
+- **Notes:** Registered for cats in the EU, Australia, and Canada
+- **Storage:** 28 days refrigerated
+
+#### Protaphane / NPH
+
+- **Concentration:** U-100
+- **Duration:** 6–10 h — too short for most cats
+- **Notes:** Not a first-line choice for cats (ISFM 2023)
+
+### U-40 vs U-100 — Critical Distinction
+
+| Concentration | Units per mL | Required Syringe |
+|---|---|---|
+| U-40 | 40 units | U-40 syringe |
+| U-100 | 100 units | U-100 syringe |
+
+> **WARNING:** Using a U-100 syringe with U-40 insulin = 2.5x overdose. Always confirm the correct syringe type with your veterinarian.
+
+### Storage Rules
+
+- Unopened vial: refrigerate at +2...+8°C
+- Never freeze; keep away from sunlight and heat
+- ProZinc and Caninsulin: gently roll between palms before drawing (do not shake)
+- Bring to room temperature before injecting (hold in hands 1–2 minutes)
+
+> **Important:** Never change the insulin type, dose, or schedule without consulting your veterinarian.`,
+    },
+    category: 'treatment',
+    readingTimeMinutes: 6,
+    tags: [
+      { ru: 'инсулин', en: 'insulin' },
+      { ru: 'лечение', en: 'treatment' },
+      { ru: 'дозировка', en: 'dosage' },
+      { ru: 'шприц', en: 'syringe' },
+    ],
+  },
+  {
+    id: 'glucose_monitoring',
+    titleKey: {
+      ru: 'Мониторинг глюкозы дома',
+      en: 'Home Glucose Monitoring',
+    },
+    summaryKey: {
+      ru: 'Домашний контроль глюкозы — ключевой инструмент управления диабетом у кошки. Узнайте про кривые глюкозы, надир и как интерпретировать результаты.',
+      en: 'Home glucose monitoring is the key tool for managing your cat\'s diabetes. Learn about glucose curves, nadir, and how to interpret results.',
+    },
+    contentKey: {
+      ru: `## Мониторинг глюкозы дома
+
+Регулярное измерение глюкозы — основа безопасного управления диабетом. Домашний мониторинг точнее клинического: стресс в клинике поднимает глюкозу до 15–17 ммоль/л даже у здоровых кошек.
+
+### Глюкометры
+
+#### AlphaTRAK 2 (рекомендован ветеринарами)
+
+- Специально откалиброван для кошек и собак
+- Код калибровки: **код 7 для кошек** (важно выбрать правильный!)
+- Объём крови: 0.3–0.5 мкл (минимальный укол)
+- Полоски специфические для AlphaTRAK 2
+
+#### FreeStyle Libre (непрерывный CGM)
+
+- Человеческий прибор, адаптируется для кошек
+- Сенсор крепится на кожу (холка или бок)
+- Измеряет глюкозу в тканевой жидкости: задержка 10–15 мин, отклонение 10–20%
+- Требует установки и интерпретации под наблюдением ветеринара
+
+### Где брать кровь
+
+**Ушная раковина (краевая вена)** — наиболее удобный метод:
+1. Согрейте ухо несколько секунд
+2. Быстрый укол ланцетом в краевую вену
+3. Не сдавливайте ухо — дождитесь капли самостоятельно
+4. Прикоснитесь полоской к капле, затем зажмите ухо тампоном 30 сек
+
+### Кривая глюкозы
+
+Серия измерений на протяжении 12-часового цикла:
+
+**Полный протокол:** 0 ч → 2 ч → 4 ч → 6 ч → 8 ч → 10 ч → 12 ч
+**Минимальный:** 0 ч → 4 ч → 6–8 ч (надир) → 12 ч
+
+### Надир — ключевое значение
+
+Надир — **наименьшее значение** глюкозы в цикле. Именно по надиру ветеринар корректирует дозу.
+
+**Целевой надир для кошек:** 5.5–8.0 ммоль/л (100–144 мг/дл)
+
+| Надир | Интерпретация | Действие |
+|---|---|---|
+| < 3.3 ммоль/л | Гипогликемия | Снизить дозу, вызвать врача |
+| 3.3–5.5 | Ниже цели | Рассмотреть снижение дозы |
+| 5.5–8.0 | **Целевой** | Доза подобрана |
+| 8.0–14.0 | Выше цели | Рассмотреть повышение дозы |
+| > 14.0 | Плохой контроль | Консультация ветеринара |
+
+### Феномен Сомоджи (рикошет)
+
+Глюкоза падает слишком низко → организм выбрасывает гормоны → глюкоза резко растёт.
+**Выглядит как гипергликемия, но причина — передозировка инсулина.**
+Решение: снижение дозы (не повышение!).
+
+### Частота мониторинга
+
+- **Подбор дозы:** кривая каждые 1–2 недели
+- **Стабильный контроль:** кривая раз в 1–3 месяца + ежедневные разовые измерения
+- **При недомогании:** измерить немедленно
+
+> Коррекцию дозы всегда делает ветеринар. Не меняйте дозу самостоятельно.`,
+      en: `## Home Glucose Monitoring
+
+Regular glucose measurement is the foundation of safe diabetes management. Home monitoring is more accurate than clinic visits: stress alone can raise glucose to 15–17 mmol/L in healthy cats.
+
+### Glucometers
+
+#### AlphaTRAK 2 (Veterinarian-Recommended)
+
+- Specifically calibrated for cats and dogs
+- Calibration code: **code 7 for cats** (selecting the correct code is essential)
+- Blood volume: 0.3–0.5 µL (minimal lancet stick)
+- Strips are specific to AlphaTRAK 2
+
+#### FreeStyle Libre (Continuous CGM)
+
+- Human device adapted for cats
+- Sensor placed on skin (scruff or flank)
+- Measures interstitial fluid glucose: 10–15 min lag, 10–20% variance
+- Requires veterinary supervision for placement and interpretation
+
+### Where to Collect Blood
+
+**Ear pinna (marginal vein)** — most convenient method:
+1. Warm the ear for a few seconds
+2. Quick lancet prick in the marginal vein
+3. Do not squeeze — wait for the drop to form naturally
+4. Touch strip to drop, then hold cotton pad against ear for 30 sec
+
+### Glucose Curve
+
+A series of measurements across a 12-hour insulin cycle:
+
+**Full protocol:** 0 h → 2 h → 4 h → 6 h → 8 h → 10 h → 12 h
+**Minimal:** 0 h → 4 h → 6–8 h (nadir) → 12 h
+
+### Nadir — The Key Value
+
+The nadir is the **lowest glucose point** in the cycle. The veterinarian uses it to adjust the dose.
+
+**Target nadir for cats:** 5.5–8.0 mmol/L (100–144 mg/dL)
+
+| Nadir | Interpretation | Action |
+|---|---|---|
+| < 3.3 mmol/L | Hypoglycemia | Reduce dose, contact vet |
+| 3.3–5.5 | Below target | Consider dose reduction |
+| 5.5–8.0 | **Target range** | Dose well adjusted |
+| 8.0–14.0 | Above target | Consider dose increase |
+| > 14.0 | Poor control | Consult veterinarian |
+
+### Somogyi Rebound
+
+Glucose drops too low → body releases stress hormones → glucose rises sharply.
+**Looks like hyperglycemia, but the cause is insulin overdose.**
+Solution: reduce the dose (not increase it).
+
+### Monitoring Frequency
+
+- **Dose adjustment:** glucose curve every 1–2 weeks
+- **Stable control:** curve every 1–3 months + daily spot checks
+- **Any illness:** measure immediately
+
+> Dose adjustments are always made by the veterinarian. Do not adjust the dose on your own.`,
+    },
+    category: 'monitoring',
+    readingTimeMinutes: 7,
+    tags: [
+      { ru: 'мониторинг', en: 'monitoring' },
+      { ru: 'глюкоза', en: 'glucose' },
+      { ru: 'кривая глюкозы', en: 'glucose curve' },
+      { ru: 'надир', en: 'nadir' },
+    ],
+  },
+  {
+    id: 'fructosamine',
+    titleKey: {
+      ru: 'Фруктозамин: контроль за 2–3 недели',
+      en: 'Fructosamine: 2–3 Week Control Marker',
+    },
+    summaryKey: {
+      ru: 'Фруктозамин — анализ крови, показывающий средний уровень глюкозы за последние 2–3 недели. Норма для кошек 170–340 мкмоль/л.',
+      en: 'Fructosamine is a blood test showing average glucose over the past 2–3 weeks. Normal range for cats: 170–340 µmol/L.',
+    },
+    contentKey: {
+      ru: `## Фруктозамин: долгосрочный контроль диабета у кошек
+
+Разовые измерения глюкозы — «мгновенный снимок». Фруктозамин показывает «среднюю температуру» за последние 2–3 недели.
+
+### Что такое фруктозамин
+
+Продукт необратимой реакции глюкозы с белками крови (преимущественно альбумином). Чем выше глюкоза на протяжении 2–3 недель — тем выше фруктозамин.
+
+### Почему не HbA1c (как у людей)?
+
+У кошек эритроциты живут ~70 дней (у людей ~120 дней), а реакция гемоглобина с глюкозой протекает иначе. Поэтому HbA1c у кошек неинформативен — стандарт для кошек **фруктозамин**.
+
+### Референсные значения
+
+| Значение (мкмоль/л) | Интерпретация |
+|---|---|
+| 170–340 | Норма у здоровой кошки |
+| 340–400 | Хороший контроль диабета |
+| 400–500 | Удовлетворительный контроль |
+| > 500 | Плохой контроль — нужна коррекция |
+| > 600 | Очень плохой — высокий риск осложнений |
+
+### Ложно заниженный результат
+
+Фруктозамин может быть **занижен** при:
+- Гипоальбуминемии (болезни печени, почек, воспаления)
+- Гипертиреозе кошек (ускоренный белковый обмен)
+- Гемолизе пробы крови
+
+Всегда интерпретируется вместе с клинической картиной и домашними измерениями.
+
+### Когда сдавать
+
+- **При диагностике:** подтверждает хроническую гипергликемию (исключает стресс)
+- **Подбор дозы:** каждые 4–6 недель
+- **Стабильный контроль:** каждые 3–6 месяцев
+- **Подозрение на ремиссию или ухудшение:** для объективной оценки
+
+### Фруктозамин при ремиссии
+
+После ремиссии возвращается к норме (170–340 мкмоль/л). Рост выше 400 мкмоль/л у кошки в ремиссии — ранний признак возврата диабета, часто ещё до симптомов.
+
+> Продолжайте проверять фруктозамин каждые 3–6 месяцев даже в ремиссии.`,
+      en: `## Fructosamine: Long-Term Diabetes Control in Cats
+
+Single glucose measurements are an "instant snapshot." Fructosamine shows the "average" over the past 2–3 weeks.
+
+### What Is Fructosamine
+
+The product of an irreversible reaction between glucose and blood proteins (primarily albumin). The higher blood glucose over the past 2–3 weeks, the more fructosamine is formed.
+
+### Why Not HbA1c (Like in Humans)?
+
+Cat red blood cells live ~70 days (vs ~120 days in humans), and feline hemoglobin reacts with glucose differently. HbA1c is not informative in cats — **fructosamine** is the standard.
+
+### Reference Values
+
+| Value (µmol/L) | Interpretation |
+|---|---|
+| 170–340 | Normal for a healthy cat |
+| 340–400 | Good diabetic control |
+| 400–500 | Acceptable control |
+| > 500 | Poor control — dose adjustment needed |
+| > 600 | Very poor — high complication risk |
+
+### Falsely Low Results
+
+Fructosamine can be **falsely lowered** by:
+- Hypoalbuminemia (liver disease, kidney disease, inflammation)
+- Hyperthyroidism (accelerated protein turnover)
+- Hemolysis of the blood sample
+
+Always interpret alongside clinical signs and home glucose measurements.
+
+### When to Test
+
+- **At diagnosis:** confirms chronic hyperglycemia (rules out a stress response)
+- **Dose adjustment period:** every 4–6 weeks
+- **Stable control:** every 3–6 months
+- **Suspected remission or worsening:** for objective assessment
+
+### Fructosamine During Remission
+
+After remission, returns to the healthy range (170–340 µmol/L). A rise above 400 µmol/L in a cat in remission is an early sign of relapse — often before symptoms appear.
+
+> Continue testing fructosamine every 3–6 months even during remission.`,
+    },
+    category: 'monitoring',
+    readingTimeMinutes: 5,
+    tags: [
+      { ru: 'фруктозамин', en: 'fructosamine' },
+      { ru: 'мониторинг', en: 'monitoring' },
+      { ru: 'анализ крови', en: 'blood test' },
+      { ru: 'гликемический контроль', en: 'glycemic control' },
+    ],
+  },
 ];

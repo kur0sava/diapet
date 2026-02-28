@@ -1,12 +1,10 @@
 import React from 'react';
-import { View, Text, Dimensions, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, useWindowDimensions } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '@shared/theme';
 import { GlucoseReading } from '@storage/domain/types';
 import { format, parseISO } from 'date-fns';
 
-const { width: screenWidth } = Dimensions.get('window');
-const CHART_WIDTH = screenWidth - 80;
 const CHART_HEIGHT = 120;
 const NORMAL_MIN = 4.0;
 const NORMAL_MAX = 9.0;
@@ -18,6 +16,8 @@ interface Props {
 export function GlucoseChart({ data }: Props) {
   const { t } = useTranslation();
   const { theme } = useTheme();
+  const { width: screenWidth } = useWindowDimensions();
+  const CHART_WIDTH = screenWidth - 80;
 
   if (data.length === 0) return null;
 

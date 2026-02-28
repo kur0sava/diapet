@@ -19,6 +19,7 @@ const useLang = () => {
 const CATEGORY_ICONS: Record<ArticleCategory, { name: string; color: string }> = {
   basics: { name: 'book-outline', color: '#4F8EF7' },
   treatment: { name: 'medical-outline', color: '#7C5CBF' },
+  monitoring: { name: 'pulse-outline', color: '#32ADE6' },
   nutrition: { name: 'nutrition-outline', color: '#34C759' },
   complications: { name: 'alert-circle-outline', color: '#FF9500' },
   remission: { name: 'sparkles-outline', color: '#5AC8FA' },
@@ -36,6 +37,7 @@ export default function ArticleListScreen() {
   const categoryLabels: Record<ArticleCategory, string> = {
     basics: t('encyclopedia.categories.basics'),
     treatment: t('encyclopedia.categories.treatment'),
+    monitoring: t('encyclopedia.categories.monitoring'),
     nutrition: t('encyclopedia.categories.nutrition'),
     complications: t('encyclopedia.categories.complications'),
     remission: t('encyclopedia.categories.remission'),

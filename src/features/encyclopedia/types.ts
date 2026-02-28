@@ -19,6 +19,7 @@ export interface Article {
 export type ArticleCategory =
   | 'basics'
   | 'treatment'
+  | 'monitoring'
   | 'nutrition'
   | 'complications'
   | 'remission'

@@ -173,7 +173,7 @@ export const en = {
     typeError: 'Specify insulin type',
     saveError: 'Failed to save',
     notesPlaceholder: 'Optional...',
-    commonInsulins: ['Protaphane', 'Lantus', 'Lantus SoloStar', 'Levemir', 'Humulin N', 'Actrapid', 'ProZinc (PZI)', 'Caninsulin', 'Vetsulin'],
+    commonInsulins: ['Protaphane', 'Lantus', 'Lantus SoloStar', 'Levemir', 'Humulin N', 'Actrapid (clinic only)', 'ProZinc (PZI)', 'Caninsulin', 'Vetsulin'],
     history: 'Injection History',
     noHistory: 'No injections recorded yet',
     doseChart: 'Doses (last 14 days)',
@@ -296,6 +296,7 @@ export const en = {
     categories: {
       basics: 'Basics',
       treatment: 'Treatment',
+      monitoring: 'Monitoring',
       nutrition: 'Nutrition',
       complications: 'Complications',
       remission: 'Remission',

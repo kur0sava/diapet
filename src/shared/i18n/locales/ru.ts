@@ -173,7 +173,7 @@ export const ru = {
     typeError: 'Укажите тип инсулина',
     saveError: 'Не удалось сохранить',
     notesPlaceholder: 'Опционально...',
-    commonInsulins: ['Протафан', 'Лантус', 'Лантус SoloStar', 'Левемир', 'Хумулин N', 'Актрапид'],
+    commonInsulins: ['Протафан', 'Лантус', 'Лантус SoloStar', 'Левемир', 'Хумулин N', 'Актрапид (только клинич.)', 'ProZinc (PZI)', 'Caninsulin'],
     history: 'История инъекций',
     noHistory: 'Нет записей об инъекциях',
     doseChart: 'Дозы (последние 14 дней)',
@@ -296,6 +296,7 @@ export const ru = {
     categories: {
       basics: 'Основы',
       treatment: 'Лечение',
+      monitoring: 'Мониторинг',
       nutrition: 'Питание',
       complications: 'Осложнения',
       remission: 'Ремиссия',
