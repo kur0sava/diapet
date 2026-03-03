@@ -39,6 +39,7 @@ export const ru = {
     addPetSubtitle: 'Расскажите нам о вашем питомце',
     petName: 'Имя питомца',
     petAge: 'Возраст (лет)',
+    petAgeHint: 'Полных лет',
     petWeight: 'Вес (кг)',
     petGender: 'Пол',
     diagnosisDate: 'Дата постановки диагноза',

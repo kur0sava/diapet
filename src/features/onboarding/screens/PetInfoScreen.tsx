@@ -22,7 +22,7 @@ export default function PetInfoScreen() {
   const [name, setName] = useState('');
   const [gender, setGender] = useState<'male' | 'female'>('male');
   const [weightKg, setWeightKg] = useState('');
-  const [birthYear, setBirthYear] = useState('');
+  const [age, setAge] = useState('');
   const [diabetesType, setDiabetesType] = useState<'type1' | 'type2' | 'unknown'>('unknown');
   const [diagnosisDate, setDiagnosisDate] = useState<Date | null>(null);
   const [showDatePicker, setShowDatePicker] = useState(false);
@@ -42,7 +42,7 @@ export default function PetInfoScreen() {
         name: name.trim(),
         gender,
         weightKg: weightKg ? parseFloat(weightKg.replace(',', '.')) : undefined,
-        birthYear: birthYear ? parseInt(birthYear) : undefined,
+        birthYear: age ? new Date().getFullYear() - parseInt(age) : undefined,
         diabetesType,
         diagnosisDate: diagnosisDate?.toISOString().split('T')[0],
       },
@@ -118,11 +118,12 @@ export default function PetInfoScreen() {
             />
             <Input
               label={t('onboarding.petAge')}
-              value={birthYear}
-              onChangeText={setBirthYear}
-              placeholder="2020"
+              value={age}
+              onChangeText={setAge}
+              placeholder="5"
               keyboardType="number-pad"
               containerStyle={{ flex: 1 }}
+              hint={t('onboarding.petAgeHint')}
             />
           </View>
 
