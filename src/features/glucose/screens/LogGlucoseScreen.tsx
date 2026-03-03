@@ -214,7 +214,8 @@ export default function LogGlucoseScreen() {
               onChangeText={setValue}
               placeholder={unit === 'mmol/L' ? '6.5' : '117'}
               keyboardType="decimal-pad"
-              style={{ fontSize: 32, textAlign: 'center', fontFamily: theme.fonts.bold }}
+              containerStyle={{ alignSelf: 'stretch' }}
+              style={{ fontSize: 32, textAlign: 'center', fontFamily: theme.fonts.bold, color: theme.colors.text }}
             />
 
             {glucosePreview && (

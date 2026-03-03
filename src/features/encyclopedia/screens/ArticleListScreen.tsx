@@ -113,6 +113,7 @@ export default function ArticleListScreen() {
         data={categories}
         keyExtractor={item => item}
         showsHorizontalScrollIndicator={false}
+        style={{ flexShrink: 0, minHeight: 44 }}
         contentContainerStyle={styles.categories}
         renderItem={({ item }) => (
           <TouchableOpacity
