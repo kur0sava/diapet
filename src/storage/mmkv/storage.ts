@@ -90,4 +90,5 @@ export const StorageKeys = {
   LAST_BACKUP: 'lastBackup',
   BOOKMARKED_ARTICLES: 'bookmarkedArticles',
   SUBSCRIPTION_CACHED_PRO: 'subscriptionCachedPro',
+  ONBOARDING_DRAFT: 'onboardingDraft',
 } as const;

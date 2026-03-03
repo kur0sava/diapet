@@ -41,6 +41,10 @@ export default function ScheduleScreen() {
 
   const removeTime = (type: 'injection' | 'feeding', index: number) => {
     if (type === 'injection') {
+      if (injectionTimes.length <= 1) {
+        Alert.alert(t('onboarding.minOneInjection'));
+        return;
+      }
       setInjectionTimes(injectionTimes.filter((_, i) => i !== index));
     } else {
       setFeedingTimes(feedingTimes.filter((_, i) => i !== index));

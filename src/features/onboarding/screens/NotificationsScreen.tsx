@@ -62,9 +62,10 @@ export default function NotificationsScreen() {
         }
       }
 
-      // Mark onboarding complete
+      // Mark onboarding complete & clear draft
       storage.set(StorageKeys.ACTIVE_PET_ID, pet.id);
       storage.set(StorageKeys.ONBOARDING_COMPLETE, true);
+      storage.delete(StorageKeys.ONBOARDING_DRAFT);
 
       // Navigate to main app
       rootNavigation.reset({ index: 0, routes: [{ name: 'Main' }] });

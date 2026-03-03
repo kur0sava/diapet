@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert, KeyboardAvoidingView, Platform } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
@@ -29,6 +29,7 @@ export default function AddExpenseScreen() {
   const [description, setDescription] = useState('');
   const [originalDate, setOriginalDate] = useState<string | undefined>();
   const [loading, setLoading] = useState(false);
+  const savingRef = useRef(false);
 
   const categoryLabels: Record<ExpenseCategory, string> = {
     insulin: t('expenses.insulin'), testStrips: t('expenses.testStrips'),
@@ -51,9 +52,10 @@ export default function AddExpenseScreen() {
   }, [editId]);
 
   const handleSave = async () => {
-    if (!activePet) return;
+    if (savingRef.current || !activePet) return;
     const numAmount = parseFloat(amount.replace(',', '.'));
     if (!amount || isNaN(numAmount) || numAmount <= 0) { Alert.alert(t('common.error'), t('expenses.amountError')); return; }
+    savingRef.current = true;
     setLoading(true);
     try {
       if (editId) {
@@ -64,7 +66,7 @@ export default function AddExpenseScreen() {
       await queryClient.invalidateQueries({ queryKey: ['expenses'] });
       navigation.goBack();
     } catch { Alert.alert(t('common.error'), t('expenses.saveError')); }
-    finally { setLoading(false); }
+    finally { savingRef.current = false; setLoading(false); }
   };
 
   return (

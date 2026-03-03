@@ -89,14 +89,19 @@ export default function SymptomsListScreen() {
           </Text>
           <Text style={[styles.date, { color: theme.colors.textSecondary }]}>{formatDateTime(item.recordedAt)}</Text>
           {item.notes && <Text style={[styles.notes, { color: theme.colors.textTertiary }]} numberOfLines={2}>{item.notes}</Text>}
-          {item.photoUris.length > 0 && (
-            <View style={styles.photosRow}>
-              <Ionicons name="camera-outline" size={15} color={theme.colors.primary} />
-              <Text style={[styles.photos, { color: theme.colors.primary }]}>
-                {item.photoUris.length} {t('symptoms.photos')}
-              </Text>
-            </View>
-          )}
+          <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+            {item.photoUris.length > 0 ? (
+              <View style={styles.photosRow}>
+                <Ionicons name="camera-outline" size={15} color={theme.colors.primary} />
+                <Text style={[styles.photos, { color: theme.colors.primary }]}>
+                  {item.photoUris.length} {t('symptoms.photos')}
+                </Text>
+              </View>
+            ) : <View />}
+            <TouchableOpacity onPress={() => handleDelete(item.id)} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
+              <Ionicons name="trash-outline" size={18} color={theme.colors.danger} />
+            </TouchableOpacity>
+          </View>
         </Card>
       </TouchableOpacity>
     </AnimatedListItem>

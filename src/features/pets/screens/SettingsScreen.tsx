@@ -25,8 +25,8 @@ export default function SettingsScreen() {
   );
 
   const handleDeleteAllData = () => {
-    // UX-015: First confirmation
-    Alert.alert(t('settings.deleteDataConfirm'), t('settings.deleteDataWarning'), [
+    // UX-015: First confirmation with explicit irreversibility warning
+    Alert.alert(t('settings.deleteDataConfirm'), t('settings.deleteDataIrreversible'), [
       { text: t('common.cancel'), style: 'cancel' },
       { text: t('common.delete'), style: 'destructive', onPress: () => {
         // UX-015: Second confirmation — double confirm for irreversible action
@@ -46,6 +46,7 @@ export default function SettingsScreen() {
               storage.delete(StorageKeys.LAST_BACKUP);
               storage.delete(StorageKeys.BOOKMARKED_ARTICLES);
               storage.delete(StorageKeys.SUBSCRIPTION_CACHED_PRO);
+              storage.delete(StorageKeys.ONBOARDING_DRAFT);
               // H006: cancel all scheduled notifications for deleted pets
               await Notifications.cancelAllScheduledNotificationsAsync();
               // H007: clear React Query cache so stale data is not shown

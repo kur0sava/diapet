@@ -252,7 +252,12 @@ export default function GlucoseListScreen() {
                   </View>
                 )}
               </View>
-              <Ionicons name="chevron-forward" size={16} color={theme.colors.textTertiary} />
+              <View style={{ alignItems: 'center', gap: 8 }}>
+                <TouchableOpacity onPress={() => handleDelete(item.id)} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
+                  <Ionicons name="trash-outline" size={18} color={theme.colors.danger} />
+                </TouchableOpacity>
+                <Ionicons name="chevron-forward" size={16} color={theme.colors.textTertiary} />
+              </View>
             </View>
           </Card>
         </TouchableOpacity>

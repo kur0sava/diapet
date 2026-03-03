@@ -46,6 +46,11 @@ export default function LogInjectionScreen() {
     }
     // MC002: Warn on unusually high dose (typical cat range: 1–4 units)
     const doseNum = parseFloat(dose.replace(',', '.'));
+    // FORM-004: Hard limit — 20 units is absolute max for cats
+    if (doseNum > 20) {
+      Alert.alert(t('glucose.doseAbsoluteLimit'), t('glucose.doseAbsoluteLimitDesc'));
+      return;
+    }
     if (doseNum > 10) {
       Alert.alert(t('glucose.veryHighDoseWarning'), t('glucose.veryHighDoseWarningDesc', { dose: doseNum }), [
         { text: t('common.cancel'), style: 'cancel' },

@@ -55,8 +55,11 @@ export default function EditPetScreen() {
     return () => { cancelled = true; };
   }, [activePet]);
 
+  const savingRef = useRef(false);
+
   const handleSave = async () => {
-    if (!activePet || !name.trim()) { Alert.alert(t('pets.enterName')); return; }
+    if (savingRef.current || !activePet || !name.trim()) { Alert.alert(t('pets.enterName')); return; }
+    savingRef.current = true;
     setLoading(true);
     try {
       await petRepository.update(activePet.id, { name: name.trim(), weightKg: weightKg ? parseFloat(weightKg.replace(',', '.')) : undefined, insulinType: insulinType || undefined });
@@ -77,7 +80,7 @@ export default function EditPetScreen() {
       await queryClient.invalidateQueries({ queryKey: ['schedule'] });
       navigation.goBack();
     } catch { Alert.alert(t('pets.saveError')); }
-    finally { setLoading(false); }
+    finally { savingRef.current = false; setLoading(false); }
   };
 
   const validateTime = (value: string): string => {
@@ -95,7 +98,10 @@ export default function EditPetScreen() {
       {times.map((time, i) => (
         <View key={`time-${i}-${time}`} style={[styles.timeRow, { backgroundColor: theme.colors.surfaceSecondary, borderRadius: 12 }]}>
           <Input value={time} onChangeText={v => { const n = [...times]; n[i] = validateTime(v); setTimes(n); }} placeholder="HH:MM" maxLength={5} containerStyle={{ flex: 1 }} />
-          <TouchableOpacity onPress={() => setTimes(times.filter((_, idx) => idx !== i))} style={{ padding: 12 }}>
+          <TouchableOpacity onPress={() => {
+            if (type === 'injection' && times.length <= 1) { Alert.alert(t('onboarding.minOneInjection')); return; }
+            setTimes(times.filter((_, idx) => idx !== i));
+          }} style={{ padding: 12 }}>
             <Ionicons name="close-circle" size={24} color={theme.colors.danger} />
           </TouchableOpacity>
         </View>

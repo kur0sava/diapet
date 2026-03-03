@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -13,6 +13,7 @@ import { useTranslation } from 'react-i18next';
 import { useTheme } from '@shared/theme';
 import { Button, Input } from '@shared/components/ui';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import { storage, StorageKeys } from '@storage/mmkv/storage';
 
 export default function PetInfoScreen() {
   const navigation = useOnboardingNavigation();
@@ -28,6 +29,22 @@ export default function PetInfoScreen() {
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
 
+  // ONB-001: Restore draft from MMKV on mount
+  useEffect(() => {
+    const raw = storage.getString(StorageKeys.ONBOARDING_DRAFT);
+    if (raw) {
+      try {
+        const draft = JSON.parse(raw);
+        if (draft.name) setName(draft.name);
+        if (draft.gender) setGender(draft.gender);
+        if (draft.weightKg) setWeightKg(draft.weightKg);
+        if (draft.age) setAge(draft.age);
+        if (draft.diabetesType) setDiabetesType(draft.diabetesType);
+        if (draft.diagnosisDate) setDiagnosisDate(new Date(draft.diagnosisDate));
+      } catch {}
+    }
+  }, []);
+
   const validate = () => {
     const newErrors: Record<string, string> = {};
     if (!name.trim()) newErrors.name = t('common.error');
@@ -37,6 +54,11 @@ export default function PetInfoScreen() {
 
   const handleContinue = () => {
     if (!validate()) return;
+    // ONB-001: Save draft to MMKV
+    storage.set(StorageKeys.ONBOARDING_DRAFT, JSON.stringify({
+      name: name.trim(), gender, weightKg, age, diabetesType,
+      diagnosisDate: diagnosisDate?.toISOString(),
+    }));
     navigation.navigate('Schedule', {
       petData: {
         name: name.trim(),

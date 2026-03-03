@@ -108,6 +108,9 @@ export default function FeedingListScreen() {
                 {item.notes}
               </Text>
             )}
+            <TouchableOpacity onPress={() => handleDelete(item.id)} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }} style={{ alignSelf: 'flex-start' }}>
+              <Ionicons name="trash-outline" size={18} color={theme.colors.danger} />
+            </TouchableOpacity>
           </View>
         </Card>
       </TouchableOpacity>

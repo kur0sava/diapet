@@ -132,6 +132,11 @@ export default function LogGlucoseScreen() {
     if (!isValidValue) { Alert.alert(t('common.error'), t('glucose.invalidValue')); return; }
     // MC002: Warn on unusually high insulin dose (typical cat range: 1–4 units)
     const doseNum = insulinDose ? parseFloat(insulinDose.replace(',', '.')) : 0;
+    // FORM-004: Hard limit — 20 units is absolute max for cats
+    if (doseNum > 20) {
+      Alert.alert(t('glucose.doseAbsoluteLimit'), t('glucose.doseAbsoluteLimitDesc'));
+      return;
+    }
     if (doseNum > 10) {
       Alert.alert(t('glucose.veryHighDoseWarning'), t('glucose.veryHighDoseWarningDesc', { dose: doseNum }), [
         { text: t('common.cancel'), style: 'cancel' },

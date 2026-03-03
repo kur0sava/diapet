@@ -76,7 +76,12 @@ export default function ExpensesScreen() {
           {item.description && <Text style={[styles.expenseDesc, { color: theme.colors.textSecondary }]} numberOfLines={1}>{item.description}</Text>}
           <Text style={[styles.expenseDate, { color: theme.colors.textTertiary }]}>{item.date}</Text>
         </View>
-        <Text style={[styles.expenseAmount, { color: theme.colors.text, fontFamily: theme.fonts.bold }]}>{item.amount.toLocaleString()} {t('expenses.currency')}</Text>
+        <View style={{ alignItems: 'flex-end', gap: 8 }}>
+          <Text style={[styles.expenseAmount, { color: theme.colors.text, fontFamily: theme.fonts.bold }]}>{item.amount.toLocaleString()} {t('expenses.currency')}</Text>
+          <TouchableOpacity onPress={() => handleDelete(item.id)} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
+            <Ionicons name="trash-outline" size={18} color={theme.colors.danger} />
+          </TouchableOpacity>
+        </View>
       </Card>
     </TouchableOpacity>
   );
