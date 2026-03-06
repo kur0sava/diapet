@@ -95,7 +95,7 @@ export default function LogInjectionScreen() {
       <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.background }]}>
         <View>
           <View style={[styles.navHeader, { borderBottomColor: theme.colors.border }]}>
-            <TouchableOpacity onPress={() => navigation.goBack()}>
+            <TouchableOpacity onPress={() => navigation.goBack()} style={{ minHeight: 44, minWidth: 44, justifyContent: 'center' }}>
               <Text style={{ color: theme.colors.primary }}>{'\u2190 '}{t('common.back')}</Text>
             </TouchableOpacity>
             <Text style={[styles.title, { color: theme.colors.text }]}>{t('injection.title')}</Text>

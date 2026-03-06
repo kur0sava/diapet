@@ -71,7 +71,7 @@ export default function VetContactScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
-  backBtn: { paddingHorizontal: 24, paddingTop: 16 },
+  backBtn: { paddingHorizontal: 24, paddingTop: 16, minHeight: 44, minWidth: 44, justifyContent: 'center' },
   content: { padding: 24, alignItems: 'center' },
   title: { fontSize: 28, fontWeight: '800', marginBottom: 8, textAlign: 'center' },
   subtitle: { fontSize: 15, lineHeight: 22, textAlign: 'center', marginBottom: 32 },

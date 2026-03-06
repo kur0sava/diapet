@@ -132,7 +132,7 @@ export default function FeedGuideScreen() {
 const styles = StyleSheet.create({
   container: { flex: 1 },
   header: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 16, paddingTop: 8, paddingBottom: 12, gap: 12 },
-  backButton: { padding: 4 },
+  backButton: { padding: 4, minHeight: 44, minWidth: 44, justifyContent: 'center' },
   headerText: { flex: 1 },
   title: { fontSize: 24, fontWeight: '800' },
   subtitle: { fontSize: 13, marginTop: 2 },

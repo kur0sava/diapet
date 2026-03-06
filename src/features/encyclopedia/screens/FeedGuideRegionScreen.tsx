@@ -253,7 +253,7 @@ export default function FeedGuideRegionScreen() {
 const styles = StyleSheet.create({
   container: { flex: 1 },
   header: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 16, paddingTop: 8, paddingBottom: 12, gap: 12 },
-  backButton: { padding: 4 },
+  backButton: { padding: 4, minHeight: 44, minWidth: 44, justifyContent: 'center' },
   title: { fontSize: 22, fontWeight: '800' },
   filterRow: { flexDirection: 'row', paddingHorizontal: 16, gap: 8, paddingBottom: 8 },
   filterChip: { flexDirection: 'row', alignItems: 'center', gap: 4, paddingHorizontal: 12, paddingVertical: 7, borderRadius: 20, borderWidth: 1 },

@@ -358,7 +358,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
     paddingHorizontal: 16, paddingVertical: 12, borderBottomWidth: 0.5,
   },
-  backBtn: { width: 60 },
+  backBtn: { width: 60, minHeight: 44, minWidth: 44, justifyContent: 'center' },
   headerTitle: { fontSize: 17 },
   content: { padding: 20, gap: 16, paddingBottom: 40 },
   mainCard: { alignItems: 'center', paddingVertical: 24 },

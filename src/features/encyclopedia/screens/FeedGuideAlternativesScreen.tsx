@@ -151,7 +151,7 @@ export default function FeedGuideAlternativesScreen() {
 const styles = StyleSheet.create({
   container: { flex: 1 },
   header: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 16, paddingTop: 8, paddingBottom: 8, gap: 12 },
-  backButton: { padding: 4 },
+  backButton: { padding: 4, minHeight: 44, minWidth: 44, justifyContent: 'center' },
   title: { fontSize: 22, fontWeight: '800' },
   infoCard: { flexDirection: 'row', alignItems: 'center', gap: 10, marginHorizontal: 16, padding: 12, borderRadius: 12, marginBottom: 8 },
   infoText: { flex: 1, fontSize: 13, lineHeight: 18 },

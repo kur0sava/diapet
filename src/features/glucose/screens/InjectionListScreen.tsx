@@ -12,6 +12,7 @@ import { InjectionLog } from '@storage/domain/types';
 import { formatDateTime } from '@shared/utils/dateUtils';
 import { EmptyState, Card, AnimatedListItem } from '@shared/components/ui';
 import { SimpleBarChart, BarData } from '@shared/components/charts/SimpleBarChart';
+import { LinearGradient } from 'expo-linear-gradient';
 import { format, parseISO, subDays, isAfter } from 'date-fns';
 
 export default function InjectionListScreen() {
@@ -55,7 +56,11 @@ export default function InjectionListScreen() {
   }, [injections, theme.colors.primary]);
 
   const handleDelete = (id: string) => {
-    Alert.alert(t('injection.deleteConfirm'), undefined, [
+    const item = injections.find(inj => inj.id === id);
+    const info = item
+      ? `${format(parseISO(item.administeredAt), 'dd.MM.yyyy HH:mm')} — ${item.doseUnits} ${t('common.units')}${item.insulinType ? ` (${item.insulinType})` : ''}`
+      : '';
+    Alert.alert(t('injection.deleteConfirm'), info || undefined, [
       { text: t('common.cancel'), style: 'cancel' },
       { text: t('common.delete'), style: 'destructive', onPress: async () => {
         await injectionRepository.delete(id);
@@ -101,7 +106,7 @@ export default function InjectionListScreen() {
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.background }]}>
       <View style={[styles.navHeader, { borderBottomColor: theme.colors.border }]}>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
+        <TouchableOpacity onPress={() => navigation.goBack()} style={{ minHeight: 44, minWidth: 44, justifyContent: 'center' }}>
           <Text style={{ color: theme.colors.primary }}>{'← '}{t('common.back')}</Text>
         </TouchableOpacity>
         <Text style={[styles.headerTitle, { color: theme.colors.text, fontFamily: theme.fonts.bold }]}>{t('injection.history')}</Text>
@@ -142,9 +147,26 @@ export default function InjectionListScreen() {
             iconColor={theme.colors.secondary}
             title={t('injection.history')}
             subtitle={t('injection.noHistory')}
+            actionLabel={t('injection.addEntry')}
+            onAction={() => navigation.navigate('LogInjection')}
           />
         }
       />
+
+      {/* FAB */}
+      <TouchableOpacity
+        onPress={() => navigation.navigate('LogInjection')}
+        activeOpacity={0.8}
+      >
+        <LinearGradient
+          colors={theme.gradients.primary}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          style={[styles.fab, theme.shadows.primarySm]}
+        >
+          <Ionicons name="add" size={28} color="#fff" />
+        </LinearGradient>
+      </TouchableOpacity>
     </SafeAreaView>
   );
 }
@@ -165,4 +187,5 @@ const styles = StyleSheet.create({
   notes: { fontSize: 12, marginTop: 4 },
   loadingFooter: { paddingVertical: 16 },
   hintText: { fontSize: 12, textAlign: 'center', marginBottom: 8 },
+  fab: { position: 'absolute', bottom: 24, right: 20, width: 56, height: 56, borderRadius: 28, alignItems: 'center', justifyContent: 'center' },
 });

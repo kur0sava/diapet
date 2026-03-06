@@ -104,7 +104,7 @@ export default function AddExpenseScreen() {
 const styles = StyleSheet.create({
   container: { flex: 1 },
   navHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', padding: 16, borderBottomWidth: 0.5 },
-  navBtn: { flexDirection: 'row', alignItems: 'center', gap: 2 },
+  navBtn: { flexDirection: 'row', alignItems: 'center', gap: 2, minHeight: 44, minWidth: 44 },
   title: { fontSize: 17 },
   content: { padding: 20, gap: 16, paddingBottom: 40 },
   sectionTitle: { fontSize: 16 },

@@ -150,7 +150,7 @@ export default function ScheduleScreen() {
 const styles = StyleSheet.create({
   container: { flex: 1 },
   scroll: { flex: 1 },
-  backBtn: { paddingHorizontal: 24, paddingTop: 16 },
+  backBtn: { paddingHorizontal: 24, paddingTop: 16, minHeight: 44, minWidth: 44, justifyContent: 'center' },
   header: { padding: 24, paddingBottom: 0 },
   title: { fontSize: 28, fontWeight: '800', marginBottom: 8 },
   subtitle: { fontSize: 15, lineHeight: 22 },

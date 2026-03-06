@@ -182,6 +182,7 @@ export const en = {
     noHistory: 'No injections recorded yet',
     doseChart: 'Doses (last 14 days)',
     deleteConfirm: 'Delete this injection?',
+    addEntry: 'Log Injection',
   },
 
   feeding: {
@@ -199,6 +200,7 @@ export const en = {
     noHistory: 'No feedings recorded yet',
     amountChart: 'Amounts (last 14 days)',
     deleteConfirm: 'Delete this feeding?',
+    addEntry: 'Log Feeding',
   },
 
   symptoms: {
@@ -282,6 +284,7 @@ export const en = {
     ],
     noVetContact: 'No vet contact added',
     addVetContact: 'Add a vet contact in pet settings to enable quick calling.',
+    call112: 'Call 112',
     goToSettings: 'Go to settings',
     tapToAddVet: 'Tap to add vet contact',
     disclaimer: 'This information is for reference only. In any emergency, contact your veterinarian immediately.',
@@ -423,6 +426,7 @@ export const en = {
     subtitle: 'Answer questions about your pet\'s symptoms',
     start: 'Start Assessment',
     reassess: 'Reassess',
+    showResult: 'Show Result',
     question: 'Question {{current}} of {{total}}',
     no: 'No',
     sometimes: 'Sometimes',

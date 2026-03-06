@@ -274,7 +274,7 @@ export default function FeedGuideNaturalScreen() {
 const styles = StyleSheet.create({
   container: { flex: 1 },
   header: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 16, paddingTop: 8, paddingBottom: 8, gap: 12 },
-  backButton: { padding: 4 },
+  backButton: { padding: 4, minHeight: 44, minWidth: 44, justifyContent: 'center' },
   title: { fontSize: 22, fontWeight: '800' },
   filterRow: { flexDirection: 'row', paddingHorizontal: 16, gap: 6, paddingBottom: 8, flexWrap: 'wrap' },
   filterChip: { flexDirection: 'row', alignItems: 'center', gap: 4, paddingHorizontal: 10, paddingVertical: 6, borderRadius: 16, borderWidth: 1 },

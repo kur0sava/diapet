@@ -170,9 +170,13 @@ export default function GlucoseListScreen() {
   });
 
   const handleDelete = useCallback((id: string) => {
+    const item = readings.find(r => r.id === id);
+    const info = item
+      ? `${format(new Date(item.recordedAt), 'dd.MM.yyyy HH:mm')} — ${item.valueMmol.toFixed(1)} ${unit}`
+      : '';
     Alert.alert(
       t('glucose.deleteConfirm'),
-      undefined,
+      info || undefined,
       [
         { text: t('common.cancel'), style: 'cancel' },
         {
@@ -185,7 +189,7 @@ export default function GlucoseListScreen() {
         },
       ]
     );
-  }, [t, queryClient]);
+  }, [t, queryClient, readings, unit]);
 
   const mealLabels = useMemo<Record<string, string>>(() => ({
     before_meal: t('glucose.beforeMeal'),

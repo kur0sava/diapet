@@ -28,6 +28,7 @@ export default function EmergencyScreen() {
       // UX-013: Navigate to edit pet screen to add vet contact
       Alert.alert(t('emergency.noVetContact'), t('emergency.addVetContact'), [
         { text: t('common.cancel'), style: 'cancel' },
+        { text: t('emergency.call112'), onPress: () => Linking.openURL('tel:112') },
         { text: t('emergency.goToSettings'), onPress: () => navigation.navigate('Main', { screen: 'More', params: { screen: 'EditPet' } } as any) },
       ]);
       return;
@@ -172,6 +173,8 @@ const styles = StyleSheet.create({
   closeBtn: {
     width: 44,
     height: 44,
+    minHeight: 44,
+    minWidth: 44,
     borderRadius: 22,
     backgroundColor: 'rgba(255,255,255,0.2)',
     alignItems: 'center',

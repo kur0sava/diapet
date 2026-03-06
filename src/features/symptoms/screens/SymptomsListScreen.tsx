@@ -10,6 +10,7 @@ import { symptomRepository } from '@storage/database';
 import { usePetStore } from '@shared/stores/petStore';
 import { SymptomEntry, SYMPTOM_ICONS } from '../types';
 import { formatDateTime } from '@shared/utils/dateUtils';
+import { format } from 'date-fns';
 import { EmptyState, Card, AnimatedListItem } from '@shared/components/ui';
 
 export default function SymptomsListScreen() {
@@ -50,7 +51,11 @@ export default function SymptomsListScreen() {
   };
 
   const handleDelete = (id: string) => {
-    Alert.alert(t('symptoms.deleteConfirm'), undefined, [
+    const item = symptoms.find(s => s.id === id);
+    const info = item
+      ? `${format(new Date(item.recordedAt), 'dd.MM.yyyy HH:mm')} — ${item.symptomTypes.map(s => t(`symptoms.types.${s}`)).join(', ')} (${severityLabels[item.severity]})`
+      : '';
+    Alert.alert(t('symptoms.deleteConfirm'), info || undefined, [
       { text: t('common.cancel'), style: 'cancel' },
       { text: t('common.delete'), style: 'destructive', onPress: async () => {
         await symptomRepository.delete(id);

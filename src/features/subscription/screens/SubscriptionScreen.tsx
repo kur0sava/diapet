@@ -41,7 +41,7 @@ export default function SubscriptionScreen() {
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.background }]}>
       <View style={[styles.navHeader, { borderBottomColor: theme.colors.border }]}>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
+        <TouchableOpacity onPress={() => navigation.goBack()} style={{ minHeight: 44, minWidth: 44, justifyContent: 'center' }}>
           <Text style={{ color: theme.colors.primary }}>← {t('common.back')}</Text>
         </TouchableOpacity>
         <Text style={[styles.title, { color: theme.colors.text, fontFamily: theme.fonts.semibold }]}>

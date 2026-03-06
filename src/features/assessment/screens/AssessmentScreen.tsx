@@ -58,6 +58,7 @@ export default function AssessmentScreen() {
 
   const [currentIndex, setCurrentIndex] = useState(0);
   const [answers, setAnswers] = useState<Record<string, AnswerValue>>({});
+  const [selectedAnswer, setSelectedAnswer] = useState<AnswerValue | null>(null);
   const [showResult, setShowResult] = useState(false);
 
   const totalQuestions = QUESTIONS.length;
@@ -67,20 +68,27 @@ export default function AssessmentScreen() {
   const stage = getStage(totalScore);
   const stageColor = STAGE_COLORS[stage];
 
-  const handleAnswer = useCallback((value: AnswerValue) => {
+  const handleSelect = useCallback((value: AnswerValue) => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    setSelectedAnswer(value);
+  }, []);
+
+  const handleNext = useCallback(() => {
+    if (selectedAnswer === null) return;
     const key = QUESTIONS[currentIndex];
-    setAnswers(prev => ({ ...prev, [key]: value }));
+    setAnswers(prev => ({ ...prev, [key]: selectedAnswer }));
+    setSelectedAnswer(null);
 
     if (currentIndex < totalQuestions - 1) {
       setCurrentIndex(prev => prev + 1);
     } else {
       setShowResult(true);
     }
-  }, [currentIndex, totalQuestions]);
+  }, [currentIndex, totalQuestions, selectedAnswer]);
 
   const handleBack = useCallback(() => {
     if (currentIndex > 0) {
+      setSelectedAnswer(null);
       setCurrentIndex(prev => prev - 1);
     }
   }, [currentIndex]);
@@ -99,7 +107,7 @@ export default function AssessmentScreen() {
     return (
       <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.background }]}>
         <View style={[styles.navHeader, { borderBottomColor: theme.colors.border }]}>
-          <TouchableOpacity onPress={() => navigation.goBack()}>
+          <TouchableOpacity onPress={() => navigation.goBack()} style={{ minHeight: 44, minWidth: 44, justifyContent: 'center' }}>
             <Text style={{ color: theme.colors.primary }}>{'\u2190'} {t('common.back')}</Text>
           </TouchableOpacity>
           <Text style={[styles.title, { color: theme.colors.text }]}>{t('assessment.title')}</Text>
@@ -167,7 +175,7 @@ export default function AssessmentScreen() {
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.background }]}>
       <View style={[styles.navHeader, { borderBottomColor: theme.colors.border }]}>
-        <TouchableOpacity onPress={currentIndex > 0 ? handleBack : () => navigation.goBack()}>
+        <TouchableOpacity onPress={currentIndex > 0 ? handleBack : () => navigation.goBack()} style={{ minHeight: 44, minWidth: 44, justifyContent: 'center' }}>
           <Text style={{ color: theme.colors.primary }}>{'\u2190'} {t('common.back')}</Text>
         </TouchableOpacity>
         <Text style={[styles.title, { color: theme.colors.text }]}>{t('assessment.title')}</Text>
@@ -192,22 +200,24 @@ export default function AssessmentScreen() {
         {/* Answer chips */}
         <View style={styles.answerRow}>
           {ANSWER_OPTIONS.map(opt => {
-            const selected = answers[currentQuestion!] === opt.value;
+            const isSelected = selectedAnswer === opt.value;
             return (
               <TouchableOpacity
                 key={opt.value}
                 style={[
                   styles.answerChip,
                   {
-                    backgroundColor: selected ? theme.colors.primary : theme.colors.surfaceSecondary,
+                    backgroundColor: isSelected ? theme.colors.primary : theme.colors.surfaceSecondary,
+                    borderWidth: isSelected ? 2 : 0,
+                    borderColor: theme.colors.primary,
                     flex: 1,
                   },
                 ]}
-                onPress={() => handleAnswer(opt.value)}
+                onPress={() => handleSelect(opt.value)}
                 activeOpacity={0.8}
               >
                 <Text style={{
-                  color: selected ? '#fff' : theme.colors.text,
+                  color: isSelected ? '#fff' : theme.colors.text,
                   fontWeight: '600',
                   textAlign: 'center',
                 }}>
@@ -217,6 +227,19 @@ export default function AssessmentScreen() {
             );
           })}
         </View>
+
+        {/* Next button */}
+        {selectedAnswer !== null && (
+          <TouchableOpacity
+            style={[styles.nextBtn, { backgroundColor: theme.colors.primary }]}
+            onPress={handleNext}
+            activeOpacity={0.8}
+          >
+            <Text style={styles.nextBtnText}>
+              {currentIndex < totalQuestions - 1 ? t('common.next') : t('assessment.showResult')}
+            </Text>
+          </TouchableOpacity>
+        )}
       </ScrollView>
     </SafeAreaView>
   );
@@ -263,6 +286,17 @@ const styles = StyleSheet.create({
     padding: 14,
     borderRadius: 12,
     alignItems: 'center',
+  },
+  nextBtn: {
+    padding: 16,
+    borderRadius: 14,
+    alignItems: 'center',
+    marginTop: 8,
+  },
+  nextBtnText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: '700',
   },
   resultCard: {
     borderRadius: 20,

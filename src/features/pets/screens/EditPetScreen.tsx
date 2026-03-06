@@ -116,7 +116,7 @@ export default function EditPetScreen() {
     <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={{ flex: 1 }}>
       <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.background }]}>
         <View style={[styles.navHeader, { borderBottomColor: theme.colors.border }]}>
-          <TouchableOpacity onPress={() => navigation.goBack()}><Text style={{ color: theme.colors.primary }}>← {t('common.back')}</Text></TouchableOpacity>
+          <TouchableOpacity onPress={() => navigation.goBack()} style={{ minHeight: 44, minWidth: 44, justifyContent: 'center' }}><Text style={{ color: theme.colors.primary }}>← {t('common.back')}</Text></TouchableOpacity>
           <Text style={[{ fontSize: 17, fontFamily: theme.fonts.semibold, color: theme.colors.text }]}>{t('pets.editPet')}</Text>
           <View style={{ width: 60 }} />
         </View>

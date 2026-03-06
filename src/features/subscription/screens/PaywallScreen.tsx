@@ -253,7 +253,7 @@ export default function PaywallScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
-  closeBtn: { position: 'absolute', right: 16, zIndex: 10, padding: 4 },
+  closeBtn: { position: 'absolute', right: 16, zIndex: 10, padding: 4, minHeight: 44, minWidth: 44, justifyContent: 'center', alignItems: 'center' },
   scroll: { paddingBottom: 40 },
   hero: { alignItems: 'center', paddingVertical: 40, paddingHorizontal: 20, gap: 8 },
   heroTitle: { color: '#fff', fontSize: 28 },

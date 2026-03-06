@@ -45,20 +45,24 @@ export default function ExpensesScreen() {
 
   const monthKeys = ['jan','feb','mar','apr','may','jun','jul','aug','sep','oct','nov','dec'];
 
+  const categoryLabels: Record<ExpenseCategory, string> = {
+    insulin: t('expenses.insulin'), testStrips: t('expenses.testStrips'),
+    vetVisit: t('expenses.vetVisit'), medication: t('expenses.medication'),
+    food: t('expenses.food'), other: t('expenses.other'),
+  };
+
   const handleDelete = (id: string) => {
-    Alert.alert(t('expenses.deleteConfirm'), undefined, [
+    const item = expenses.find(e => e.id === id);
+    const info = item
+      ? `${item.date} — ${categoryLabels[item.category as ExpenseCategory]}, ${item.amount.toLocaleString()} ${t('expenses.currency')}`
+      : '';
+    Alert.alert(t('expenses.deleteConfirm'), info || undefined, [
       { text: t('common.cancel'), style: 'cancel' },
       { text: t('common.delete'), style: 'destructive', onPress: async () => {
         await expenseRepository.delete(id);
         queryClient.invalidateQueries({ queryKey: ['expenses'] });
       }},
     ]);
-  };
-
-  const categoryLabels: Record<ExpenseCategory, string> = {
-    insulin: t('expenses.insulin'), testStrips: t('expenses.testStrips'),
-    vetVisit: t('expenses.vetVisit'), medication: t('expenses.medication'),
-    food: t('expenses.food'), other: t('expenses.other'),
   };
 
   const renderExpense = ({ item }: { item: Expense }) => (
