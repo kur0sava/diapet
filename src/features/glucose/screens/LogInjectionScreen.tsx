@@ -34,6 +34,28 @@ export default function LogInjectionScreen() {
   const savingRef = useRef(false);
   useUnsavedChangesGuard(!!dose || !!notes);
 
+  const doSaveInjection = useCallback(async () => {
+    if (!activePet || savingRef.current) return;
+    savingRef.current = true;
+    setLoading(true);
+    try {
+      await injectionRepository.create({
+        petId: activePet.id,
+        insulinType: insulinType.trim(),
+        doseUnits: parseFloat(dose.replace(',', '.')),
+        notes: notes || undefined,
+      });
+      await queryClient.invalidateQueries({ queryKey: ['injections'] });
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+      navigation.goBack();
+    } catch {
+      Alert.alert(t('common.error'), t('injection.saveError'));
+    } finally {
+      savingRef.current = false;
+      setLoading(false);
+    }
+  }, [activePet, dose, insulinType, notes, queryClient, navigation, t]);
+
   const handleSave = useCallback(async () => {
     if (savingRef.current || !activePet) return;
     if (!dose || parseFloat(dose.replace(',', '.')) <= 0) {
@@ -66,29 +88,7 @@ export default function LogInjectionScreen() {
       return;
     }
     doSaveInjection();
-  }, [activePet, dose, insulinType, notes, queryClient, navigation, t]);
-
-  const doSaveInjection = useCallback(async () => {
-    if (!activePet || savingRef.current) return;
-    savingRef.current = true;
-    setLoading(true);
-    try {
-      await injectionRepository.create({
-        petId: activePet.id,
-        insulinType: insulinType.trim(),
-        doseUnits: parseFloat(dose.replace(',', '.')),
-        notes: notes || undefined,
-      });
-      await queryClient.invalidateQueries({ queryKey: ['injections'] });
-      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-      navigation.goBack();
-    } catch {
-      Alert.alert(t('common.error'), t('injection.saveError'));
-    } finally {
-      savingRef.current = false;
-      setLoading(false);
-    }
-  }, [activePet, dose, insulinType, notes, queryClient, navigation, t]);
+  }, [activePet, dose, insulinType, t, doSaveInjection]);
 
   return (
     <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={{ flex: 1 }}>

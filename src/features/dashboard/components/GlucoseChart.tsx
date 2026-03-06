@@ -4,8 +4,10 @@ import { useTranslation } from 'react-i18next';
 import { useTheme } from '@shared/theme';
 import { GlucoseReading } from '@storage/domain/types';
 import { format, parseISO } from 'date-fns';
+import Svg, { Path } from 'react-native-svg';
 
 const CHART_HEIGHT = 120;
+const Y_AXIS_WIDTH = 30;
 const NORMAL_MIN = 4.0;
 const NORMAL_MAX = 9.0;
 
@@ -17,7 +19,7 @@ export function GlucoseChart({ data }: Props) {
   const { t } = useTranslation();
   const { theme } = useTheme();
   const { width: screenWidth } = useWindowDimensions();
-  const CHART_WIDTH = screenWidth - 80;
+  const CHART_WIDTH = screenWidth - 80 - Y_AXIS_WIDTH;
 
   if (data.length === 0) return null;
 
@@ -29,6 +31,7 @@ export function GlucoseChart({ data }: Props) {
   const getY = (v: number) => CHART_HEIGHT - ((v - minVal) / range) * CHART_HEIGHT;
   const getX = (i: number) => (i / Math.max(data.length - 1, 1)) * CHART_WIDTH;
 
+  // SVG path connecting all data points
   const pathD = data.map((d, i) => {
     const x = getX(i);
     const y = getY(d.valueMmol);
@@ -38,6 +41,11 @@ export function GlucoseChart({ data }: Props) {
   // Normal zone Y coordinates
   const normalMaxY = getY(NORMAL_MAX);
   const normalMinY = getY(NORMAL_MIN);
+
+  // X-axis label indices — show first, middle, last when >7 points
+  const xLabelIndices = data.length <= 7
+    ? data.map((_, i) => i)
+    : [0, Math.floor(data.length / 2), data.length - 1];
 
   return (
     <View style={styles.container}>
@@ -49,7 +57,7 @@ export function GlucoseChart({ data }: Props) {
         <Text style={[styles.axisLabel, { color: theme.colors.textTertiary }]}>{minVal.toFixed(0)}</Text>
       </View>
 
-      {/* Simple SVG-like chart using Views */}
+      {/* Chart area */}
       <View style={[styles.chart, { width: CHART_WIDTH, height: CHART_HEIGHT }]}>
         {/* Normal zone band */}
         <View style={[
@@ -60,6 +68,21 @@ export function GlucoseChart({ data }: Props) {
             backgroundColor: `${theme.colors.success}15`,
           },
         ]} />
+
+        {/* Connecting line */}
+        {data.length > 1 && (
+          <Svg width={CHART_WIDTH} height={CHART_HEIGHT} style={StyleSheet.absoluteFill}>
+            <Path
+              d={pathD}
+              stroke={theme.colors.primary}
+              strokeWidth={2}
+              fill="none"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              opacity={0.6}
+            />
+          </Svg>
+        )}
 
         {/* Data points */}
         {data.map((reading, i) => {
@@ -87,13 +110,13 @@ export function GlucoseChart({ data }: Props) {
 
       {/* X-axis labels */}
       <View style={styles.xAxis}>
-        {data.length <= 7 && data.map((d, i) => (
+        {xLabelIndices.map(i => (
           <Text
-            key={d.id}
+            key={data[i].id}
             style={[styles.xLabel, { color: theme.colors.textTertiary }]}
             numberOfLines={1}
           >
-            {format(parseISO(d.recordedAt), 'dd.MM')}
+            {format(parseISO(data[i].recordedAt), 'dd.MM')}
           </Text>
         ))}
       </View>
@@ -115,13 +138,13 @@ export function GlucoseChart({ data }: Props) {
 
 const styles = StyleSheet.create({
   container: { paddingVertical: 8 },
-  yAxis: { position: 'absolute', left: 0, top: 0, height: CHART_HEIGHT, justifyContent: 'space-between', width: 0 },
+  yAxis: { position: 'absolute', left: 0, top: 0, height: CHART_HEIGHT, justifyContent: 'space-between', width: Y_AXIS_WIDTH },
   axisLabel: { fontSize: 9 },
-  chart: { marginLeft: 4, position: 'relative' },
+  chart: { marginLeft: Y_AXIS_WIDTH + 4, position: 'relative' },
   normalZone: { position: 'absolute', left: 0, right: 0 },
   dot: { position: 'absolute', width: 10, height: 10, borderRadius: 5, borderWidth: 2 },
-  xAxis: { flexDirection: 'row', justifyContent: 'space-between', marginTop: 4 },
-  xLabel: { fontSize: 9, flex: 1, textAlign: 'center' },
+  xAxis: { flexDirection: 'row', justifyContent: 'space-between', marginTop: 4, marginLeft: Y_AXIS_WIDTH + 4 },
+  xLabel: { fontSize: 9, textAlign: 'center' },
   legend: { flexDirection: 'row', gap: 16, marginTop: 8 },
   legendItem: { flexDirection: 'row', alignItems: 'center', gap: 4 },
   legendDot: { width: 8, height: 8, borderRadius: 4 },

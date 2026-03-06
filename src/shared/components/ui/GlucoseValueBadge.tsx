@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { useTheme } from '@shared/theme';
-import { getGlucoseColor, getGlucoseLevel } from '@storage/domain/types';
+import { getGlucoseColor, getGlucoseLevel, MGDL_PER_MMOLL } from '@storage/domain/types';
 import { useTranslation } from 'react-i18next';
 import { storage, StorageKeys } from '@storage/mmkv/storage';
 
@@ -17,7 +17,7 @@ export function GlucoseValueBadge({ valueMmol, size = 'md', showLabel = true }: 
   const unit = storage.getString(StorageKeys.GLUCOSE_UNIT) ?? 'mmol/L';
 
   const displayValue = unit === 'mg/dL'
-    ? Math.round(valueMmol * 18.018).toString()
+    ? Math.round(valueMmol * MGDL_PER_MMOLL).toString()
     : valueMmol.toFixed(1);
 
   const color = getGlucoseColor(valueMmol);

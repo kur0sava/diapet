@@ -143,9 +143,9 @@ export const glucoseRepository = {
       params.push(valueMmol, valueMgdl);
     }
     if (dto.mealRelation !== undefined) { sets.push('meal_relation=?'); params.push(dto.mealRelation); }
-    if (dto.insulinDose !== undefined) { sets.push('insulin_dose=?'); params.push(dto.insulinDose); }
-    if (dto.insulinType !== undefined) { sets.push('insulin_type=?'); params.push(dto.insulinType); }
-    if (dto.notes !== undefined) { sets.push('notes=?'); params.push(dto.notes); }
+    if ('insulinDose' in dto) { sets.push('insulin_dose=?'); params.push(dto.insulinDose ?? null); }
+    if ('insulinType' in dto) { sets.push('insulin_type=?'); params.push(dto.insulinType ?? null); }
+    if ('notes' in dto) { sets.push('notes=?'); params.push(dto.notes ?? null); }
     if (dto.recordedAt !== undefined) { sets.push('recorded_at=?'); params.push(dto.recordedAt); }
 
     if (sets.length > 0) {

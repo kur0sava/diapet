@@ -12,6 +12,7 @@ import { Button, Input, Card } from '@shared/components/ui';
 import { glucoseRepository } from '@storage/database';
 import { usePetStore } from '@shared/stores/petStore';
 import { MealRelation, GlucoseUnit, getGlucoseLevel, getGlucoseColor } from '../types';
+import { MGDL_PER_MMOLL } from '@storage/domain/types';
 import { useQueryClient } from '@tanstack/react-query';
 import { storage, StorageKeys } from '@storage/mmkv/storage';
 import * as Haptics from 'expo-haptics';
@@ -86,8 +87,8 @@ export default function LogGlucoseScreen() {
 
   const glucosePreview = isValidValue
     ? {
-        level: getGlucoseLevel(unit === 'mmol/L' ? numValue : numValue / 18.018),
-        color: getGlucoseColor(unit === 'mmol/L' ? numValue : numValue / 18.018),
+        level: getGlucoseLevel(unit === 'mmol/L' ? numValue : numValue / MGDL_PER_MMOLL),
+        color: getGlucoseColor(unit === 'mmol/L' ? numValue : numValue / MGDL_PER_MMOLL),
       }
     : null;
 
@@ -201,7 +202,7 @@ export default function LogGlucoseScreen() {
                     // UX-001: Convert value when switching units
                     const num = parseFloat(value.replace(',', '.'));
                     if (!isNaN(num) && num > 0) {
-                      const converted = u === 'mg/dL' ? (num * 18.018).toFixed(0) : (num / 18.018).toFixed(1);
+                      const converted = u === 'mg/dL' ? (num * MGDL_PER_MMOLL).toFixed(0) : (num / MGDL_PER_MMOLL).toFixed(1);
                       setValue(converted);
                     }
                     setUnit(u);

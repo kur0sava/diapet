@@ -1,13 +1,11 @@
-import React, { useEffect } from 'react';
-import { View, TouchableOpacity, StyleSheet, AppState } from 'react-native';
+import React from 'react';
+import { View, TouchableOpacity, StyleSheet } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { useRootNavigation } from '@navigation/hooks';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '@shared/theme';
 import { useTranslation } from 'react-i18next';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import Animated, { useAnimatedStyle, useSharedValue, withRepeat, withSequence, withTiming, cancelAnimation } from 'react-native-reanimated';
 import { MainTabParamList } from './types';
 
 // Screens
@@ -148,54 +146,12 @@ function MoreStackNavigator() {
   );
 }
 
-// Emergency FAB Button
-function EmergencyButton() {
-  const navigation = useRootNavigation();
-  const insets = useSafeAreaInsets();
-  const scale = useSharedValue(1.0);
-
-  useEffect(() => {
-    const startPulse = () => {
-      scale.value = withRepeat(withSequence(
-        withTiming(1.08, { duration: 1000 }),
-        withTiming(1.0, { duration: 1000 }),
-      ), 20, true); // L001: finite 20 repeats (~40s) to avoid indefinite UI-thread animation
-    };
-    startPulse();
-    const sub = AppState.addEventListener('change', state => {
-      if (state === 'active') startPulse();
-      else cancelAnimation(scale);
-    });
-    return () => {
-      cancelAnimation(scale);
-      sub.remove();
-    };
-  }, [scale]);
-
-  const pulseStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: scale.value }],
-  }));
-
-  return (
-    <Animated.View style={[styles.emergencyButtonWrapper, { bottom: 72 + Math.max(insets.bottom, 8) }, pulseStyle]}>
-      <TouchableOpacity
-        style={styles.emergencyButton}
-        onPress={() => navigation.navigate('Emergency')}
-        activeOpacity={0.8}
-      >
-        <Ionicons name="warning" size={20} color="#fff" />
-      </TouchableOpacity>
-    </Animated.View>
-  );
-}
-
 export default function MainNavigator() {
   const { theme } = useTheme();
   const { t } = useTranslation();
   const insets = useSafeAreaInsets();
 
   return (
-    <>
       <Tab.Navigator
         screenOptions={({ route }) => ({
           headerShown: false,
@@ -211,7 +167,7 @@ export default function MainNavigator() {
             height: 64 + Math.max(insets.bottom, 8),
           },
           tabBarActiveTintColor: theme.colors.primary,
-          tabBarInactiveTintColor: theme.colors.textTertiary,
+          tabBarInactiveTintColor: theme.colors.tabBarInactive,
           tabBarLabelStyle: {
             fontSize: 10,
             fontWeight: '500',
@@ -248,29 +204,7 @@ export default function MainNavigator() {
         <Tab.Screen name="EncyclopediaTab" component={EncyclopediaStackNavigator} options={{ title: t('navigation.encyclopedia') }} />
         <Tab.Screen name="MoreTab" component={MoreStackNavigator} options={{ title: t('navigation.more') }} />
       </Tab.Navigator>
-      <EmergencyButton />
-    </>
   );
 }
 
-const styles = StyleSheet.create({
-  emergencyButtonWrapper: {
-    position: 'absolute',
-    bottom: 80,
-    right: 20,
-    zIndex: 1000,
-  },
-  emergencyButton: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    backgroundColor: '#FF3B30',
-    justifyContent: 'center',
-    alignItems: 'center',
-    shadowColor: '#FF3B30',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.4,
-    shadowRadius: 8,
-    elevation: 8,
-  },
-});
+const styles = StyleSheet.create({});
