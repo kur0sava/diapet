@@ -31,7 +31,6 @@ export default function MoreMenuScreen() {
     { iconName: 'star-outline' as const, label: t('subscription.title'), screen: 'Subscription' as const, iconColor: '#FFB340', badge: !isPro ? 'upgrade' : 'active' },
     { iconName: 'paw-outline' as const, label: t('pets.title'), screen: 'PetProfile' as const, iconColor: theme.colors.primary, subtitle: activePet?.name },
     { iconName: 'wallet-outline' as const, label: t('expenses.title'), screen: 'Expenses' as const, iconColor: theme.colors.warning },
-    { iconName: 'fitness-outline' as const, label: t('assessment.title'), screen: 'Assessment' as const, iconColor: theme.colors.success, proGated: true },
     { iconName: 'calculator-outline' as const, label: t('feedCalculator.title'), screen: 'FeedCalculator' as const, iconColor: theme.colors.secondary, proGated: true },
     { iconName: 'settings-outline' as const, label: t('settings.title'), screen: 'Settings' as const, iconColor: theme.colors.textSecondary },
   ];

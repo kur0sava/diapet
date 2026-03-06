@@ -4,7 +4,7 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useMoreNavigation, useRootNavigation } from '@navigation/hooks';
+import { useSymptomsNavigation, useRootNavigation } from '@navigation/hooks';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '@shared/theme';
 import * as Haptics from 'expo-haptics';
@@ -51,7 +51,7 @@ function getStage(score: number): Stage {
 }
 
 export default function AssessmentScreen() {
-  const navigation = useMoreNavigation();
+  const navigation = useSymptomsNavigation();
   const rootNavigation = useRootNavigation();
   const { t } = useTranslation();
   const { theme } = useTheme();

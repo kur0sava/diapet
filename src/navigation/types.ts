@@ -28,6 +28,7 @@ export type HomeStackParamList = {
   AddSymptom: { editId?: string; glucoseReadingId?: string };
   InjectionList: undefined;
   FeedingList: undefined;
+  FeedGuide: undefined;
 };
 
 // Glucose Stack
@@ -41,6 +42,7 @@ export type SymptomsStackParamList = {
   SymptomsList: undefined;
   SymptomDetail: { id: string };
   AddSymptom: { editId?: string; glucoseReadingId?: string };
+  Assessment: undefined;
 };
 
 // Encyclopedia Stack
@@ -61,7 +63,6 @@ export type MoreStackParamList = {
   Expenses: undefined;
   AddExpense: { editId?: string };
   Settings: undefined;
-  Assessment: undefined;
   FeedCalculator: undefined;
   Subscription: undefined;
 };

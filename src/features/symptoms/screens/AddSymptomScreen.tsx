@@ -14,6 +14,7 @@ import { symptomRepository, glucoseRepository } from '@storage/database';
 import { usePetStore } from '@shared/stores/petStore';
 import { storage, StorageKeys } from '@storage/mmkv/storage';
 import { SymptomType, SymptomSeverity, SYMPTOM_ICONS } from '../types';
+import { calculateSeverity } from '../utils/severityCalculator';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { GlucoseReading } from '@storage/domain/types';
 import { HomeStackParamList } from '@navigation/types';
@@ -48,8 +49,12 @@ export default function AddSymptomScreen() {
   const glucoseUnit = storage.getString(StorageKeys.GLUCOSE_UNIT) ?? 'mmol/L';
   const dateFnsLocale = (storage.getString(StorageKeys.LANGUAGE) ?? 'ru') === 'ru' ? ruLocale : undefined;
   const [selectedTypes, setSelectedTypes] = useState<SymptomType[]>([]);
-  const [severity, setSeverity] = useState<SymptomSeverity>('mild');
+  const [severityOverride, setSeverityOverride] = useState<SymptomSeverity | null>(null);
+  const [showSeverityOverride, setShowSeverityOverride] = useState(false);
   const [notes, setNotes] = useState('');
+
+  const autoSeverity = selectedTypes.length > 0 ? calculateSeverity(selectedTypes) : null;
+  const severity: SymptomSeverity = severityOverride ?? autoSeverity?.severity ?? 'mild';
   const [photos, setPhotos] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
   // ARCH005: prevent duplicate symptom save on double-tap
@@ -64,7 +69,12 @@ export default function AddSymptomScreen() {
       symptomRepository.findById(editId).then(entry => {
         if (!entry) return;
         setSelectedTypes(entry.symptomTypes);
-        setSeverity(entry.severity);
+        // If stored severity differs from auto-calculated, treat as override
+        const auto = calculateSeverity(entry.symptomTypes);
+        if (auto.severity !== entry.severity) {
+          setSeverityOverride(entry.severity);
+          setShowSeverityOverride(true);
+        }
         setNotes(entry.notes ?? '');
         setPhotos(entry.photoUris ?? []);
         setSelectedGlucoseId(entry.glucoseReadingId);
@@ -203,23 +213,57 @@ export default function AddSymptomScreen() {
             })}
           </View>
 
-          <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>{t('symptoms.severity')}</Text>
-          <View style={styles.severityRow}>
-            {SEVERITY_OPTIONS.map(opt => (
-              <TouchableOpacity
-                key={opt.value}
-                style={[
-                  styles.severityBtn,
-                  { backgroundColor: severity === opt.value ? opt.color : theme.colors.surfaceSecondary, flex: 1 },
-                ]}
-                onPress={() => setSeverity(opt.value)}
-              >
-                <Text style={{ color: severity === opt.value ? '#fff' : theme.colors.text, fontWeight: '600' }}>
-                  {t(opt.labelKey)}
+          {/* Auto-severity result */}
+          {autoSeverity && (
+            <View style={[styles.severityCard, { backgroundColor: theme.colors.surface, ...theme.shadows.sm }]}>
+              <View style={styles.severityCardHeader}>
+                <Text style={[styles.sectionTitle, { color: theme.colors.text, marginTop: 0 }]}>{t('symptoms.autoSeverity')}</Text>
+                <TouchableOpacity onPress={() => setShowSeverityOverride(!showSeverityOverride)}>
+                  <Text style={{ color: theme.colors.primary, fontSize: 13, fontWeight: '600' }}>{t('symptoms.changeSeverity')}</Text>
+                </TouchableOpacity>
+              </View>
+              <View style={[styles.severityBadge, { backgroundColor: `${SEVERITY_OPTIONS.find(o => o.value === severity)?.color ?? '#999'}20` }]}>
+                <Text style={[styles.severityBadgeText, { color: SEVERITY_OPTIONS.find(o => o.value === severity)?.color }]}>
+                  {t(`symptoms.${severity}`)}
                 </Text>
-              </TouchableOpacity>
-            ))}
-          </View>
+              </View>
+              <Text style={[styles.severityExplanation, { color: theme.colors.textSecondary }]}>
+                {t(autoSeverity.explanationKey)}
+              </Text>
+              {severity === 'severe' && (
+                <TouchableOpacity
+                  style={[styles.emergencyBtn, { backgroundColor: '#FF3B30' }]}
+                  onPress={() => navigation.getParent()?.getParent()?.navigate('Emergency' as never)}
+                >
+                  <Ionicons name="warning" size={16} color="#fff" style={{ marginRight: 6 }} />
+                  <Text style={{ color: '#fff', fontWeight: '700', fontSize: 14 }}>{t('emergency.emergencyMode')}</Text>
+                </TouchableOpacity>
+              )}
+            </View>
+          )}
+
+          {/* Manual severity override */}
+          {showSeverityOverride && (
+            <>
+              <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>{t('symptoms.severity')}</Text>
+              <View style={styles.severityRow}>
+                {SEVERITY_OPTIONS.map(opt => (
+                  <TouchableOpacity
+                    key={opt.value}
+                    style={[
+                      styles.severityBtn,
+                      { backgroundColor: severity === opt.value ? opt.color : theme.colors.surfaceSecondary, flex: 1 },
+                    ]}
+                    onPress={() => setSeverityOverride(opt.value)}
+                  >
+                    <Text style={{ color: severity === opt.value ? '#fff' : theme.colors.text, fontWeight: '600' }}>
+                      {t(opt.labelKey)}
+                    </Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+            </>
+          )}
 
           <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>{t('symptoms.photo')}</Text>
           <View style={styles.photoRow}>
@@ -320,6 +364,12 @@ const styles = StyleSheet.create({
   symptomChip: { width: '47%', padding: 14, borderRadius: 14, alignItems: 'center', gap: 6 },
   symptomEmoji: { fontSize: 28 },
   symptomLabel: { fontSize: 12, fontWeight: '600', textAlign: 'center' },
+  severityCard: { padding: 16, borderRadius: 16, gap: 10 },
+  severityCardHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
+  severityBadge: { alignSelf: 'flex-start', paddingHorizontal: 14, paddingVertical: 6, borderRadius: 12 },
+  severityBadgeText: { fontSize: 15, fontWeight: '700' },
+  severityExplanation: { fontSize: 13, lineHeight: 18 },
+  emergencyBtn: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', padding: 14, borderRadius: 12, marginTop: 4 },
   severityRow: { flexDirection: 'row', gap: 10 },
   severityBtn: { padding: 14, borderRadius: 12, alignItems: 'center' },
   photoRow: { flexDirection: 'row', gap: 12 },

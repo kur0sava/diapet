@@ -122,9 +122,29 @@ export default function SymptomsListScreen() {
         onEndReached={() => hasNextPage && fetchNextPage()}
         onEndReachedThreshold={0.5}
         ListHeaderComponent={
-          symptoms.length > 0 ? (
-            <Text style={[styles.hintText, { color: theme.colors.textTertiary }]}>{t('common.longPressToDelete')}</Text>
-          ) : null
+          <>
+            <TouchableOpacity
+              style={[styles.assessmentBanner, { backgroundColor: theme.colors.surface, ...theme.shadows.sm }]}
+              onPress={() => navigation.navigate('Assessment')}
+              activeOpacity={0.8}
+            >
+              <View style={[styles.assessmentIcon, { backgroundColor: `${theme.colors.success}20` }]}>
+                <Ionicons name="fitness-outline" size={22} color={theme.colors.success} />
+              </View>
+              <View style={{ flex: 1 }}>
+                <Text style={[styles.assessmentTitle, { color: theme.colors.text, fontFamily: theme.fonts.semibold }]}>
+                  {t('symptoms.takeAssessment')}
+                </Text>
+                <Text style={[styles.assessmentSub, { color: theme.colors.textSecondary }]}>
+                  {t('symptoms.takeAssessmentSub')}
+                </Text>
+              </View>
+              <Ionicons name="chevron-forward" size={18} color={theme.colors.textTertiary} />
+            </TouchableOpacity>
+            {symptoms.length > 0 && (
+              <Text style={[styles.hintText, { color: theme.colors.textTertiary }]}>{t('common.longPressToDelete')}</Text>
+            )}
+          </>
         }
         ListFooterComponent={
           isFetchingNextPage ? (
@@ -167,6 +187,10 @@ const styles = StyleSheet.create({
   notes: { fontSize: 13 },
   photosRow: { flexDirection: 'row', alignItems: 'center', gap: 4 },
   photos: { fontSize: 13, fontWeight: '500' },
+  assessmentBanner: { flexDirection: 'row', alignItems: 'center', gap: 12, padding: 14, borderRadius: 16, marginBottom: 12 },
+  assessmentIcon: { width: 40, height: 40, borderRadius: 20, alignItems: 'center', justifyContent: 'center' },
+  assessmentTitle: { fontSize: 14 },
+  assessmentSub: { fontSize: 12, marginTop: 2 },
   fab: { position: 'absolute', bottom: 24, right: 20, width: 56, height: 56, borderRadius: 28, alignItems: 'center', justifyContent: 'center', elevation: 6, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.2, shadowRadius: 4 },
   loadingFooter: { paddingVertical: 16 },
   hintText: { fontSize: 12, textAlign: 'center', marginBottom: 8 },

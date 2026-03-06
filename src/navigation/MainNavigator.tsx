@@ -62,6 +62,7 @@ function HomeStackNavigator() {
       <HomeStack.Screen name="AddSymptom" component={AddSymptomScreen} options={{ headerShown: false }} />
       <HomeStack.Screen name="InjectionList" component={InjectionListScreen} options={{ headerShown: false }} />
       <HomeStack.Screen name="FeedingList" component={FeedingListScreen} options={{ headerShown: false }} />
+      <HomeStack.Screen name="FeedGuide" component={FeedGuideScreen} options={{ headerShown: false }} />
     </HomeStack.Navigator>
   );
 }
@@ -97,6 +98,7 @@ function SymptomsStackNavigator() {
       <SymptomsStack.Screen name="SymptomsList" component={SymptomsListScreen} options={{ headerShown: false }} />
       <SymptomsStack.Screen name="AddSymptom" component={AddSymptomScreen} options={{ headerShown: false }} />
       <SymptomsStack.Screen name="SymptomDetail" component={SymptomDetailScreen} options={{ headerShown: false }} />
+      <SymptomsStack.Screen name="Assessment" component={AssessmentScreen} options={{ headerShown: false }} />
     </SymptomsStack.Navigator>
   );
 }
@@ -139,7 +141,6 @@ function MoreStackNavigator() {
       <MoreStack.Screen name="Expenses" component={ExpensesScreen} options={{ headerShown: false }} />
       <MoreStack.Screen name="AddExpense" component={AddExpenseScreen} options={{ headerShown: false }} />
       <MoreStack.Screen name="Settings" component={SettingsScreen} options={{ headerShown: false }} />
-      <MoreStack.Screen name="Assessment" component={AssessmentScreen} options={{ headerShown: false }} />
       <MoreStack.Screen name="FeedCalculator" component={FeedCalculatorScreen} options={{ headerShown: false }} />
       <MoreStack.Screen name="Subscription" component={SubscriptionScreen} options={{ headerShown: false }} />
     </MoreStack.Navigator>

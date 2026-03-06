@@ -92,6 +92,8 @@ export const ru = {
     trendUp: 'Растёт',
     trendDown: 'Снижается',
     trendStable: 'Стабильно',
+    feedGuide: 'Гид по питанию',
+    feedGuideSub: 'Корма, натуралка, лечебное питание',
     status: {
       good: 'Хороший контроль',
       attention: 'Требует внимания',
@@ -241,6 +243,15 @@ export const ru = {
       vomiting: 'Рвота',
       diarrhea: 'Диарея',
       other: 'Другое',
+    },
+    autoSeverity: 'Оценка тяжести',
+    changeSeverity: 'Изменить',
+    takeAssessment: 'Пройти полную оценку',
+    takeAssessmentSub: '8 вопросов о состоянии питомца',
+    severityExplanation: {
+      mild: 'Симптомы лёгкие. Продолжайте наблюдать и записывать изменения.',
+      moderate: 'Симптомы требуют внимания. Рекомендуется консультация ветеринара.',
+      severe: 'Серьёзные симптомы. Свяжитесь с ветеринаром как можно скорее!',
     },
   },
 

@@ -92,6 +92,8 @@ export const en = {
     trendUp: 'Rising',
     trendDown: 'Falling',
     trendStable: 'Stable',
+    feedGuide: 'Feeding Guide',
+    feedGuideSub: 'Diets, natural food, therapeutic nutrition',
     status: {
       good: 'Good control',
       attention: 'Needs attention',
@@ -241,6 +243,15 @@ export const en = {
       vomiting: 'Vomiting',
       diarrhea: 'Diarrhea',
       other: 'Other',
+    },
+    autoSeverity: 'Severity Assessment',
+    changeSeverity: 'Change',
+    takeAssessment: 'Take Full Assessment',
+    takeAssessmentSub: '8 questions about your pet\'s condition',
+    severityExplanation: {
+      mild: 'Symptoms are mild. Continue monitoring and recording changes.',
+      moderate: 'Symptoms need attention. Consider consulting your vet.',
+      severe: 'Serious symptoms. Contact your vet as soon as possible!',
     },
   },
 

@@ -286,6 +286,26 @@ export default function DashboardScreen() {
           </Card>
         </View>
 
+        {/* Feed Guide Banner */}
+        <TouchableOpacity
+          style={[styles.feedGuideBanner, { backgroundColor: theme.colors.surface, ...theme.shadows.sm }]}
+          onPress={() => navigation.navigate('FeedGuide')}
+          activeOpacity={0.8}
+        >
+          <View style={[styles.feedGuideIcon, { backgroundColor: theme.colors.successLight }]}>
+            <Ionicons name="nutrition-outline" size={22} color={theme.colors.success} />
+          </View>
+          <View style={{ flex: 1 }}>
+            <Text style={[styles.feedGuideTitle, { color: theme.colors.text, fontFamily: theme.fonts.semibold }]}>
+              {t('dashboard.feedGuide')}
+            </Text>
+            <Text style={[styles.feedGuideSub, { color: theme.colors.textSecondary }]}>
+              {t('dashboard.feedGuideSub')}
+            </Text>
+          </View>
+          <Ionicons name="chevron-forward" size={18} color={theme.colors.textTertiary} />
+        </TouchableOpacity>
+
         {/* Last Injection Info */}
         {lastInjection && (
           <View style={styles.section}>
@@ -432,6 +452,10 @@ const styles = StyleSheet.create({
   historyLink: { flex: 1, flexDirection: 'row', alignItems: 'center', gap: 10, padding: 14, borderRadius: 16 },
   historyIcon: { width: 34, height: 34, borderRadius: 17, alignItems: 'center', justifyContent: 'center' },
   historyLinkText: { flex: 1, fontSize: 13 },
+  feedGuideBanner: { flexDirection: 'row', alignItems: 'center', gap: 12, marginHorizontal: 20, marginTop: 20, padding: 14, borderRadius: 16 },
+  feedGuideIcon: { width: 40, height: 40, borderRadius: 20, alignItems: 'center', justifyContent: 'center' },
+  feedGuideTitle: { fontSize: 14 },
+  feedGuideSub: { fontSize: 12, marginTop: 2 },
   upgradeCard: { flexDirection: 'row', alignItems: 'center', gap: 12, marginHorizontal: 20, marginTop: 20, padding: 14, borderRadius: 16 },
   upgradeIconCircle: { width: 32, height: 32, borderRadius: 16, alignItems: 'center', justifyContent: 'center' },
   upgradeText: { flex: 1, fontSize: 13 },
