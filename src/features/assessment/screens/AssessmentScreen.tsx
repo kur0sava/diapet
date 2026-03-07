@@ -140,7 +140,7 @@ export default function AssessmentScreen() {
 
             {Array.isArray(actions) && actions.length > 0 && (
               <View style={styles.actionsList}>
-                {actions.map((action, i) => (
+                {actions.map((action, _i) => (
                   <View key={action} style={styles.actionItem}>
                     <Text style={styles.actionCheckmark}>{'\u2705'}</Text>
                     <Text style={[styles.actionText, { color: theme.colors.text }]}>{action}</Text>

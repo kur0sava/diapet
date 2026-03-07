@@ -38,7 +38,7 @@ export default function InjectionListScreen() {
     enabled: !!activePet?.id,
   });
 
-  const injections = data?.pages.flatMap(p => p.data) ?? [];
+  const injections = useMemo(() => data?.pages.flatMap(p => p.data) ?? [], [data]);
 
   const chartData = useMemo((): BarData[] => {
     const cutoff = subDays(new Date(), 14);

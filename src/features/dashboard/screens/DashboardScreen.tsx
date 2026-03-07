@@ -17,7 +17,7 @@ import { useQuery } from '@tanstack/react-query';
 import { glucoseRepository, injectionRepository, scheduleRepository } from '@storage/database';
 import { storage, StorageKeys } from '@storage/mmkv/storage';
 import { GlucoseUnit } from '@storage/domain/types';
-import { Card, GlucoseValueBadge } from '@shared/components/ui';
+import { Card } from '@shared/components/ui';
 import { GlucoseChart } from '../components/GlucoseChart';
 import { StatusCard } from '../components/StatusCard';
 import { QuickActionButton } from '../components/QuickActionButton';

@@ -4,6 +4,15 @@ import uuid from 'react-native-uuid';
 
 export type { Schedule };
 
+interface ScheduleRow {
+  id: string;
+  pet_id: string;
+  time_of_day: string;
+  days_of_week: string | null;
+  is_active: number;
+  created_at: string;
+}
+
 export const scheduleRepository = {
   async addInjectionTime(petId: string, timeOfDay: string): Promise<Schedule> {
     const db = await getDatabase();
@@ -29,7 +38,7 @@ export const scheduleRepository = {
 
   async getInjectionTimes(petId: string): Promise<Schedule[]> {
     const db = await getDatabase();
-    const rows = await db.getAllAsync<any>(
+    const rows = await db.getAllAsync<ScheduleRow>(
       'SELECT * FROM injection_schedule WHERE pet_id = ? AND is_active = 1 ORDER BY time_of_day',
       [petId]
     );
@@ -38,7 +47,7 @@ export const scheduleRepository = {
 
   async getFeedingTimes(petId: string): Promise<Schedule[]> {
     const db = await getDatabase();
-    const rows = await db.getAllAsync<any>(
+    const rows = await db.getAllAsync<ScheduleRow>(
       'SELECT * FROM feeding_schedule WHERE pet_id = ? AND is_active = 1 ORDER BY time_of_day',
       [petId]
     );
@@ -56,7 +65,7 @@ export const scheduleRepository = {
   },
 };
 
-function mapRow(row: any): Schedule {
+function mapRow(row: ScheduleRow): Schedule {
   return {
     id: row.id,
     petId: row.pet_id,

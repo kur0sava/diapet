@@ -29,6 +29,7 @@ export default function EmergencyScreen() {
       Alert.alert(t('emergency.noVetContact'), t('emergency.addVetContact'), [
         { text: t('common.cancel'), style: 'cancel' },
         { text: t('emergency.call112'), onPress: () => Linking.openURL('tel:112') },
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         { text: t('emergency.goToSettings'), onPress: () => navigation.navigate('Main', { screen: 'More', params: { screen: 'EditPet' } } as any) },
       ]);
       return;
@@ -48,7 +49,6 @@ export default function EmergencyScreen() {
   // UX-014: Use theme-aware colors for dark mode support
   const cardBg = theme.colors.surface;
   const cardText = theme.colors.text;
-  const cardTextSecondary = theme.colors.textSecondary;
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: '#FF3B30' }]}>

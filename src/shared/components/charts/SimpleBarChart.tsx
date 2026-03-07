@@ -43,7 +43,7 @@ export function SimpleBarChart({ data, title, height = 140, unit }: Props) {
 
         {/* Bars */}
         <View style={styles.barsContainer}>
-          {data.map((item, i) => {
+          {data.map((item) => {
             const barHeight = (item.value / maxVal) * (height - 24);
             const color = item.color ?? theme.colors.primary;
             return (
@@ -107,7 +107,7 @@ export function SimpleHorizontalBarChart({ data, title }: HBarProps) {
       {title && (
         <Text style={[styles.title, { color: theme.colors.textSecondary }]}>{title}</Text>
       )}
-      {data.map((item, i) => (
+      {data.map((item) => (
         <View key={item.label} style={styles.hBarRow}>
           <Text
             style={[styles.hBarLabel, { color: theme.colors.text }]}

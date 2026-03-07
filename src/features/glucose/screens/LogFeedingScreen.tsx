@@ -56,7 +56,7 @@ export default function LogFeedingScreen() {
       await queryClient.invalidateQueries({ queryKey: ['feedings'] });
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       navigation.goBack();
-    } catch (e) {
+    } catch {
       Alert.alert(t('common.error'), t('feeding.saveError'));
     } finally {
       savingRef.current = false;

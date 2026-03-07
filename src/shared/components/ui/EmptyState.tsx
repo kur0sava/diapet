@@ -22,7 +22,7 @@ export function EmptyState({ icon = '📋', iconName, iconColor, title, subtitle
     <View style={styles.container}>
       {iconName ? (
         <View style={[styles.iconCircle, { backgroundColor: color + '15' }]}>
-          <Ionicons name={iconName as any} size={32} color={color} />
+          <Ionicons name={iconName as string} size={32} color={color} />
         </View>
       ) : (
         <Text style={styles.icon}>{icon}</Text>

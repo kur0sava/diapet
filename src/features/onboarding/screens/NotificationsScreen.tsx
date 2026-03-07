@@ -69,7 +69,7 @@ export default function NotificationsScreen() {
 
       // Navigate to main app
       rootNavigation.reset({ index: 0, routes: [{ name: 'Main' }] });
-    } catch (error) {
+    } catch {
       Alert.alert(t('common.error'), t('onboarding.savingError'));
     } finally {
       setLoading(false);
@@ -89,7 +89,7 @@ export default function NotificationsScreen() {
         </Text>
 
         <View style={styles.features}>
-          {[t('onboarding.notifInjections'), t('onboarding.notifFeedings'), t('onboarding.notifGlucose')].map((feature, i) => (
+          {[t('onboarding.notifInjections'), t('onboarding.notifFeedings'), t('onboarding.notifGlucose')].map((feature) => (
             <View key={feature} style={[styles.featureRow, { backgroundColor: theme.colors.surface, borderRadius: 12 }]}>
               <Text style={[styles.featureText, { color: theme.colors.text }]}>{feature}</Text>
             </View>

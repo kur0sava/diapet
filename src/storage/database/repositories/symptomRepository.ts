@@ -3,6 +3,19 @@ import { SymptomEntry, SymptomType, CreateSymptomDTO, PaginatedResult } from '@s
 import uuid from 'react-native-uuid';
 import * as FileSystem from 'expo-file-system/legacy';
 
+interface SymptomRow {
+  id: string;
+  pet_id: string;
+  symptom_types: string | null;
+  severity: string;
+  photo_uris: string | null;
+  notes: string | null;
+  glucose_reading_id: string | null;
+  recorded_at: string;
+  created_at: string;
+  updated_at: string;
+}
+
 export const symptomRepository = {
   async create(dto: CreateSymptomDTO): Promise<SymptomEntry> {
     const db = await getDatabase();
@@ -29,7 +42,7 @@ export const symptomRepository = {
 
   async findById(id: string): Promise<SymptomEntry | null> {
     const db = await getDatabase();
-    const row = await db.getFirstAsync<any>('SELECT * FROM symptoms WHERE id = ?', [id]);
+    const row = await db.getFirstAsync<SymptomRow>('SELECT * FROM symptoms WHERE id = ?', [id]);
     if (!row) return null;
     const types = await db.getAllAsync<{ symptom_type: string }>(
       'SELECT symptom_type FROM symptom_entry_types WHERE symptom_id = ?',
@@ -40,7 +53,7 @@ export const symptomRepository = {
 
   async findByPetId(petId: string, limit = 50, cursor?: string): Promise<PaginatedResult<SymptomEntry>> {
     const db = await getDatabase();
-    const rows = await db.getAllAsync<any>(
+    const rows = await db.getAllAsync<SymptomRow>(
       'SELECT * FROM symptoms WHERE pet_id = ? AND (? IS NULL OR recorded_at < ?) ORDER BY recorded_at DESC LIMIT ?',
       [petId, cursor ?? null, cursor ?? null, limit + 1]
     );
@@ -52,7 +65,7 @@ export const symptomRepository = {
     }
 
     // Batch-load all symptom types for the returned symptom IDs
-    const ids = items.map((r: any) => r.id as string);
+    const ids = items.map((r) => r.id);
     const placeholders = ids.map(() => '?').join(',');
     const typeRows = await db.getAllAsync<{ symptom_id: string; symptom_type: string }>(
       `SELECT symptom_id, symptom_type FROM symptom_entry_types WHERE symptom_id IN (${placeholders})`,
@@ -66,7 +79,7 @@ export const symptomRepository = {
       typesBySymptomId.set(tr.symptom_id, arr);
     }
 
-    const data = items.map((row: any) => {
+    const data = items.map((row) => {
       const junctionTypes = typesBySymptomId.get(row.id);
       return mapRowToSymptom(row, junctionTypes && junctionTypes.length > 0 ? junctionTypes : undefined);
     });
@@ -82,7 +95,7 @@ export const symptomRepository = {
     const now = new Date().toISOString();
     await db.withTransactionAsync(async () => {
       const sets: string[] = [];
-      const params: any[] = [];
+      const params: (string | null)[] = [];
       if (dto.symptomTypes !== undefined) { sets.push('symptom_types=?'); params.push(JSON.stringify(dto.symptomTypes)); }
       if (dto.severity !== undefined) { sets.push('severity=?'); params.push(dto.severity); }
       if ('photoUris' in dto) { sets.push('photo_uris=?'); params.push(dto.photoUris ? JSON.stringify(dto.photoUris) : null); }
@@ -129,14 +142,14 @@ function safeJsonParse<T>(json: string | null | undefined, fallback: T): T {
   try { return JSON.parse(json); } catch { return fallback; }
 }
 
-function mapRowToSymptom(row: any, types?: SymptomType[]): SymptomEntry {
+function mapRowToSymptom(row: SymptomRow, types?: SymptomType[]): SymptomEntry {
   return {
     id: row.id,
     petId: row.pet_id,
     symptomTypes: types ?? safeJsonParse<SymptomType[]>(row.symptom_types, []),
-    severity: row.severity,
+    severity: row.severity as SymptomEntry['severity'],
     photoUris: safeJsonParse<string[]>(row.photo_uris, []),
-    notes: row.notes,
+    notes: row.notes ?? undefined,
     glucoseReadingId: row.glucose_reading_id ?? undefined,
     recordedAt: row.recorded_at,
     createdAt: row.created_at,

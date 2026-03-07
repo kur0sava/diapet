@@ -20,7 +20,7 @@ export function getStorage(): MMKV {
 export const storage = new Proxy({} as MMKV, {
   get(_target, prop) {
     const instance = getStorage();
-    const value = (instance as any)[prop];
+    const value = instance[prop as keyof MMKV];
     return typeof value === 'function' ? value.bind(instance) : value;
   },
 });

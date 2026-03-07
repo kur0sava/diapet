@@ -45,7 +45,7 @@ export default function FeedingListScreen() {
     enabled: !!activePet?.id,
   });
 
-  const feedings = data?.pages.flatMap(p => p.data) ?? [];
+  const feedings = useMemo(() => data?.pages.flatMap(p => p.data) ?? [], [data]);
 
   const chartData = useMemo((): BarData[] => {
     const cutoff = subDays(new Date(), 14);

@@ -107,7 +107,7 @@ export function Button({
       ) : (
         <>
           {icon && iconPosition === 'left' && (
-            <Ionicons name={icon as any} size={iconSize} color={textColor} style={{ marginRight: 6 }} />
+            <Ionicons name={icon as string} size={iconSize} color={textColor} style={{ marginRight: 6 }} />
           )}
           <Text
             style={[
@@ -124,7 +124,7 @@ export function Button({
             {title}
           </Text>
           {icon && iconPosition === 'right' && (
-            <Ionicons name={icon as any} size={iconSize} color={textColor} style={{ marginLeft: 6 }} />
+            <Ionicons name={icon as string} size={iconSize} color={textColor} style={{ marginLeft: 6 }} />
           )}
         </>
       )}

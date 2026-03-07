@@ -11,7 +11,7 @@ import { useTheme } from '@shared/theme';
 import { Ionicons } from '@expo/vector-icons';
 import {
   getPrescriptionFoods, getOtcFoods, getFoodsByCarbs,
-  getFoodVerdict, VALID_REGIONS, type Region, type DiabeticCatFood, type FoodType,
+  getFoodVerdict, VALID_REGIONS, type Region, type DiabeticCatFood,
 } from '../data/diabeticFoods';
 import { getStoresForRegion } from '../data/regionStores';
 import type { StoreEntry } from '../types';
@@ -84,7 +84,7 @@ export default function FeedGuideRegionScreen() {
 
   const renderStoreChip = (store: StoreEntry) => (
     <View key={store.id} style={[styles.storeChip, { backgroundColor: theme.colors.surfaceSecondary }]}>
-      <Ionicons name={STORE_TYPE_ICONS[store.type] as any} size={16} color={theme.colors.primary} />
+      <Ionicons name={STORE_TYPE_ICONS[store.type] as string} size={16} color={theme.colors.primary} />
       <Text style={[styles.storeName, { color: theme.colors.text }]}>
         {isRu && store.nameRu ? store.nameRu : store.name}
       </Text>

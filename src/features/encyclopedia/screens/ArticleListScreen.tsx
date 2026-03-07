@@ -62,7 +62,7 @@ export default function ArticleListScreen() {
     >
       <View style={styles.articleHeader}>
         <View style={[styles.categoryBadge, { backgroundColor: CATEGORY_ICONS[item.category].color + '15' }]}>
-          <Ionicons name={CATEGORY_ICONS[item.category].name as any} size={14} color={CATEGORY_ICONS[item.category].color} />
+          <Ionicons name={CATEGORY_ICONS[item.category].name as string} size={14} color={CATEGORY_ICONS[item.category].color} />
           <Text style={[styles.categoryLabel, { color: CATEGORY_ICONS[item.category].color }]}>
             {categoryLabels[item.category]}
           </Text>
@@ -127,7 +127,7 @@ export default function ArticleListScreen() {
             ]}
             onPress={() => setSelectedCategory(selectedCategory === item ? null : item)}
           >
-            <Ionicons name={CATEGORY_ICONS[item].name as any} size={16} color={selectedCategory === item ? '#fff' : CATEGORY_ICONS[item].color} />
+            <Ionicons name={CATEGORY_ICONS[item].name as string} size={16} color={selectedCategory === item ? '#fff' : CATEGORY_ICONS[item].color} />
             <Text style={{ color: selectedCategory === item ? '#fff' : theme.colors.text, fontSize: 13, fontWeight: '500' }}>
               {categoryLabels[item]}
             </Text>

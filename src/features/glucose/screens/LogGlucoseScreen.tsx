@@ -79,7 +79,7 @@ export default function LogGlucoseScreen() {
       });
     }
     return () => { cancelled = true; };
-  }, [editId]);
+  }, [editId, savedUnit]);
 
   const numValue = parseFloat(value.replace(',', '.'));
   // MM001: use consistent max — 35 mmol/L = 630 mg/dL (was 600 mg/dL, mismatched)
@@ -119,7 +119,7 @@ export default function LogGlucoseScreen() {
       await queryClient.invalidateQueries({ queryKey: ['glucose'] });
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       navigation.goBack();
-    } catch (e) {
+    } catch {
       Alert.alert(t('common.error'), t('glucose.saveError'));
     } finally {
       savingRef.current = false;

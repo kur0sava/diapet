@@ -82,7 +82,6 @@ export default function GlucoseListScreen() {
   const [showDateFrom, setShowDateFrom] = useState(false);
   const [showDateTo, setShowDateTo] = useState(false);
 
-  const filtersActive = isFilterActive(filters);
   const activeFilterCount = countActiveFilters(filters);
 
   // Compute level filter from selected presets
@@ -118,14 +117,14 @@ export default function GlucoseListScreen() {
     });
   }, []);
 
-  const handleDateFromChange = useCallback((_event: any, date?: Date) => {
+  const handleDateFromChange = useCallback((_event: unknown, date?: Date) => {
     setShowDateFrom(false);
     if (date) {
       setFilters(prev => ({ ...prev, dateFrom: date.toISOString() }));
     }
   }, []);
 
-  const handleDateToChange = useCallback((_event: any, date?: Date) => {
+  const handleDateToChange = useCallback((_event: unknown, date?: Date) => {
     setShowDateTo(false);
     if (date) {
       // Set to end of day
@@ -143,7 +142,6 @@ export default function GlucoseListScreen() {
 
   const {
     data,
-    isLoading,
     hasNextPage,
     fetchNextPage,
     isFetchingNextPage,
@@ -161,7 +159,7 @@ export default function GlucoseListScreen() {
     enabled: !!activePet?.id,
   });
 
-  const readings = data?.pages.flatMap(p => p.data) ?? [];
+  const readings = useMemo(() => data?.pages.flatMap(p => p.data) ?? [], [data]);
 
   const { data: stats } = useQuery({
     queryKey: ['glucose', 'stats', activePet?.id],
@@ -267,7 +265,7 @@ export default function GlucoseListScreen() {
         </TouchableOpacity>
       </AnimatedListItem>
     );
-  }, [unit, theme, navigation, handleDelete, mealLabels]);
+  }, [unit, theme, navigation, handleDelete, mealLabels, t]);
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.background }]}>

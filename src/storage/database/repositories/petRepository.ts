@@ -2,6 +2,23 @@ import { getDatabase } from '../database';
 import { Pet, CreatePetDTO, UpdatePetDTO } from '@storage/domain/types';
 import uuid from 'react-native-uuid';
 
+interface PetRow {
+  id: string;
+  name: string;
+  species: string;
+  breed: string | null;
+  gender: string;
+  birth_year: number | null;
+  weight_kg: number | null;
+  diagnosis_date: string | null;
+  diabetes_type: string;
+  insulin_type: string | null;
+  photo_uri: string | null;
+  is_active: number;
+  created_at: string;
+  updated_at: string;
+}
+
 export const petRepository = {
   async create(dto: CreatePetDTO): Promise<Pet> {
     const db = await getDatabase();
@@ -19,19 +36,19 @@ export const petRepository = {
 
   async findById(id: string): Promise<Pet | null> {
     const db = await getDatabase();
-    const row = await db.getFirstAsync<any>('SELECT * FROM pets WHERE id = ?', [id]);
+    const row = await db.getFirstAsync<PetRow>('SELECT * FROM pets WHERE id = ?', [id]);
     return row ? mapRowToPet(row) : null;
   },
 
   async findAll(): Promise<Pet[]> {
     const db = await getDatabase();
-    const rows = await db.getAllAsync<any>('SELECT * FROM pets ORDER BY created_at ASC');
+    const rows = await db.getAllAsync<PetRow>('SELECT * FROM pets ORDER BY created_at ASC');
     return rows.map(mapRowToPet);
   },
 
   async findActive(): Promise<Pet[]> {
     const db = await getDatabase();
-    const rows = await db.getAllAsync<any>('SELECT * FROM pets WHERE is_active = 1 ORDER BY created_at ASC');
+    const rows = await db.getAllAsync<PetRow>('SELECT * FROM pets WHERE is_active = 1 ORDER BY created_at ASC');
     return rows.map(mapRowToPet);
   },
 
@@ -39,7 +56,7 @@ export const petRepository = {
     const db = await getDatabase();
     const now = new Date().toISOString();
     const sets: string[] = [];
-    const params: any[] = [];
+    const params: (string | number | null)[] = [];
     const fields: Array<[string, keyof UpdatePetDTO]> = [
       ['name', 'name'], ['breed', 'breed'], ['gender', 'gender'],
       ['birth_year', 'birthYear'], ['weight_kg', 'weightKg'],
@@ -66,19 +83,19 @@ export const petRepository = {
   },
 };
 
-function mapRowToPet(row: any): Pet {
+function mapRowToPet(row: PetRow): Pet {
   return {
     id: row.id,
     name: row.name,
-    species: row.species,
-    breed: row.breed,
-    gender: row.gender,
-    birthYear: row.birth_year,
-    weightKg: row.weight_kg,
-    diagnosisDate: row.diagnosis_date,
-    diabetesType: row.diabetes_type,
-    insulinType: row.insulin_type,
-    photoUri: row.photo_uri,
+    species: row.species as Pet['species'],
+    breed: row.breed ?? undefined,
+    gender: row.gender as Pet['gender'],
+    birthYear: row.birth_year ?? undefined,
+    weightKg: row.weight_kg ?? undefined,
+    diagnosisDate: row.diagnosis_date ?? undefined,
+    diabetesType: row.diabetes_type as Pet['diabetesType'],
+    insulinType: row.insulin_type ?? undefined,
+    photoUri: row.photo_uri ?? undefined,
     isActive: !!row.is_active,
     createdAt: row.created_at,
     updatedAt: row.updated_at,

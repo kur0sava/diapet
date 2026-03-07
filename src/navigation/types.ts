@@ -74,8 +74,11 @@ export type MoreStackParamList = {
 export type OnboardingStackParamList = {
   Language: undefined;
   PetInfo: undefined;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   Schedule: { petData: any };
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   VetContact: { petData: any; injectionTimes: string[]; feedingTimes: string[] };
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   Notifications: { petData: any; injectionTimes: string[]; feedingTimes: string[]; vetName?: string; vetPhone?: string };
 };
 

@@ -73,8 +73,8 @@ export const useSubscriptionStore = create<SubscriptionStore>((set) => ({
       setCachedPro(isPro);
       set({ isPro });
       return isPro;
-    } catch (e: any) {
-      if (!e.userCancelled) {
+    } catch (e: unknown) {
+      if (!(e instanceof Object && 'userCancelled' in e && e.userCancelled)) {
         console.error('Purchase error:', e);
       }
       return false;

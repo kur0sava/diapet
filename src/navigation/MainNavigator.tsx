@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, TouchableOpacity, StyleSheet } from 'react-native';
+import { View } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { Ionicons } from '@expo/vector-icons';
@@ -187,7 +187,7 @@ export default function MainNavigator() {
             };
             return (
               <View style={{ alignItems: 'center' }}>
-                <Ionicons name={icons[route.name] as any} size={size} color={color} />
+                <Ionicons name={icons[route.name] as string} size={size} color={color} />
                 {focused && (
                   <View style={{
                     width: 4,
@@ -210,5 +210,3 @@ export default function MainNavigator() {
       </Tab.Navigator>
   );
 }
-
-const styles = StyleSheet.create({});

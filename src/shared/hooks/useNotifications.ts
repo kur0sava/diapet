@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+
 import * as Notifications from 'expo-notifications';
 import { Platform } from 'react-native';
 import i18n from '@shared/i18n';

@@ -1,6 +1,5 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import { useTheme } from '@shared/theme';
 import { getGlucoseColor, getGlucoseLevel, MGDL_PER_MMOLL } from '@storage/domain/types';
 import { useTranslation } from 'react-i18next';
 import { storage, StorageKeys } from '@storage/mmkv/storage';
@@ -12,7 +11,6 @@ interface Props {
 }
 
 export function GlucoseValueBadge({ valueMmol, size = 'md', showLabel = true }: Props) {
-  const { theme } = useTheme();
   const { t } = useTranslation();
   const unit = storage.getString(StorageKeys.GLUCOSE_UNIT) ?? 'mmol/L';
 

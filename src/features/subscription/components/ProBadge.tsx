@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { Text, StyleSheet } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 
 export function ProBadge({ size = 'sm' }: { size?: 'sm' | 'md' }) {

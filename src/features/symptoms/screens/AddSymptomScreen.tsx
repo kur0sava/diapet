@@ -171,7 +171,7 @@ export default function AddSymptomScreen() {
       savingRef.current = false;
       setLoading(false);
     }
-  }, [activePet, selectedTypes, severity, notes, photos, selectedGlucoseId, queryClient, navigation, t]);
+  }, [activePet, selectedTypes, severity, notes, photos, selectedGlucoseId, queryClient, navigation, t, editId]);
 
   return (
     <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={{ flex: 1 }}>
@@ -203,7 +203,7 @@ export default function AddSymptomScreen() {
                   ]}
                   onPress={() => toggleType(type)}
                 >
-                  <Ionicons name={SYMPTOM_ICONS[type] as any} size={24} color={selected ? theme.colors.primary : theme.colors.textSecondary} />
+                  <Ionicons name={SYMPTOM_ICONS[type] as string} size={24} color={selected ? theme.colors.primary : theme.colors.textSecondary} />
                   <Text style={[styles.symptomLabel, { color: selected ? theme.colors.primary : theme.colors.text }]}
                     numberOfLines={2}>
                     {t(`symptoms.types.${type}`)}

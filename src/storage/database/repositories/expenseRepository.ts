@@ -3,6 +3,22 @@ import { Expense, CreateExpenseDTO } from '@storage/domain/types';
 import { lastDayOfMonth, format } from 'date-fns';
 import uuid from 'react-native-uuid';
 
+interface ExpenseRow {
+  id: string;
+  pet_id: string;
+  category: string;
+  amount: number;
+  currency: string;
+  description: string | null;
+  date: string;
+  created_at: string;
+  updated_at: string;
+}
+
+interface ExpenseTotalRow {
+  total: number | null;
+}
+
 export const expenseRepository = {
   async create(dto: CreateExpenseDTO): Promise<Expense> {
     const db = await getDatabase();
@@ -19,13 +35,13 @@ export const expenseRepository = {
 
   async findById(id: string): Promise<Expense | null> {
     const db = await getDatabase();
-    const row = await db.getFirstAsync<any>('SELECT * FROM expenses WHERE id = ?', [id]);
+    const row = await db.getFirstAsync<ExpenseRow>('SELECT * FROM expenses WHERE id = ?', [id]);
     return row ? mapRowToExpense(row) : null;
   },
 
   async findByPetId(petId: string): Promise<Expense[]> {
     const db = await getDatabase();
-    const rows = await db.getAllAsync<any>(
+    const rows = await db.getAllAsync<ExpenseRow>(
       'SELECT * FROM expenses WHERE pet_id = ? ORDER BY date DESC',
       [petId]
     );
@@ -36,7 +52,7 @@ export const expenseRepository = {
     const db = await getDatabase();
     const start = `${year}-${String(month).padStart(2, '0')}-01`;
     const end = format(lastDayOfMonth(new Date(year, month - 1)), 'yyyy-MM-dd');
-    const rows = await db.getAllAsync<any>(
+    const rows = await db.getAllAsync<ExpenseRow>(
       'SELECT * FROM expenses WHERE pet_id = ? AND date >= ? AND date <= ? ORDER BY date DESC',
       [petId, start, end]
     );
@@ -47,7 +63,7 @@ export const expenseRepository = {
     const db = await getDatabase();
     const start = `${year}-${String(month).padStart(2, '0')}-01`;
     const end = format(lastDayOfMonth(new Date(year, month - 1)), 'yyyy-MM-dd');
-    const row = await db.getFirstAsync<any>(
+    const row = await db.getFirstAsync<ExpenseTotalRow>(
       'SELECT SUM(amount) as total FROM expenses WHERE pet_id = ? AND date >= ? AND date <= ?',
       [petId, start, end]
     );
@@ -58,7 +74,7 @@ export const expenseRepository = {
     const db = await getDatabase();
     const now = new Date().toISOString();
     const sets: string[] = [];
-    const params: any[] = [];
+    const params: (string | number | null)[] = [];
     if (dto.category !== undefined) { sets.push('category=?'); params.push(dto.category); }
     if (dto.amount !== undefined) { sets.push('amount=?'); params.push(dto.amount); }
     if (dto.currency !== undefined) { sets.push('currency=?'); params.push(dto.currency); }
@@ -78,14 +94,14 @@ export const expenseRepository = {
   },
 };
 
-function mapRowToExpense(row: any): Expense {
+function mapRowToExpense(row: ExpenseRow): Expense {
   return {
     id: row.id,
     petId: row.pet_id,
-    category: row.category,
+    category: row.category as Expense['category'],
     amount: row.amount,
     currency: row.currency,
-    description: row.description,
+    description: row.description ?? undefined,
     date: row.date,
     createdAt: row.created_at,
     updatedAt: row.updated_at,

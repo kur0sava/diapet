@@ -142,7 +142,7 @@ const styles = StyleSheet.create({
   sectionTitle: { fontSize: 18, fontWeight: '700', marginTop: 12 },
   sectionDesc: { fontSize: 13, marginBottom: 8 },
   regionGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 10 },
-  regionChip: { flexDirection: 'row', alignItems: 'center', gap: 8, paddingHorizontal: 14, paddingVertical: 12, borderRadius: 14, width: '48%' as any },
+  regionChip: { flexDirection: 'row', alignItems: 'center', gap: 8, paddingHorizontal: 14, paddingVertical: 12, borderRadius: 14, width: '48%' as unknown as number },
   regionEmoji: { fontSize: 20 },
   regionLabel: { flex: 1, fontSize: 14, fontWeight: '600' },
   sectionCard: { flexDirection: 'row', alignItems: 'center', gap: 14, padding: 16, borderRadius: 16 },

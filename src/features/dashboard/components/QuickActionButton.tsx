@@ -1,5 +1,5 @@
 import React from 'react';
-import { Text, StyleSheet, View, Pressable } from 'react-native';
+import { Text, StyleSheet, Pressable } from 'react-native';
 import { useTheme } from '@shared/theme';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -10,7 +10,7 @@ const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
 interface Props {
   iconName: keyof typeof Ionicons.glyphMap;
-  iconColor: string;
+
   label: string;
   color: string;
   onPress: () => void;
@@ -24,7 +24,7 @@ function lightenColor(hex: string, amount: number): string {
   return `#${(r << 16 | g << 8 | b).toString(16).padStart(6, '0')}`;
 }
 
-export function QuickActionButton({ iconName, iconColor, label, color, onPress }: Props) {
+export function QuickActionButton({ iconName, label, color, onPress }: Props) {
   const { theme } = useTheme();
   const scale = useSharedValue(1);
 

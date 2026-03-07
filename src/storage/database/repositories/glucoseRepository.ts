@@ -9,6 +9,27 @@ import {
 } from '@storage/domain/types';
 import uuid from 'react-native-uuid';
 
+interface GlucoseRow {
+  id: string;
+  pet_id: string;
+  value_mmol: number;
+  value_mgdl: number;
+  meal_relation: string;
+  insulin_dose: number | null;
+  insulin_type: string | null;
+  notes: string | null;
+  recorded_at: string;
+  created_at: string;
+  updated_at: string;
+}
+
+interface GlucoseStatsRow {
+  avg: number | null;
+  min: number | null;
+  max: number | null;
+  count: number;
+}
+
 export const glucoseRepository = {
   async create(dto: CreateGlucoseDTO): Promise<GlucoseReading> {
     const db = await getDatabase();
@@ -28,13 +49,13 @@ export const glucoseRepository = {
 
   async findById(id: string): Promise<GlucoseReading | null> {
     const db = await getDatabase();
-    const row = await db.getFirstAsync<any>('SELECT * FROM glucose_readings WHERE id = ?', [id]);
+    const row = await db.getFirstAsync<GlucoseRow>('SELECT * FROM glucose_readings WHERE id = ?', [id]);
     return row ? mapRowToReading(row) : null;
   },
 
   async findByPetId(petId: string, limit = 50, cursor?: string): Promise<PaginatedResult<GlucoseReading>> {
     const db = await getDatabase();
-    const rows = await db.getAllAsync<any>(
+    const rows = await db.getAllAsync<GlucoseRow>(
       'SELECT * FROM glucose_readings WHERE pet_id = ? AND (? IS NULL OR recorded_at < ?) ORDER BY recorded_at DESC LIMIT ?',
       [petId, cursor ?? null, cursor ?? null, limit + 1]
     );
@@ -55,7 +76,7 @@ export const glucoseRepository = {
   ): Promise<PaginatedResult<GlucoseReading>> {
     const db = await getDatabase();
     const conditions: string[] = ['pet_id = ?'];
-    const params: any[] = [petId];
+    const params: (string | number | null)[] = [petId];
 
     if (cursor) {
       conditions.push('recorded_at < ?');
@@ -98,7 +119,7 @@ export const glucoseRepository = {
     const where = conditions.join(' AND ');
     params.push(limit + 1);
 
-    const rows = await db.getAllAsync<any>(
+    const rows = await db.getAllAsync<GlucoseRow>(
       `SELECT * FROM glucose_readings WHERE ${where} ORDER BY recorded_at DESC LIMIT ?`,
       params,
     );
@@ -114,7 +135,7 @@ export const glucoseRepository = {
   async findLast7Days(petId: string): Promise<GlucoseReading[]> {
     const db = await getDatabase();
     const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
-    const rows = await db.getAllAsync<any>(
+    const rows = await db.getAllAsync<GlucoseRow>(
       'SELECT * FROM glucose_readings WHERE pet_id = ? AND recorded_at >= ? ORDER BY recorded_at ASC',
       [petId, sevenDaysAgo]
     );
@@ -123,7 +144,7 @@ export const glucoseRepository = {
 
   async findLatest(petId: string): Promise<GlucoseReading | null> {
     const db = await getDatabase();
-    const row = await db.getFirstAsync<any>(
+    const row = await db.getFirstAsync<GlucoseRow>(
       'SELECT * FROM glucose_readings WHERE pet_id = ? ORDER BY recorded_at DESC LIMIT 1',
       [petId]
     );
@@ -134,7 +155,7 @@ export const glucoseRepository = {
     const db = await getDatabase();
     const now = new Date().toISOString();
     const sets: string[] = [];
-    const params: any[] = [];
+    const params: (string | number | null)[] = [];
 
     if (dto.value !== undefined && dto.unit) {
       const valueMgdl = dto.unit === 'mg/dL' ? dto.value : mmolToMgdl(dto.value);
@@ -164,7 +185,7 @@ export const glucoseRepository = {
   async getStats(petId: string, days = 30): Promise<{ avg: number; min: number; max: number; count: number }> {
     const db = await getDatabase();
     const since = new Date(Date.now() - days * 24 * 60 * 60 * 1000).toISOString();
-    const row = await db.getFirstAsync<any>(
+    const row = await db.getFirstAsync<GlucoseStatsRow>(
       'SELECT AVG(value_mmol) as avg, MIN(value_mmol) as min, MAX(value_mmol) as max, COUNT(*) as count FROM glucose_readings WHERE pet_id = ? AND recorded_at >= ?',
       [petId, since]
     );
@@ -172,16 +193,16 @@ export const glucoseRepository = {
   },
 };
 
-function mapRowToReading(row: any): GlucoseReading {
+function mapRowToReading(row: GlucoseRow): GlucoseReading {
   return {
     id: row.id,
     petId: row.pet_id,
     valueMmol: row.value_mmol,
     valueMgdl: row.value_mgdl,
-    mealRelation: row.meal_relation,
-    insulinDose: row.insulin_dose,
-    insulinType: row.insulin_type,
-    notes: row.notes,
+    mealRelation: row.meal_relation as GlucoseReading['mealRelation'],
+    insulinDose: row.insulin_dose ?? undefined,
+    insulinType: row.insulin_type ?? undefined,
+    notes: row.notes ?? undefined,
     recordedAt: row.recorded_at,
     createdAt: row.created_at,
     updatedAt: row.updated_at,

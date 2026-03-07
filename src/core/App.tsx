@@ -39,7 +39,7 @@ function AppContent() {
 
   useEffect(() => {
     loadPets();
-  }, []);
+  }, [loadPets]);
 
   return (
     <>

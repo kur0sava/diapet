@@ -75,7 +75,7 @@ export default function SymptomsListScreen() {
           <View style={styles.cardHeader}>
             <View style={styles.iconsRow}>
               {item.symptomTypes.slice(0, 4).map(type => (
-                <Ionicons key={type} name={SYMPTOM_ICONS[type] as any} size={18} color={theme.colors.textSecondary} style={{ marginRight: 4 }} />
+                <Ionicons key={type} name={SYMPTOM_ICONS[type] as string} size={18} color={theme.colors.textSecondary} style={{ marginRight: 4 }} />
               ))}
               {item.symptomTypes.length > 4 && (
                 <Text style={[styles.moreCount, { color: theme.colors.textSecondary }]}>

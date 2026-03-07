@@ -94,7 +94,7 @@ export default function SymptomDetailScreen() {
           <Card style={styles.card}>
             <Text style={[styles.sectionLabel, { color: theme.colors.textSecondary }]}>{t('symptoms.photo')}</Text>
             <View style={styles.photosGrid}>
-              {symptom.photoUris.map((uri, i) => (
+              {symptom.photoUris.map((uri) => (
                 <Image key={uri} source={{ uri }} style={styles.photo} />
               ))}
             </View>

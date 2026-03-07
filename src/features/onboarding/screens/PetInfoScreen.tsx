@@ -1,11 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
   StyleSheet,
   ScrollView,
   TouchableOpacity,
-  Platform,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useOnboardingNavigation } from '@navigation/hooks';
@@ -20,30 +19,24 @@ export default function PetInfoScreen() {
   const { t } = useTranslation();
   const { theme } = useTheme();
 
-  const [name, setName] = useState('');
-  const [gender, setGender] = useState<'male' | 'female'>('male');
-  const [weightKg, setWeightKg] = useState('');
-  const [age, setAge] = useState('');
-  const [diabetesType, setDiabetesType] = useState<'type1' | 'type2' | 'unknown'>('unknown');
-  const [diagnosisDate, setDiagnosisDate] = useState<Date | null>(null);
+  // ONB-001: Restore draft from MMKV synchronously via lazy initializers
+  // (avoids calling setState inside useEffect, which triggers cascading renders)
+  const draft = (() => {
+    const raw = storage.getString(StorageKeys.ONBOARDING_DRAFT);
+    if (!raw) return null;
+    try {
+      return JSON.parse(raw);
+    } catch { /* corrupted draft — ignore */ return null; }
+  })();
+
+  const [name, setName] = useState(draft?.name ?? '');
+  const [gender, setGender] = useState<'male' | 'female'>(draft?.gender ?? 'male');
+  const [weightKg, setWeightKg] = useState(draft?.weightKg ?? '');
+  const [age, setAge] = useState(draft?.age ?? '');
+  const [diabetesType, setDiabetesType] = useState<'type1' | 'type2' | 'unknown'>(draft?.diabetesType ?? 'unknown');
+  const [diagnosisDate, setDiagnosisDate] = useState<Date | null>(draft?.diagnosisDate ? new Date(draft.diagnosisDate) : null);
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
-
-  // ONB-001: Restore draft from MMKV on mount
-  useEffect(() => {
-    const raw = storage.getString(StorageKeys.ONBOARDING_DRAFT);
-    if (raw) {
-      try {
-        const draft = JSON.parse(raw);
-        if (draft.name) setName(draft.name);
-        if (draft.gender) setGender(draft.gender);
-        if (draft.weightKg) setWeightKg(draft.weightKg);
-        if (draft.age) setAge(draft.age);
-        if (draft.diabetesType) setDiabetesType(draft.diabetesType);
-        if (draft.diagnosisDate) setDiagnosisDate(new Date(draft.diagnosisDate));
-      } catch {}
-    }
-  }, []);
 
   const validate = () => {
     const newErrors: Record<string, string> = {};
@@ -119,7 +112,7 @@ export default function PetInfoScreen() {
                       flex: 1,
                     },
                   ]}
-                  onPress={() => setGender(opt.value as any)}
+                  onPress={() => setGender(opt.value as 'male' | 'female')}
                 >
                   <Text style={{ color: gender === opt.value ? '#fff' : theme.colors.text, fontWeight: '600' }}>
                     {opt.icon} {opt.label}
@@ -186,7 +179,7 @@ export default function PetInfoScreen() {
                   styles.radioRow,
                   { borderColor: diabetesType === opt.value ? theme.colors.primary : theme.colors.border },
                 ]}
-                onPress={() => setDiabetesType(opt.value as any)}
+                onPress={() => setDiabetesType(opt.value as 'type1' | 'type2' | 'unknown')}
               >
                 <View style={[
                   styles.radio,

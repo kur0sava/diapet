@@ -19,20 +19,31 @@ export default function MoreMenuScreen() {
   const activePet = usePetStore(s => s.activePet);
   const { isPro, canAccessAdvanced } = useSubscription();
 
-  const handleProScreen = (screen: string) => {
+  type MenuScreen = 'Subscription' | 'PetProfile' | 'Expenses' | 'FeedCalculator' | 'Settings';
+  interface MenuItem {
+    iconName: string;
+    label: string;
+    screen: MenuScreen;
+    iconColor: string;
+    badge?: string;
+    subtitle?: string;
+    proGated?: boolean;
+  }
+
+  const handleProScreen = (screen: MenuScreen) => {
     if (canAccessAdvanced()) {
-      navigation.navigate(screen as any);
+      navigation.navigate(screen);
     } else {
       rootNavigation.navigate('Paywall');
     }
   };
 
-  const menuItems = [
-    { iconName: 'star-outline' as const, label: t('subscription.title'), screen: 'Subscription' as const, iconColor: '#FFB340', badge: !isPro ? 'upgrade' : 'active' },
-    { iconName: 'paw-outline' as const, label: t('pets.title'), screen: 'PetProfile' as const, iconColor: theme.colors.primary, subtitle: activePet?.name },
-    { iconName: 'wallet-outline' as const, label: t('expenses.title'), screen: 'Expenses' as const, iconColor: theme.colors.warning },
-    { iconName: 'calculator-outline' as const, label: t('feedCalculator.title'), screen: 'FeedCalculator' as const, iconColor: theme.colors.secondary, proGated: true },
-    { iconName: 'settings-outline' as const, label: t('settings.title'), screen: 'Settings' as const, iconColor: theme.colors.textSecondary },
+  const menuItems: MenuItem[] = [
+    { iconName: 'star-outline', label: t('subscription.title'), screen: 'Subscription', iconColor: '#FFB340', badge: !isPro ? 'upgrade' : 'active' },
+    { iconName: 'paw-outline', label: t('pets.title'), screen: 'PetProfile', iconColor: theme.colors.primary, subtitle: activePet?.name },
+    { iconName: 'wallet-outline', label: t('expenses.title'), screen: 'Expenses', iconColor: theme.colors.warning },
+    { iconName: 'calculator-outline', label: t('feedCalculator.title'), screen: 'FeedCalculator', iconColor: theme.colors.secondary, proGated: true },
+    { iconName: 'settings-outline', label: t('settings.title'), screen: 'Settings', iconColor: theme.colors.textSecondary },
   ];
 
   return (
@@ -67,7 +78,7 @@ export default function MoreMenuScreen() {
           <TouchableOpacity
             key={item.screen}
             style={[styles.menuItem, { backgroundColor: theme.colors.surface, ...theme.shadows.sm }]}
-            onPress={() => (item as any).proGated ? handleProScreen(item.screen) : navigation.navigate(item.screen as any)}
+            onPress={() => item.proGated ? handleProScreen(item.screen) : navigation.navigate(item.screen)}
             activeOpacity={0.8}
           >
             <View style={[styles.menuIcon, { backgroundColor: `${item.iconColor}20` }]}>
@@ -76,14 +87,14 @@ export default function MoreMenuScreen() {
             <View style={styles.menuText}>
               <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
                 <Text style={[styles.menuLabel, { color: theme.colors.text, fontFamily: theme.fonts.semibold }]}>{item.label}</Text>
-                {(item as any).proGated && !isPro && <ProBadge />}
-                {(item as any).badge === 'upgrade' && !isPro && (
+                {item.proGated && !isPro && <ProBadge />}
+                {item.badge === 'upgrade' && !isPro && (
                   <View style={[styles.upgradePill, { backgroundColor: `${theme.colors.primary}15` }]}>
                     <Text style={{ color: theme.colors.primary, fontSize: 11, fontWeight: '600' }}>{t('subscription.upgrade')}</Text>
                   </View>
                 )}
               </View>
-              {(item as any).subtitle && <Text style={[styles.menuSub, { color: theme.colors.textSecondary }]}>{(item as any).subtitle}</Text>}
+              {item.subtitle && <Text style={[styles.menuSub, { color: theme.colors.textSecondary }]}>{item.subtitle}</Text>}
             </View>
             <Ionicons name="chevron-forward" size={18} color={theme.colors.textTertiary} />
           </TouchableOpacity>

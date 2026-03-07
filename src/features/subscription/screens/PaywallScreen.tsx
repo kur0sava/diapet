@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import {
   View, Text, StyleSheet, ScrollView,
   TouchableOpacity, Alert, ActivityIndicator, Linking,
@@ -32,9 +32,13 @@ export default function PaywallScreen() {
   const [selectedPlan, setSelectedPlan] = useState<'monthly' | 'yearly'>('yearly');
   const [purchasing, setPurchasing] = useState(false);
 
-  useEffect(() => {
+  const loadOfferingsIfNeeded = useCallback(() => {
     if (!offerings) loadOfferings();
-  }, []);
+  }, [offerings, loadOfferings]);
+
+  useEffect(() => {
+    loadOfferingsIfNeeded();
+  }, [loadOfferingsIfNeeded]);
 
   const monthlyPkg = offerings?.monthly;
   const yearlyPkg = offerings?.annual;
@@ -105,7 +109,7 @@ export default function PaywallScreen() {
           {FEATURES.map((f, i) => (
             <View key={i} style={styles.featureRow}>
               <View style={[styles.featureIcon, { backgroundColor: `${theme.colors.primary}15` }]}>
-                <Ionicons name={f.icon as any} size={22} color={theme.colors.primary} />
+                <Ionicons name={f.icon as string} size={22} color={theme.colors.primary} />
               </View>
               <View style={styles.featureText}>
                 <Text style={[styles.featureTitle, { color: theme.colors.text, fontFamily: theme.fonts.semibold }]}>

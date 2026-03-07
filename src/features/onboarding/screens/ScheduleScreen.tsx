@@ -5,7 +5,6 @@ import {
   StyleSheet,
   ScrollView,
   TouchableOpacity,
-  Platform,
   Alert,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -28,8 +27,6 @@ export default function ScheduleScreen() {
   const [injectionTimes, setInjectionTimes] = useState<string[]>(['08:00', '20:00']);
   const [feedingTimes, setFeedingTimes] = useState<string[]>(['08:00', '20:00']);
   const [showPicker, setShowPicker] = useState<{ type: 'injection' | 'feeding'; index: number } | null>(null);
-
-  const formatTime = (time: string) => time;
 
   const addTime = (type: 'injection' | 'feeding') => {
     if (type === 'injection') {
