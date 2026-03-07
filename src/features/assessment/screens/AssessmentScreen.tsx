@@ -8,6 +8,7 @@ import { useSymptomsNavigation, useRootNavigation } from '@navigation/hooks';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '@shared/theme';
 import * as Haptics from 'expo-haptics';
+import { useUnsavedChangesGuard } from '@shared/hooks/useUnsavedChangesGuard';
 
 const QUESTIONS = [
   'polyuria',
@@ -60,6 +61,7 @@ export default function AssessmentScreen() {
   const [answers, setAnswers] = useState<Record<string, AnswerValue>>({});
   const [selectedAnswer, setSelectedAnswer] = useState<AnswerValue | null>(null);
   const [showResult, setShowResult] = useState(false);
+  useUnsavedChangesGuard(Object.keys(answers).length > 0 && !showResult);
 
   const totalQuestions = QUESTIONS.length;
   const currentQuestion: QuestionKey | undefined = QUESTIONS[currentIndex];

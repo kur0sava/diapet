@@ -35,11 +35,17 @@ const MIGRATIONS: Migration[] = [
   {
     version: 3,
     name: 'add_symptom_glucose_link',
-    up: [
+    up: [],
+    afterSql: async (db: SQLiteDatabase) => {
       // FIX-02: photo_uri already exists in schema.ts CREATE TABLE, skip it
       // Only add glucose_reading_id to symptoms (not in initial schema)
-      `ALTER TABLE symptoms ADD COLUMN glucose_reading_id TEXT REFERENCES glucose_readings(id)`,
-    ],
+      // Idempotent: catch error if column already exists (SQLite lacks IF NOT EXISTS for ALTER TABLE)
+      try {
+        await db.execAsync('ALTER TABLE symptoms ADD COLUMN glucose_reading_id TEXT REFERENCES glucose_readings(id)');
+      } catch {
+        // Column already exists — safe to ignore
+      }
+    },
   },
   {
     version: 4,
