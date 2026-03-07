@@ -25,9 +25,9 @@ export const ru = {
     notFound: 'Не найдено',
     export: 'Экспорт',
     share: 'Поделиться',
-    unsavedChanges: 'Отменить изменения?',
-    unsavedChangesDesc: 'У вас есть несохранённые данные. Уверены, что хотите вернуться?',
-    discard: 'Отменить',
+    unsavedChanges: 'Несохранённые данные',
+    unsavedChangesDesc: 'У вас есть несохранённые данные. Уверены, что хотите выйти?',
+    discard: 'Выйти без сохранения',
     longPressToDelete: 'Удерживайте запись для удаления',
   },
 

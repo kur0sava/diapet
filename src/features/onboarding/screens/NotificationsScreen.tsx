@@ -10,6 +10,7 @@ import { Button } from '@shared/components/ui';
 import { Ionicons } from '@expo/vector-icons';
 import { storage, StorageKeys } from '@storage/mmkv/storage';
 import { petRepository, scheduleRepository } from '@storage/database';
+import { usePetStore } from '@shared/stores/petStore';
 import { useNotifications } from '@shared/hooks/useNotifications';
 
 export default function NotificationsScreen() {
@@ -66,6 +67,9 @@ export default function NotificationsScreen() {
       storage.set(StorageKeys.ACTIVE_PET_ID, pet.id);
       storage.set(StorageKeys.ONBOARDING_COMPLETE, true);
       storage.delete(StorageKeys.ONBOARDING_DRAFT);
+
+      // Load the newly created pet into the store so screens can access it
+      await usePetStore.getState().loadPets();
 
       // Navigate to main app
       rootNavigation.reset({ index: 0, routes: [{ name: 'Main' }] });

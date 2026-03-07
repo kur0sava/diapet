@@ -57,7 +57,7 @@ export function QuickActionButton({ iconName, label, color, onPress }: Props) {
 }
 
 const styles = StyleSheet.create({
-  btn: { width: '47%', padding: 18, alignItems: 'center', gap: 12 },
+  btn: { flex: 1, minWidth: '40%', maxWidth: '48%', padding: 18, alignItems: 'center', gap: 12 },
   iconContainer: { width: 56, height: 56, borderRadius: 28, alignItems: 'center', justifyContent: 'center' },
   label: { fontSize: 13, textAlign: 'center' },
 });

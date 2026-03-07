@@ -114,6 +114,7 @@ export default function LogInjectionScreen() {
               placeholder="2.0"
               keyboardType="decimal-pad"
               style={{ fontSize: 28, textAlign: 'center', fontWeight: '700' }}
+              rightElement={<Text style={{ fontSize: 18, color: theme.colors.textSecondary, fontWeight: '600' }}>{t('common.units')}</Text>}
             />
           </Card>
 
