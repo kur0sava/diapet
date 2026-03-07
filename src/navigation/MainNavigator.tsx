@@ -63,6 +63,9 @@ function HomeStackNavigator() {
       <HomeStack.Screen name="InjectionList" component={InjectionListScreen} options={{ headerShown: false }} />
       <HomeStack.Screen name="FeedingList" component={FeedingListScreen} options={{ headerShown: false }} />
       <HomeStack.Screen name="FeedGuide" component={FeedGuideScreen} options={{ headerShown: false }} />
+      <HomeStack.Screen name="FeedGuideRegion" component={FeedGuideRegionScreen} options={{ headerShown: false }} />
+      <HomeStack.Screen name="FeedGuideAlternatives" component={FeedGuideAlternativesScreen} options={{ headerShown: false }} />
+      <HomeStack.Screen name="FeedGuideNatural" component={FeedGuideNaturalScreen} options={{ headerShown: false }} />
     </HomeStack.Navigator>
   );
 }

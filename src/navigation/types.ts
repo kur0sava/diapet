@@ -29,6 +29,9 @@ export type HomeStackParamList = {
   InjectionList: undefined;
   FeedingList: undefined;
   FeedGuide: undefined;
+  FeedGuideRegion: { region: string };
+  FeedGuideAlternatives: undefined;
+  FeedGuideNatural: undefined;
 };
 
 // Glucose Stack

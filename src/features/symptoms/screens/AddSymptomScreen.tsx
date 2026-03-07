@@ -233,7 +233,7 @@ export default function AddSymptomScreen() {
               {severity === 'severe' && (
                 <TouchableOpacity
                   style={[styles.emergencyBtn, { backgroundColor: '#FF3B30' }]}
-                  onPress={() => navigation.getParent()?.getParent()?.navigate('Emergency' as never)}
+                  onPress={() => navigation.navigate('Emergency' as never)}
                 >
                   <Ionicons name="warning" size={16} color="#fff" style={{ marginRight: 6 }} />
                   <Text style={{ color: '#fff', fontWeight: '700', fontSize: 14 }}>{t('emergency.emergencyMode')}</Text>

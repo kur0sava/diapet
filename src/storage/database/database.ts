@@ -21,6 +21,10 @@ export async function getDatabase(): Promise<SQLite.SQLiteDatabase> {
     }
     const database = await SQLite.openDatabaseAsync(DB_NAME);
     // Must be first operation before any reads/writes
+    // Validate key is a UUID (hex + hyphens only) to prevent SQL injection
+    if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(sqliteKey)) {
+      throw new Error('Invalid SQLite encryption key format');
+    }
     await database.runAsync(`PRAGMA key = '${sqliteKey}'`);
     await initializeDatabase(database);
     db = database;
