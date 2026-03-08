@@ -96,6 +96,22 @@ export default function ArticleDetailScreen() {
     );
   }
 
+  // Render inline text with **bold** segments
+  const renderInline = (text: string, baseStyle: object, key: string) => {
+    const parts = text.split(/(\*\*[^*]+\*\*)/g);
+    if (parts.length === 1) return <Text key={key} style={[baseStyle, { color: theme.colors.text }]}>{text}</Text>;
+    return (
+      <Text key={key} style={[baseStyle, { color: theme.colors.text }]}>
+        {parts.map((part, j) => {
+          if (part.startsWith('**') && part.endsWith('**')) {
+            return <Text key={j} style={{ fontWeight: '700' }}>{part.slice(2, -2)}</Text>;
+          }
+          return part;
+        })}
+      </Text>
+    );
+  };
+
   const renderContent = (content: string) => {
     return content.split('\n').map((line, i) => {
       if (line.startsWith('## ')) {
@@ -123,7 +139,7 @@ export default function ArticleDetailScreen() {
       if (line.startsWith('> ')) {
         return (
           <View key={`line-${i}`} style={[styles.blockquote, { borderLeftColor: theme.colors.primary, backgroundColor: theme.colors.primaryLight }]}>
-            <Text style={[styles.blockquoteText, { color: theme.colors.text }]}>{line.replace('> ', '')}</Text>
+            {renderInline(line.replace('> ', ''), styles.blockquoteText, `bq-${i}`)}
           </View>
         );
       }
@@ -133,10 +149,18 @@ export default function ArticleDetailScreen() {
       if (line.trim() === '') {
         return <View key={`line-${i}`} style={{ height: 8 }} />;
       }
+      if (line.startsWith('- ')) {
+        return (
+          <View key={`line-${i}`} style={styles.bulletItem}>
+            <Text style={[styles.bulletDot, { color: theme.colors.textSecondary }]}>{'•'}</Text>
+            {renderInline(line.slice(2), styles.body, `bi-${i}`)}
+          </View>
+        );
+      }
       if (line.startsWith('**') && line.endsWith('**')) {
         return <Text key={`line-${i}`} style={[styles.bold, { color: theme.colors.text }]}>{line.replace(/\*\*/g, '')}</Text>;
       }
-      return <Text key={`line-${i}`} style={[styles.body, { color: theme.colors.text }]}>{line}</Text>;
+      return renderInline(line, styles.body, `line-${i}`);
     });
   };
 
@@ -240,6 +264,8 @@ const styles = StyleSheet.create({
   blockquote: { borderLeftWidth: 4, paddingLeft: 12, paddingVertical: 10, paddingRight: 12, borderRadius: 4, marginVertical: 8 },
   blockquoteText: { fontSize: 14, lineHeight: 20, fontStyle: 'italic' },
   divider: { height: 1, marginVertical: 16 },
+  bulletItem: { flexDirection: 'row', alignItems: 'flex-start', gap: 8, marginVertical: 2 },
+  bulletDot: { fontSize: 15, lineHeight: 24, width: 12 },
   // TOC styles
   tocContainer: { borderWidth: 1, borderRadius: 12, marginBottom: 20, overflow: 'hidden' },
   tocHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', padding: 14 },
