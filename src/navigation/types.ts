@@ -32,6 +32,7 @@ export type MainTabParamList = {
 // Home Stack
 export type HomeStackParamList = {
   Dashboard: undefined;
+  DailyDiary: { date?: string };
   LogGlucose: { editId?: string };
   LogInjection: undefined;
   LogFeeding: undefined;

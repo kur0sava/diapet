@@ -65,6 +65,15 @@ export const injectionRepository = {
     return rows.map(mapRow);
   },
 
+  async findForDay(petId: string, dateStr: string): Promise<InjectionLog[]> {
+    const db = await getDatabase();
+    const rows = await db.getAllAsync<InjectionRow>(
+      'SELECT * FROM injections WHERE pet_id = ? AND DATE(administered_at) = DATE(?) ORDER BY administered_at ASC',
+      [petId, dateStr]
+    );
+    return rows.map(mapRow);
+  },
+
   async delete(id: string): Promise<void> {
     const db = await getDatabase();
     await db.runAsync('DELETE FROM injections WHERE id = ?', [id]);

@@ -56,6 +56,24 @@ export const feedingRepository = {
     return row ? mapRow(row) : null;
   },
 
+  async findAllByPetId(petId: string): Promise<FeedingLog[]> {
+    const db = await getDatabase();
+    const rows = await db.getAllAsync<FeedingRow>(
+      'SELECT * FROM feedings WHERE pet_id = ? ORDER BY fed_at ASC',
+      [petId]
+    );
+    return rows.map(mapRow);
+  },
+
+  async findForDay(petId: string, dateStr: string): Promise<FeedingLog[]> {
+    const db = await getDatabase();
+    const rows = await db.getAllAsync<FeedingRow>(
+      'SELECT * FROM feedings WHERE pet_id = ? AND DATE(fed_at) = DATE(?) ORDER BY fed_at ASC',
+      [petId, dateStr]
+    );
+    return rows.map(mapRow);
+  },
+
   async delete(id: string): Promise<void> {
     const db = await getDatabase();
     await db.runAsync('DELETE FROM feedings WHERE id = ?', [id]);

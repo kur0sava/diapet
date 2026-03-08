@@ -182,8 +182,13 @@ export default function GlucoseListScreen() {
           text: t('common.delete'),
           style: 'destructive',
           onPress: async () => {
-            await glucoseRepository.delete(id);
-            queryClient.invalidateQueries({ queryKey: ['glucose'] });
+            try {
+              await glucoseRepository.delete(id);
+              queryClient.invalidateQueries({ queryKey: ['glucose'] });
+              queryClient.invalidateQueries({ queryKey: ['diary'] });
+            } catch {
+              Alert.alert(t('common.error'));
+            }
           },
         },
       ]

@@ -46,6 +46,7 @@ export default function LogInjectionScreen() {
         notes: notes || undefined,
       });
       await queryClient.invalidateQueries({ queryKey: ['injections'] });
+      await queryClient.invalidateQueries({ queryKey: ['diary'] });
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       navigation.goBack();
     } catch {

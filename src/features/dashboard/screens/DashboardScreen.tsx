@@ -83,19 +83,19 @@ export default function DashboardScreen() {
     enabled: !!petId,
   });
 
-  const { data: lastInjection } = useQuery({
+  const { data: lastInjection, refetch: refetchLastInjection } = useQuery({
     queryKey: ['injections', 'latest', petId],
     queryFn: () => injectionRepository.findLatest(petId),
     enabled: !!petId,
   });
 
-  const { data: injectionTimes } = useQuery({
+  const { data: injectionTimes, refetch: refetchInjectionTimes } = useQuery({
     queryKey: ['schedule', 'injections', petId],
     queryFn: () => scheduleRepository.getInjectionTimes(petId),
     enabled: !!petId,
   });
 
-  const { data: feedingTimes } = useQuery({
+  const { data: feedingTimes, refetch: refetchFeedingTimes } = useQuery({
     queryKey: ['schedule', 'feedings', petId],
     queryFn: () => scheduleRepository.getFeedingTimes(petId),
     enabled: !!petId,
@@ -105,9 +105,15 @@ export default function DashboardScreen() {
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
-    await Promise.all([refetchGlucose(), refetchHistory()]);
+    await Promise.all([
+      refetchGlucose(),
+      refetchHistory(),
+      refetchLastInjection(),
+      refetchInjectionTimes(),
+      refetchFeedingTimes(),
+    ]);
     setRefreshing(false);
-  }, [refetchGlucose, refetchHistory]);
+  }, [refetchGlucose, refetchHistory, refetchLastInjection, refetchInjectionTimes, refetchFeedingTimes]);
 
   const nextInjection = injectionTimes?.length
     ? [...injectionTimes].sort((a, b) => minutesUntil(a.timeOfDay) - minutesUntil(b.timeOfDay))[0]
@@ -156,6 +162,13 @@ export default function DashboardScreen() {
       label: t('dashboard.logSymptom'),
       color: theme.colors.warning,
       onPress: () => navigation.navigate('AddSymptom', {}),
+    },
+    {
+      iconName: 'calendar' as const,
+      iconColor: theme.colors.info ?? theme.colors.primary,
+      label: t('dashboard.dailyDiary'),
+      color: theme.colors.info ?? theme.colors.primary,
+      onPress: () => navigation.navigate('DailyDiary', {}),
     },
   ];
 
@@ -439,7 +452,7 @@ const styles = StyleSheet.create({
   trendText: { fontSize: 12 },
   section: { paddingHorizontal: 20, marginTop: 20 },
   sectionTitle: { fontSize: 17, marginBottom: 12 },
-  actionsGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 12 },
+  actionsGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 12, justifyContent: 'center' },
   noData: { padding: 32, alignItems: 'center' },
   noDataText: { fontSize: 14 },
   sectionHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 },

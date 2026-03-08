@@ -71,13 +71,14 @@ export default function FeedingListScreen() {
   const handleDelete = (id: string) => {
     const item = feedings.find(f => f.id === id);
     const info = item
-      ? `${format(parseISO(item.fedAt), 'dd.MM.yyyy HH:mm')} — ${foodLabel(item.foodType)}${item.amountGrams != null ? `, ${item.amountGrams} г` : ''}`
+      ? `${format(parseISO(item.fedAt), 'dd.MM.yyyy HH:mm')} — ${foodLabel(item.foodType)}${item.amountGrams != null ? `, ${item.amountGrams} ${t('common.grams')}` : ''}`
       : '';
     Alert.alert(t('feeding.deleteConfirm'), info || undefined, [
       { text: t('common.cancel'), style: 'cancel' },
       { text: t('common.delete'), style: 'destructive', onPress: async () => {
         await feedingRepository.delete(id);
         queryClient.invalidateQueries({ queryKey: ['feedings'] });
+        queryClient.invalidateQueries({ queryKey: ['diary'] });
       }},
     ]);
   };

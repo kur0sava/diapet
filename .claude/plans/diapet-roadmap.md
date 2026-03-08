@@ -88,8 +88,29 @@ AI-панель рекомендаций (заглушка rule-based, позж�
 
 | # | Задача | Статус |
 |---|--------|--------|
-| 0 | Закоммитить + запушить 7 файлов | ⏳ |
-| 1 | Рефакторинг (секция 1) | ❌ НЕ НАЧАТ |
-| 2 | Daily Diary (секция 2) | ❌ НЕ НАЧАТ |
+| 0 | Закоммитить + запушить 7 файлов | ✅ коммит 3caca28 |
+| 1 | Рефакторинг (секция 1) | ✅ DONE (2026-03-08) |
+| 2 | Daily Diary (секция 2) | ✅ DONE (2026-03-08) |
 | 3 | MEDIUM/LOW аудит-фиксы | ❌ отложено |
 | 4 | AI через Claude API | ❌ будущее |
+
+## Daily Diary — итог (2026-03-08)
+- `DailyDiary` роут добавлен в `HomeStackParamList`
+- `diaryAnalyzer.ts` — rule-based анализ: severe_low, low, high, inRange%, spread
+- `DailyDiaryScreen.tsx` — таймлайн дня, навигация по датам, stats row, AI-панель, кнопки добавления
+- `injectionRepository.findForDay` + `feedingRepository.findForDay` + `findAllByPetId` (feeding)
+- i18n: `diary.*` + `dashboard.dailyDiary` в ru/en
+- TS: 0 errors, ESLint: 0 warnings
+
+## Рефакторинг — итог (2026-03-08)
+- 0 TS ошибок (было 36: @expo/vector-icons + ThemeContext)
+- 0 ESLint warnings
+- `IoniconName` — единый тип для имён иконок (12 файлов)
+- `NavigatorScreenParams` для typed deep navigation
+- `OnboardingPetData` — убраны `any` в онбординге
+- `ThemeSchemeColors` — фикс ThemeContext TS ошибки
+- `.gitattributes` — LF нормализация
+- 3 неиспользуемых пакета удалены (-633 строки package-lock)
+- `pets.invalidTimeFormat` i18n ключ добавлен в ru/en
+- `findAllByPetId` в 3 репозиториях — PDF больше не обрезает историю на 50 записях
+- `handleDelete` deps fix — убран stale closure риск

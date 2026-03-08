@@ -35,6 +35,7 @@ import FeedCalculatorScreen from '@features/feedCalculator/screens/FeedCalculato
 import InjectionListScreen from '@features/glucose/screens/InjectionListScreen';
 import FeedingListScreen from '@features/glucose/screens/FeedingListScreen';
 import SubscriptionScreen from '@features/subscription/screens/SubscriptionScreen';
+import DailyDiaryScreen from '@features/diary/screens/DailyDiaryScreen';
 
 const Tab = createBottomTabNavigator<MainTabParamList>();
 
@@ -57,6 +58,7 @@ function HomeStackNavigator() {
       }}
     >
       <HomeStack.Screen name="Dashboard" component={DashboardScreen} options={{ headerShown: false }} />
+      <HomeStack.Screen name="DailyDiary" component={DailyDiaryScreen} options={{ headerShown: false }} />
       <HomeStack.Screen name="LogGlucose" component={LogGlucoseScreen} options={{ headerShown: false }} />
       <HomeStack.Screen name="LogInjection" component={LogInjectionScreen} options={{ headerShown: false }} />
       <HomeStack.Screen name="LogFeeding" component={LogFeedingScreen} options={{ headerShown: false }} />

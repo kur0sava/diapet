@@ -65,6 +65,7 @@ export default function InjectionListScreen() {
       { text: t('common.delete'), style: 'destructive', onPress: async () => {
         await injectionRepository.delete(id);
         queryClient.invalidateQueries({ queryKey: ['injections'] });
+        queryClient.invalidateQueries({ queryKey: ['diary'] });
       }},
     ]);
   };

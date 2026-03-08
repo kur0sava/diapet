@@ -132,6 +132,15 @@ export const glucoseRepository = {
     };
   },
 
+  async findForDay(petId: string, dateStr: string): Promise<GlucoseReading[]> {
+    const db = await getDatabase();
+    const rows = await db.getAllAsync<GlucoseRow>(
+      "SELECT * FROM glucose_readings WHERE pet_id = ? AND DATE(recorded_at) = DATE(?) ORDER BY recorded_at ASC",
+      [petId, dateStr]
+    );
+    return rows.map(mapRowToReading);
+  },
+
   async findAllByPetId(petId: string): Promise<GlucoseReading[]> {
     const db = await getDatabase();
     const rows = await db.getAllAsync<GlucoseRow>(

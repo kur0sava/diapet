@@ -118,6 +118,7 @@ export default function LogGlucoseScreen() {
         });
       }
       await queryClient.invalidateQueries({ queryKey: ['glucose'] });
+      await queryClient.invalidateQueries({ queryKey: ['diary'] });
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       navigation.goBack();
     } catch {

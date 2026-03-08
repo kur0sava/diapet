@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useRef } from 'react';
+import React, { useState, useCallback, useRef, useMemo } from 'react';
 import {
   View, Text, StyleSheet, ScrollView,
   TouchableOpacity, Alert, KeyboardAvoidingView, Platform,
@@ -19,12 +19,12 @@ export default function LogFeedingScreen() {
   const navigation = useHomeNavigation();
   const { t } = useTranslation();
 
-  const FOOD_TYPE_OPTIONS: { value: string; label: string }[] = [
+  const FOOD_TYPE_OPTIONS = useMemo(() => [
     { value: 'dry', label: t('feeding.dry') },
     { value: 'wet', label: t('feeding.wet') },
     { value: 'medical', label: t('feeding.medical') },
     { value: 'other', label: t('feeding.other') },
-  ];
+  ], [t]);
   const { theme } = useTheme();
   const activePet = usePetStore(s => s.activePet);
   const queryClient = useQueryClient();
@@ -54,6 +54,7 @@ export default function LogFeedingScreen() {
         notes: notes || undefined,
       });
       await queryClient.invalidateQueries({ queryKey: ['feedings'] });
+      await queryClient.invalidateQueries({ queryKey: ['diary'] });
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       navigation.goBack();
     } catch {
