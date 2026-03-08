@@ -304,7 +304,7 @@ export default function LogGlucoseScreen() {
                 onPress={() => setMealRelation(opt.value)}
               >
                 <Ionicons name={opt.iconName} size={24} color={mealRelation === opt.value ? theme.colors.primary : opt.iconColor} />
-                <Text style={[styles.mealLabel, { color: mealRelation === opt.value ? theme.colors.primary : theme.colors.text, fontFamily: theme.fonts.semibold }]}>
+                <Text style={[styles.mealLabel, { color: mealRelation === opt.value ? theme.colors.primary : theme.colors.text, fontFamily: theme.fonts.semibold }]} numberOfLines={2} adjustsFontSizeToFit minimumFontScale={0.8}>
                   {t(opt.labelKey)}
                 </Text>
               </TouchableOpacity>

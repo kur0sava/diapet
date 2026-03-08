@@ -370,7 +370,7 @@ export default function GlucoseListScreen() {
                   onPress={() => toggleLevelPreset(preset.key)}
                 >
                   <View style={[styles.chipDot, { backgroundColor: preset.color }]} />
-                  <Text style={[styles.chipText, { color: selected ? preset.color : theme.colors.text }]}>
+                  <Text style={[styles.chipText, { color: selected ? preset.color : theme.colors.text }]} numberOfLines={1}>
                     {t(preset.labelKey)}
                   </Text>
                 </TouchableOpacity>
@@ -398,7 +398,7 @@ export default function GlucoseListScreen() {
                   ]}
                   onPress={() => toggleMealRelation(opt.value)}
                 >
-                  <Text style={[styles.chipText, { color: selected ? theme.colors.primary : theme.colors.text }]}>
+                  <Text style={[styles.chipText, { color: selected ? theme.colors.primary : theme.colors.text }]} numberOfLines={1}>
                     {t(opt.labelKey)}
                   </Text>
                 </TouchableOpacity>

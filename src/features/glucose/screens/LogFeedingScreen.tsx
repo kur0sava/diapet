@@ -112,7 +112,7 @@ export default function LogFeedingScreen() {
                 <Text style={[
                   styles.chipLabel,
                   { color: foodType === opt.value ? theme.colors.primary : theme.colors.text },
-                ]}>
+                ]} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.8}>
                   {opt.label}
                 </Text>
               </TouchableOpacity>
