@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { ComponentProps } from 'react';
 import {
   TouchableOpacity,
   Text,
@@ -14,6 +14,8 @@ import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '@shared/theme';
 import * as Haptics from 'expo-haptics';
 
+export type IoniconName = ComponentProps<typeof Ionicons>['name'];
+
 type ButtonVariant = 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger';
 type ButtonSize = 'sm' | 'md' | 'lg';
 
@@ -28,7 +30,7 @@ interface ButtonProps {
   style?: StyleProp<ViewStyle>;
   textStyle?: StyleProp<TextStyle>;
   haptic?: boolean;
-  icon?: string;
+  icon?: IoniconName;
   iconPosition?: 'left' | 'right';
 }
 
@@ -107,7 +109,7 @@ export function Button({
       ) : (
         <>
           {icon && iconPosition === 'left' && (
-            <Ionicons name={icon as string} size={iconSize} color={textColor} style={{ marginRight: 6 }} />
+            <Ionicons name={icon} size={iconSize} color={textColor} style={{ marginRight: 6 }} />
           )}
           <Text
             style={[
@@ -124,7 +126,7 @@ export function Button({
             {title}
           </Text>
           {icon && iconPosition === 'right' && (
-            <Ionicons name={icon as string} size={iconSize} color={textColor} style={{ marginLeft: 6 }} />
+            <Ionicons name={icon} size={iconSize} color={textColor} style={{ marginLeft: 6 }} />
           )}
         </>
       )}

@@ -1,22 +1,32 @@
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
-import type { CompositeScreenProps } from '@react-navigation/native';
+import type { CompositeScreenProps, NavigatorScreenParams } from '@react-navigation/native';
+
+// Onboarding pet data passed between onboarding screens
+export type OnboardingPetData = {
+  name: string;
+  gender: 'male' | 'female';
+  weightKg?: number;
+  birthYear?: number;
+  diabetesType: 'type1' | 'type2' | 'unknown';
+  diagnosisDate?: string;
+};
 
 // Root Stack
 export type RootStackParamList = {
   Onboarding: undefined;
-  Main: undefined;
+  Main: NavigatorScreenParams<MainTabParamList> | undefined;
   Emergency: undefined;
   Paywall: { feature?: string } | undefined;
 };
 
 // Tab Navigator
 export type MainTabParamList = {
-  Home: undefined;
-  GlucoseTab: undefined;
-  SymptomsTab: undefined;
-  EncyclopediaTab: undefined;
-  MoreTab: undefined;
+  Home: NavigatorScreenParams<HomeStackParamList> | undefined;
+  GlucoseTab: NavigatorScreenParams<GlucoseStackParamList> | undefined;
+  SymptomsTab: NavigatorScreenParams<SymptomsStackParamList> | undefined;
+  EncyclopediaTab: NavigatorScreenParams<EncyclopediaStackParamList> | undefined;
+  MoreTab: NavigatorScreenParams<MoreStackParamList> | undefined;
 };
 
 // Home Stack
@@ -74,12 +84,9 @@ export type MoreStackParamList = {
 export type OnboardingStackParamList = {
   Language: undefined;
   PetInfo: undefined;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  Schedule: { petData: any };
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  VetContact: { petData: any; injectionTimes: string[]; feedingTimes: string[] };
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  Notifications: { petData: any; injectionTimes: string[]; feedingTimes: string[]; vetName?: string; vetPhone?: string };
+  Schedule: { petData: OnboardingPetData };
+  VetContact: { petData: OnboardingPetData; injectionTimes: string[]; feedingTimes: string[] };
+  Notifications: { petData: OnboardingPetData; injectionTimes: string[]; feedingTimes: string[]; vetName?: string; vetPhone?: string };
 };
 
 // Screen props helpers

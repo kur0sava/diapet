@@ -7,8 +7,28 @@ import { storage } from '@storage/mmkv/storage';
 
 export type ColorScheme = 'light' | 'dark' | 'system';
 
+/** Scheme-dependent colors — identical keys in light/dark, but different values */
+type ThemeSchemeColors = {
+  background: string;
+  surface: string;
+  surfaceSecondary: string;
+  border: string;
+  divider: string;
+  text: string;
+  textSecondary: string;
+  textTertiary: string;
+  placeholder: string;
+  shadow: string;
+  overlay: string;
+  card: string;
+  tabBar: string;
+  tabBarInactive: string;
+  header: string;
+  statusBar: 'dark-content' | 'light-content';
+};
+
 export type Theme = {
-  colors: typeof Colors.light & {
+  colors: ThemeSchemeColors & {
     primary: string;
     primaryDark: string;
     primaryLight: string;

@@ -7,6 +7,7 @@ import { useTheme } from '@shared/theme';
 import { useTranslation } from 'react-i18next';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { MainTabParamList } from './types';
+import type { IoniconName } from '@shared/components/ui';
 
 // Screens
 import DashboardScreen from '@features/dashboard/screens/DashboardScreen';
@@ -178,7 +179,7 @@ export default function MainNavigator() {
             fontFamily: 'Inter_500Medium',
           },
           tabBarIcon: ({ focused, color, size }) => {
-            const icons: Record<string, string> = {
+            const icons: Record<string, IoniconName> = {
               Home: focused ? 'home' : 'home-outline',
               GlucoseTab: focused ? 'water' : 'water-outline',
               SymptomsTab: focused ? 'paw' : 'paw-outline',
@@ -187,7 +188,7 @@ export default function MainNavigator() {
             };
             return (
               <View style={{ alignItems: 'center' }}>
-                <Ionicons name={icons[route.name] as string} size={size} color={color} />
+                <Ionicons name={icons[route.name] ?? 'home'} size={size} color={color} />
                 {focused && (
                   <View style={{
                     width: 4,

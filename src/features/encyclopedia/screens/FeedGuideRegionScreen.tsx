@@ -9,6 +9,7 @@ import type { EncyclopediaStackScreenProps } from '@navigation/types';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '@shared/theme';
 import { Ionicons } from '@expo/vector-icons';
+import type { IoniconName } from '@shared/components/ui';
 import {
   getPrescriptionFoods, getOtcFoods, getFoodsByCarbs,
   getFoodVerdict, VALID_REGIONS, type Region, type DiabeticCatFood,
@@ -18,7 +19,7 @@ import type { StoreEntry } from '../types';
 
 type FilterType = 'all' | 'wet' | 'dry';
 
-const STORE_TYPE_ICONS: Record<string, string> = {
+const STORE_TYPE_ICONS: Record<string, IoniconName> = {
   online: 'globe-outline',
   retail: 'storefront-outline',
   vet_pharmacy: 'medkit-outline',
@@ -84,7 +85,7 @@ export default function FeedGuideRegionScreen() {
 
   const renderStoreChip = (store: StoreEntry) => (
     <View key={store.id} style={[styles.storeChip, { backgroundColor: theme.colors.surfaceSecondary }]}>
-      <Ionicons name={STORE_TYPE_ICONS[store.type] as string} size={16} color={theme.colors.primary} />
+      <Ionicons name={STORE_TYPE_ICONS[store.type] ?? 'storefront-outline'} size={16} color={theme.colors.primary} />
       <Text style={[styles.storeName, { color: theme.colors.text }]}>
         {isRu && store.nameRu ? store.nameRu : store.name}
       </Text>

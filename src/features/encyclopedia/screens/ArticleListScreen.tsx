@@ -10,13 +10,14 @@ import { useTheme } from '@shared/theme';
 import { articles } from '../data/articles';
 import { Article, ArticleCategory, BilingualText } from '../types';
 import { Ionicons } from '@expo/vector-icons';
+import type { IoniconName } from '@shared/components/ui';
 
 const useLang = () => {
   const { i18n } = useTranslation();
   return (text: BilingualText) => text[i18n.language as 'ru' | 'en'] ?? text.en;
 };
 
-const CATEGORY_ICONS: Record<ArticleCategory, { name: string; color: string }> = {
+const CATEGORY_ICONS: Record<ArticleCategory, { name: IoniconName; color: string }> = {
   basics: { name: 'book-outline', color: '#4F8EF7' },
   treatment: { name: 'medical-outline', color: '#7C5CBF' },
   monitoring: { name: 'pulse-outline', color: '#32ADE6' },
@@ -62,7 +63,7 @@ export default function ArticleListScreen() {
     >
       <View style={styles.articleHeader}>
         <View style={[styles.categoryBadge, { backgroundColor: CATEGORY_ICONS[item.category].color + '15' }]}>
-          <Ionicons name={CATEGORY_ICONS[item.category].name as string} size={14} color={CATEGORY_ICONS[item.category].color} />
+          <Ionicons name={CATEGORY_ICONS[item.category].name} size={14} color={CATEGORY_ICONS[item.category].color} />
           <Text style={[styles.categoryLabel, { color: CATEGORY_ICONS[item.category].color }]}>
             {categoryLabels[item.category]}
           </Text>
@@ -127,7 +128,7 @@ export default function ArticleListScreen() {
             ]}
             onPress={() => setSelectedCategory(selectedCategory === item ? null : item)}
           >
-            <Ionicons name={CATEGORY_ICONS[item].name as string} size={16} color={selectedCategory === item ? '#fff' : CATEGORY_ICONS[item].color} />
+            <Ionicons name={CATEGORY_ICONS[item].name} size={16} color={selectedCategory === item ? '#fff' : CATEGORY_ICONS[item].color} />
             <Text style={{ color: selectedCategory === item ? '#fff' : theme.colors.text, fontSize: 13, fontWeight: '500' }}>
               {categoryLabels[item]}
             </Text>

@@ -7,6 +7,7 @@ import { useTranslation } from 'react-i18next';
 import { useTheme } from '@shared/theme';
 import { usePetStore } from '@shared/stores/petStore';
 import { Ionicons } from '@expo/vector-icons';
+import type { IoniconName } from '@shared/components/ui';
 import { useSubscription } from '@features/subscription/hooks/useSubscription';
 import { ProBadge } from '@features/subscription/components/ProBadge';
 import Constants from 'expo-constants';
@@ -21,7 +22,7 @@ export default function MoreMenuScreen() {
 
   type MenuScreen = 'Subscription' | 'PetProfile' | 'Expenses' | 'FeedCalculator' | 'Settings';
   interface MenuItem {
-    iconName: string;
+    iconName: IoniconName;
     label: string;
     screen: MenuScreen;
     iconColor: string;

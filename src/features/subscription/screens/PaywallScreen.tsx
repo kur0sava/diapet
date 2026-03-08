@@ -5,6 +5,7 @@ import {
 } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
+import type { IoniconName } from '@shared/components/ui';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useTheme } from '@shared/theme';
 import { useTranslation } from 'react-i18next';
@@ -15,7 +16,7 @@ import * as Haptics from 'expo-haptics';
 const PRIVACY_URL = 'https://kur0sava.github.io/diapet/assets/privacy-policy.html';
 const TERMS_URL = 'https://kur0sava.github.io/diapet/assets/terms-of-service.html';
 
-const FEATURES: { icon: string; titleKey: string; descKey: string }[] = [
+const FEATURES: { icon: IoniconName; titleKey: string; descKey: string }[] = [
   { icon: 'paw', titleKey: 'subscription.features.unlimitedPets', descKey: 'subscription.features.unlimitedPetsDesc' },
   { icon: 'document-text', titleKey: 'subscription.features.pdfExport', descKey: 'subscription.features.pdfExportDesc' },
   { icon: 'analytics', titleKey: 'subscription.features.advancedAnalytics', descKey: 'subscription.features.advancedAnalyticsDesc' },
@@ -109,7 +110,7 @@ export default function PaywallScreen() {
           {FEATURES.map((f, i) => (
             <View key={i} style={styles.featureRow}>
               <View style={[styles.featureIcon, { backgroundColor: `${theme.colors.primary}15` }]}>
-                <Ionicons name={f.icon as string} size={22} color={theme.colors.primary} />
+                <Ionicons name={f.icon} size={22} color={theme.colors.primary} />
               </View>
               <View style={styles.featureText}>
                 <Text style={[styles.featureTitle, { color: theme.colors.text, fontFamily: theme.fonts.semibold }]}>

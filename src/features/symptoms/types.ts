@@ -7,12 +7,9 @@ export {
 
 // Feature-specific UI constants stay here
 import type { SymptomType } from '@storage/domain/types';
-import type { ComponentProps } from 'react';
-import type { Ionicons } from '@expo/vector-icons';
+import type { IoniconName } from '@shared/components/ui';
 
-export type IonIconName = ComponentProps<typeof Ionicons>['name'];
-
-export const SYMPTOM_ICONS: Record<SymptomType, IonIconName> = {
+export const SYMPTOM_ICONS: Record<SymptomType, IoniconName> = {
   hindLimbWeakness: 'walk-outline',
   weightLoss: 'trending-down-outline',
   polyuria: 'water-outline',

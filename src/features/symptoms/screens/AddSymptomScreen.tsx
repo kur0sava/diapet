@@ -203,7 +203,7 @@ export default function AddSymptomScreen() {
                   ]}
                   onPress={() => toggleType(type)}
                 >
-                  <Ionicons name={SYMPTOM_ICONS[type] as string} size={24} color={selected ? theme.colors.primary : theme.colors.textSecondary} />
+                  <Ionicons name={SYMPTOM_ICONS[type]} size={24} color={selected ? theme.colors.primary : theme.colors.textSecondary} />
                   <Text style={[styles.symptomLabel, { color: selected ? theme.colors.primary : theme.colors.text }]}
                     numberOfLines={2}>
                     {t(`symptoms.types.${type}`)}
