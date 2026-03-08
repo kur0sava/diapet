@@ -57,8 +57,16 @@ export default function EditPetScreen() {
 
   const savingRef = useRef(false);
 
+  const isValidTime = (time: string) => /^\d{1,2}:\d{2}$/.test(time);
+
   const handleSave = async () => {
     if (savingRef.current || !activePet || !name.trim()) { Alert.alert(t('pets.enterName')); return; }
+    // Validate all time entries are complete HH:MM format
+    const allTimes = [...injectionTimes, ...feedingTimes];
+    if (allTimes.some(t => !isValidTime(t))) {
+      Alert.alert(t('common.error'), t('pets.invalidTimeFormat', { defaultValue: 'Введите время в формате ЧЧ:ММ' }));
+      return;
+    }
     savingRef.current = true;
     setLoading(true);
     try {

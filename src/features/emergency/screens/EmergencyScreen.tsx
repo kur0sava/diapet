@@ -30,7 +30,7 @@ export default function EmergencyScreen() {
         { text: t('common.cancel'), style: 'cancel' },
         { text: t('emergency.call112'), onPress: () => Linking.openURL('tel:112') },
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        { text: t('emergency.goToSettings'), onPress: () => navigation.navigate('Main', { screen: 'More', params: { screen: 'EditPet' } } as any) },
+        { text: t('emergency.goToSettings'), onPress: () => navigation.navigate('Main', { screen: 'MoreTab', params: { screen: 'EditPet' } } as any) },
       ]);
       return;
     }

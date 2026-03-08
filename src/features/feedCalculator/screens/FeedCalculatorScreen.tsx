@@ -23,12 +23,13 @@ export default function FeedCalculatorScreen() {
 
   const result = useMemo(() => {
     if (!allFilled) return null;
+    const p = (v: string) => parseFloat(v.replace(',', '.')) || 0;
     return calculateDryMatter({
-      protein: parseFloat(protein) || 0,
-      fat: parseFloat(fat) || 0,
-      fiber: parseFloat(fiber) || 0,
-      ash: parseFloat(ash) || 0,
-      moisture: parseFloat(moisture) || 0,
+      protein: p(protein),
+      fat: p(fat),
+      fiber: p(fiber),
+      ash: p(ash),
+      moisture: p(moisture),
     });
   }, [protein, fat, fiber, ash, moisture, allFilled]);
 
@@ -105,7 +106,7 @@ export default function FeedCalculatorScreen() {
           </Text>
         )}
 
-        {allFilled && parseFloat(ash) === 0 && (
+        {allFilled && (parseFloat(ash.replace(',', '.')) || 0) === 0 && (
           <Text style={[styles.errorText, { color: theme.colors.warning }]}>
             {t('feedCalculator.ashZeroWarning')}
           </Text>

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useMoreNavigation } from '@navigation/hooks';
+import { useMoreNavigation, useRootNavigation } from '@navigation/hooks';
 import { useTranslation } from 'react-i18next';
 import { useTheme, ColorScheme } from '@shared/theme';
 import { storage, StorageKeys } from '@storage/mmkv/storage';
@@ -12,9 +12,11 @@ import { usePetStore } from '@shared/stores/petStore';
 import * as Notifications from 'expo-notifications';
 import { useQueryClient } from '@tanstack/react-query';
 import Constants from 'expo-constants';
+import { CommonActions } from '@react-navigation/native';
 
 export default function SettingsScreen() {
   const navigation = useMoreNavigation();
+  const rootNavigation = useRootNavigation();
   const { t } = useTranslation();
   const { theme, colorScheme, setColorScheme } = useTheme();
   const queryClient = useQueryClient();
@@ -51,8 +53,13 @@ export default function SettingsScreen() {
               await Notifications.cancelAllScheduledNotificationsAsync();
               // H007: clear React Query cache so stale data is not shown
               queryClient.clear();
+              // Reset onboarding flag so user goes through setup again
+              storage.delete(StorageKeys.ONBOARDING_COMPLETE);
               usePetStore.setState({ pets: [], activePet: null });
-              Alert.alert(t('settings.dataDeleted'), t('settings.restartApp'));
+              // Navigate to Onboarding, resetting the stack
+              rootNavigation.dispatch(
+                CommonActions.reset({ index: 0, routes: [{ name: 'Onboarding' }] })
+              );
             } catch {
               Alert.alert(t('common.error'));
             }

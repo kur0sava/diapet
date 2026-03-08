@@ -31,6 +31,7 @@ export function formatRelative(dateStr: string): string {
 
 export function getNextOccurrence(timeOfDay: string): Date {
   const [hours, minutes] = timeOfDay.split(':').map(Number);
+  if (isNaN(hours) || isNaN(minutes)) return new Date(NaN);
   const now = new Date();
   const next = new Date();
   next.setHours(hours, minutes, 0, 0);
@@ -49,6 +50,7 @@ export function minutesUntil(timeOfDay: string): number {
 
 export function formatCountdown(minutes: number): string {
   const isRu = i18n.language === 'ru';
+  if (!isFinite(minutes) || isNaN(minutes)) return '—';
   if (minutes < 60) return isRu ? `${minutes} мин` : `${minutes} min`;
   const h = Math.floor(minutes / 60);
   const m = minutes % 60;

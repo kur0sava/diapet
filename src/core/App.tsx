@@ -19,7 +19,7 @@ import {
 } from '@expo-google-fonts/inter';
 import * as SplashScreen from 'expo-splash-screen';
 import Purchases from 'react-native-purchases';
-import { useSubscriptionStore } from '@shared/stores/subscriptionStore';
+import { useSubscriptionStore, markPurchasesConfigured } from '@shared/stores/subscriptionStore';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -68,6 +68,7 @@ export default function App() {
         try {
           if (!REVENUECAT_API_KEY.startsWith('YOUR_')) {
             Purchases.configure({ apiKey: REVENUECAT_API_KEY });
+            markPurchasesConfigured();
             useSubscriptionStore.getState().loadStatus();
           } else {
             console.warn('RevenueCat: placeholder API key — subscription features disabled. Replace REVENUECAT_API_KEY in App.tsx.');

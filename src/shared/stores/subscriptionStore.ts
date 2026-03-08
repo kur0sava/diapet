@@ -3,6 +3,10 @@ import Purchases, { CustomerInfo, PurchasesOffering, PurchasesPackage } from 're
 import { storage, StorageKeys } from '@storage/mmkv/storage';
 
 const ENTITLEMENT_ID = 'pro';
+
+/** Flag set by App.tsx after successful Purchases.configure() */
+let purchasesConfigured = false;
+export function markPurchasesConfigured() { purchasesConfigured = true; }
 const CACHE_TTL_MS = 30 * 24 * 60 * 60 * 1000; // 30 days
 const CACHE_TIMESTAMP_KEY = 'subscriptionCachedAt';
 
@@ -42,6 +46,7 @@ export const useSubscriptionStore = create<SubscriptionStore>((set) => ({
   offerings: null,
 
   loadStatus: async () => {
+    if (!purchasesConfigured) { set({ isLoading: false }); return; }
     set({ isLoading: true });
     try {
       const info = await Purchases.getCustomerInfo();
@@ -56,6 +61,7 @@ export const useSubscriptionStore = create<SubscriptionStore>((set) => ({
   },
 
   loadOfferings: async () => {
+    if (!purchasesConfigured) { set({ isLoadingOfferings: false }); return; }
     set({ isLoadingOfferings: true });
     try {
       const offerings = await Purchases.getOfferings();
@@ -67,6 +73,7 @@ export const useSubscriptionStore = create<SubscriptionStore>((set) => ({
   },
 
   purchase: async (pkg: PurchasesPackage) => {
+    if (!purchasesConfigured) return false;
     try {
       const { customerInfo } = await Purchases.purchasePackage(pkg);
       const isPro = checkPro(customerInfo);
@@ -82,6 +89,7 @@ export const useSubscriptionStore = create<SubscriptionStore>((set) => ({
   },
 
   restore: async () => {
+    if (!purchasesConfigured) return false;
     try {
       const info = await Purchases.restorePurchases();
       const isPro = checkPro(info);
