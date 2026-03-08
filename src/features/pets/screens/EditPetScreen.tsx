@@ -61,6 +61,14 @@ export default function EditPetScreen() {
 
   const handleSave = async () => {
     if (savingRef.current || !activePet || !name.trim()) { Alert.alert(t('pets.enterName')); return; }
+    // Validate weight: if provided, must be positive
+    if (weightKg) {
+      const parsedWeight = parseFloat(weightKg.replace(',', '.'));
+      if (isNaN(parsedWeight) || parsedWeight <= 0 || parsedWeight > 30) {
+        Alert.alert(t('common.error'), t('pets.invalidWeight'));
+        return;
+      }
+    }
     // Validate all time entries are complete HH:MM format
     const allTimes = [...injectionTimes, ...feedingTimes];
     if (allTimes.some(t => !isValidTime(t))) {

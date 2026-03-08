@@ -7,26 +7,42 @@ export function getLocale() {
 }
 
 export function formatDate(dateStr: string): string {
-  const date = parseISO(dateStr);
-  const locale = getLocale();
-  if (isToday(date)) return i18n.t('common.today');
-  if (isYesterday(date)) return i18n.t('common.yesterday');
-  return format(date, 'd MMM yyyy', { locale });
+  try {
+    const date = parseISO(dateStr);
+    const locale = getLocale();
+    if (isToday(date)) return i18n.t('common.today');
+    if (isYesterday(date)) return i18n.t('common.yesterday');
+    return format(date, 'd MMM yyyy', { locale });
+  } catch {
+    return dateStr;
+  }
 }
 
 export function formatDateTime(dateStr: string): string {
-  const date = parseISO(dateStr);
-  const locale = getLocale();
-  return format(date, 'd MMM yyyy, HH:mm', { locale });
+  try {
+    const date = parseISO(dateStr);
+    const locale = getLocale();
+    return format(date, 'd MMM yyyy, HH:mm', { locale });
+  } catch {
+    return dateStr;
+  }
 }
 
 export function formatTime(dateStr: string): string {
-  return format(parseISO(dateStr), 'HH:mm');
+  try {
+    return format(parseISO(dateStr), 'HH:mm');
+  } catch {
+    return '--:--';
+  }
 }
 
 export function formatRelative(dateStr: string): string {
-  const locale = getLocale();
-  return formatDistanceToNow(parseISO(dateStr), { addSuffix: true, locale });
+  try {
+    const locale = getLocale();
+    return formatDistanceToNow(parseISO(dateStr), { addSuffix: true, locale });
+  } catch {
+    return dateStr;
+  }
 }
 
 export function getNextOccurrence(timeOfDay: string): Date {

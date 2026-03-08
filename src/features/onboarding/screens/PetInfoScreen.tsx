@@ -41,6 +41,14 @@ export default function PetInfoScreen() {
   const validate = () => {
     const newErrors: Record<string, string> = {};
     if (!name.trim()) newErrors.name = t('common.error');
+    if (weightKg) {
+      const w = parseFloat(weightKg.replace(',', '.'));
+      if (isNaN(w) || w <= 0 || w > 30) newErrors.weightKg = t('pets.invalidWeight');
+    }
+    if (age) {
+      const a = parseInt(age, 10);
+      if (isNaN(a) || a < 0 || a > 30) newErrors.age = t('common.error');
+    }
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -130,6 +138,7 @@ export default function PetInfoScreen() {
               placeholder="4.5"
               keyboardType="decimal-pad"
               containerStyle={{ flex: 1 }}
+              error={errors.weightKg}
             />
             <Input
               label={t('onboarding.petAge')}
@@ -139,6 +148,7 @@ export default function PetInfoScreen() {
               keyboardType="number-pad"
               containerStyle={{ flex: 1 }}
               hint={t('onboarding.petAgeHint')}
+              error={errors.age}
             />
           </View>
 

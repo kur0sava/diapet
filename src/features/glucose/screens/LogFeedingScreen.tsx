@@ -44,6 +44,15 @@ export default function LogFeedingScreen() {
       return;
     }
 
+    // Validate amount: if provided, must be a positive number
+    if (amount) {
+      const parsedAmount = parseFloat(amount.replace(',', '.'));
+      if (isNaN(parsedAmount) || parsedAmount <= 0) {
+        Alert.alert(t('common.error'), t('feeding.amountError'));
+        return;
+      }
+    }
+
     savingRef.current = true;
     setLoading(true);
     try {
