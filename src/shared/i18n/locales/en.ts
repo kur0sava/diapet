@@ -384,6 +384,7 @@ export const en = {
     injectionSchedule: '💉 Injection schedule',
     feedingSchedule: '🍽️ Feeding schedule',
     enterName: 'Enter name',
+    invalidTimeFormat: 'Please enter time in HH:MM format',
     saveError: 'Save error',
     diabetesType1Short: 'Type 1',
     diabetesType2Short: 'Type 2',

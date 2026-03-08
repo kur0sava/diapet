@@ -64,7 +64,7 @@ export default function EditPetScreen() {
     // Validate all time entries are complete HH:MM format
     const allTimes = [...injectionTimes, ...feedingTimes];
     if (allTimes.some(t => !isValidTime(t))) {
-      Alert.alert(t('common.error'), t('pets.invalidTimeFormat', { defaultValue: 'Введите время в формате ЧЧ:ММ' }));
+      Alert.alert(t('common.error'), t('pets.invalidTimeFormat'));
       return;
     }
     savingRef.current = true;

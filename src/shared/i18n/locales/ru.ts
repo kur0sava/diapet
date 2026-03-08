@@ -384,6 +384,7 @@ export const ru = {
     injectionSchedule: '💉 Расписание инъекций',
     feedingSchedule: '🍽️ Расписание кормлений',
     enterName: 'Введите имя',
+    invalidTimeFormat: 'Введите время в формате ЧЧ:ММ',
     saveError: 'Ошибка сохранения',
     diabetesType1Short: 'Тип 1',
     diabetesType2Short: 'Тип 2',
