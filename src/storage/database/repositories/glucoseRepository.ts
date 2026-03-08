@@ -132,6 +132,15 @@ export const glucoseRepository = {
     };
   },
 
+  async findAllByPetId(petId: string): Promise<GlucoseReading[]> {
+    const db = await getDatabase();
+    const rows = await db.getAllAsync<GlucoseRow>(
+      'SELECT * FROM glucose_readings WHERE pet_id = ? ORDER BY recorded_at ASC',
+      [petId]
+    );
+    return rows.map(mapRowToReading);
+  },
+
   async findLast7Days(petId: string): Promise<GlucoseReading[]> {
     const db = await getDatabase();
     const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();

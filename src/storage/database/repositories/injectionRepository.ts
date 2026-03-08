@@ -56,6 +56,15 @@ export const injectionRepository = {
     };
   },
 
+  async findAllByPetId(petId: string): Promise<InjectionLog[]> {
+    const db = await getDatabase();
+    const rows = await db.getAllAsync<InjectionRow>(
+      'SELECT * FROM injections WHERE pet_id = ? ORDER BY administered_at ASC',
+      [petId]
+    );
+    return rows.map(mapRow);
+  },
+
   async delete(id: string): Promise<void> {
     const db = await getDatabase();
     await db.runAsync('DELETE FROM injections WHERE id = ?', [id]);

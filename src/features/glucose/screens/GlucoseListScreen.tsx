@@ -204,15 +204,14 @@ export default function GlucoseListScreen() {
     }
     setExporting(true);
     try {
-      const [injectionsResult, symptomsResult] = await Promise.all([
-        injectionRepository.findByPetId(activePet.id),
-        symptomRepository.findByPetId(activePet.id),
+      const [allReadings, injections, symptoms] = await Promise.all([
+        glucoseRepository.findAllByPetId(activePet.id),
+        injectionRepository.findAllByPetId(activePet.id),
+        symptomRepository.findAllByPetId(activePet.id),
       ]);
-      const injections = injectionsResult.data;
-      const symptoms = symptomsResult.data;
       await generateVetReportPdf({
         pet: activePet,
-        glucoseReadings: readings,
+        glucoseReadings: allReadings,
         injections,
         symptoms,
       });

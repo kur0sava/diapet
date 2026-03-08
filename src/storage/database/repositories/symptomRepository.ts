@@ -90,6 +90,31 @@ export const symptomRepository = {
     };
   },
 
+  async findAllByPetId(petId: string): Promise<SymptomEntry[]> {
+    const db = await getDatabase();
+    const rows = await db.getAllAsync<SymptomRow>(
+      'SELECT * FROM symptoms WHERE pet_id = ? ORDER BY recorded_at ASC',
+      [petId]
+    );
+    if (rows.length === 0) return [];
+    const ids = rows.map(r => r.id);
+    const placeholders = ids.map(() => '?').join(',');
+    const typeRows = await db.getAllAsync<{ symptom_id: string; symptom_type: string }>(
+      `SELECT symptom_id, symptom_type FROM symptom_entry_types WHERE symptom_id IN (${placeholders})`,
+      ids
+    );
+    const typesBySymptomId = new Map<string, SymptomType[]>();
+    for (const tr of typeRows) {
+      const arr = typesBySymptomId.get(tr.symptom_id) ?? [];
+      arr.push(tr.symptom_type as SymptomType);
+      typesBySymptomId.set(tr.symptom_id, arr);
+    }
+    return rows.map(row => {
+      const junctionTypes = typesBySymptomId.get(row.id);
+      return mapRowToSymptom(row, junctionTypes && junctionTypes.length > 0 ? junctionTypes : undefined);
+    });
+  },
+
   async update(id: string, dto: Partial<CreateSymptomDTO>): Promise<SymptomEntry | null> {
     const db = await getDatabase();
     const now = new Date().toISOString();
