@@ -3,9 +3,10 @@ import { View, Text, StyleSheet } from 'react-native';
 import { useTheme } from '@shared/theme';
 import { Ionicons } from '@expo/vector-icons';
 import Animated, { FadeInUp } from 'react-native-reanimated';
+import type { IoniconName } from '@shared/components/ui';
 
 interface Props {
-  iconName: keyof typeof Ionicons.glyphMap;
+  iconName: IoniconName;
   iconColor: string;
   label: string;
   value: string;

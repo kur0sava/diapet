@@ -21,8 +21,9 @@ import { format } from 'date-fns';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useUnsavedChangesGuard } from '@shared/hooks/useUnsavedChangesGuard';
+import type { IoniconName } from '@shared/components/ui';
 
-const MEAL_OPTIONS: { value: MealRelation; labelKey: string; iconName: keyof typeof Ionicons.glyphMap; iconColor: string }[] = [
+const MEAL_OPTIONS: { value: MealRelation; labelKey: string; iconName: IoniconName; iconColor: string }[] = [
   { value: 'fasting', labelKey: 'glucose.fasting', iconName: 'sunny-outline', iconColor: '#FF9500' },
   { value: 'before_meal', labelKey: 'glucose.beforeMeal', iconName: 'restaurant-outline', iconColor: '#FF6B6B' },
   { value: 'after_meal', labelKey: 'glucose.afterMeal', iconName: 'checkmark-circle-outline', iconColor: '#34C759' },

@@ -168,7 +168,8 @@ export default function GlucoseListScreen() {
   });
 
   const handleDelete = useCallback((id: string) => {
-    const item = readings.find(r => r.id === id);
+    const allItems = data?.pages.flatMap(p => p.data) ?? [];
+    const item = allItems.find(r => r.id === id);
     const info = item
       ? `${format(new Date(item.recordedAt), 'dd.MM.yyyy HH:mm')} — ${item.valueMmol.toFixed(1)} ${unit}`
       : '';
@@ -187,7 +188,7 @@ export default function GlucoseListScreen() {
         },
       ]
     );
-  }, [t, queryClient, readings, unit]);
+  }, [t, queryClient, data, unit]);
 
   const mealLabels = useMemo<Record<string, string>>(() => ({
     before_meal: t('glucose.beforeMeal'),
@@ -220,7 +221,7 @@ export default function GlucoseListScreen() {
     } finally {
       setExporting(false);
     }
-  }, [activePet, readings, t, rootNav, canExportPDF]);
+  }, [activePet, t, rootNav, canExportPDF]);
 
   const renderReading = useCallback(({ item, index }: { item: GlucoseReading; index: number }) => {
     const displayValue = unit === 'mmol/L' ? `${item.valueMmol.toFixed(1)}` : `${item.valueMgdl}`;

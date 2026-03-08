@@ -5,11 +5,12 @@ import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import Animated, { useSharedValue, useAnimatedStyle, withSpring } from 'react-native-reanimated';
 import * as Haptics from 'expo-haptics';
+import type { IoniconName } from '@shared/components/ui';
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
 interface Props {
-  iconName: keyof typeof Ionicons.glyphMap;
+  iconName: IoniconName;
 
   label: string;
   color: string;
