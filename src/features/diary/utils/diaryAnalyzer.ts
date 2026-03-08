@@ -69,9 +69,10 @@ export function analyzeDayGlucose(readings: GlucoseReading[]): DiaryRecommendati
     });
   }
 
-  // In-range assessment
+  // In-range assessment — only show goodControl if no warnings/criticals already present
+  const hasWarnings = recommendations.some(r => r.type === 'critical' || r.type === 'warning');
   if (stats.inRangePercent !== null) {
-    if (stats.inRangePercent >= 80) {
+    if (stats.inRangePercent >= 80 && !hasWarnings) {
       recommendations.push({
         type: 'good',
         messageKey: 'diary.advice.goodControl',

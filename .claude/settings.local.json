@@ -39,7 +39,8 @@
       "Bash(./gradlew assembleDebug:*)",
       "Bash(grep:*)",
       "Bash(npx depcheck:*)",
-      "Bash(xargs wc:*)"
+      "Bash(xargs wc:*)",
+      "Bash(git:*)"
     ]
   }
 }

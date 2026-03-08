@@ -63,9 +63,13 @@ export default function InjectionListScreen() {
     Alert.alert(t('injection.deleteConfirm'), info || undefined, [
       { text: t('common.cancel'), style: 'cancel' },
       { text: t('common.delete'), style: 'destructive', onPress: async () => {
-        await injectionRepository.delete(id);
-        queryClient.invalidateQueries({ queryKey: ['injections'] });
-        queryClient.invalidateQueries({ queryKey: ['diary'] });
+        try {
+          await injectionRepository.delete(id);
+          queryClient.invalidateQueries({ queryKey: ['injections'] });
+          queryClient.invalidateQueries({ queryKey: ['diary'] });
+        } catch {
+          Alert.alert(t('common.error'));
+        }
       }},
     ]);
   };

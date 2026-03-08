@@ -54,11 +54,12 @@ export default function LogGlucoseScreen() {
   // H003: prevent double-tap save
   const savingRef = useRef(false);
   // H002: track initial values to avoid false dirty-guard on edit load
-  const initialValuesRef = useRef({ value: '', insulinDose: '', notes: '' });
+  const initialValuesRef = useRef({ value: '', insulinDose: '', notes: '', mealRelation: 'unspecified' as MealRelation });
   useUnsavedChangesGuard(
     value !== initialValuesRef.current.value ||
     insulinDose !== initialValuesRef.current.insulinDose ||
-    notes !== initialValuesRef.current.notes
+    notes !== initialValuesRef.current.notes ||
+    mealRelation !== initialValuesRef.current.mealRelation
   );
 
   useEffect(() => {
@@ -76,7 +77,7 @@ export default function LogGlucoseScreen() {
         if (reading.notes) setNotes(loadedNotes);
         if (reading.recordedAt) setRecordedAt(new Date(reading.recordedAt));
         // H002: set baseline so guard doesn't fire immediately after load
-        initialValuesRef.current = { value: displayValue, insulinDose: loadedDose, notes: loadedNotes };
+        initialValuesRef.current = { value: displayValue, insulinDose: loadedDose, notes: loadedNotes, mealRelation: reading.mealRelation };
       });
     }
     return () => { cancelled = true; };

@@ -200,7 +200,7 @@ export default function DashboardScreen() {
                   <Text style={[styles.greeting, { fontFamily: theme.fonts.medium }]}>
                     {t('dashboard.title')}
                   </Text>
-                  <Text style={[styles.petName, { fontFamily: theme.fonts.bold }]}>
+                  <Text style={[styles.petName, { fontFamily: theme.fonts.bold }]} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.6}>
                     {activePet?.name ?? 'DiaPet'}
                   </Text>
                 </View>

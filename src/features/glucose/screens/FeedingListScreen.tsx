@@ -76,9 +76,13 @@ export default function FeedingListScreen() {
     Alert.alert(t('feeding.deleteConfirm'), info || undefined, [
       { text: t('common.cancel'), style: 'cancel' },
       { text: t('common.delete'), style: 'destructive', onPress: async () => {
-        await feedingRepository.delete(id);
-        queryClient.invalidateQueries({ queryKey: ['feedings'] });
-        queryClient.invalidateQueries({ queryKey: ['diary'] });
+        try {
+          await feedingRepository.delete(id);
+          queryClient.invalidateQueries({ queryKey: ['feedings'] });
+          queryClient.invalidateQueries({ queryKey: ['diary'] });
+        } catch {
+          Alert.alert(t('common.error'));
+        }
       }},
     ]);
   };
@@ -102,7 +106,7 @@ export default function FeedingListScreen() {
               </View>
               {item.amountGrams != null && (
                 <Text style={[styles.amount, { color: theme.colors.textSecondary }]}>
-                  {item.amountGrams} {t('feeding.amountGrams').replace(/\(.*\)/, '').trim()}
+                  {item.amountGrams} {t('common.grams')}
                 </Text>
               )}
               <Text style={[styles.time, { color: theme.colors.textTertiary }]}>

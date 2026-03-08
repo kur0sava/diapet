@@ -22,6 +22,18 @@ Key categories: hardcoded colors (~50 instances), missing keyboardShouldPersistT
 StatusBar issues (2 screens), Dimensions.get (1 screen), missing input validation (feeding, calculator),
 no unsaved guard (AddExpense), pet name overflow, ErrorBoundary fully hardcoded colors.
 
+## Small Screen Layout Issues (2026-03-08)
+- **StatusCard**: 3 cards in row on 320px = 58.6px per label. Russian labels 14-19 chars TRUNCATED.
+  Fix: shorten i18n keys or add adjustsFontSizeToFit.
+- **QuickActions**: justifyContent:'center' CONFIRMED FIXED. 5th button centered (acceptable).
+- **DailyDiary addRow**: 3 buttons flex:1 on 320px = 90.6px for text. "Сделать инъекцию" wraps to 2 lines.
+  Fix: shorter i18n keys for diary context (diary.addGlucose/addInjection/addFeeding).
+- **DailyDiary statsRow**: statLabel fontSize:11 no numberOfLines -- overflows with large font.
+- **DailyDiary CRITICAL**: No petId guard. Empty petId -> empty diary + add buttons lead to forms with no petId.
+- **DailyDiary**: No pull-to-refresh (Dashboard HAS it). No error state from useQuery.
+- **Dashboard petName**: fontSize:28 no numberOfLines -- long names overflow into SOS button.
+
 ## Audit History
 - 2026-03-03: 6 Critical, 11 High, 16 Medium, 14 Low
-- 2026-03-07: Full re-audit with focus on restructure + visual/layout audit (this session)
+- 2026-03-07: Full re-audit with focus on restructure + visual/layout audit
+- 2026-03-08: POST-FIX audit: 1 Critical, 4 High, 6 Medium, 3 Low

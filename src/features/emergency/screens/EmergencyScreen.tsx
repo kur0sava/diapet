@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import {
   View, Text, StyleSheet, ScrollView,
   TouchableOpacity, Linking, Alert, StatusBar,
@@ -19,22 +19,26 @@ export default function EmergencyScreen() {
   const { t } = useTranslation();
   const { theme } = useTheme();
   const [activeTab, setActiveTab] = useState<EmergencyType>('hypoglycemia');
+  const callingRef = useRef(false);
 
   const vetPhone = storage.getString('vetPhone');
   const vetName = storage.getString('vetName');
 
   const callVet = () => {
+    if (callingRef.current) return;
     if (!vetPhone) {
-      // UX-013: Navigate to edit pet screen to add vet contact
+      // Не уводим с Emergency в Settings — пользователь теряет инструкции в момент паники.
+      // Предлагаем только звонок 112, добавить ветеринара можно после.
       Alert.alert(t('emergency.noVetContact'), t('emergency.addVetContact'), [
         { text: t('common.cancel'), style: 'cancel' },
         { text: t('emergency.call112'), onPress: () => Linking.openURL('tel:112') },
-        { text: t('emergency.goToSettings'), onPress: () => navigation.navigate('Main', { screen: 'MoreTab', params: { screen: 'EditPet' } }) },
       ]);
       return;
     }
+    callingRef.current = true;
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
     Linking.openURL(`tel:${vetPhone}`);
+    setTimeout(() => { callingRef.current = false; }, 2000);
   };
 
   const hypoSigns = t('emergency.hypoSigns', { returnObjects: true }) as string[];

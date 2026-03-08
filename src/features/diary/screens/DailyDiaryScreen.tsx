@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   StatusBar,
   ActivityIndicator,
+  RefreshControl,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
@@ -56,7 +57,8 @@ export default function DailyDiaryScreen() {
 
   const [currentDate, setCurrentDate] = useState<Date>(() => {
     if (route.params?.date) {
-      return parseISO(route.params.date);
+      const parsed = parseISO(route.params.date);
+      return isValid(parsed) ? parsed : new Date();
     }
     return new Date();
   });
@@ -71,25 +73,33 @@ export default function DailyDiaryScreen() {
     }
   }, [currentDate]);
 
-  const { data: glucoseReadings = [], isLoading: loadingGlucose } = useQuery({
+  const { data: glucoseReadings = [], isLoading: loadingGlucose, isError: errGlucose, refetch: refetchGlucose } = useQuery({
     queryKey: ['diary', 'glucose', petId, dateStr],
     queryFn: () => glucoseRepository.findForDay(petId, dateStr),
     enabled: !!petId,
   });
 
-  const { data: injections = [], isLoading: loadingInj } = useQuery({
+  const { data: injections = [], isLoading: loadingInj, isError: errInj, refetch: refetchInj } = useQuery({
     queryKey: ['diary', 'injection', petId, dateStr],
     queryFn: () => injectionRepository.findForDay(petId, dateStr),
     enabled: !!petId,
   });
 
-  const { data: feedings = [], isLoading: loadingFeed } = useQuery({
+  const { data: feedings = [], isLoading: loadingFeed, isError: errFeed, refetch: refetchFeed } = useQuery({
     queryKey: ['diary', 'feeding', petId, dateStr],
     queryFn: () => feedingRepository.findForDay(petId, dateStr),
     enabled: !!petId,
   });
 
   const isLoading = loadingGlucose || loadingInj || loadingFeed;
+  const isError = errGlucose || errInj || errFeed;
+
+  const [refreshing, setRefreshing] = useState(false);
+  const onRefresh = useCallback(async () => {
+    setRefreshing(true);
+    await Promise.all([refetchGlucose(), refetchInj(), refetchFeed()]);
+    setRefreshing(false);
+  }, [refetchGlucose, refetchInj, refetchFeed]);
 
   const timeline: TimelineEvent[] = useMemo(() => {
     const events: TimelineEvent[] = [];
@@ -183,14 +193,20 @@ export default function DailyDiaryScreen() {
         <TouchableOpacity onPress={goToPrevDay} style={styles.dateNavBtn} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
           <Ionicons name="chevron-back" size={20} color={theme.colors.primary} />
         </TouchableOpacity>
-        <Text style={[styles.dateLabel, { color: theme.colors.text, fontFamily: theme.fonts.semibold }]}>
-          {formatDayHeader(currentDate, t)}
+        <TouchableOpacity
+          onPress={() => !isToday(currentDate) && setCurrentDate(new Date())}
+          disabled={isToday(currentDate)}
+          style={styles.dateLabelBtn}
+        >
+          <Text style={[styles.dateLabel, { color: theme.colors.text, fontFamily: theme.fonts.semibold }]}>
+            {formatDayHeader(currentDate, t)}
+          </Text>
           {!isToday(currentDate) && (
-            <Text style={[styles.dateSub, { color: theme.colors.textSecondary }]}>
-              {'  '}{format(currentDate, 'dd.MM.yyyy')}
+            <Text style={[styles.dateSub, { color: theme.colors.primary }]}>
+              {format(currentDate, 'dd.MM.yyyy')} · {t('common.today')} →
             </Text>
           )}
-        </Text>
+        </TouchableOpacity>
         <TouchableOpacity
           onPress={goToNextDay}
           style={[styles.dateNavBtn, isToday(currentDate) && styles.dateNavBtnDisabled]}
@@ -201,7 +217,25 @@ export default function DailyDiaryScreen() {
         </TouchableOpacity>
       </View>
 
-      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
+      {!petId && (
+        <View style={styles.centered}>
+          <Ionicons name="paw-outline" size={40} color={theme.colors.textTertiary} style={{ marginBottom: 10 }} />
+          <Text style={[styles.emptyText, { color: theme.colors.textSecondary }]}>{t('common.noData')}</Text>
+        </View>
+      )}
+
+      {isError && petId && (
+        <View style={styles.centered}>
+          <Ionicons name="alert-circle-outline" size={32} color={theme.colors.danger} style={{ marginBottom: 8 }} />
+          <Text style={[styles.emptyText, { color: theme.colors.textSecondary }]}>{t('common.error')}</Text>
+        </View>
+      )}
+
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={styles.scrollContent}
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={theme.colors.primary} />}
+      >
 
         {/* Stats Row */}
         {stats.count > 0 && (
@@ -318,7 +352,7 @@ export default function DailyDiaryScreen() {
               onPress={() => navigation.navigate('LogGlucose', {})}
             >
               <Ionicons name="water" size={20} color={theme.colors.primary} />
-              <Text style={[styles.addBtnText, { color: theme.colors.primary, fontFamily: theme.fonts.medium }]}>
+              <Text style={[styles.addBtnText, { color: theme.colors.primary, fontFamily: theme.fonts.medium }]} numberOfLines={2}>
                 {t('dashboard.logGlucose')}
               </Text>
             </TouchableOpacity>
@@ -327,7 +361,7 @@ export default function DailyDiaryScreen() {
               onPress={() => navigation.navigate('LogInjection')}
             >
               <Ionicons name="medkit" size={20} color={theme.colors.secondary} />
-              <Text style={[styles.addBtnText, { color: theme.colors.secondary, fontFamily: theme.fonts.medium }]}>
+              <Text style={[styles.addBtnText, { color: theme.colors.secondary, fontFamily: theme.fonts.medium }]} numberOfLines={2}>
                 {t('dashboard.logInjection')}
               </Text>
             </TouchableOpacity>
@@ -336,7 +370,7 @@ export default function DailyDiaryScreen() {
               onPress={() => navigation.navigate('LogFeeding')}
             >
               <Ionicons name="restaurant" size={20} color={theme.colors.success} />
-              <Text style={[styles.addBtnText, { color: theme.colors.success, fontFamily: theme.fonts.medium }]}>
+              <Text style={[styles.addBtnText, { color: theme.colors.success, fontFamily: theme.fonts.medium }]} numberOfLines={2}>
                 {t('dashboard.logFeeding')}
               </Text>
             </TouchableOpacity>
@@ -369,8 +403,9 @@ const styles = StyleSheet.create({
   },
   dateNavBtn: { padding: 4 },
   dateNavBtnDisabled: { opacity: 0.3 },
+  dateLabelBtn: { flex: 1, alignItems: 'center', paddingVertical: 4 },
   dateLabel: { fontSize: 16, textAlign: 'center' },
-  dateSub: { fontSize: 13 },
+  dateSub: { fontSize: 11, textAlign: 'center', marginTop: 2 },
   scrollContent: { paddingBottom: 120 },
   statsRow: {
     flexDirection: 'row',
