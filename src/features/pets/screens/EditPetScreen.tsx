@@ -29,8 +29,9 @@ export default function EditPetScreen() {
   const [feedingTimes, setFeedingTimes] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
   const [isDirty, setIsDirty] = useState(false);
+  const [guardEnabled, setGuardEnabled] = useState(true);
   const initialLoaded = useRef(false);
-  useUnsavedChangesGuard(isDirty);
+  useUnsavedChangesGuard(guardEnabled && isDirty);
 
   // Track changes after initial load
   useEffect(() => {
@@ -94,6 +95,7 @@ export default function EditPetScreen() {
       await refreshActivePet();
       await queryClient.invalidateQueries({ queryKey: ['pet'] });
       await queryClient.invalidateQueries({ queryKey: ['schedule'] });
+      setGuardEnabled(false);
       navigation.goBack();
     } catch { Alert.alert(t('pets.saveError')); }
     finally { savingRef.current = false; setLoading(false); }

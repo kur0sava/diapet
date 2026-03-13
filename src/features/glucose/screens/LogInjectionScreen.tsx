@@ -3,6 +3,8 @@ import {
   View, Text, StyleSheet, ScrollView,
   TouchableOpacity, Alert, KeyboardAvoidingView, Platform,
 } from 'react-native';
+import DateTimePicker from '@react-native-community/datetimepicker';
+import { format } from 'date-fns';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -28,11 +30,15 @@ export default function LogInjectionScreen() {
   const [dose, setDose] = useState('');
   const [insulinType, setInsulinType] = useState(activePet?.insulinType ?? '');
   const [notes, setNotes] = useState('');
+  const [administeredAt, setAdministeredAt] = useState(new Date());
+  const [showDatePicker, setShowDatePicker] = useState(false);
+  const [showTimePicker, setShowTimePicker] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [guardEnabled, setGuardEnabled] = useState(true);
   const commonInsulins = t('injection.commonInsulins', { returnObjects: true }) as string[];
   // ARCH005: prevent duplicate injection on double-tap
   const savingRef = useRef(false);
-  useUnsavedChangesGuard(!!dose || !!notes);
+  useUnsavedChangesGuard(guardEnabled && (!!dose || !!notes));
 
   const doSaveInjection = useCallback(async () => {
     if (!activePet || savingRef.current) return;
@@ -44,9 +50,11 @@ export default function LogInjectionScreen() {
         insulinType: insulinType.trim(),
         doseUnits: parseFloat(dose.replace(',', '.')),
         notes: notes || undefined,
+        administeredAt: administeredAt.toISOString(),
       });
       await queryClient.invalidateQueries({ queryKey: ['injections'] });
       await queryClient.invalidateQueries({ queryKey: ['diary'] });
+      setGuardEnabled(false);
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       navigation.goBack();
     } catch {
@@ -55,7 +63,7 @@ export default function LogInjectionScreen() {
       savingRef.current = false;
       setLoading(false);
     }
-  }, [activePet, dose, insulinType, notes, queryClient, navigation, t]);
+  }, [activePet, dose, insulinType, notes, administeredAt, queryClient, navigation, t]);
 
   const handleSave = useCallback(async () => {
     if (savingRef.current || !activePet) return;
@@ -146,6 +154,54 @@ export default function LogInjectionScreen() {
             ))}
           </View>
 
+          <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>{t('glucose.date')} & {t('glucose.time')}</Text>
+          <View style={styles.row}>
+            <TouchableOpacity
+              style={[styles.dateTimeBtn, { backgroundColor: theme.colors.surfaceSecondary }]}
+              onPress={() => setShowDatePicker(true)}
+            >
+              <View style={styles.dateTimeContent}>
+                <Ionicons name="calendar-outline" size={18} color={theme.colors.primary} style={{ marginRight: 6 }} />
+                <Text style={{ color: theme.colors.text, fontSize: 15, fontFamily: theme.fonts.semibold }}>
+                  {format(administeredAt, 'dd.MM.yyyy')}
+                </Text>
+              </View>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.dateTimeBtn, { backgroundColor: theme.colors.surfaceSecondary }]}
+              onPress={() => setShowTimePicker(true)}
+            >
+              <View style={styles.dateTimeContent}>
+                <Ionicons name="time-outline" size={18} color={theme.colors.primary} style={{ marginRight: 6 }} />
+                <Text style={{ color: theme.colors.text, fontSize: 15, fontFamily: theme.fonts.semibold }}>
+                  {format(administeredAt, 'HH:mm')}
+                </Text>
+              </View>
+            </TouchableOpacity>
+          </View>
+
+          {showDatePicker && (
+            <DateTimePicker
+              value={administeredAt}
+              mode="date"
+              maximumDate={new Date()}
+              onChange={(_, date) => {
+                setShowDatePicker(false);
+                if (date) setAdministeredAt(date);
+              }}
+            />
+          )}
+          {showTimePicker && (
+            <DateTimePicker
+              value={administeredAt}
+              mode="time"
+              onChange={(_, date) => {
+                setShowTimePicker(false);
+                if (date) setAdministeredAt(date);
+              }}
+            />
+          )}
+
           <Input
             label={t('glucose.notes')}
             value={notes}
@@ -178,4 +234,7 @@ const styles = StyleSheet.create({
   sectionTitle: { fontSize: 15, fontWeight: '700', marginTop: 4 },
   chips: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
   chip: { paddingHorizontal: 14, paddingVertical: 8, borderRadius: 20 },
+  row: { flexDirection: 'row', gap: 10 },
+  dateTimeBtn: { flex: 1, borderRadius: 12, paddingVertical: 12, paddingHorizontal: 14 },
+  dateTimeContent: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center' },
 });

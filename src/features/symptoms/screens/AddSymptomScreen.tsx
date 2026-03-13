@@ -57,12 +57,13 @@ export default function AddSymptomScreen() {
   const severity: SymptomSeverity = severityOverride ?? autoSeverity?.severity ?? 'mild';
   const [photos, setPhotos] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
+  const [guardEnabled, setGuardEnabled] = useState(true);
   // ARCH005: prevent duplicate symptom save on double-tap
   const savingRef = useRef(false);
   const [selectedGlucoseId, setSelectedGlucoseId] = useState<string | undefined>(
     route.params?.glucoseReadingId
   );
-  useUnsavedChangesGuard(selectedTypes.length > 0 || !!notes);
+  useUnsavedChangesGuard(guardEnabled && (selectedTypes.length > 0 || !!notes));
 
   useEffect(() => {
     if (editId) {
@@ -163,6 +164,7 @@ export default function AddSymptomScreen() {
         });
       }
       await queryClient.invalidateQueries({ queryKey: ['symptoms'] });
+      setGuardEnabled(false);
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       navigation.goBack();
     } catch {
