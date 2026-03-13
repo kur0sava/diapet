@@ -44,6 +44,12 @@
       "favicon": "./assets/favicon.png"
     },
     "plugins": [
+      [
+        "react-native-google-mobile-ads",
+        {
+          "androidAppId": "ca-app-pub-XXXXXXXXXXXXXXXX~XXXXXXXXXX"
+        }
+      ],
       "expo-notifications",
       "expo-image-picker",
       [

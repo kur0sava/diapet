@@ -25,6 +25,11 @@ import { formatRelative, minutesUntil, formatCountdown, hoursSince } from '@shar
 import { Ionicons } from '@expo/vector-icons';
 import { usePetStore } from '@shared/stores/petStore';
 import { useSubscription } from '@features/subscription/hooks/useSubscription';
+import { BannerAd, BannerAdSize, TestIds } from 'react-native-google-mobile-ads';
+
+const ADMOB_BANNER_ID = __DEV__
+  ? TestIds.ADAPTIVE_BANNER
+  : 'ca-app-pub-XXXXXXXXXXXXXXXX/XXXXXXXXXX';
 
 interface GlucoseReading {
   valueMmol: number;
@@ -395,6 +400,17 @@ export default function DashboardScreen() {
             </TouchableOpacity>
           </View>
         </View>
+
+        {/* AdMob banner — only for free users */}
+        {!isPro && (
+          <View style={styles.adBanner}>
+            <BannerAd
+              unitId={ADMOB_BANNER_ID}
+              size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER}
+              requestOptions={{ requestNonPersonalizedAdsOnly: false }}
+            />
+          </View>
+        )}
       </ScrollView>
     </SafeAreaView>
   );
@@ -403,6 +419,7 @@ export default function DashboardScreen() {
 const styles = StyleSheet.create({
   container: { flex: 1 },
   scrollContent: { paddingBottom: 100 },
+  adBanner: { alignItems: 'center', marginTop: 8, marginBottom: 16 },
   // Hero
   heroGradient: {
     paddingBottom: 20,
