@@ -12,7 +12,7 @@ import { useInfiniteQuery, useQuery, useQueryClient } from '@tanstack/react-quer
 import { glucoseRepository, injectionRepository, symptomRepository } from '@storage/database';
 import { usePetStore } from '@shared/stores/petStore';
 import { GlucoseReading, getGlucoseColor, MealRelation } from '../types';
-import { GlucoseFilter } from '@storage/domain/types';
+import { GlucoseFilter, GLUCOSE_RANGES } from '@storage/domain/types';
 import { formatDateTime } from '@shared/utils/dateUtils';
 import { EmptyState, Card, AnimatedListItem } from '@shared/components/ui';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -31,10 +31,12 @@ if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental
 type LevelPreset = { key: string; labelKey: string; min?: number; max?: number; color: string };
 
 const LEVEL_PRESETS: LevelPreset[] = [
-  { key: 'low', labelKey: 'glucose.low', max: 4, color: '#FF3B30' },
-  { key: 'normal', labelKey: 'glucose.normal', min: 4, max: 9, color: '#34C759' },
-  { key: 'high', labelKey: 'glucose.high', min: 9, max: 14, color: '#FF9500' },
-  { key: 'veryHigh', labelKey: 'glucose.veryHigh', min: 14, color: '#FF3B30' },
+  { key: 'severe_low', labelKey: 'glucose.severeLow', max: GLUCOSE_RANGES.severe_low.max, color: GLUCOSE_RANGES.severe_low.color },
+  { key: 'low', labelKey: 'glucose.low', min: GLUCOSE_RANGES.low.min, max: GLUCOSE_RANGES.low.max, color: GLUCOSE_RANGES.low.color },
+  { key: 'below_target', labelKey: 'glucose.belowTarget', min: GLUCOSE_RANGES.below_target.min, max: GLUCOSE_RANGES.below_target.max, color: GLUCOSE_RANGES.below_target.color },
+  { key: 'normal', labelKey: 'glucose.normal', min: GLUCOSE_RANGES.normal.min, max: GLUCOSE_RANGES.normal.max, color: GLUCOSE_RANGES.normal.color },
+  { key: 'high', labelKey: 'glucose.high', min: GLUCOSE_RANGES.high.min, max: GLUCOSE_RANGES.high.max, color: GLUCOSE_RANGES.high.color },
+  { key: 'very_high', labelKey: 'glucose.veryHigh', min: GLUCOSE_RANGES.very_high.min, color: GLUCOSE_RANGES.very_high.color },
 ];
 
 type MealOption = { value: MealRelation; labelKey: string };

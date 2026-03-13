@@ -53,13 +53,28 @@ export default function LogGlucoseScreen() {
   const [showTimePicker, setShowTimePicker] = useState(false);
   // H003: prevent double-tap save
   const savingRef = useRef(false);
+  // GUARD-001: allow disabling guard during intentional navigation (after save)
+  const [guardEnabled, setGuardEnabled] = useState(true);
   // H002: track initial values to avoid false dirty-guard on edit load
-  const initialValuesRef = useRef({ value: '', insulinDose: '', notes: '', mealRelation: 'unspecified' as MealRelation });
+  const initialValuesRef = useRef({
+    value: '',
+    insulinDose: '',
+    insulinType: '',
+    notes: '',
+    mealRelation: 'unspecified' as MealRelation,
+    unit: savedUnit as GlucoseUnit,
+    recordedAt: new Date(recordedAt).getTime(),
+  });
   useUnsavedChangesGuard(
-    value !== initialValuesRef.current.value ||
-    insulinDose !== initialValuesRef.current.insulinDose ||
-    notes !== initialValuesRef.current.notes ||
-    mealRelation !== initialValuesRef.current.mealRelation
+    guardEnabled && (
+      value !== initialValuesRef.current.value ||
+      insulinDose !== initialValuesRef.current.insulinDose ||
+      insulinType !== initialValuesRef.current.insulinType ||
+      notes !== initialValuesRef.current.notes ||
+      mealRelation !== initialValuesRef.current.mealRelation ||
+      unit !== initialValuesRef.current.unit ||
+      recordedAt.getTime() !== initialValuesRef.current.recordedAt
+    )
   );
 
   useEffect(() => {
@@ -77,7 +92,15 @@ export default function LogGlucoseScreen() {
         if (reading.notes) setNotes(loadedNotes);
         if (reading.recordedAt) setRecordedAt(new Date(reading.recordedAt));
         // H002: set baseline so guard doesn't fire immediately after load
-        initialValuesRef.current = { value: displayValue, insulinDose: loadedDose, notes: loadedNotes, mealRelation: reading.mealRelation };
+        initialValuesRef.current = {
+          value: displayValue,
+          insulinDose: loadedDose,
+          insulinType: reading.insulinType ?? '',
+          notes: loadedNotes,
+          mealRelation: reading.mealRelation,
+          unit: savedUnit,
+          recordedAt: reading.recordedAt ? new Date(reading.recordedAt).getTime() : new Date().getTime(),
+        };
       });
     }
     return () => { cancelled = true; };
@@ -93,6 +116,18 @@ export default function LogGlucoseScreen() {
         color: getGlucoseColor(unit === 'mmol/L' ? numValue : numValue / MGDL_PER_MMOLL),
       }
     : null;
+
+  const syncInitialValues = useCallback(() => {
+    initialValuesRef.current = {
+      value,
+      insulinDose,
+      insulinType,
+      notes,
+      mealRelation,
+      unit,
+      recordedAt: recordedAt.getTime(),
+    };
+  }, [value, insulinDose, insulinType, notes, mealRelation, unit, recordedAt]);
 
   // M011: doSave defined first so handleSave can include it in deps (stale closure fix)
   const doSave = useCallback(async () => {
@@ -120,6 +155,9 @@ export default function LogGlucoseScreen() {
       }
       await queryClient.invalidateQueries({ queryKey: ['glucose'] });
       await queryClient.invalidateQueries({ queryKey: ['diary'] });
+      // Disable guard for the navigation we're about to trigger
+      setGuardEnabled(false);
+      syncInitialValues();
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       navigation.goBack();
     } catch {
@@ -128,7 +166,7 @@ export default function LogGlucoseScreen() {
       savingRef.current = false;
       setLoading(false);
     }
-  }, [activePet, numValue, unit, mealRelation, insulinDose, insulinType, notes, recordedAt, editId, queryClient, navigation, t]);
+  }, [activePet, numValue, unit, mealRelation, insulinDose, insulinType, notes, recordedAt, editId, queryClient, navigation, t, syncInitialValues]);
 
   const handleSave = useCallback(async () => {
     if (savingRef.current) return;
@@ -209,6 +247,7 @@ export default function LogGlucoseScreen() {
                       setValue(converted);
                     }
                     setUnit(u);
+                    storage.set(StorageKeys.GLUCOSE_UNIT, u);
                   }}
                 >
                   <Text style={{ color: unit === u ? '#fff' : theme.colors.text, fontFamily: theme.fonts.semibold, fontSize: 13 }}>

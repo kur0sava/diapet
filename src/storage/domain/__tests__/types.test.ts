@@ -1,10 +1,11 @@
 import { getGlucoseLevel, getGlucoseColor, GLUCOSE_RANGES } from '../types';
 
 describe('getGlucoseLevel', () => {
-  it('returns "low" when value is below 4.0', () => {
-    expect(getGlucoseLevel(2.5)).toBe('low');
-    expect(getGlucoseLevel(3.9)).toBe('low');
-    expect(getGlucoseLevel(0)).toBe('low');
+  it('returns proper levels for hypo ranges', () => {
+    expect(getGlucoseLevel(2.5)).toBe('severe_low');
+    expect(getGlucoseLevel(2.8)).toBe('low');
+    expect(getGlucoseLevel(3.2)).toBe('low');
+    expect(getGlucoseLevel(3.5)).toBe('below_target');
   });
 
   it('returns "normal" when value is between 4.0 and 9.0 (inclusive)', () => {
@@ -28,8 +29,8 @@ describe('getGlucoseLevel', () => {
 
 describe('getGlucoseColor', () => {
   it('returns red for low glucose', () => {
-    expect(getGlucoseColor(2.0)).toBe(GLUCOSE_RANGES.low.color);
-    expect(getGlucoseColor(2.0)).toBe('#FF3B30');
+    expect(getGlucoseColor(2.0)).toBe(GLUCOSE_RANGES.severe_low.color);
+    expect(getGlucoseColor(3.0)).toBe(GLUCOSE_RANGES.low.color);
   });
 
   it('returns green for normal glucose', () => {
@@ -50,7 +51,11 @@ describe('getGlucoseColor', () => {
 
 describe('GLUCOSE_RANGES', () => {
   it('has correct boundary values', () => {
-    expect(GLUCOSE_RANGES.low.max).toBe(4.0);
+    expect(GLUCOSE_RANGES.severe_low.max).toBe(2.8);
+    expect(GLUCOSE_RANGES.low.min).toBe(2.8);
+    expect(GLUCOSE_RANGES.low.max).toBe(3.3);
+    expect(GLUCOSE_RANGES.below_target.min).toBe(3.3);
+    expect(GLUCOSE_RANGES.below_target.max).toBe(4.0);
     expect(GLUCOSE_RANGES.normal.min).toBe(4.0);
     expect(GLUCOSE_RANGES.normal.max).toBe(9.0);
     expect(GLUCOSE_RANGES.high.min).toBe(9.0);
