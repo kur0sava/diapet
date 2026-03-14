@@ -6,8 +6,12 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ThemeProvider, useTheme } from '@shared/theme';
 import { ErrorBoundary } from '@shared/components/ErrorBoundary';
 import { RootNavigator } from '@navigation/RootNavigator';
+import { HintProvider } from '@features/hints/components/HintProvider';
+import { useMorningGreeting } from '@features/hints/hooks/useMorningGreeting';
+import { useMissedInjection } from '@features/hints/hooks/useMissedInjection';
+import { scheduleHintPushNotifications } from '@features/hints/utils/hintScheduler';
 import { usePetStore } from '@shared/stores/petStore';
-import { initStorage } from '@storage/mmkv/storage';
+import { initStorage, storage, StorageKeys } from '@storage/mmkv/storage';
 import { restoreLanguage } from '@shared/i18n';
 import '@shared/i18n';
 import {
@@ -41,6 +45,15 @@ function AppContent() {
     loadPets();
   }, [loadPets]);
 
+  useMorningGreeting();
+  useMissedInjection();
+
+  useEffect(() => {
+    scheduleHintPushNotifications().catch(() => {
+      // Non-critical — silently ignore
+    });
+  }, []);
+
   return (
     <>
       <StatusBar style={theme.isDark ? 'light' : 'dark'} />
@@ -63,6 +76,11 @@ export default function App() {
     initStorage()
       .then(async () => {
         restoreLanguage();
+        // Fallback: set hints registration date for existing users who completed onboarding
+        // before the hints system was introduced
+        if (storage.getBoolean(StorageKeys.ONBOARDING_COMPLETE) && !storage.getString(StorageKeys.HINTS_REGISTRATION_DATE)) {
+          storage.set(StorageKeys.HINTS_REGISTRATION_DATE, new Date().toISOString());
+        }
         // Init RevenueCat — replace the key below with your real RevenueCat API key
         const REVENUECAT_API_KEY = 'YOUR_REVENUECAT_API_KEY';
         try {
@@ -115,7 +133,9 @@ export default function App() {
       <QueryClientProvider client={queryClient}>
         <ErrorBoundary>
           <ThemeProvider>
-            <AppContent />
+            <HintProvider>
+              <AppContent />
+            </HintProvider>
           </ThemeProvider>
         </ErrorBoundary>
       </QueryClientProvider>

@@ -36,6 +36,7 @@ import InjectionListScreen from '@features/glucose/screens/InjectionListScreen';
 import FeedingListScreen from '@features/glucose/screens/FeedingListScreen';
 import SubscriptionScreen from '@features/subscription/screens/SubscriptionScreen';
 import DailyDiaryScreen from '@features/diary/screens/DailyDiaryScreen';
+import AiAssistantScreen from '@features/hints/screens/AiAssistantScreen';
 
 const Tab = createBottomTabNavigator<MainTabParamList>();
 
@@ -149,6 +150,7 @@ function MoreStackNavigator() {
       <MoreStack.Screen name="Settings" component={SettingsScreen} options={{ headerShown: false }} />
       <MoreStack.Screen name="FeedCalculator" component={FeedCalculatorScreen} options={{ headerShown: false }} />
       <MoreStack.Screen name="Subscription" component={SubscriptionScreen} options={{ headerShown: false }} />
+      <MoreStack.Screen name="AiAssistant" component={AiAssistantScreen} options={{ headerShown: false }} />
     </MoreStack.Navigator>
   );
 }

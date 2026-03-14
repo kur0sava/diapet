@@ -697,4 +697,19 @@ export const ru = {
     showDetails: 'Показать детали',
     hideDetails: 'Скрыть детали',
   },
+
+  hints: {
+    gotIt: 'Понятно',
+    achievementTitle: 'Достижение!',
+    achievementClose: 'Спасибо',
+    aiAssistant: 'ИИ-ассистент',
+    aiAssistantDesc: 'Персональный помощник по диабету кошек',
+    aiAssistantPremium: 'Доступно в Pro-версии',
+    aiPlaceholder: 'Задайте вопрос о диабете кошек...',
+    aiSend: 'Отправить',
+    aiDisclaimer: 'ИИ-ассистент не заменяет консультацию ветеринара',
+    tipLabel: 'Подсказка',
+    factLabel: 'Факт',
+    supportLabel: 'Поддержка',
+  },
 };

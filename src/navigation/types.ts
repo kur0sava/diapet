@@ -79,6 +79,7 @@ export type MoreStackParamList = {
   Settings: undefined;
   FeedCalculator: undefined;
   Subscription: undefined;
+  AiAssistant: undefined;
 };
 
 // Onboarding Stack

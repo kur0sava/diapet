@@ -167,7 +167,8 @@ export function mmolToMgdl(valueMmol: number): number {
 }
 
 export function mgdlToMmol(valueMgdl: number): number {
-  return Math.round((valueMgdl / MGDL_PER_MMOLL) * 10) / 10;
+  // C007: 2 decimal places to avoid 5.55 → 5.6 precision loss
+  return Math.round((valueMgdl / MGDL_PER_MMOLL) * 100) / 100;
 }
 
 export function convertGlucoseValue(value: number, from: GlucoseUnit, to: GlucoseUnit): number {

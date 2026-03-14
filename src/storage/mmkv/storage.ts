@@ -3,6 +3,9 @@ import * as SecureStore from 'expo-secure-store';
 import * as Crypto from 'expo-crypto';
 
 const SECURE_STORE_KEY = 'diapet-mmkv-encryption-key';
+// C004: deterministic fallback if SecureStore is unavailable (e.g. rooted device).
+// Data persists across restarts consistently; less secure than random key but better than plaintext.
+const FALLBACK_ENCRYPTION_KEY = 'diapet-fallback-enc-key-v1';
 
 let _storage: MMKV | null = null;
 let initialized = false;
@@ -33,11 +36,19 @@ export const storage = new Proxy({} as MMKV, {
 export async function initStorage(): Promise<void> {
   if (initialized) return;
 
-  let encryptionKey = await SecureStore.getItemAsync(SECURE_STORE_KEY);
-
-  if (!encryptionKey) {
-    encryptionKey = Crypto.randomUUID();
-    await SecureStore.setItemAsync(SECURE_STORE_KEY, encryptionKey);
+  let encryptionKey: string;
+  try {
+    let storedKey = await SecureStore.getItemAsync(SECURE_STORE_KEY);
+    if (!storedKey) {
+      storedKey = Crypto.randomUUID();
+      await SecureStore.setItemAsync(SECURE_STORE_KEY, storedKey);
+    }
+    encryptionKey = storedKey;
+  } catch (e) {
+    // C004: SecureStore unavailable (rooted device, etc.) — use deterministic fallback
+    // so data persists consistently across restarts instead of silently going unencrypted
+    console.error('[MMKV] SecureStore unavailable, using fallback encryption key:', e);
+    encryptionKey = FALLBACK_ENCRYPTION_KEY;
   }
 
   _storage = new MMKV({
@@ -91,4 +102,11 @@ export const StorageKeys = {
   BOOKMARKED_ARTICLES: 'bookmarkedArticles',
   SUBSCRIPTION_CACHED_PRO: 'subscriptionCachedPro',
   ONBOARDING_DRAFT: 'onboardingDraft',
+  HINTS_REGISTRATION_DATE: 'hintsRegistrationDate',
+  HINTS_SHOWN_IDS: 'hintsShownIds',
+  HINTS_INJECTION_COUNT: 'hintsInjectionCount',
+  HINTS_LAST_APP_OPEN_DATE: 'hintsLastAppOpenDate',
+  HINTS_ACHIEVEMENT_SHOWN: 'hintsAchievementShown',
+  HINTS_PUSH_SHOWN_IDS: 'hintsPushShownIds',
+  HINTS_PUSH_LAST_SCHEDULED: 'hintsPushLastScheduled',
 } as const;

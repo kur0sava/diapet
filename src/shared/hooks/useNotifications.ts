@@ -36,6 +36,12 @@ export function useNotifications() {
         vibrationPattern: [0, 250, 250, 250],
         lightColor: '#34C759',
       });
+      await Notifications.setNotificationChannelAsync('hints', {
+        name: 'Подсказки / Tips',
+        importance: Notifications.AndroidImportance.DEFAULT,
+        vibrationPattern: [0, 250],
+        lightColor: '#FFD700',
+      });
     }
 
     return finalStatus === 'granted';

@@ -1,0 +1,1381 @@
+export type HintTrigger = 'injection' | 'glucose' | 'feeding' | 'missed_injection' | 'morning';
+export type HintStage = 'week1' | 'week2' | 'week3' | 'week4' | 'days29_30';
+export type HintCategory = 'practical' | 'medical_fact' | 'support';
+export type HintTimeOfDay = 'morning' | 'evening' | 'any';
+
+export interface HintContent {
+  id: string;
+  trigger: HintTrigger;
+  stage: HintStage;
+  category: HintCategory;
+  timeOfDay: HintTimeOfDay;
+  ru: string;
+  en: string;
+}
+
+export interface AchievementContent {
+  title: { ru: string; en: string };
+  congratulation: { ru: string; en: string };
+  cardText: { ru: string; en: string };
+}
+
+// =============================================================================
+// HINTS ARRAY
+// =============================================================================
+// Total: 60 injection + 30 glucose + 30 feeding + 12 morning + 5 missed = 137
+// =============================================================================
+
+export const HINTS: HintContent[] = [
+
+  // ===========================================================================
+  // INJECTION HINTS — Week 1 (14 hints: 7 days × morning + evening)
+  // ===========================================================================
+
+  {
+    id: 'inj_w1_d1m',
+    trigger: 'injection',
+    stage: 'week1',
+    category: 'practical',
+    timeOfDay: 'morning',
+    ru: 'Лучшее место для укола — складка кожи в области холки или между лопатками. Слегка оттяни кожу, введи иглу под углом 45°, и всё будет хорошо.',
+    en: 'The best spot for an injection is a skin fold at the scruff or between the shoulder blades. Gently lift the skin, insert the needle at a 45° angle, and you\'ll be fine.',
+  },
+  {
+    id: 'inj_w1_d1e',
+    trigger: 'injection',
+    stage: 'week1',
+    category: 'support',
+    timeOfDay: 'evening',
+    ru: 'Первые дни — самые сложные. Волнение совершенно нормально, и у тебя уже есть всё, что нужно, чтобы справиться. 💪',
+    en: 'The first days are the hardest. Feeling nervous is completely normal, and you already have everything it takes to get through this. 💪',
+  },
+  {
+    id: 'inj_w1_d2m',
+    trigger: 'injection',
+    stage: 'week1',
+    category: 'practical',
+    timeOfDay: 'morning',
+    ru: 'Достань инсулин из холодильника за 10–15 минут до укола и согрей флакон в ладонях. Холодный инсулин может вызвать дискомфорт.',
+    en: 'Take the insulin out of the fridge 10–15 minutes before the injection and warm the vial in your hands. Cold insulin can cause discomfort.',
+  },
+  {
+    id: 'inj_w1_d2e',
+    trigger: 'injection',
+    stage: 'week1',
+    category: 'support',
+    timeOfDay: 'evening',
+    ru: 'Большинство кошек привыкают к уколам в течение первой недели. То, что сегодня кажется сложным, через несколько дней станет просто частью дня.',
+    en: 'Most cats get used to injections within the first week. What feels hard today will simply become part of your routine in a few days.',
+  },
+  {
+    id: 'inj_w1_d3m',
+    trigger: 'injection',
+    stage: 'week1',
+    category: 'medical_fact',
+    timeOfDay: 'morning',
+    ru: 'Инсулин всегда вводят после еды — это снижает риск гипогликемии. Если кот отказался есть, не делай укол и сразу позвони ветеринару.',
+    en: 'Insulin is always given after a meal — this lowers the risk of hypoglycemia. If your cat refused to eat, skip the injection and call your vet right away.',
+  },
+  {
+    id: 'inj_w1_d3e',
+    trigger: 'injection',
+    stage: 'week1',
+    category: 'practical',
+    timeOfDay: 'evening',
+    ru: 'Не используй одну иглу дважды — она тупеет после первого использования и укол становится болезненнее. Каждый раз — новая игла.',
+    en: 'Don\'t reuse a needle — it dulls after the first use and makes injections more painful. Use a fresh needle every time.',
+  },
+  {
+    id: 'inj_w1_d4m',
+    trigger: 'injection',
+    stage: 'week1',
+    category: 'support',
+    timeOfDay: 'morning',
+    ru: 'Если кот нервничает перед уколом, попробуй сделать его во время кормления — большинство котов настолько увлечены едой, что почти не реагируют.',
+    en: 'If your cat gets anxious before injections, try giving the shot during feeding time — most cats are so focused on food they barely notice.',
+  },
+  {
+    id: 'inj_w1_d4e',
+    trigger: 'injection',
+    stage: 'week1',
+    category: 'practical',
+    timeOfDay: 'evening',
+    ru: 'После введения инсулина придержи кожу ещё пару секунд, прежде чем убрать иглу. Это снизит риск вытекания препарата.',
+    en: 'After injecting, hold the skin fold for a couple of seconds before withdrawing the needle. This reduces the chance of the insulin leaking out.',
+  },
+  {
+    id: 'inj_w1_d5m',
+    trigger: 'injection',
+    stage: 'week1',
+    category: 'medical_fact',
+    timeOfDay: 'morning',
+    ru: 'Регулярность важнее точности минуты. Постарайся делать уколы в одно и то же время с отклонением не более 1 часа — это помогает стабилизировать уровень глюкозы. 🐱',
+    en: 'Consistency matters more than hitting the exact minute. Try to give injections at the same time each day, within a 1-hour window — this helps stabilize glucose levels. 🐱',
+  },
+  {
+    id: 'inj_w1_d5e',
+    trigger: 'injection',
+    stage: 'week1',
+    category: 'support',
+    timeOfDay: 'evening',
+    ru: 'Ты делаешь что-то очень сложное — и делаешь это каждый день. Это требует не только любви, но и настоящего мужества.',
+    en: 'You\'re doing something very hard — and you do it every single day. That takes not just love, but real courage.',
+  },
+  {
+    id: 'inj_w1_d6m',
+    trigger: 'injection',
+    stage: 'week1',
+    category: 'practical',
+    timeOfDay: 'morning',
+    ru: 'Перед набором дозы осторожно перекати флакон инсулина между ладонями — никогда не встряхивай. Встряхивание может повредить молекулы препарата.',
+    en: 'Before drawing the dose, gently roll the insulin vial between your palms — never shake it. Shaking can damage the insulin molecules.',
+  },
+  {
+    id: 'inj_w1_d6e',
+    trigger: 'injection',
+    stage: 'week1',
+    category: 'practical',
+    timeOfDay: 'evening',
+    ru: 'Слегка сожми складку кожи перед уколом — это помогает убедиться, что игла попадёт именно в подкожный слой, а не в мышцу.',
+    en: 'Gently pinch the skin fold before injecting — this helps ensure the needle goes into the subcutaneous layer rather than the muscle.',
+  },
+  {
+    id: 'inj_w1_d7m',
+    trigger: 'injection',
+    stage: 'week1',
+    category: 'medical_fact',
+    timeOfDay: 'morning',
+    ru: 'Хранить открытый флакон инсулина нужно в холодильнике (2–8°C). Неоткрытый запас — тоже. Проверь, чтобы он не оказался рядом с морозильной камерой.',
+    en: 'An opened insulin vial should be kept in the fridge (2–8°C). So should unopened stock. Make sure it\'s not sitting too close to the freezer.',
+  },
+  {
+    id: 'inj_w1_d7e',
+    trigger: 'injection',
+    stage: 'week1',
+    category: 'support',
+    timeOfDay: 'evening',
+    ru: 'Ты уже завершил первую неделю. Это не просто цифра — это 14 уколов, 14 раз ты выбрал здоровье своего кота. ❤️',
+    en: 'You\'ve just finished your first week. That\'s not just a number — it\'s 14 injections, 14 times you chose your cat\'s health. ❤️',
+  },
+
+  // ===========================================================================
+  // INJECTION HINTS — Week 2 (14 hints)
+  // ===========================================================================
+
+  {
+    id: 'inj_w2_d1m',
+    trigger: 'injection',
+    stage: 'week2',
+    category: 'practical',
+    timeOfDay: 'morning',
+    ru: 'Попробуй чередовать места уколов: сегодня левая сторона холки, завтра правая. Это предотвращает образование уплотнений под кожей.',
+    en: 'Try rotating injection sites: today the left side of the scruff, tomorrow the right. This prevents scar tissue from building up under the skin.',
+  },
+  {
+    id: 'inj_w2_d1e',
+    trigger: 'injection',
+    stage: 'week2',
+    category: 'support',
+    timeOfDay: 'evening',
+    ru: 'Вторая неделя — уже не первый шаг, а уверенная поступь. Ты знаешь, что делаешь, даже если иногда кажется иначе.',
+    en: 'Week two — no longer a first step, but a confident stride. You know what you\'re doing, even when it doesn\'t feel that way.',
+  },
+  {
+    id: 'inj_w2_d2m',
+    trigger: 'injection',
+    stage: 'week2',
+    category: 'practical',
+    timeOfDay: 'morning',
+    ru: 'Записывай время каждого укола в приложении сразу после — это займёт 5 секунд и даст ветеринару важную информацию на следующем приёме.',
+    en: 'Log each injection time in the app right after — it takes 5 seconds and gives your vet valuable data at the next appointment.',
+  },
+  {
+    id: 'inj_w2_d2e',
+    trigger: 'injection',
+    stage: 'week2',
+    category: 'medical_fact',
+    timeOfDay: 'evening',
+    ru: 'Если ты видишь маленькое влажное пятно на шерсти после укола — возможно, часть инсулина вышла. Не нужно делать дополнительный укол: сообщи ветеринару при следующем контакте.',
+    en: 'If you notice a small wet spot on the fur after an injection, some insulin may have leaked. Don\'t give an extra dose — mention it to your vet at the next contact.',
+  },
+  {
+    id: 'inj_w2_d3m',
+    trigger: 'injection',
+    stage: 'week2',
+    category: 'practical',
+    timeOfDay: 'morning',
+    ru: 'Угол введения иглы 45° подходит большинству кошек. У худых котов можно уменьшить до 30° — меньше риска попасть в мышцу.',
+    en: 'A 45° needle angle works for most cats. For lean cats, try 30° — less risk of hitting muscle.',
+  },
+  {
+    id: 'inj_w2_d3e',
+    trigger: 'injection',
+    stage: 'week2',
+    category: 'support',
+    timeOfDay: 'evening',
+    ru: 'Если сегодня укол прошёл лучше, чем вчера — отметь это. Прогресс есть, даже когда кажется незаметным.',
+    en: 'If today\'s injection went better than yesterday\'s — notice that. Progress is real, even when it feels invisible.',
+  },
+  {
+    id: 'inj_w2_d4m',
+    trigger: 'injection',
+    stage: 'week2',
+    category: 'medical_fact',
+    timeOfDay: 'morning',
+    ru: 'Инсулин начинает действовать через 1–3 часа после укола. В это время лучше держать кота в привычной обстановке без лишнего стресса.',
+    en: 'Insulin starts working 1–3 hours after injection. During this time, it\'s best to keep your cat in a calm, familiar environment.',
+  },
+  {
+    id: 'inj_w2_d4e',
+    trigger: 'injection',
+    stage: 'week2',
+    category: 'practical',
+    timeOfDay: 'evening',
+    ru: 'Если кот начал вырываться во время уколов — попробуй сделать его, пока кот стоит или сидит естественно, без фиксации. Иногда меньше сдерживания означает меньше стресса.',
+    en: 'If your cat has started wriggling during injections, try giving the shot while they\'re standing or sitting naturally, without restraint. Sometimes less holding means less stress.',
+  },
+  {
+    id: 'inj_w2_d5m',
+    trigger: 'injection',
+    stage: 'week2',
+    category: 'practical',
+    timeOfDay: 'morning',
+    ru: 'Используй инсулиновые шприцы с коротким стволом (4–6 мм) — они специально разработаны для подкожных инъекций и вызывают меньше дискомфорта.',
+    en: 'Use insulin syringes with a short barrel (4–6 mm) — they\'re designed specifically for subcutaneous injections and cause less discomfort.',
+  },
+  {
+    id: 'inj_w2_d5e',
+    trigger: 'injection',
+    stage: 'week2',
+    category: 'medical_fact',
+    timeOfDay: 'evening',
+    ru: 'Стресс — как у кошки, так и у хозяина — может влиять на уровень глюкозы. Спокойное состояние перед уколом помогает обоим.',
+    en: 'Stress — for both the cat and the owner — can affect glucose levels. A calm moment before the injection helps you both.',
+  },
+  {
+    id: 'inj_w2_d6m',
+    trigger: 'injection',
+    stage: 'week2',
+    category: 'support',
+    timeOfDay: 'morning',
+    ru: 'Ритм складывается незаметно: сначала это усилие, потом — привычка. Ты уже на полпути к этому.',
+    en: 'A routine forms quietly: first it\'s effort, then it\'s habit. You\'re already halfway there.',
+  },
+  {
+    id: 'inj_w2_d6e',
+    trigger: 'injection',
+    stage: 'week2',
+    category: 'practical',
+    timeOfDay: 'evening',
+    ru: 'Следи за сроком годности открытого флакона инсулина — обычно он составляет 28–30 дней после вскрытия. Напиши дату вскрытия прямо на флаконе.',
+    en: 'Keep track of your opened insulin vial\'s expiry — it\'s usually 28–30 days after opening. Write the opening date directly on the vial.',
+  },
+  {
+    id: 'inj_w2_d7m',
+    trigger: 'injection',
+    stage: 'week2',
+    category: 'medical_fact',
+    timeOfDay: 'morning',
+    ru: 'Замутнение инсулина (кроме NPH/Lente, которые должны быть мутноватыми) или наличие хлопьев — повод выбросить флакон и открыть новый.',
+    en: 'Cloudiness in insulin (except NPH/Lente types, which should be milky) or visible particles are a reason to discard the vial and open a new one.',
+  },
+  {
+    id: 'inj_w2_d7e',
+    trigger: 'injection',
+    stage: 'week2',
+    category: 'support',
+    timeOfDay: 'evening',
+    ru: 'Две недели позади. Ты справился со всем, что казалось невозможным в первый день. 💪',
+    en: 'Two weeks down. You\'ve handled everything that seemed impossible on day one. 💪',
+  },
+
+  // ===========================================================================
+  // INJECTION HINTS — Week 3 (14 hints)
+  // ===========================================================================
+
+  {
+    id: 'inj_w3_d1m',
+    trigger: 'injection',
+    stage: 'week3',
+    category: 'medical_fact',
+    timeOfDay: 'morning',
+    ru: 'Обрати внимание: если кот стал более активным и меньше пьёт воды — это хороший знак. Глюкоза начинает контролироваться.',
+    en: 'Pay attention: if your cat has become more active and is drinking less water — that\'s a good sign. Glucose is starting to come under control.',
+  },
+  {
+    id: 'inj_w3_d1e',
+    trigger: 'injection',
+    stage: 'week3',
+    category: 'practical',
+    timeOfDay: 'evening',
+    ru: 'На третьей неделе обрати внимание на уплотнения в местах уколов. Если прощупываешь бугорки под кожей — обязательно чередуй стороны.',
+    en: 'In week three, check for lumps at injection sites. If you feel small bumps under the skin, make sure you\'re rotating sides consistently.',
+  },
+  {
+    id: 'inj_w3_d2m',
+    trigger: 'injection',
+    stage: 'week3',
+    category: 'support',
+    timeOfDay: 'morning',
+    ru: 'Три недели — это серьёзный срок. Ты уже видишь свою кошку иначе: не как пациента, а как партнёра в этом маршруте.',
+    en: 'Three weeks is significant. You\'re already seeing your cat differently — not as a patient, but as a partner in this journey.',
+  },
+  {
+    id: 'inj_w3_d2e',
+    trigger: 'injection',
+    stage: 'week3',
+    category: 'practical',
+    timeOfDay: 'evening',
+    ru: 'Хорошая практика: подготовь шприц за 5 минут до укола, пока кот ест. Так ты не торопишься и не нервничаешь.',
+    en: 'Good habit: prepare the syringe 5 minutes before the injection, while your cat eats. No rushing, no nerves.',
+  },
+  {
+    id: 'inj_w3_d3m',
+    trigger: 'injection',
+    stage: 'week3',
+    category: 'medical_fact',
+    timeOfDay: 'morning',
+    ru: 'Замечаешь паттерны? Если глюкоза стабильно высокая по утрам — это называется эффект Сомоджи или феномен рассвета. Обязательно обсуди с ветеринаром.',
+    en: 'Noticing patterns? If glucose is consistently high in the morning, it could be the Somogyi effect or dawn phenomenon. Discuss it with your vet.',
+  },
+  {
+    id: 'inj_w3_d3e',
+    trigger: 'injection',
+    stage: 'week3',
+    category: 'support',
+    timeOfDay: 'evening',
+    ru: 'Иногда всё идёт не по плану — укол получился неловким, кот вырвался. Это бывает. Один несовершенный укол ничего не сломает.',
+    en: 'Sometimes things don\'t go smoothly — an awkward injection, a wriggling cat. It happens. One imperfect shot won\'t break anything.',
+  },
+  {
+    id: 'inj_w3_d4m',
+    trigger: 'injection',
+    stage: 'week3',
+    category: 'practical',
+    timeOfDay: 'morning',
+    ru: 'Попробуй делать укол в одно и то же место ежедневно в рамках ротации — например, неделю слева, неделю справа. Так кожа успевает восстановиться.',
+    en: 'Try using a consistent spot within your rotation — for example, left side for a week, right side the next. This gives skin time to recover.',
+  },
+  {
+    id: 'inj_w3_d4e',
+    trigger: 'injection',
+    stage: 'week3',
+    category: 'medical_fact',
+    timeOfDay: 'evening',
+    ru: 'Физическая активность снижает уровень глюкозы. Если кот играл перед уколом — это может повлиять на показания. Записывай это наблюдение.',
+    en: 'Physical activity lowers glucose levels. If your cat played before the injection, that can affect readings. Log this observation.',
+  },
+  {
+    id: 'inj_w3_d5m',
+    trigger: 'injection',
+    stage: 'week3',
+    category: 'support',
+    timeOfDay: 'morning',
+    ru: 'На третьей неделе многие замечают: кот сам приходит к месту кормления в нужное время. Рутина работает для вас обоих. 🐱',
+    en: 'By week three, many people notice their cat starts coming to the feeding spot on its own. The routine works for both of you. 🐱',
+  },
+  {
+    id: 'inj_w3_d5e',
+    trigger: 'injection',
+    stage: 'week3',
+    category: 'practical',
+    timeOfDay: 'evening',
+    ru: 'Не нужно дезинфицировать кожу кошки перед уколом — кошачья шерсть чистая, а спирт может дать дискомфорт. Просто чистые руки и новая игла.',
+    en: 'You don\'t need to disinfect your cat\'s skin before injecting — cat fur is clean, and alcohol can cause stinging. Just clean hands and a fresh needle.',
+  },
+  {
+    id: 'inj_w3_d6m',
+    trigger: 'injection',
+    stage: 'week3',
+    category: 'medical_fact',
+    timeOfDay: 'morning',
+    ru: 'Если кот потолстел после начала инсулинотерапии — это возможный побочный эффект. Обсуди с ветеринаром корректировку диеты и дозы.',
+    en: 'If your cat has gained weight since starting insulin therapy, that\'s a possible side effect. Discuss diet and dose adjustments with your vet.',
+  },
+  {
+    id: 'inj_w3_d6e',
+    trigger: 'injection',
+    stage: 'week3',
+    category: 'support',
+    timeOfDay: 'evening',
+    ru: 'Ты научился видеть кота по-новому — замечать маленькие сигналы его самочувствия. Это навык, который мало кто имеет.',
+    en: 'You\'ve learned to read your cat in a new way — noticing small signals of how they\'re feeling. That\'s a skill very few people have.',
+  },
+  {
+    id: 'inj_w3_d7m',
+    trigger: 'injection',
+    stage: 'week3',
+    category: 'practical',
+    timeOfDay: 'morning',
+    ru: 'Сохраняй использованные шприцы в контейнер для острых предметов — никогда не выбрасывай открытые иглы в мусор. Это важно для безопасности.',
+    en: 'Dispose of used syringes in a sharps container — never throw uncapped needles in the trash. This matters for safety.',
+  },
+  {
+    id: 'inj_w3_d7e',
+    trigger: 'injection',
+    stage: 'week3',
+    category: 'medical_fact',
+    timeOfDay: 'evening',
+    ru: 'Три недели мониторинга — это уже достаточно данных, чтобы видеть паттерны. Покажи графики ветеринару на следующем визите.',
+    en: 'Three weeks of monitoring is already enough data to see patterns. Show the charts to your vet at the next visit.',
+  },
+
+  // ===========================================================================
+  // INJECTION HINTS — Week 4 (14 hints)
+  // ===========================================================================
+
+  {
+    id: 'inj_w4_d1m',
+    trigger: 'injection',
+    stage: 'week4',
+    category: 'medical_fact',
+    timeOfDay: 'morning',
+    ru: 'У части кошек диабет входит в ремиссию — глюкоза нормализуется, и доза инсулина снижается до нуля. Продолжай мониторить: это реально возможно.',
+    en: 'Some cats achieve diabetic remission — glucose normalizes and the insulin dose drops to zero. Keep monitoring: this is genuinely possible.',
+  },
+  {
+    id: 'inj_w4_d1e',
+    trigger: 'injection',
+    stage: 'week4',
+    category: 'support',
+    timeOfDay: 'evening',
+    ru: 'Четыре недели. Ты уже эксперт по своему коту — знаешь его реакции, его настроение, его паттерны. Это ценнее любых книжных знаний.',
+    en: 'Four weeks. You\'re already an expert on your cat — you know their reactions, their mood, their patterns. That\'s worth more than any textbook.',
+  },
+  {
+    id: 'inj_w4_d2m',
+    trigger: 'injection',
+    stage: 'week4',
+    category: 'practical',
+    timeOfDay: 'morning',
+    ru: 'Если ты путешествуешь, берёшь кота с собой или оставляешь с кем-то — составь письменную инструкцию с дозой, временем и контактами ветеринара.',
+    en: 'If you\'re travelling, taking your cat along, or leaving them with someone — write a clear care sheet with the dose, timing, and your vet\'s contact.',
+  },
+  {
+    id: 'inj_w4_d2e',
+    trigger: 'injection',
+    stage: 'week4',
+    category: 'medical_fact',
+    timeOfDay: 'evening',
+    ru: 'Смена корма может резко изменить уровень глюкозы. Если хочешь попробовать новый рацион — делай переход постепенно и усиль мониторинг в этот период.',
+    en: 'Changing food can sharply affect glucose levels. If you want to try a new diet, transition gradually and increase monitoring during that period.',
+  },
+  {
+    id: 'inj_w4_d3m',
+    trigger: 'injection',
+    stage: 'week4',
+    category: 'support',
+    timeOfDay: 'morning',
+    ru: 'На четвёртой неделе многие замечают, что уколы занимают меньше умственных сил. Это потому что ты стал настоящим специалистом. 💉',
+    en: 'By week four, many people notice injections take less mental effort. That\'s because you\'ve become genuinely skilled. 💉',
+  },
+  {
+    id: 'inj_w4_d3e',
+    trigger: 'injection',
+    stage: 'week4',
+    category: 'practical',
+    timeOfDay: 'evening',
+    ru: 'Если планируешь визит к ветеринару — не меняй ничего за 2–3 дня до визита. Стабильные данные помогут врачу принять точное решение.',
+    en: 'If you\'re planning a vet visit, try not to change anything 2–3 days before. Stable data helps the vet make a precise decision.',
+  },
+  {
+    id: 'inj_w4_d4m',
+    trigger: 'injection',
+    stage: 'week4',
+    category: 'medical_fact',
+    timeOfDay: 'morning',
+    ru: 'Инфекции — даже незначительные — могут повысить потребность в инсулине. Если кот заболел, чаще измеряй глюкозу и держи связь с ветеринаром.',
+    en: 'Infections — even minor ones — can increase insulin needs. If your cat gets sick, check glucose more often and stay in touch with your vet.',
+  },
+  {
+    id: 'inj_w4_d4e',
+    trigger: 'injection',
+    stage: 'week4',
+    category: 'support',
+    timeOfDay: 'evening',
+    ru: 'Ты мог сдаться в первый день — но не сдался. Это не мелочь.',
+    en: 'You could have given up on day one — but you didn\'t. That\'s not a small thing.',
+  },
+  {
+    id: 'inj_w4_d5m',
+    trigger: 'injection',
+    stage: 'week4',
+    category: 'practical',
+    timeOfDay: 'morning',
+    ru: 'Убедись, что у тебя всегда есть запас инсулина и игл минимум на 2 недели. Неожиданные перебои в поставках — не редкость.',
+    en: 'Make sure you always have at least a 2-week supply of insulin and needles. Unexpected supply disruptions do happen.',
+  },
+  {
+    id: 'inj_w4_d5e',
+    trigger: 'injection',
+    stage: 'week4',
+    category: 'medical_fact',
+    timeOfDay: 'evening',
+    ru: 'Стероиды, некоторые антибиотики и противовоспалительные препараты могут влиять на уровень глюкозы. Всегда сообщай ветеринару обо всех лекарствах, которые принимает кот.',
+    en: 'Steroids, some antibiotics, and anti-inflammatory drugs can affect glucose levels. Always tell your vet about every medication your cat is taking.',
+  },
+  {
+    id: 'inj_w4_d6m',
+    trigger: 'injection',
+    stage: 'week4',
+    category: 'support',
+    timeOfDay: 'morning',
+    ru: 'Ты стал частью небольшого, но очень преданного сообщества людей, которые каждый день делают всё возможное для своих котов. ❤️',
+    en: 'You\'ve become part of a small but deeply dedicated community of people who do everything they can for their cats every single day. ❤️',
+  },
+  {
+    id: 'inj_w4_d6e',
+    trigger: 'injection',
+    stage: 'week4',
+    category: 'practical',
+    timeOfDay: 'evening',
+    ru: 'Хорошая практика — сфотографировать места уколов раз в неделю, чтобы отслеживать состояние кожи. Уплотнения или покраснения — повод показать ветеринару.',
+    en: 'A good habit: photograph the injection sites once a week to track skin condition. Lumps or redness are worth showing your vet.',
+  },
+  {
+    id: 'inj_w4_d7m',
+    trigger: 'injection',
+    stage: 'week4',
+    category: 'medical_fact',
+    timeOfDay: 'morning',
+    ru: 'Четыре недели данных — это полноценная кривая глюкозы. Твои записи сейчас ценнее, чем один анализ в клинике.',
+    en: 'Four weeks of data is a complete glucose curve. Your records right now are more valuable than a single test at the clinic.',
+  },
+  {
+    id: 'inj_w4_d7e',
+    trigger: 'injection',
+    stage: 'week4',
+    category: 'support',
+    timeOfDay: 'evening',
+    ru: 'Завтра — последний рубеж. Ты прошёл 28 дней. Это достижение, которое не каждый смог бы повторить.',
+    en: 'Tomorrow is the final stretch. You\'ve made it through 28 days. That\'s something not everyone could do.',
+  },
+
+  // ===========================================================================
+  // INJECTION HINTS — Days 29–30 (4 hints)
+  // ===========================================================================
+
+  {
+    id: 'inj_w5_d1m',
+    trigger: 'injection',
+    stage: 'days29_30',
+    category: 'support',
+    timeOfDay: 'morning',
+    ru: 'День 29. Ты прошёл огромный путь от первого неуверенного укола. Сегодня — почти финиш.',
+    en: 'Day 29. You\'ve come so far from that first uncertain injection. Today is almost the finish line.',
+  },
+  {
+    id: 'inj_w5_d1e',
+    trigger: 'injection',
+    stage: 'days29_30',
+    category: 'practical',
+    timeOfDay: 'evening',
+    ru: 'Всё, что ты делал эти 30 дней — чередование мест, точное время, записи — это теперь часть тебя. Эти навыки останутся.',
+    en: 'Everything you\'ve done these 30 days — rotating sites, keeping to schedule, logging — is now part of you. These skills stay.',
+  },
+  {
+    id: 'inj_w5_d2m',
+    trigger: 'injection',
+    stage: 'days29_30',
+    category: 'medical_fact',
+    timeOfDay: 'morning',
+    ru: 'Первый месяц — критический для стабилизации. Ты его прошёл. Продолжай в том же ритме — кот это оценит. 🐱',
+    en: 'The first month is critical for stabilisation. You made it through. Keep the same rhythm — your cat will feel the difference. 🐱',
+  },
+  {
+    id: 'inj_w5_d2e',
+    trigger: 'injection',
+    stage: 'days29_30',
+    category: 'support',
+    timeOfDay: 'evening',
+    ru: '30 дней. Твой кот не может сказать спасибо, но каждый день, когда он ест, играет и спит рядом — это его ответ тебе. ❤️',
+    en: '30 days. Your cat can\'t say thank you, but every day they eat, play, and sleep beside you — that\'s their answer to you. ❤️',
+  },
+
+  // ===========================================================================
+  // GLUCOSE HINTS — Week 1 (6 hints)
+  // ===========================================================================
+
+  {
+    id: 'glu_w1_01',
+    trigger: 'glucose',
+    stage: 'week1',
+    category: 'practical',
+    timeOfDay: 'any',
+    ru: 'Лучшее место для замера глюкозы у кошки — внутренняя поверхность ушной раковины. Слегка помассируй ухо перед уколом, чтобы усилить кровоток.',
+    en: 'The best spot for a glucose check in cats is the inner surface of the ear flap. Gently massage the ear before pricking to improve blood flow.',
+  },
+  {
+    id: 'glu_w1_02',
+    trigger: 'glucose',
+    stage: 'week1',
+    category: 'medical_fact',
+    timeOfDay: 'any',
+    ru: 'Нормальный уровень глюкозы у кошки натощак — примерно 4–8 ммоль/л. У диабетических кошек целевые значения устанавливает ветеринар индивидуально.',
+    en: 'Normal fasting glucose in cats is roughly 4–8 mmol/L. For diabetic cats, target values are set by the vet individually.',
+  },
+  {
+    id: 'glu_w1_03',
+    trigger: 'glucose',
+    stage: 'week1',
+    category: 'support',
+    timeOfDay: 'any',
+    ru: 'Не расстраивайся из-за одного высокого показателя. Важна тенденция за несколько дней, а не единственное значение.',
+    en: 'Don\'t be discouraged by one high reading. What matters is the trend over several days, not a single number.',
+  },
+  {
+    id: 'glu_w1_04',
+    trigger: 'glucose',
+    stage: 'week1',
+    category: 'practical',
+    timeOfDay: 'any',
+    ru: 'Замеряй глюкозу примерно в одно и то же время относительно укола — например, через 2 часа после инъекции. Так данные будут сопоставимы.',
+    en: 'Measure glucose at roughly the same time relative to the injection — for example, 2 hours after. This makes the data comparable.',
+  },
+  {
+    id: 'glu_w1_05',
+    trigger: 'glucose',
+    stage: 'week1',
+    category: 'medical_fact',
+    timeOfDay: 'any',
+    ru: 'Стресс от самого замера может временно повысить глюкозу. Если кот нервничает, дай ему 5–10 минут успокоиться перед следующей попыткой.',
+    en: 'Stress from the test itself can briefly raise glucose. If your cat is anxious, give them 5–10 minutes to calm down before trying again.',
+  },
+  {
+    id: 'glu_w1_06',
+    trigger: 'glucose',
+    stage: 'week1',
+    category: 'support',
+    timeOfDay: 'any',
+    ru: 'Домашний мониторинг точнее, чем измерения в клинике — кот в стрессе от ветеринара даёт искажённые результаты. Твои данные важнее.',
+    en: 'Home monitoring is more accurate than clinic readings — a stressed cat at the vet gives skewed results. Your data matters more.',
+  },
+
+  // ===========================================================================
+  // GLUCOSE HINTS — Week 2 (6 hints)
+  // ===========================================================================
+
+  {
+    id: 'glu_w2_01',
+    trigger: 'glucose',
+    stage: 'week2',
+    category: 'practical',
+    timeOfDay: 'any',
+    ru: 'Попробуй собирать суточную кривую глюкозы раз в неделю: замеры каждые 2–3 часа в течение дня. Это даёт ветеринару полную картину.',
+    en: 'Try doing a full glucose curve once a week: readings every 2–3 hours throughout the day. This gives your vet the complete picture.',
+  },
+  {
+    id: 'glu_w2_02',
+    trigger: 'glucose',
+    stage: 'week2',
+    category: 'medical_fact',
+    timeOfDay: 'any',
+    ru: 'Глюкоза выше 20 ммоль/л в течение нескольких дней подряд — сигнал для связи с ветеринаром, а не повод самостоятельно менять дозу.',
+    en: 'Glucose above 20 mmol/L for several days in a row is a signal to contact your vet — not a reason to change the dose yourself.',
+  },
+  {
+    id: 'glu_w2_03',
+    trigger: 'glucose',
+    stage: 'week2',
+    category: 'support',
+    timeOfDay: 'any',
+    ru: 'Если показатели скачут и ты чувствуешь, что всё делаешь неправильно — это нормальный этап. Диабет у кошек требует терпения, и ты с этим справляешься.',
+    en: 'If readings are all over the place and you feel like you\'re doing everything wrong — that\'s a normal phase. Feline diabetes takes patience, and you\'re handling it.',
+  },
+  {
+    id: 'glu_w2_04',
+    trigger: 'glucose',
+    stage: 'week2',
+    category: 'practical',
+    timeOfDay: 'any',
+    ru: 'Записывай не только значение, но и контекст: кот только поел, или натощак? Был ли стресс? Эти заметки помогут ветеринару.',
+    en: 'Record not just the value, but the context: did the cat just eat, or is it fasting? Any stress? These notes help your vet.',
+  },
+  {
+    id: 'glu_w2_05',
+    trigger: 'glucose',
+    stage: 'week2',
+    category: 'medical_fact',
+    timeOfDay: 'any',
+    ru: 'Гипогликемия (глюкоза ниже 2.8 ммоль/л) — это экстренная ситуация. Признаки: слабость, дрожь, судороги. Нанеси мёд или сироп на дёсны и немедленно обратись к ветеринару.',
+    en: 'Hypoglycemia (glucose below 2.8 mmol/L) is an emergency. Signs: weakness, trembling, seizures. Apply honey or syrup to the gums and get to a vet immediately.',
+  },
+  {
+    id: 'glu_w2_06',
+    trigger: 'glucose',
+    stage: 'week2',
+    category: 'practical',
+    timeOfDay: 'any',
+    ru: 'Убедись, что глюкометр откалиброван для кошек — некоторые человеческие глюкометры дают неточные результаты для кошачьей крови. Уточни у ветеринара.',
+    en: 'Make sure your glucometer is calibrated for cats — some human meters give inaccurate results for feline blood. Check with your vet.',
+  },
+
+  // ===========================================================================
+  // GLUCOSE HINTS — Week 3 (6 hints)
+  // ===========================================================================
+
+  {
+    id: 'glu_w3_01',
+    trigger: 'glucose',
+    stage: 'week3',
+    category: 'medical_fact',
+    timeOfDay: 'any',
+    ru: 'К третьей неделе у тебя достаточно данных, чтобы видеть суточный ритм глюкозы кота. Посмотри: в какое время суток показатели обычно выше?',
+    en: 'By week three you have enough data to see your cat\'s daily glucose rhythm. Look: at what time of day are the readings typically highest?',
+  },
+  {
+    id: 'glu_w3_02',
+    trigger: 'glucose',
+    stage: 'week3',
+    category: 'practical',
+    timeOfDay: 'any',
+    ru: 'Тест-полоски нужно хранить при комнатной температуре в закрытой упаковке. Влажность и жара снижают их точность.',
+    en: 'Test strips should be stored at room temperature in a sealed container. Humidity and heat reduce their accuracy.',
+  },
+  {
+    id: 'glu_w3_03',
+    trigger: 'glucose',
+    stage: 'week3',
+    category: 'support',
+    timeOfDay: 'any',
+    ru: 'Три недели регулярного мониторинга — это не просто данные. Это забота, воплощённая в цифрах.',
+    en: 'Three weeks of consistent monitoring isn\'t just data. It\'s care expressed in numbers.',
+  },
+  {
+    id: 'glu_w3_04',
+    trigger: 'glucose',
+    stage: 'week3',
+    category: 'medical_fact',
+    timeOfDay: 'any',
+    ru: 'Если глюкоза несколько дней подряд остаётся в целевом диапазоне — это хороший знак. Обсуди с ветеринаром, нужна ли корректировка дозы.',
+    en: 'If glucose stays in the target range for several days in a row, that\'s a good sign. Discuss with your vet whether a dose adjustment might be worth considering.',
+  },
+  {
+    id: 'glu_w3_05',
+    trigger: 'glucose',
+    stage: 'week3',
+    category: 'practical',
+    timeOfDay: 'any',
+    ru: 'Первая капля крови часто содержит тканевую жидкость — вытри её и используй вторую. Так результат будет точнее.',
+    en: 'The first drop of blood often contains tissue fluid — wipe it away and use the second drop. This gives a more accurate result.',
+  },
+  {
+    id: 'glu_w3_06',
+    trigger: 'glucose',
+    stage: 'week3',
+    category: 'support',
+    timeOfDay: 'any',
+    ru: 'Кот не понимает, зачем ты колешь его в ухо. Но он чувствует, что ты рядом — и это важнее всего.',
+    en: 'Your cat doesn\'t understand why you\'re pricking their ear. But they feel that you\'re there — and that matters most.',
+  },
+
+  // ===========================================================================
+  // GLUCOSE HINTS — Week 4 (6 hints)
+  // ===========================================================================
+
+  {
+    id: 'glu_w4_01',
+    trigger: 'glucose',
+    stage: 'week4',
+    category: 'medical_fact',
+    timeOfDay: 'any',
+    ru: 'Если за четыре недели глюкоза стабильно снижается к норме — это признак возможной ремиссии. Не прекращай инсулин самостоятельно, но обязательно обсуди это с ветеринаром.',
+    en: 'If glucose has been consistently trending toward normal over four weeks, that could signal remission. Don\'t stop insulin on your own, but do discuss it with your vet.',
+  },
+  {
+    id: 'glu_w4_02',
+    trigger: 'glucose',
+    stage: 'week4',
+    category: 'practical',
+    timeOfDay: 'any',
+    ru: 'Четыре недели данных — хорошее время для расширенного анализа крови и мочи. Уточни у ветеринара, что стоит проверить.',
+    en: 'Four weeks of data is a good time for a broader blood and urine check. Ask your vet what\'s worth testing.',
+  },
+  {
+    id: 'glu_w4_03',
+    trigger: 'glucose',
+    stage: 'week4',
+    category: 'support',
+    timeOfDay: 'any',
+    ru: 'Мониторинг глюкозы — это не бесконечная тревога. Это инструмент контроля, который даёт уверенность. Ты умеешь им пользоваться. 💪',
+    en: 'Monitoring glucose isn\'t endless anxiety. It\'s a control tool that gives you confidence. You know how to use it. 💪',
+  },
+  {
+    id: 'glu_w4_04',
+    trigger: 'glucose',
+    stage: 'week4',
+    category: 'medical_fact',
+    timeOfDay: 'any',
+    ru: 'Стресс, новая пища, болезнь или гормональные изменения могут дать неожиданный скачок. Один плохой день не отменяет четыре недели хорошей работы.',
+    en: 'Stress, new food, illness, or hormonal changes can cause an unexpected spike. One bad day doesn\'t erase four weeks of good work.',
+  },
+  {
+    id: 'glu_w4_05',
+    trigger: 'glucose',
+    stage: 'week4',
+    category: 'practical',
+    timeOfDay: 'any',
+    ru: 'Веди журнал наблюдений помимо чисел: аппетит, жажда, активность, настроение. Это помогает видеть связь между состоянием кота и показателями глюкозы.',
+    en: 'Keep observational notes alongside the numbers: appetite, thirst, activity, mood. This helps you see the link between your cat\'s wellbeing and glucose readings.',
+  },
+  {
+    id: 'glu_w4_06',
+    trigger: 'glucose',
+    stage: 'week4',
+    category: 'support',
+    timeOfDay: 'any',
+    ru: 'Ты превратил измерение глюкозы из пугающей процедуры в обычную часть дня. Это большой путь.',
+    en: 'You\'ve turned glucose testing from a scary procedure into a normal part of your day. That\'s a long journey.',
+  },
+
+  // ===========================================================================
+  // GLUCOSE HINTS — Days 29–30 (6 hints)
+  // ===========================================================================
+
+  {
+    id: 'glu_w5_01',
+    trigger: 'glucose',
+    stage: 'days29_30',
+    category: 'support',
+    timeOfDay: 'any',
+    ru: 'Почти финиш. Твои данные за 30 дней — это история заботы, написанная по одному замеру за раз.',
+    en: 'Almost there. Your 30 days of data are a story of care, written one reading at a time.',
+  },
+  {
+    id: 'glu_w5_02',
+    trigger: 'glucose',
+    stage: 'days29_30',
+    category: 'medical_fact',
+    timeOfDay: 'any',
+    ru: 'Через 30 дней имеет смысл пересмотреть целевые показатели вместе с ветеринаром. Первоначальные цифры могут потребовать корректировки.',
+    en: 'After 30 days, it\'s worth reviewing target values with your vet. Initial numbers may need adjustment.',
+  },
+  {
+    id: 'glu_w5_03',
+    trigger: 'glucose',
+    stage: 'days29_30',
+    category: 'practical',
+    timeOfDay: 'any',
+    ru: 'Экспортируй данные из приложения перед визитом к ветеринару. Это сэкономит время и даст врачу полную картину.',
+    en: 'Export data from the app before your vet visit. It saves time and gives the vet the full picture.',
+  },
+  {
+    id: 'glu_w5_04',
+    trigger: 'glucose',
+    stage: 'days29_30',
+    category: 'support',
+    timeOfDay: 'any',
+    ru: 'Кот не знает слова "диабет". Он знает только одно: ты здесь, каждый день, рядом. ❤️',
+    en: 'Your cat doesn\'t know the word "diabetes." They only know one thing: you\'re here, every day, right beside them. ❤️',
+  },
+  {
+    id: 'glu_w5_05',
+    trigger: 'glucose',
+    stage: 'days29_30',
+    category: 'medical_fact',
+    timeOfDay: 'any',
+    ru: 'Первые 30 дней — самые трудные для подбора дозы и режима. Дальше становится стабильнее. Ты уже прошёл самую сложную часть.',
+    en: 'The first 30 days are the hardest for finding the right dose and routine. Things stabilise after this. You\'ve already been through the hardest part.',
+  },
+  {
+    id: 'glu_w5_06',
+    trigger: 'glucose',
+    stage: 'days29_30',
+    category: 'practical',
+    timeOfDay: 'any',
+    ru: 'Продолжай вести журнал после 30 дней — паттерны, которые ты заметишь через 60 дней, могут удивить даже ветеринара.',
+    en: 'Keep logging after day 30 — patterns you notice at day 60 may even surprise your vet.',
+  },
+
+  // ===========================================================================
+  // FEEDING HINTS — Week 1 (6 hints)
+  // ===========================================================================
+
+  {
+    id: 'feed_w1_01',
+    trigger: 'feeding',
+    stage: 'week1',
+    category: 'practical',
+    timeOfDay: 'any',
+    ru: 'Кормление строго по расписанию — не менее важно, чем сам укол. Еда запускает метаболизм глюкозы, и инсулин должен действовать в нужный момент.',
+    en: 'Feeding strictly on schedule is just as important as the injection itself. Food triggers glucose metabolism, and insulin needs to be working at the right moment.',
+  },
+  {
+    id: 'feed_w1_02',
+    trigger: 'feeding',
+    stage: 'week1',
+    category: 'medical_fact',
+    timeOfDay: 'any',
+    ru: 'Диета с низким содержанием углеводов — лучший выбор для кошки с диабетом. Влажный корм обычно предпочтительнее сухого. Уточни у ветеринара.',
+    en: 'A low-carbohydrate diet is the best choice for a diabetic cat. Wet food is usually preferable to dry. Check with your vet.',
+  },
+  {
+    id: 'feed_w1_03',
+    trigger: 'feeding',
+    stage: 'week1',
+    category: 'support',
+    timeOfDay: 'any',
+    ru: 'Если кот отказался от еды — это серьёзно при диабете. Не паникуй, но свяжись с ветеринаром в этот же день.',
+    en: 'If your cat refuses to eat — that\'s serious with diabetes. Don\'t panic, but contact your vet the same day.',
+  },
+  {
+    id: 'feed_w1_04',
+    trigger: 'feeding',
+    stage: 'week1',
+    category: 'practical',
+    timeOfDay: 'any',
+    ru: 'Порции должны быть одинаковыми каждый раз. Даже небольшое изменение количества еды может сдвинуть уровень глюкозы.',
+    en: 'Portions should be the same every time. Even a small change in food quantity can shift glucose levels.',
+  },
+  {
+    id: 'feed_w1_05',
+    trigger: 'feeding',
+    stage: 'week1',
+    category: 'medical_fact',
+    timeOfDay: 'any',
+    ru: 'Угощения и лакомства в период подбора дозы лучше исключить — они вносят неконтролируемую переменную в уровень глюкозы.',
+    en: 'Treats and snacks are best avoided during the dose-finding period — they add an uncontrolled variable to glucose levels.',
+  },
+  {
+    id: 'feed_w1_06',
+    trigger: 'feeding',
+    stage: 'week1',
+    category: 'practical',
+    timeOfDay: 'any',
+    ru: 'Поставь будильник на время кормления — не на время укола. Еда первична, укол следует за ней.',
+    en: 'Set your alarm for feeding time — not injection time. Food comes first, the injection follows.',
+  },
+
+  // ===========================================================================
+  // FEEDING HINTS — Week 2 (6 hints)
+  // ===========================================================================
+
+  {
+    id: 'feed_w2_01',
+    trigger: 'feeding',
+    stage: 'week2',
+    category: 'practical',
+    timeOfDay: 'any',
+    ru: 'Если кот ест медленно — подожди, пока он съест большую часть порции, прежде чем делать укол. Цель — чтобы инсулин начал работать, когда глюкоза уже поднимается.',
+    en: 'If your cat eats slowly, wait until they\'ve eaten most of their portion before giving the injection. The goal is for insulin to start working as glucose is rising.',
+  },
+  {
+    id: 'feed_w2_02',
+    trigger: 'feeding',
+    stage: 'week2',
+    category: 'medical_fact',
+    timeOfDay: 'any',
+    ru: 'Смена корма — один из главных триггеров нестабильной глюкозы. Если переходишь на новый корм, делай это постепенно в течение 7–10 дней.',
+    en: 'Changing food is one of the main triggers of unstable glucose. If switching to a new food, do it gradually over 7–10 days.',
+  },
+  {
+    id: 'feed_w2_03',
+    trigger: 'feeding',
+    stage: 'week2',
+    category: 'support',
+    timeOfDay: 'any',
+    ru: 'Жёсткий режим кормления может быть неудобен для тебя тоже. Это нормально — ставить будильники, планировать день вокруг кота. Ты делаешь это из любви.',
+    en: 'A strict feeding schedule can be inconvenient for you too. It\'s okay — setting alarms, planning your day around your cat. You\'re doing it out of love.',
+  },
+  {
+    id: 'feed_w2_04',
+    trigger: 'feeding',
+    stage: 'week2',
+    category: 'practical',
+    timeOfDay: 'any',
+    ru: 'Корм комнатной температуры кошки принимают лучше, чем прямо из холодильника. Влажный корм можно слегка подогреть — это часто улучшает аппетит.',
+    en: 'Cats accept food at room temperature better than straight from the fridge. Wet food can be slightly warmed — this often improves appetite.',
+  },
+  {
+    id: 'feed_w2_05',
+    trigger: 'feeding',
+    stage: 'week2',
+    category: 'medical_fact',
+    timeOfDay: 'any',
+    ru: 'Обильное питьё воды у кошки с диабетом — симптом высокой глюкозы. Если заметил, что кот пьёт больше обычного — измерь глюкозу.',
+    en: 'Excessive water drinking in a diabetic cat is a symptom of high glucose. If you notice your cat drinking more than usual, check the glucose.',
+  },
+  {
+    id: 'feed_w2_06',
+    trigger: 'feeding',
+    stage: 'week2',
+    category: 'practical',
+    timeOfDay: 'any',
+    ru: 'Если котов в доме несколько — корми диабетического кота отдельно. Он должен съедать только свою порцию, без подъедания за другими.',
+    en: 'If you have multiple cats, feed your diabetic cat separately. They should eat only their portion, not finish off the others\'.',
+  },
+
+  // ===========================================================================
+  // FEEDING HINTS — Week 3 (6 hints)
+  // ===========================================================================
+
+  {
+    id: 'feed_w3_01',
+    trigger: 'feeding',
+    stage: 'week3',
+    category: 'medical_fact',
+    timeOfDay: 'any',
+    ru: 'Белковая диета — ключ к стабилизации диабета у кошек. Кошки — облигатные хищники, и корм с высоким содержанием белка даёт более предсказуемые показатели глюкозы.',
+    en: 'A protein-rich diet is key to stabilising diabetes in cats. Cats are obligate carnivores, and high-protein food gives more predictable glucose readings.',
+  },
+  {
+    id: 'feed_w3_02',
+    trigger: 'feeding',
+    stage: 'week3',
+    category: 'practical',
+    timeOfDay: 'any',
+    ru: 'На третьей неделе обрати внимание: меняется ли аппетит кота в разное время суток? Это может помочь скорректировать расписание кормления.',
+    en: 'In week three, notice: does your cat\'s appetite vary at different times of day? This can help fine-tune the feeding schedule.',
+  },
+  {
+    id: 'feed_w3_03',
+    trigger: 'feeding',
+    stage: 'week3',
+    category: 'support',
+    timeOfDay: 'any',
+    ru: 'Строгое расписание — это не тюрьма для кота, а его безопасность. С каждой неделей ты видишь, как стабильность помогает. 🐱',
+    en: 'A strict schedule isn\'t a prison for your cat — it\'s their safety. Each week you can see how consistency helps. 🐱',
+  },
+  {
+    id: 'feed_w3_04',
+    trigger: 'feeding',
+    stage: 'week3',
+    category: 'practical',
+    timeOfDay: 'any',
+    ru: 'Остатки влажного корма не оставляй в миске дольше 30–40 минут. Испортившийся корм — риск расстройства желудка, которое нарушит всё расписание.',
+    en: 'Don\'t leave wet food in the bowl for more than 30–40 minutes. Spoiled food risks an upset stomach that will throw off the whole schedule.',
+  },
+  {
+    id: 'feed_w3_05',
+    trigger: 'feeding',
+    stage: 'week3',
+    category: 'medical_fact',
+    timeOfDay: 'any',
+    ru: 'Если ты думаешь о переходе на лечебный корм для диабетиков — обсуди это с ветеринаром. Такой корм может потребовать коррекции дозы инсулина.',
+    en: 'If you\'re thinking about switching to prescription diabetic food, discuss it with your vet first. It may require adjusting the insulin dose.',
+  },
+  {
+    id: 'feed_w3_06',
+    trigger: 'feeding',
+    stage: 'week3',
+    category: 'support',
+    timeOfDay: 'any',
+    ru: 'Кот, который стабильно ест — это уже хороший знак. Аппетит у диабетических кошек часто улучшается по мере стабилизации глюкозы.',
+    en: 'A cat that eats consistently is already a good sign. Appetite in diabetic cats often improves as glucose stabilises.',
+  },
+
+  // ===========================================================================
+  // FEEDING HINTS — Week 4 (6 hints)
+  // ===========================================================================
+
+  {
+    id: 'feed_w4_01',
+    trigger: 'feeding',
+    stage: 'week4',
+    category: 'medical_fact',
+    timeOfDay: 'any',
+    ru: 'К четвёртой неделе становится понятно, какой корм подходит коту лучше всего. Не торопись менять то, что работает.',
+    en: 'By week four you have a clearer picture of which food works best for your cat. Don\'t rush to change what\'s working.',
+  },
+  {
+    id: 'feed_w4_02',
+    trigger: 'feeding',
+    stage: 'week4',
+    category: 'practical',
+    timeOfDay: 'any',
+    ru: 'Создай «запас на случай форс-мажора»: несколько банок привычного корма в шкафу. Когда нет нужной еды, соблюдать расписание куда сложнее.',
+    en: 'Build a "just in case" stock: a few cans of the usual food in the cupboard. When the right food isn\'t available, keeping the schedule is much harder.',
+  },
+  {
+    id: 'feed_w4_03',
+    trigger: 'feeding',
+    stage: 'week4',
+    category: 'support',
+    timeOfDay: 'any',
+    ru: 'Ты перестроил весь свой день вокруг потребностей кота. Это большая жертва, которую видишь только ты — и кот.',
+    en: 'You\'ve restructured your entire day around your cat\'s needs. That\'s a big sacrifice that only you — and your cat — truly see.',
+  },
+  {
+    id: 'feed_w4_04',
+    trigger: 'feeding',
+    stage: 'week4',
+    category: 'practical',
+    timeOfDay: 'any',
+    ru: 'Если нужно поручить кормление другому человеку — дай ему конкретную инструкцию: какой корм, сколько граммов, во сколько часов, что делать если кот отказался.',
+    en: 'If someone else needs to feed your cat, give them specific instructions: which food, how many grams, at what time, and what to do if the cat refuses to eat.',
+  },
+  {
+    id: 'feed_w4_05',
+    trigger: 'feeding',
+    stage: 'week4',
+    category: 'medical_fact',
+    timeOfDay: 'any',
+    ru: 'Снижение веса при хорошем аппетите — симптом плохо контролируемого диабета. Если замечаешь это, сообщи ветеринару.',
+    en: 'Weight loss despite good appetite is a symptom of poorly controlled diabetes. If you notice this, let your vet know.',
+  },
+  {
+    id: 'feed_w4_06',
+    trigger: 'feeding',
+    stage: 'week4',
+    category: 'support',
+    timeOfDay: 'any',
+    ru: 'Четыре недели строгого расписания кормления. Ты сделал это. Котейка в хороших руках. ❤️',
+    en: 'Four weeks of strict feeding schedule. You did it. Your cat is in good hands. ❤️',
+  },
+
+  // ===========================================================================
+  // FEEDING HINTS — Days 29–30 (6 hints)
+  // ===========================================================================
+
+  {
+    id: 'feed_w5_01',
+    trigger: 'feeding',
+    stage: 'days29_30',
+    category: 'practical',
+    timeOfDay: 'any',
+    ru: 'Ты нашёл режим кормления, который работает для вас обоих. Это ценное знание — сохрани его в заметках.',
+    en: 'You\'ve found a feeding routine that works for both of you. That\'s valuable knowledge — save it in your notes.',
+  },
+  {
+    id: 'feed_w5_02',
+    trigger: 'feeding',
+    stage: 'days29_30',
+    category: 'medical_fact',
+    timeOfDay: 'any',
+    ru: 'После 30 дней стабильного питания можно говорить об устойчивом режиме. Это основа долгосрочного контроля диабета.',
+    en: 'After 30 days of consistent feeding, you can speak of a stable routine. This is the foundation of long-term diabetes management.',
+  },
+  {
+    id: 'feed_w5_03',
+    trigger: 'feeding',
+    stage: 'days29_30',
+    category: 'support',
+    timeOfDay: 'any',
+    ru: 'Каждая миска еды, поставленная вовремя — это маленький акт заботы. За 30 дней их накопилось 60. Это много.',
+    en: 'Every bowl of food put down on time is a small act of care. Over 30 days, that\'s 60 of them. That adds up.',
+  },
+  {
+    id: 'feed_w5_04',
+    trigger: 'feeding',
+    stage: 'days29_30',
+    category: 'practical',
+    timeOfDay: 'any',
+    ru: 'Запиши рацион кота и расписание кормлений — это пригодится, если придётся объяснять ситуацию новому ветеринару или при госпитализации кота.',
+    en: 'Write down your cat\'s diet and feeding schedule — it\'ll be useful if you need to explain the situation to a new vet or if your cat is hospitalised.',
+  },
+  {
+    id: 'feed_w5_05',
+    trigger: 'feeding',
+    stage: 'days29_30',
+    category: 'medical_fact',
+    timeOfDay: 'any',
+    ru: 'Стабильный вес + хороший аппетит + снижение жажды — три признака того, что лечение работает. Если видишь все три, ты на правильном пути.',
+    en: 'Stable weight + good appetite + reduced thirst — three signs that treatment is working. If you see all three, you\'re on the right track.',
+  },
+  {
+    id: 'feed_w5_06',
+    trigger: 'feeding',
+    stage: 'days29_30',
+    category: 'support',
+    timeOfDay: 'any',
+    ru: 'Финальный день. Котейка ел вовремя все 30 дней — во многом благодаря тебе. 🐱',
+    en: 'Final day. Your cat ate on time for all 30 days — largely because of you. 🐱',
+  },
+
+  // ===========================================================================
+  // MORNING GREETING HINTS — Week 1 (3 hints)
+  // ===========================================================================
+
+  {
+    id: 'morn_w1_01',
+    trigger: 'morning',
+    stage: 'week1',
+    category: 'support',
+    timeOfDay: 'any',
+    ru: 'Доброе утро. Первая неделя — самая тяжёлая, и ты в ней. Один день за раз.',
+    en: 'Good morning. The first week is the hardest, and you\'re in it. One day at a time.',
+  },
+  {
+    id: 'morn_w1_02',
+    trigger: 'morning',
+    stage: 'week1',
+    category: 'practical',
+    timeOfDay: 'any',
+    ru: 'Утро. Достань инсулин из холодильника — пусть согреется, пока ты кормишь кота. Всё по порядку.',
+    en: 'Morning. Take the insulin out of the fridge — let it warm while you feed your cat. Everything in order.',
+  },
+  {
+    id: 'morn_w1_03',
+    trigger: 'morning',
+    stage: 'week1',
+    category: 'support',
+    timeOfDay: 'any',
+    ru: 'Каждое утро ты начинаешь день с заботы о своём коте. Это уже говорит о тебе всё. ❤️',
+    en: 'Every morning you start your day by caring for your cat. That already says everything about you. ❤️',
+  },
+
+  // ===========================================================================
+  // MORNING GREETING HINTS — Week 2 (3 hints)
+  // ===========================================================================
+
+  {
+    id: 'morn_w2_01',
+    trigger: 'morning',
+    stage: 'week2',
+    category: 'support',
+    timeOfDay: 'any',
+    ru: 'Доброе утро. Вторая неделя — ты уже знаешь, что делать. Просто делай.',
+    en: 'Good morning. Week two — you already know what to do. Just do it.',
+  },
+  {
+    id: 'morn_w2_02',
+    trigger: 'morning',
+    stage: 'week2',
+    category: 'practical',
+    timeOfDay: 'any',
+    ru: 'Утро. Отличный момент записать вчерашние наблюдения, пока они свежие — аппетит, активность, самочувствие.',
+    en: 'Morning. A great moment to log yesterday\'s observations while they\'re fresh — appetite, activity, how they seemed.',
+  },
+  {
+    id: 'morn_w2_03',
+    trigger: 'morning',
+    stage: 'week2',
+    category: 'medical_fact',
+    timeOfDay: 'any',
+    ru: 'Утренняя глюкоза — до кормления и укола — даёт «базовый» уровень. Полезно замерять её периодически для оценки прогресса.',
+    en: 'Morning glucose — before feeding and injection — gives a baseline level. Worth measuring periodically to track progress.',
+  },
+
+  // ===========================================================================
+  // MORNING GREETING HINTS — Week 3 (3 hints)
+  // ===========================================================================
+
+  {
+    id: 'morn_w3_01',
+    trigger: 'morning',
+    stage: 'week3',
+    category: 'support',
+    timeOfDay: 'any',
+    ru: 'Доброе утро. Три недели в строю. Ты, наверное, и сам не заметил, как рутина стала частью тебя.',
+    en: 'Good morning. Three weeks in. You probably didn\'t notice when the routine became part of you.',
+  },
+  {
+    id: 'morn_w3_02',
+    trigger: 'morning',
+    stage: 'week3',
+    category: 'medical_fact',
+    timeOfDay: 'any',
+    ru: 'На третьей неделе стоит оценить динамику: стала ли глюкоза стабильнее, чем в первую неделю? Если да — это результат твоей работы.',
+    en: 'In week three, it\'s worth reviewing the trend: is glucose more stable than in week one? If so — that\'s the result of your work.',
+  },
+  {
+    id: 'morn_w3_03',
+    trigger: 'morning',
+    stage: 'week3',
+    category: 'support',
+    timeOfDay: 'any',
+    ru: 'Утро — хорошее время напомнить себе: ты делаешь всё возможное. Этого достаточно. 💪',
+    en: 'Morning is a good time to remind yourself: you\'re doing everything possible. That\'s enough. 💪',
+  },
+
+  // ===========================================================================
+  // MORNING GREETING HINTS — Days 29–30 (3 hints)
+  // ===========================================================================
+
+  {
+    id: 'morn_w5_01',
+    trigger: 'morning',
+    stage: 'days29_30',
+    category: 'support',
+    timeOfDay: 'any',
+    ru: 'Доброе утро, герой. Последние дни первого месяца. Ты прошёл дальше, чем думал.',
+    en: 'Good morning, hero. The last days of the first month. You\'ve gone further than you thought you would.',
+  },
+  {
+    id: 'morn_w5_02',
+    trigger: 'morning',
+    stage: 'days29_30',
+    category: 'support',
+    timeOfDay: 'any',
+    ru: 'Почти финиш. Сегодня — ещё один день, который ты проведёшь рядом со своим котом. Это и есть главное. ❤️',
+    en: 'Almost there. Today is one more day you\'ll spend beside your cat. That\'s what matters most. ❤️',
+  },
+  {
+    id: 'morn_w5_03',
+    trigger: 'morning',
+    stage: 'days29_30',
+    category: 'practical',
+    timeOfDay: 'any',
+    ru: 'Последние дни — хороший момент подготовить итоговый отчёт для ветеринара: что изменилось, что работает, что вызывает вопросы.',
+    en: 'The final days are a good moment to prepare a summary for your vet: what changed, what works, what questions remain.',
+  },
+
+  // ===========================================================================
+  // MISSED INJECTION HINTS (5 hints, universal)
+  // ===========================================================================
+
+  {
+    id: 'miss_01',
+    trigger: 'missed_injection',
+    stage: 'week1',
+    category: 'support',
+    timeOfDay: 'any',
+    ru: 'Это бывает. Жизнь не всегда идёт по плану. Свяжись с ветеринаром и уточни, что делать в твоём конкретном случае — пропустить или сделать позже.',
+    en: 'It happens. Life doesn\'t always follow a schedule. Contact your vet to ask what\'s best in your specific case — skip it or give it later.',
+  },
+  {
+    id: 'miss_02',
+    trigger: 'missed_injection',
+    stage: 'week2',
+    category: 'medical_fact',
+    timeOfDay: 'any',
+    ru: 'Никогда не делай двойную дозу, чтобы «наверстать» пропущенный укол — это опасно. Следующий укол — в обычное время и в обычной дозе.',
+    en: 'Never give a double dose to "make up" for a missed injection — it\'s dangerous. The next injection goes at the usual time and usual dose.',
+  },
+  {
+    id: 'miss_03',
+    trigger: 'missed_injection',
+    stage: 'week3',
+    category: 'support',
+    timeOfDay: 'any',
+    ru: 'Один пропуск не перечёркивает всё, что ты сделал. Продолжай с следующего укола — и всё вернётся в норму.',
+    en: 'One missed injection doesn\'t cancel everything you\'ve done. Pick up at the next injection and things will return to normal.',
+  },
+  {
+    id: 'miss_04',
+    trigger: 'missed_injection',
+    stage: 'week4',
+    category: 'practical',
+    timeOfDay: 'any',
+    ru: 'Если пропуски случаются регулярно — стоит обсудить с ветеринаром, можно ли скорректировать расписание под твой реальный день.',
+    en: 'If missed injections happen regularly, it\'s worth discussing with your vet whether the schedule can be adjusted to fit your actual day.',
+  },
+  {
+    id: 'miss_05',
+    trigger: 'missed_injection',
+    stage: 'days29_30',
+    category: 'support',
+    timeOfDay: 'any',
+    ru: 'Ты делаешь всё возможное, и этого достаточно. Измерь глюкозу, чтобы понять текущее состояние, и двигайся дальше.',
+    en: 'You\'re doing everything you can, and that\'s enough. Check the glucose to understand the current state, and move forward.',
+  },
+];
+
+// =============================================================================
+// ACHIEVEMENT
+// =============================================================================
+
+export const ACHIEVEMENT_HERO: AchievementContent = {
+  title: {
+    ru: 'Диабетный герой',
+    en: 'Diabetes Hero',
+  },
+  congratulation: {
+    ru: 'Ты прошёл 30 дней — 30 дней уколов, замеров, строгих расписаний и бессонных мыслей о том, всё ли ты делаешь правильно. Это требует не просто любви к коту, но и настоящей силы духа. Твой кот не может сказать спасибо словами — но его аппетит, его желание играть, его тепло рядом с тобой — это и есть его благодарность. Ты справился с самым сложным первым месяцем. Продолжай в том же духе.',
+    en: 'You made it through 30 days — 30 days of injections, glucose checks, strict schedules, and quiet worries about whether you were doing everything right. It takes more than love for your cat; it takes real strength of character. Your cat can\'t say thank you in words — but their appetite, their willingness to play, their warmth beside you — that is their gratitude. You got through the hardest first month. Keep going.',
+  },
+  cardText: {
+    ru: '30 дней рядом с котом. Каждый день.',
+    en: '30 days by your cat\'s side. Every single day.',
+  },
+};

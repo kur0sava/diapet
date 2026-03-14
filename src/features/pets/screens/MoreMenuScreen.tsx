@@ -20,7 +20,7 @@ export default function MoreMenuScreen() {
   const activePet = usePetStore(s => s.activePet);
   const { isPro, canAccessAdvanced } = useSubscription();
 
-  type MenuScreen = 'Subscription' | 'PetProfile' | 'Expenses' | 'FeedCalculator' | 'Settings';
+  type MenuScreen = 'Subscription' | 'PetProfile' | 'Expenses' | 'FeedCalculator' | 'Settings' | 'AiAssistant';
   interface MenuItem {
     iconName: IoniconName;
     label: string;
@@ -44,6 +44,7 @@ export default function MoreMenuScreen() {
     { iconName: 'paw-outline', label: t('pets.title'), screen: 'PetProfile', iconColor: theme.colors.primary, subtitle: activePet?.name },
     { iconName: 'wallet-outline', label: t('expenses.title'), screen: 'Expenses', iconColor: theme.colors.warning },
     { iconName: 'calculator-outline', label: t('feedCalculator.title'), screen: 'FeedCalculator', iconColor: theme.colors.secondary, proGated: true },
+    { iconName: 'chatbubble-ellipses-outline', label: t('hints.aiAssistant'), screen: 'AiAssistant', iconColor: '#5E5CE6', proGated: true },
     { iconName: 'settings-outline', label: t('settings.title'), screen: 'Settings', iconColor: theme.colors.textSecondary },
   ];
 

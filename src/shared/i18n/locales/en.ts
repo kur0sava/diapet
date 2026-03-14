@@ -697,4 +697,19 @@ export const en = {
     showDetails: 'Show details',
     hideDetails: 'Hide details',
   },
+
+  hints: {
+    gotIt: 'Got it',
+    achievementTitle: 'Achievement!',
+    achievementClose: 'Thanks',
+    aiAssistant: 'AI Assistant',
+    aiAssistantDesc: 'Personal cat diabetes helper',
+    aiAssistantPremium: 'Available in Pro version',
+    aiPlaceholder: 'Ask about cat diabetes...',
+    aiSend: 'Send',
+    aiDisclaimer: 'AI assistant does not replace veterinary consultation',
+    tipLabel: 'Tip',
+    factLabel: 'Fact',
+    supportLabel: 'Support',
+  },
 };

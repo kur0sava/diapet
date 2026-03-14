@@ -68,7 +68,8 @@
     "extra": {
       "eas": {
         "projectId": "b4a89637-64fe-470c-94a7-732162d80caa"
-      }
+      },
+      "anthropicApiKey": "YOUR_ANTHROPIC_API_KEY"
     },
     "owner": "kurosava"
   }

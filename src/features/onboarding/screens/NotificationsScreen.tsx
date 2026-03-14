@@ -67,6 +67,8 @@ export default function NotificationsScreen() {
       storage.set(StorageKeys.ACTIVE_PET_ID, pet.id);
       storage.set(StorageKeys.ONBOARDING_COMPLETE, true);
       storage.delete(StorageKeys.ONBOARDING_DRAFT);
+      // Start hints registration date from onboarding completion
+      storage.set(StorageKeys.HINTS_REGISTRATION_DATE, new Date().toISOString());
 
       // Load the newly created pet into the store so screens can access it
       await usePetStore.getState().loadPets();

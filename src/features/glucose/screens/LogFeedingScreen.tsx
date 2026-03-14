@@ -14,6 +14,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import * as Haptics from 'expo-haptics';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useUnsavedChangesGuard } from '@shared/hooks/useUnsavedChangesGuard';
+import { useHintTrigger } from '@features/hints/hooks/useHintTrigger';
 
 export default function LogFeedingScreen() {
   const navigation = useHomeNavigation();
@@ -34,6 +35,7 @@ export default function LogFeedingScreen() {
   const [notes, setNotes] = useState('');
   const [loading, setLoading] = useState(false);
   const [guardEnabled, setGuardEnabled] = useState(true);
+  const { triggerAfterAction } = useHintTrigger();
   // ARCH005: prevent duplicate feeding on double-tap
   const savingRef = useRef(false);
   useUnsavedChangesGuard(guardEnabled && (!!amount || !!notes));
@@ -67,6 +69,7 @@ export default function LogFeedingScreen() {
       await queryClient.invalidateQueries({ queryKey: ['diary'] });
       setGuardEnabled(false);
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+      triggerAfterAction('feeding');
       navigation.goBack();
     } catch {
       Alert.alert(t('common.error'), t('feeding.saveError'));
@@ -74,7 +77,7 @@ export default function LogFeedingScreen() {
       savingRef.current = false;
       setLoading(false);
     }
-  }, [activePet, foodType, amount, notes, queryClient, navigation, t]);
+  }, [activePet, foodType, amount, notes, queryClient, navigation, t, triggerAfterAction]);
 
   return (
     <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={{ flex: 1 }}>

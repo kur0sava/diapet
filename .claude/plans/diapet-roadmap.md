@@ -1,128 +1,116 @@
-# DiaPet — Roadmap & Plan
+# DiaPet — Roadmap
 
-> Обновлён: 2026-03-09
+> Обновлён: 2026-03-15
 
 ---
 
-## 3. ПРИОРИТЕТЫ
+## ТЕКУЩИЙ СТАТУС
+
+**Ветка**: master | **Последний коммит**: ccad581
+**Версия**: 1.1.0, versionCode 4 (иконка + Android 15/16 фиксы)
+**Google Play**: закрытое тестирование, AAB ещё не загружен
+
+---
+
+## ПРИОРИТЕТЫ
 
 | # | Задача | Статус |
 |---|--------|--------|
-| 0 | Закоммитить + запушить 7 файлов | ✅ коммит 3caca28 |
-| 1 | Рефакторинг (секция 1) | ✅ DONE (2026-03-08) |
-| 2 | Daily Diary (секция 2) | ✅ DONE (2026-03-08) |
-| 3 | Полный аудит + фиксы (секция 4) | ✅ DONE (2026-03-08) |
-| 4 | Edge-cases + layout + encyclopedia | ✅ DONE (2026-03-09) |
-| 5 | **Деплой в Google Play** | 🔜 СЛЕДУЮЩАЯ СЕССИЯ |
-| 6 | AI через Claude API | ❌ будущее |
+| 1 | **Новый EAS билд** (versionCode 4) → загрузить в Play | 🔜 СЛЕДУЮЩЕЕ |
+| 2 | **Настройка RevenueCat** — создать подписки в Play Console, подключить ключ | 🔜 |
+| 3 | **Настройка AdMob** — создать App ID + Banner Ad Unit, новый билд | 🔜 |
+| 4 | **Insulin Cycle MVP** — спецификация готова, см. ниже | ❌ будущее |
+| 5 | AI-рекомендации через Claude API | ❌ будущее |
 
 ---
 
-## 5. ДЕПЛОЙ (следующая сессия)
+## EAS БИЛД
 
-### Чеклист перед сборкой
-- [ ] `git push` — запушить все локальные коммиты на origin/master
-- [ ] `package.json` version: `"1.0.0"` → `"1.1.0"`
-- [ ] Проверить RevenueCat API key (не `YOUR_REVENUECAT_API_KEY`)
-- [ ] Финальный `npx tsc --noEmit` + `npm run lint`
-
-### Сборка
 ```bash
-eas build --platform android --profile production
+eas build --platform android --profile production --non-interactive
 ```
 
-### Публикация
-- Скачать AAB из EAS Dashboard
-- Загрузить в Google Play Console → Закрытое тестирование
-- Заполнить What's New (RU/EN)
-- Отправить на проверку
+После — скачать AAB → Google Play Console → Закрытое тестирование → What's New:
 
-### What's New v1.1.0
-**RU:** Дневник дня — просматривайте глюкозу, инъекции и кормление за любой день. Анализ показателей и советы. Исправлены ошибки.
-**EN:** Daily Diary — view glucose, injections and feedings for any day. Analysis and recommendations. Bug fixes.
+**RU:** Дневник дня, расширенная шкала глюкозы, исправления и улучшения.
+**EN:** Daily Diary, expanded glucose scale, bug fixes and improvements.
 
 ---
 
-## 4. СЕССИЯ 2026-03-09 — итог
+## НАСТРОЙКА ОПЛАТЫ (RevenueCat)
 
-### Autonomous audit edge-cases (коммит `a6790a3`)
-- `LogFeedingScreen` — блокировка amount ≤ 0 перед сохранением
-- `EditPetScreen` — валидация weight > 0 и ≤ 30 кг
-- `PetInfoScreen` (онбординг) — валидация weight + age с отображением ошибки
-- `dateUtils` — все 4 функции в try/catch → не крашат экран при повреждённых датах
-- i18n: `feeding.amountError`, `pets.invalidWeight` в ru/en
-
-### Layout overflow 320px (коммит `0c7845b`)
-- `LogGlucoseScreen` — mealLabel `numberOfLines={2}` + `adjustsFontSizeToFit`
-- `LogFeedingScreen` — chipLabel `numberOfLines={1}` + `adjustsFontSizeToFit`
-- `GlucoseListScreen` — chipText (фильтры уровня + приёма пищи) `numberOfLines={1}`
-
-### Encyclopedia fix (коммит `ce4fc56`)
-- 424 строки с `- text` рендерились как сырой текст → теперь `• text` с буллетом
-- Инлайн `**bold**` рендерился как `**слово**` → теперь жирный текст через `renderInline()`
-- Все 12 статей: RU/EN контент 2000–3300 символов, все поля присутствуют
+Код готов. Нужно:
+1. Google Play Console → создать подписки: `diapet_pro_monthly`, `diapet_pro_yearly`
+2. RevenueCat → проект DiaPet, Entitlement `pro`, Offering с продуктами
+3. `src/core/App.tsx` → заменить `YOUR_REVENUECAT_API_KEY`
 
 ---
 
-## 4. АУДИТ — итог (2026-03-08)
+## НАСТРОЙКА РЕКЛАМЫ (AdMob)
 
-29 проблем найдено и исправлено. Коммиты: `ab75862`, `bf8abdb`.
-
-### CRITICAL (2)
-- `EmergencyScreen` — SOS уводил в EditPet, пользователь терял инструкции → убрана навигация из Alert
-- `DailyDiaryScreen` — пустой экран без питомца без объяснений → добавлен guard + empty state
-
-### HIGH (11)
-- `callVet()` без debounce → 10 тапов = 10 звонков → callingRef 2s lock
-- `mealRelation` не в unsaved-changes guard → молча терялся → добавлен в initialValuesRef
-- `diary/*` query keys не инвалидировались после mutations (6 мест)
-- delete без try-catch в Injection/FeedingListScreen
-- DailyDiary: нет error state / pull-to-refresh / addRow overflow на 320px
-- StatusCard label обрезался на 320px → numberOfLines 1→2
-
-### MEDIUM (12)
-- isFuture timestamp → startOfDay
-- goodControl + highGlucose одновременно → исправлен guard
-- Нет кнопки "Сегодня" в DailyDiary при глубокой навигации
-- parseISO без isValid в route.params
-- FeedingListScreen: regex на строке перевода → t('common.grams')
-- DashboardScreen: onRefresh 2/5 → 5/5 queries; длинное имя питомца → adjustsFontSizeToFit
-
-### LOW (4)
-- avg * 18 → * MGDL_PER_MMOLL
-- FOOD_TYPE_OPTIONS вне useMemo
-- common.grams i18n ключ добавлен ru/en
-- diaryAnalyzer асимметричный guard
+Код готов. Нужно:
+1. Google AdMob → создать приложение → получить App ID → `app.json` androidAppId
+2. Создать Banner Ad Unit → `DashboardScreen.tsx` ADMOB_BANNER_ID
+3. Новый EAS билд (нативная зависимость)
 
 ---
 
-## 2. DAILY DIARY — итог (2026-03-08)
+## INSULIN CYCLE MVP (спецификация готова)
 
-- `DailyDiaryScreen.tsx` — таймлайн дня, навигация по датам + кнопка "Сегодня", stats row (avg/inRange%/count), rule-based AI-панель, pull-to-refresh, error state, petId guard
-- `diaryAnalyzer.ts` — rule-based анализ: severe_low, low, high, inRange%, spread, no contradictions
-- `injectionRepository.findForDay` + `feedingRepository.findForDay` + `findAllByPetId`
-- `DailyDiary: { date?: string }` в HomeStackParamList + MainNavigator
-- Dashboard: кнопка "Дневник дня" в quickActions (5-я кнопка, centered grid)
-- i18n: `diary.*` + `dashboard.dailyDiary` + `common.grams` в ru/en
+Полная спецификация в `memory/insulin-cycle-spec.md`.
 
----
-
-## 1. РЕФАКТОРИНГ — итог (2026-03-08)
-
-- 0 TS ошибок (было 36: @expo/vector-icons + ThemeContext)
-- 0 ESLint warnings
-- `IoniconName` — единый тип (12 файлов), `NavigatorScreenParams`, `OnboardingPetData`, `ThemeSchemeColors`
-- `.gitattributes` LF нормализация
-- 3 неиспользуемых пакета удалены
-- `findAllByPetId` в 3 репозиториях — PDF не обрезает историю
-- `pets.invalidTimeFormat` i18n ключ добавлен
+Суть: цикл инсулина (pre_meal → meal → insulin → intermediate → next pre_meal),
+AI-box с rule-based аналитикой, доза в шагах 0.25 МЕ, авто-напоминания.
+Премиум-фича через существующий RevenueCat.
 
 ---
 
-## БУДУЩЕЕ
+## АУДИТ — ВСЁ ИСПРАВЛЕНО (2026-03-15)
 
-- AI-рекомендации через Claude API (Cloudflare Worker)
-- Виртуализация таймлайна DailyDiary (FlatList при 20+ событий)
-- Онбординг hint для пустого Dashboard
-- Inline добавление ветеринара в EmergencyScreen (без выхода)
-- Unit-тесты (severityCalculator, dateUtils, diaryAnalyzer)
+Полный аудит из fix-plan-v1.8 (54 проблемы). Статус по волнам:
+
+### Волна 1 — Критические: все 9 исправлены ✅
+- C003 — инвертированный тренд глюкозы
+- MC002 — порог дозы инсулина (>6 МЕ мягкое, >10 МЕ жёсткое, >20 блок)
+- C001 — storageUtils.clear убивал тему/язык
+- MC001 — протокол гипогликемии (оральный сироп при потере сознания)
+- C002 — HTML-инъекция в PDF через имя питомца
+- C005 — уведомления хардкодом на русском
+- C006 — ErrorBoundary хардкодом на русском + белый фон
+- C007 — точность конвертации глюкозы (1 знак → 2 знака)
+- C004 — MMKV fallback на незашифрованное хранилище при сбое SecureStore
+
+### Волна 2 — Высокие: все 13 исправлены ✅
+- H002 — guard срабатывал без изменений при открытии записи
+- H003 — двойной тап = дубль инъекции
+- H004 — единицы глюкозы на Dashboard игнорировались
+- H005 — PRAGMA user_version до завершения миграции
+- H006 — призрачные уведомления после удаления данных
+- H007 — React Query кэш после удаления данных
+- H008 — расписание нельзя было редактировать
+- MH002 — ProZinc/Caninsulin/Vetsulin отсутствовали в EN
+- MH003 — carbsMaxPercent: 12 vs 15% в калькуляторе
+- MH004 — порог ремиссии "<8 ммоль/л" был неверен
+- MH005 — норма жира: три разных значения
+- MH006 — нет ДКА-предупреждения при гипергликемии
+- M003 — parseFloat без замены запятой
+
+### Волны 3-4 — Средние/Низкие
+Большинство исправлены в рамках волн 1-2 или во время предыдущих сессий.
+Открытые пункты низкого приоритета (не блокируют релиз):
+- L006 — версия хардкодена "v1.0.0" в MoreMenuScreen/SettingsScreen (expo-constants уже импортирован)
+- L005 — Terms и Privacy ведут на одну страницу
+- L004 — таблица vet_contacts создаётся но не используется
+- MM003-MM005 — три новые статьи в энциклопедии (инсулины, мониторинг, фруктозамин)
+
+---
+
+## ИСТОРИЯ СЕССИЙ
+
+| Дата | Что сделано |
+|------|-------------|
+| 2026-03-15 | Факт-чек + финальные фиксы аудита (C007, C004) |
+| 2026-03-13 | Иконка DiaPet, Android 15/16 совместимость |
+| 2026-03-11 | Деплой v1.1.0, EAS билд versionCode 3 |
+| 2026-03-09 | Edge-cases, layout 320px, encyclopedia fixes |
+| 2026-03-08 | Daily Diary, аудит 29 проблем, рефакторинг |

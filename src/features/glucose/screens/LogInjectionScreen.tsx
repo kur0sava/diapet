@@ -17,6 +17,7 @@ import { usePetStore } from '@shared/stores/petStore';
 import { useQueryClient } from '@tanstack/react-query';
 import * as Haptics from 'expo-haptics';
 import { useUnsavedChangesGuard } from '@shared/hooks/useUnsavedChangesGuard';
+import { useHintTrigger } from '@features/hints/hooks/useHintTrigger';
 
 // Insulin list is now i18n-driven, see below
 
@@ -35,6 +36,7 @@ export default function LogInjectionScreen() {
   const [showTimePicker, setShowTimePicker] = useState(false);
   const [loading, setLoading] = useState(false);
   const [guardEnabled, setGuardEnabled] = useState(true);
+  const { triggerAfterAction } = useHintTrigger();
   const commonInsulins = t('injection.commonInsulins', { returnObjects: true }) as string[];
   // ARCH005: prevent duplicate injection on double-tap
   const savingRef = useRef(false);
@@ -56,6 +58,7 @@ export default function LogInjectionScreen() {
       await queryClient.invalidateQueries({ queryKey: ['diary'] });
       setGuardEnabled(false);
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+      triggerAfterAction('injection');
       navigation.goBack();
     } catch {
       Alert.alert(t('common.error'), t('injection.saveError'));
@@ -63,7 +66,7 @@ export default function LogInjectionScreen() {
       savingRef.current = false;
       setLoading(false);
     }
-  }, [activePet, dose, insulinType, notes, administeredAt, queryClient, navigation, t]);
+  }, [activePet, dose, insulinType, notes, administeredAt, queryClient, navigation, t, triggerAfterAction]);
 
   const handleSave = useCallback(async () => {
     if (savingRef.current || !activePet) return;

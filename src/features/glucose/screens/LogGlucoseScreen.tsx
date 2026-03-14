@@ -21,6 +21,7 @@ import { format } from 'date-fns';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useUnsavedChangesGuard } from '@shared/hooks/useUnsavedChangesGuard';
+import { useHintTrigger } from '@features/hints/hooks/useHintTrigger';
 import type { IoniconName } from '@shared/components/ui';
 
 const MEAL_OPTIONS: { value: MealRelation; labelKey: string; iconName: IoniconName; iconColor: string }[] = [
@@ -51,6 +52,7 @@ export default function LogGlucoseScreen() {
   const [recordedAt, setRecordedAt] = useState(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [showTimePicker, setShowTimePicker] = useState(false);
+  const { triggerAfterAction } = useHintTrigger();
   // H003: prevent double-tap save
   const savingRef = useRef(false);
   // GUARD-001: allow disabling guard during intentional navigation (after save)
@@ -159,6 +161,9 @@ export default function LogGlucoseScreen() {
       setGuardEnabled(false);
       syncInitialValues();
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+      if (!editId) {
+        triggerAfterAction('glucose');
+      }
       navigation.goBack();
     } catch {
       Alert.alert(t('common.error'), t('glucose.saveError'));
@@ -166,7 +171,7 @@ export default function LogGlucoseScreen() {
       savingRef.current = false;
       setLoading(false);
     }
-  }, [activePet, numValue, unit, mealRelation, insulinDose, insulinType, notes, recordedAt, editId, queryClient, navigation, t, syncInitialValues]);
+  }, [activePet, numValue, unit, mealRelation, insulinDose, insulinType, notes, recordedAt, editId, queryClient, navigation, t, syncInitialValues, triggerAfterAction]);
 
   const handleSave = useCallback(async () => {
     if (savingRef.current) return;
