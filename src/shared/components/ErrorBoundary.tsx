@@ -87,12 +87,12 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
             </TouchableOpacity>
 
             {showDetails && (
-              <ScrollView style={styles.detailsContainer}>
-                <Text style={styles.detailsText}>
+              <ScrollView style={[styles.detailsContainer, { backgroundColor: isDark ? '#2C2C2E' : '#F5F5F5' }]}>
+                <Text style={[styles.detailsText, { color: isDark ? '#AEAEB2' : '#444444' }]}>
                   {error?.toString()}
                 </Text>
                 {errorInfo?.componentStack && (
-                  <Text style={styles.detailsText}>
+                  <Text style={[styles.detailsText, { color: isDark ? '#AEAEB2' : '#444444' }]}>
                     {errorInfo.componentStack}
                   </Text>
                 )}
@@ -161,14 +161,12 @@ const styles = StyleSheet.create({
   detailsContainer: {
     maxHeight: 200,
     width: '100%',
-    backgroundColor: '#F5F5F5',
     borderRadius: 8,
     padding: 12,
     marginTop: 8,
   },
   detailsText: {
     fontSize: 11,
-    color: '#444444',
     fontFamily: 'monospace',
   },
 });

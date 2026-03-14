@@ -44,7 +44,9 @@ export const glucoseRepository = {
        dto.insulinDose ?? null, dto.insulinType ?? null, dto.notes ?? null,
        dto.recordedAt ?? now, now, now]
     );
-    return this.findById(id) as Promise<GlucoseReading>;
+    const result = await this.findById(id);
+    if (!result) throw new Error(`Failed to read back glucose reading ${id} after insert`);
+    return result;
   },
 
   async findById(id: string): Promise<GlucoseReading | null> {

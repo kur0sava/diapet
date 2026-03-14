@@ -31,7 +31,9 @@ export const petRepository = {
        dto.weightKg ?? null, dto.diagnosisDate ?? null, dto.diabetesType ?? 'unknown',
        dto.insulinType ?? null, dto.photoUri ?? null, now, now]
     );
-    return this.findById(id) as Promise<Pet>;
+    const result = await this.findById(id);
+    if (!result) throw new Error(`Failed to read back pet ${id} after insert`);
+    return result;
   },
 
   async findById(id: string): Promise<Pet | null> {

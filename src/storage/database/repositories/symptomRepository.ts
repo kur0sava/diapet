@@ -37,7 +37,9 @@ export const symptomRepository = {
         );
       }
     });
-    return this.findById(id) as Promise<SymptomEntry>;
+    const result = await this.findById(id);
+    if (!result) throw new Error(`Failed to read back symptom ${id} after insert`);
+    return result;
   },
 
   async findById(id: string): Promise<SymptomEntry | null> {

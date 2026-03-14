@@ -23,7 +23,9 @@ export const feedingRepository = {
       [id, dto.petId, dto.foodType ?? null, dto.amountGrams ?? null,
        dto.notes ?? null, dto.fedAt ?? now, now]
     );
-    return this.findById(id) as Promise<FeedingLog>;
+    const result = await this.findById(id);
+    if (!result) throw new Error(`Failed to read back feeding ${id} after insert`);
+    return result;
   },
 
   async findById(id: string): Promise<FeedingLog | null> {

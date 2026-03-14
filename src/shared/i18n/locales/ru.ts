@@ -39,6 +39,7 @@ export const ru = {
     addPet: 'Добавьте питомца',
     addPetSubtitle: 'Расскажите нам о вашем питомце',
     petName: 'Имя питомца',
+    petNamePlaceholder: 'Барсик',
     petAge: 'Возраст (лет)',
     petAgeHint: 'Полных лет',
     petWeight: 'Вес (кг)',

@@ -37,7 +37,8 @@ export default function LogInjectionScreen() {
   const [loading, setLoading] = useState(false);
   const [guardEnabled, setGuardEnabled] = useState(true);
   const { triggerAfterAction } = useHintTrigger();
-  const commonInsulins = t('injection.commonInsulins', { returnObjects: true }) as string[];
+  const commonInsulinsRaw = t('injection.commonInsulins', { returnObjects: true });
+  const commonInsulins = Array.isArray(commonInsulinsRaw) ? commonInsulinsRaw as string[] : [];
   // ARCH005: prevent duplicate injection on double-tap
   const savingRef = useRef(false);
   useUnsavedChangesGuard(guardEnabled && (!!dose || !!notes));

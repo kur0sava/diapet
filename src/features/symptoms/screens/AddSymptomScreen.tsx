@@ -56,6 +56,7 @@ export default function AddSymptomScreen() {
   const autoSeverity = selectedTypes.length > 0 ? calculateSeverity(selectedTypes) : null;
   const severity: SymptomSeverity = severityOverride ?? autoSeverity?.severity ?? 'mild';
   const [photos, setPhotos] = useState<string[]>([]);
+  const [removedPhotos, setRemovedPhotos] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
   const [guardEnabled, setGuardEnabled] = useState(true);
   // ARCH005: prevent duplicate symptom save on double-tap
@@ -163,6 +164,10 @@ export default function AddSymptomScreen() {
           glucoseReadingId: selectedGlucoseId,
         });
       }
+      // Clean up orphaned photo files from disk
+      for (const uri of removedPhotos) {
+        FileSystem.deleteAsync(uri, { idempotent: true }).catch(() => {});
+      }
       await queryClient.invalidateQueries({ queryKey: ['symptoms'] });
       setGuardEnabled(false);
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
@@ -173,7 +178,7 @@ export default function AddSymptomScreen() {
       savingRef.current = false;
       setLoading(false);
     }
-  }, [activePet, selectedTypes, severity, notes, photos, selectedGlucoseId, queryClient, navigation, t, editId]);
+  }, [activePet, selectedTypes, severity, notes, photos, removedPhotos, selectedGlucoseId, queryClient, navigation, t, editId]);
 
   return (
     <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={{ flex: 1 }}>
@@ -292,7 +297,10 @@ export default function AddSymptomScreen() {
                   <Image source={{ uri }} style={styles.photoThumb} />
                   <TouchableOpacity
                     style={styles.removePhotoBtn}
-                    onPress={() => setPhotos(photos.filter((_, idx) => idx !== i))}
+                    onPress={() => {
+                      setRemovedPhotos(prev => [...prev, photos[i]]);
+                      setPhotos(photos.filter((_, idx) => idx !== i));
+                    }}
                   >
                     <Ionicons name="close" size={12} color="#fff" />
                   </TouchableOpacity>

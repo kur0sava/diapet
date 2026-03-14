@@ -186,8 +186,8 @@ export default function GlucoseListScreen() {
           onPress: async () => {
             try {
               await glucoseRepository.delete(id);
-              queryClient.invalidateQueries({ queryKey: ['glucose'] });
-              queryClient.invalidateQueries({ queryKey: ['diary'] });
+              await queryClient.invalidateQueries({ queryKey: ['glucose'] });
+              await queryClient.invalidateQueries({ queryKey: ['diary'] });
             } catch {
               Alert.alert(t('common.error'));
             }

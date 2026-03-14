@@ -23,7 +23,9 @@ export const injectionRepository = {
       [id, dto.petId, dto.insulinType, dto.doseUnits, dto.notes ?? null,
        dto.administeredAt ?? now, now]
     );
-    return this.findById(id) as Promise<InjectionLog>;
+    const result = await this.findById(id);
+    if (!result) throw new Error(`Failed to read back injection ${id} after insert`);
+    return result;
   },
 
   async findById(id: string): Promise<InjectionLog | null> {

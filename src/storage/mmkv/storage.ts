@@ -12,9 +12,7 @@ let initialized = false;
 
 export function getStorage(): MMKV {
   if (!_storage) {
-    // Will be re-created with encryption in initStorage()
-    console.warn('MMKV accessed before initStorage — using unencrypted fallback');
-    _storage = new MMKV({ id: 'diapet-storage' });
+    throw new Error('MMKV accessed before initStorage() completed — this is a bug. Ensure no component reads storage before the ready gate in App.tsx.');
   }
   return _storage;
 }

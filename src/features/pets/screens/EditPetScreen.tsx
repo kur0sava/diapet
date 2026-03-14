@@ -9,8 +9,9 @@ import { petRepository, scheduleRepository, getDatabase } from '@storage/databas
 import { usePetStore } from '@shared/stores/petStore';
 import { useQueryClient } from '@tanstack/react-query';
 import { Ionicons } from '@expo/vector-icons';
-import { storage } from '@storage/mmkv/storage';
+import { storage, StorageKeys } from '@storage/mmkv/storage';
 import { useUnsavedChangesGuard } from '@shared/hooks/useUnsavedChangesGuard';
+import { useNotifications } from '@shared/hooks/useNotifications';
 
 export default function EditPetScreen() {
   const navigation = useMoreNavigation();
@@ -19,6 +20,7 @@ export default function EditPetScreen() {
   const activePet = usePetStore(s => s.activePet);
   const refreshActivePet = usePetStore(s => s.refreshActivePet);
   const queryClient = useQueryClient();
+  const { scheduleInjectionReminder, scheduleFeedingReminder, cancelAllNotifications } = useNotifications();
 
   const [name, setName] = useState(activePet?.name ?? '');
   const [weightKg, setWeightKg] = useState(activePet?.weightKg?.toString() ?? '');
@@ -92,6 +94,17 @@ export default function EditPetScreen() {
         for (const s of existingFeedings) await scheduleRepository.deleteFeedingTime(s.id);
         for (const time of feedingTimes) await scheduleRepository.addFeedingTime(activePet.id, time);
       });
+      // Reschedule notifications after schedule changes
+      const notificationsEnabled = storage.getBoolean(StorageKeys.NOTIFICATIONS_ENABLED) !== false;
+      if (notificationsEnabled) {
+        await cancelAllNotifications();
+        for (const time of injectionTimes) {
+          await scheduleInjectionReminder(time, activePet.name);
+        }
+        for (const time of feedingTimes) {
+          await scheduleFeedingReminder(time, activePet.name);
+        }
+      }
       await refreshActivePet();
       await queryClient.invalidateQueries({ queryKey: ['pet'] });
       await queryClient.invalidateQueries({ queryKey: ['schedule'] });

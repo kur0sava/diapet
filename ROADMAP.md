@@ -1,7 +1,7 @@
 # DiaPet — Master Development Plan
 
-> Последнее обновление: 2026-02-22
-> Коммит: d342db6 (master)
+> Последнее обновление: 2026-03-15
+> Версия: 1.2.0 (versionCode 5)
 
 ---
 
@@ -16,10 +16,12 @@
 [####################] v1.4 Корм-гид       ✅ DONE
 [####################] v1.5 Bug Review     ✅ DONE
 [####################] v1.6 UI Redesign    ✅ DONE
-[____________________] v1.7 Pre-deploy     ⬅ ТЕКУЩИЙ ЭТАП (Google Play)
-[____________________] v1.8 UX фичи        🔜
-[____________________] v2.0 DevOps         🔜
-[____________________] v2.1 Backend        🔜
+[##########__________] v1.7 Pre-deploy     (иконка ✅, Android 15/16 ✅, hints ✅)
+[####################] v1.8 Bug Audit      ✅ DONE (14 багов, paranoid audit)
+[____________________] v1.9 Pre-release    ⬅ ТЕКУЩИЙ ЭТАП (оплата, реклама, билд)
+[____________________] v2.0 UX фичи       🔜
+[____________________] v2.1 DevOps         🔜
+[____________________] v2.2 Backend        🔜
 [____________________] v3.0 AI/Smart       🔜
 ```
 
@@ -213,24 +215,82 @@
 
 ## ЭТАП 4.8: v1.7 Pre-deploy — подготовка к Google Play
 
-> Финальная подготовка перед публикацией
+> Частично завершён. Иконка, Android 15/16, hints, AdMob placeholder — готовы.
 
-- [ ] app.json: version 1.0.0, versionCode 1, package name
-- [ ] Иконка приложения (512x512 adaptive icon)
-- [ ] Splash screen
+- [x] app.json: version, versionCode, package name
+- [x] Иконка приложения (1024x1024 adaptive icon, RGB + RGBA)
+- [x] Splash screen (DiaPet branding)
+- [x] Android 15/16 совместимость (orientation: default, resizeableActivity)
+- [x] Hints система (30-дневные подсказки, push, AI-ассистент)
+- [x] AdMob баннер на дашборде (placeholder, скрыт для Pro)
+- [x] Тестирование на реальном устройстве (TECNO_KJ5n)
 - [ ] Описание для Google Play (короткое + полное, RU/EN)
 - [ ] Политика конфиденциальности (offline-only, no data collection)
 - [ ] Скриншоты (минимум 4: Dashboard, Glucose, Symptoms, Encyclopedia)
 - [ ] Feature graphic (1024x500)
-- [ ] AAB production сборка: `eas build --platform android --profile production`
-- [ ] Тестирование на реальном устройстве
 - [ ] Рейтинг контента (анкета Google Play Console)
+
+---
+
+## ЭТАП 4.9: v1.8 Bug Audit ✅ DONE
+
+> Завершён 2026-03-15. Paranoid codebase audit → 14 багов исправлено.
+> Все проверки: tsc ✅
+
+### Исправленные баги:
+
+- [x] H1: MMKV getStorage() — throw вместо unencrypted fallback
+- [x] H2: Repository create() — null-check после findById (6 репозиториев)
+- [x] H3: EditPetScreen — reschedule notifications при изменении расписания
+- [x] H4: SettingsScreen deleteAllData — очистка hints + AI chat ключей
+- [x] M1: LogInjectionScreen commonInsulins — Array.isArray guard
+- [x] M2: useHintTrigger — getState() вместо stale closure
+- [x] M4: GlucoseListScreen — await invalidateQueries
+- [x] M5: HintCard — useMemo для StyleSheet
+- [x] L1: AddSymptomScreen — удаление orphan-фото с диска
+- [x] L2: PetInfoScreen placeholder — i18n (Барсик / Whiskers)
+- [x] L3: ErrorBoundary — dark mode цвета для деталей
+
+---
+
+## ЭТАП 5.0: v1.9 Pre-release — финальная подготовка ⬅ ТЕКУЩИЙ
+
+> Всё что нужно для публикации в Google Play
+
+### #1 — EAS Build
+- [ ] Запустить: `eas build --platform android --profile production --non-interactive`
+- [ ] Скачать AAB → загрузить в Google Play Console (закрытое тестирование)
+
+### #2 — RevenueCat (подписки)
+- [ ] Google Play Console → создать подписки: `diapet_pro_monthly`, `diapet_pro_yearly`
+- [ ] RevenueCat → проект DiaPet, Entitlement `pro`, Offering с продуктами
+- [ ] `src/core/App.tsx` → заменить `YOUR_REVENUECAT_API_KEY`
+
+### #3 — AdMob (реклама)
+- [ ] Google AdMob → создать приложение, получить App ID → `app.json` androidAppId
+- [ ] Создать Banner Ad Unit → `DashboardScreen.tsx` ADMOB_BANNER_ID
+- [ ] Новый EAS билд (нативная зависимость)
+
+### #4 — Google Play листинг
+- [ ] Описание (короткое + полное, RU/EN)
+- [ ] Политика конфиденциальности
+- [ ] Скриншоты (4+)
+- [ ] Feature graphic (1024x500)
+- [ ] Рейтинг контента
+
+### #5 — Валюта расходов (M5)
+- [ ] Определение валюты по локали или настройка в Settings
+- [ ] Обновить AddExpenseScreen и ExpensesScreen
+
+### #6 — Формат даты по локали (M6)
+- [ ] Заменить хардкод `dd.MM.yyyy` на locale-aware `format(date, 'P', { locale })`
+- [ ] Затронутые: LogGlucose, LogInjection, GlucoseList, DailyDiary
 
 > **DEPLOY**: загрузка в Google Play Console → Internal Testing → Production
 
 ---
 
-## ЭТАП 5: v1.7 UX улучшения
+## ЭТАП 6: v2.0 UX улучшения
 
 - [ ] F1 Закладки в Энциклопедии (MMKV)
 - [ ] F2 Оглавление для длинных статей (парсинг ##)
@@ -239,11 +299,11 @@
 - [ ] F5 Accessibility: accessibilityLabel на все кнопки (15+), размер шрифта
 - [ ] E6 Быстрый доступ к настройкам глюкозы
 
-> **CHECKPOINT 5**: commit + tsc + test + lint
+> **CHECKPOINT 6**: commit + tsc + test + lint
 
 ---
 
-## ЭТАП 6: v2.0 DevOps
+## ЭТАП 7: v2.1 DevOps
 
 - [ ] G3 GitHub Actions CI (tsc + lint + test + build)
 - [ ] G5 Sentry мониторинг крашей
@@ -252,11 +312,11 @@
 - [ ] D4 Barrel exports для фич (index.ts)
 - [ ] Расширить Jest покрытие до 70% (repositories, stores)
 
-> **CHECKPOINT 6**: commit + push + CI green
+> **CHECKPOINT 7**: commit + push + CI green
 
 ---
 
-## ЭТАП 7: v2.1 Backend + Облако + Аккаунты
+## ЭТАП 8: v2.2 Backend + Облако + Аккаунты
 
 - [ ] REST API (Fastify + PostgreSQL)
 - [ ] Авторизация: Google Sign-In + Email/Password (Firebase Auth или Supabase)
@@ -268,7 +328,7 @@
 
 ---
 
-## ЭТАП 8: v3.0 AI/Smart
+## ЭТАП 9: v3.0 AI/Smart
 
 - [ ] Анализ трендов (статистика)
 - [ ] Предупреждение о риске гипогликемии

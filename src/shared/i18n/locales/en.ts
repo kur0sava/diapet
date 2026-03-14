@@ -39,6 +39,7 @@ export const en = {
     addPet: 'Add Your Pet',
     addPetSubtitle: 'Tell us about your pet',
     petName: 'Pet name',
+    petNamePlaceholder: 'Whiskers',
     petAge: 'Age (years)',
     petAgeHint: 'Full years',
     petWeight: 'Weight (kg)',

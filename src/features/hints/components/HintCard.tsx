@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import Animated, { SlideInDown, SlideOutDown } from 'react-native-reanimated';
 import { Ionicons } from '@expo/vector-icons';
@@ -59,7 +59,7 @@ export function HintCard() {
 
   const config = CATEGORY_CONFIG[currentHint.category];
 
-  const styles = makeStyles(theme.colors.card, theme.colors.text, theme.isDark);
+  const styles = useMemo(() => makeStyles(theme.colors.card, theme.colors.text, theme.isDark), [theme.colors.card, theme.colors.text, theme.isDark]);
 
   return (
     <Animated.View

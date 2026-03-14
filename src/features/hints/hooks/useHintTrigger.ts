@@ -5,11 +5,11 @@ import { storage, StorageKeys } from '@storage/mmkv/storage';
 import type { HintTrigger } from '../data/hintsContent';
 
 export function useHintTrigger() {
-  const { showHint, currentHint, triggerAchievement } = useHintStore();
+  const { showHint, triggerAchievement } = useHintStore();
 
   const triggerAfterAction = useCallback((trigger: HintTrigger) => {
-    // Don't show if another hint is already visible
-    if (currentHint) return;
+    // Read fresh state from store to avoid stale closure
+    if (useHintStore.getState().currentHint) return;
 
     const regDate = storage.getString(StorageKeys.HINTS_REGISTRATION_DATE);
     if (!regDate) return;
@@ -36,7 +36,7 @@ export function useHintTrigger() {
         setTimeout(() => triggerAchievement(), 12000);
       }
     }
-  }, [currentHint, showHint, triggerAchievement]);
+  }, [showHint, triggerAchievement]);
 
   return { triggerAfterAction };
 }

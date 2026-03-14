@@ -30,7 +30,9 @@ export const expenseRepository = {
       [id, dto.petId, dto.category, dto.amount, dto.currency ?? 'RUB',
        dto.description ?? null, dto.date ?? now.split('T')[0], now, now]
     );
-    return this.findById(id) as Promise<Expense>;
+    const result = await this.findById(id);
+    if (!result) throw new Error(`Failed to read back expense ${id} after insert`);
+    return result;
   },
 
   async findById(id: string): Promise<Expense | null> {

@@ -101,7 +101,7 @@ export default function PetInfoScreen() {
             label={t('onboarding.petName') + ' *'}
             value={name}
             onChangeText={setName}
-            placeholder="Барсик"
+            placeholder={t('onboarding.petNamePlaceholder')}
             error={errors.name}
           />
 
