@@ -107,4 +107,8 @@ export const StorageKeys = {
   HINTS_ACHIEVEMENT_SHOWN: 'hintsAchievementShown',
   HINTS_PUSH_SHOWN_IDS: 'hintsPushShownIds',
   HINTS_PUSH_LAST_SCHEDULED: 'hintsPushLastScheduled',
+  PREDICTION_CACHE: 'predictionCache',
+  PREDICTION_LAST_REQUEST: 'predictionLastRequest',
+  REMISSION_CACHE: 'remissionCache',
+  REMISSION_LAST_REQUEST: 'remissionLastRequest',
 } as const;
