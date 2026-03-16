@@ -76,6 +76,14 @@ export const injectionRepository = {
     return rows.map(mapRow);
   },
 
+  async countByPetId(petId: string): Promise<number> {
+    const db = await getDatabase();
+    const row = await db.getFirstAsync<{ cnt: number }>(
+      'SELECT COUNT(*) as cnt FROM injections WHERE pet_id = ?', [petId],
+    );
+    return row?.cnt ?? 0;
+  },
+
   async delete(id: string): Promise<void> {
     const db = await getDatabase();
     await db.runAsync('DELETE FROM injections WHERE id = ?', [id]);

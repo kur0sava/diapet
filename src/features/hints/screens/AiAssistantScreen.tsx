@@ -64,10 +64,11 @@ export default function AiAssistantScreen() {
     if (!activePet) return;
 
     try {
-      const [glucoseResult, latestInjection, injectionSchedules] = await Promise.all([
+      const [glucoseResult, latestInjection, injectionSchedules, injectionCount] = await Promise.all([
         glucoseRepository.findByPetId(activePet.id, 5),
         injectionRepository.findLatest(activePet.id),
         scheduleRepository.getInjectionTimes(activePet.id),
+        injectionRepository.countByPetId(activePet.id),
       ]);
 
       const lastGlucoseReadings = glucoseResult.data.map(r => ({
@@ -94,7 +95,7 @@ export default function AiAssistantScreen() {
         injectionSchedule: injectionScheduleStr,
         lastGlucoseReadings,
         daysSinceDiagnosis,
-        totalInjectionsLogged: 0,
+        totalInjectionsLogged: injectionCount,
         language: i18n.language?.startsWith('en') ? 'en' : 'ru',
       };
 

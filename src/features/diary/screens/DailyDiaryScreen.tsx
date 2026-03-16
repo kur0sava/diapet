@@ -23,7 +23,7 @@ import { usePetStore } from '@shared/stores/petStore';
 import { glucoseRepository } from '@storage/database/repositories/glucoseRepository';
 import { injectionRepository } from '@storage/database/repositories/injectionRepository';
 import { feedingRepository } from '@storage/database/repositories/feedingRepository';
-import { getGlucoseColor, GlucoseUnit, MGDL_PER_MMOLL } from '@storage/domain/types';
+import { getGlucoseColor, GlucoseUnit, mmolToMgdl } from '@storage/domain/types';
 import { storage, StorageKeys } from '@storage/mmkv/storage';
 import { analyzeDayGlucose, computeDayStats } from '../utils/diaryAnalyzer';
 import { useRoute, RouteProp } from '@react-navigation/native';
@@ -243,7 +243,7 @@ export default function DailyDiaryScreen() {
             <View style={styles.statItem}>
               <Text style={[styles.statValue, { color: theme.colors.text, fontFamily: theme.fonts.bold }]}>
                 {glucoseUnit === 'mg/dL'
-                  ? `${Math.round((stats.avg ?? 0) * MGDL_PER_MMOLL)}`
+                  ? `${mmolToMgdl(stats.avg ?? 0)}`
                   : `${stats.avg?.toFixed(1) ?? '—'}`}
               </Text>
               <Text style={[styles.statLabel, { color: theme.colors.textSecondary }]}>{t('diary.avg')}</Text>

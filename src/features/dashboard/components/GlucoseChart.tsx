@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, useWindowDimensions } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '@shared/theme';
 import { GlucoseReading, getGlucoseColor } from '@storage/domain/types';
-import { format, parseISO } from 'date-fns';
+import { formatShortDate } from '@shared/utils/dateUtils';
 import Svg, { Path } from 'react-native-svg';
 
 const CHART_HEIGHT = 120;
@@ -114,7 +114,7 @@ export function GlucoseChart({ data }: Props) {
             style={[styles.xLabel, { color: theme.colors.textTertiary }]}
             numberOfLines={1}
           >
-            {format(parseISO(data[i].recordedAt), 'dd.MM')}
+            {formatShortDate(data[i].recordedAt)}
           </Text>
         ))}
       </View>

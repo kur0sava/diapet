@@ -12,7 +12,7 @@ import { Button, Input, Card } from '@shared/components/ui';
 import { glucoseRepository } from '@storage/database';
 import { usePetStore } from '@shared/stores/petStore';
 import { MealRelation, GlucoseUnit, getGlucoseLevel, getGlucoseColor } from '../types';
-import { MGDL_PER_MMOLL } from '@storage/domain/types';
+import { MGDL_PER_MMOLL, MAX_REASONABLE_GLUCOSE_MMOL, MAX_REASONABLE_GLUCOSE_MGDL } from '@storage/domain/types';
 import { useQueryClient } from '@tanstack/react-query';
 import { storage, StorageKeys } from '@storage/mmkv/storage';
 import * as Haptics from 'expo-haptics';
@@ -111,8 +111,7 @@ export default function LogGlucoseScreen() {
   }, [editId, savedUnit]);
 
   const numValue = parseFloat(value.replace(',', '.'));
-  // MM001: use consistent max — 35 mmol/L = 630 mg/dL (was 600 mg/dL, mismatched)
-  const isValidValue = !isNaN(numValue) && numValue > 0 && numValue < (unit === 'mmol/L' ? 35 : 630);
+  const isValidValue = !isNaN(numValue) && numValue > 0 && numValue < (unit === 'mmol/L' ? MAX_REASONABLE_GLUCOSE_MMOL : MAX_REASONABLE_GLUCOSE_MGDL);
 
   const glucosePreview = isValidValue
     ? {
