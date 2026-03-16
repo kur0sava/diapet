@@ -1,6 +1,6 @@
 # DiaPet — Master Development Plan
 
-> Последнее обновление: 2026-03-15
+> Последнее обновление: 2026-03-16
 > Версия: 1.2.0 (versionCode 5)
 
 ---
@@ -278,13 +278,20 @@
 - [ ] Feature graphic (1024x500)
 - [ ] Рейтинг контента
 
-### #5 — Валюта расходов (M5)
-- [ ] Определение валюты по локали или настройка в Settings
-- [ ] Обновить AddExpenseScreen и ExpensesScreen
+### #5 — Валюта расходов (M5) ✅
+- [x] Валюта по локали в AddExpenseScreen и ExpensesScreen
+- [x] Currency code: RU→RUB, EN→USD
 
-### #6 — Формат даты по локали (M6)
-- [ ] Заменить хардкод `dd.MM.yyyy` на locale-aware `format(date, 'P', { locale })`
-- [ ] Затронутые: LogGlucose, LogInjection, GlucoseList, DailyDiary
+### #6 — Формат даты по локали (M6) ✅
+- [x] dateUtils: formatShortDate/formatFullDate/formatFullDateTime (RU: dd.MM, EN: MM/dd)
+- [x] Заменены хардкоды в FeedingList, InjectionList, GlucoseList
+
+### #7 — UI Dark Mode Audit ✅
+- [x] ErrorBoundary → Colors constants вместо хардкода
+- [x] EmergencyScreen → 9x theme.colors.danger
+- [x] DashboardScreen → SOS + upgrade gradient → theme tokens
+- [x] PaywallScreen → theme.colors.success
+- [x] HintCard → normalized shadow
 
 > **DEPLOY**: загрузка в Google Play Console → Internal Testing → Production
 
