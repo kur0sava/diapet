@@ -1,0 +1,87 @@
+/**
+ * React hook for glucose prediction.
+ * Manages cache, rate limiting, and manual trigger.
+ */
+import { useState, useCallback, useMemo } from 'react';
+import { usePetStore } from '@shared/stores/petStore';
+import i18n from '@shared/i18n';
+import { collectPredictionData } from '../data/predictionDataCollector';
+import { requestPrediction } from '../utils/predictionApiClient';
+import {
+  getCachedPrediction,
+  cachePrediction,
+  canRequestPrediction,
+  timeUntilNextPrediction,
+} from '../data/predictionStorage';
+import type { PredictionResult } from '../data/predictionTypes';
+
+export interface UsePredictionReturn {
+  prediction: PredictionResult | null;
+  isLoading: boolean;
+  error: string | null;
+  canRequestNew: boolean;
+  /** Milliseconds until next request is allowed. 0 if available now. */
+  nextAvailableIn: number;
+  /** Manually trigger a new prediction. */
+  requestNewPrediction: () => Promise<void>;
+}
+
+export function usePrediction(): UsePredictionReturn {
+  const activePet = usePetStore(s => s.activePet);
+  const petId = activePet?.id ?? '';
+
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [prediction, setPrediction] = useState<PredictionResult | null>(() => {
+    if (!petId) return null;
+    return getCachedPrediction(petId);
+  });
+
+  const canRequest = useMemo(() => {
+    if (!petId) return false;
+    return canRequestPrediction(petId);
+  }, [petId, prediction]); // re-evaluate after new prediction
+
+  const nextAvailableIn = useMemo(() => {
+    if (!petId) return 0;
+    return timeUntilNextPrediction(petId);
+  }, [petId, prediction]);
+
+  const requestNewPrediction = useCallback(async () => {
+    if (!activePet || !petId) {
+      setError('No active pet');
+      return;
+    }
+
+    if (!canRequestPrediction(petId)) {
+      setError('Rate limited — try again later');
+      return;
+    }
+
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      const language = i18n.language?.startsWith('en') ? 'en' : 'ru' as const;
+      const snapshot = await collectPredictionData(petId, activePet, language);
+      const result = await requestPrediction(snapshot);
+
+      cachePrediction(petId, result);
+      setPrediction(result);
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : 'Unknown error';
+      setError(msg);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [activePet, petId]);
+
+  return {
+    prediction,
+    isLoading,
+    error,
+    canRequestNew: canRequest,
+    nextAvailableIn,
+    requestNewPrediction,
+  };
+}

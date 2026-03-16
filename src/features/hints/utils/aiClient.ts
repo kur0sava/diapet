@@ -7,17 +7,26 @@ export interface ChatMessage {
 
 const API_URL = 'https://api.anthropic.com/v1/messages';
 
+export interface AiClientOptions {
+  maxTokens?: number;
+  timeoutMs?: number;
+}
+
 export async function sendChatMessage(
   systemPrompt: string,
   messages: ChatMessage[],
+  options?: AiClientOptions,
 ): Promise<string> {
   const apiKey = Constants.expoConfig?.extra?.anthropicApiKey as string | undefined;
   if (!apiKey || apiKey === 'YOUR_ANTHROPIC_API_KEY') {
     throw new Error('Anthropic API key not configured');
   }
 
+  const maxTokens = options?.maxTokens ?? 1024;
+  const timeoutMs = options?.timeoutMs ?? 30_000;
+
   const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 30_000);
+  const timeout = setTimeout(() => controller.abort(), timeoutMs);
 
   const response = await fetch(API_URL, {
     method: 'POST',
@@ -28,7 +37,7 @@ export async function sendChatMessage(
     },
     body: JSON.stringify({
       model: 'claude-sonnet-4-20250514',
-      max_tokens: 1024,
+      max_tokens: maxTokens,
       system: systemPrompt,
       messages: messages.map(m => ({ role: m.role, content: m.content })),
     }),
