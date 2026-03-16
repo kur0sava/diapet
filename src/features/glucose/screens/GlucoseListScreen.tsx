@@ -12,7 +12,7 @@ import { useInfiniteQuery, useQuery, useQueryClient } from '@tanstack/react-quer
 import { glucoseRepository, injectionRepository, symptomRepository } from '@storage/database';
 import { usePetStore } from '@shared/stores/petStore';
 import { GlucoseReading, getGlucoseColor, MealRelation } from '../types';
-import { GlucoseFilter, GLUCOSE_RANGES } from '@storage/domain/types';
+import { GlucoseFilter, GLUCOSE_RANGES, mmolToMgdl } from '@storage/domain/types';
 import { formatDateTime, formatFullDate, formatFullDateTime } from '@shared/utils/dateUtils';
 import { EmptyState, Card, AnimatedListItem } from '@shared/components/ui';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -172,8 +172,11 @@ export default function GlucoseListScreen() {
   const handleDelete = useCallback((id: string) => {
     const allItems = data?.pages.flatMap(p => p.data) ?? [];
     const item = allItems.find(r => r.id === id);
+    const displayValue = item
+      ? unit === 'mg/dL' ? `${item.valueMgdl}` : `${item.valueMmol.toFixed(1)}`
+      : '';
     const info = item
-      ? `${formatFullDateTime(item.recordedAt)} — ${item.valueMmol.toFixed(1)} ${unit}`
+      ? `${formatFullDateTime(item.recordedAt)} — ${displayValue} ${unit}`
       : '';
     Alert.alert(
       t('glucose.deleteConfirm'),
@@ -425,15 +428,21 @@ export default function GlucoseListScreen() {
         <Card style={styles.statsCard} shadow={false}>
           <View style={styles.statsRow}>
             <View style={styles.stat}>
-              <Text style={[styles.statValue, { color: theme.colors.primary }]}>{stats.avg.toFixed(1)}</Text>
+              <Text style={[styles.statValue, { color: theme.colors.primary }]}>
+                {unit === 'mg/dL' ? mmolToMgdl(stats.avg) : stats.avg.toFixed(1)}
+              </Text>
               <Text style={[styles.statLabel, { color: theme.colors.textSecondary }]}>{t('glucose.stats.average')}</Text>
             </View>
             <View style={styles.stat}>
-              <Text style={[styles.statValue, { color: theme.colors.success }]}>{stats.min.toFixed(1)}</Text>
+              <Text style={[styles.statValue, { color: theme.colors.success }]}>
+                {unit === 'mg/dL' ? mmolToMgdl(stats.min) : stats.min.toFixed(1)}
+              </Text>
               <Text style={[styles.statLabel, { color: theme.colors.textSecondary }]}>{t('glucose.stats.min')}</Text>
             </View>
             <View style={styles.stat}>
-              <Text style={[styles.statValue, { color: theme.colors.danger }]}>{stats.max.toFixed(1)}</Text>
+              <Text style={[styles.statValue, { color: theme.colors.danger }]}>
+                {unit === 'mg/dL' ? mmolToMgdl(stats.max) : stats.max.toFixed(1)}
+              </Text>
               <Text style={[styles.statLabel, { color: theme.colors.textSecondary }]}>{t('glucose.stats.max')}</Text>
             </View>
             <View style={styles.stat}>

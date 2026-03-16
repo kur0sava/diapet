@@ -46,7 +46,7 @@ export default function LogGlucoseScreen() {
   const [unit, setUnit] = useState<GlucoseUnit>(savedUnit);
   const [mealRelation, setMealRelation] = useState<MealRelation>('unspecified');
   const [insulinDose, setInsulinDose] = useState('');
-  const [insulinType, setInsulinType] = useState('');
+  const [insulinType, setInsulinType] = useState(activePet?.insulinType ?? '');
   const [notes, setNotes] = useState('');
   const [loading, setLoading] = useState(false);
   const [recordedAt, setRecordedAt] = useState(new Date());

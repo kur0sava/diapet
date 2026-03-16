@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet, useWindowDimensions } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '@shared/theme';
-import { GlucoseReading, getGlucoseLevel } from '@storage/domain/types';
+import { GlucoseReading, getGlucoseColor } from '@storage/domain/types';
 import { format, parseISO } from 'date-fns';
 import Svg, { Path } from 'react-native-svg';
 
@@ -88,12 +88,7 @@ export function GlucoseChart({ data }: Props) {
         {data.map((reading, i) => {
           const x = getX(i);
           const y = getY(reading.valueMmol);
-          const level = getGlucoseLevel(reading.valueMmol);
-          const color =
-            level === 'normal' ? theme.colors.success
-            : level === 'below_target' ? theme.colors.warning
-            : level === 'high' ? theme.colors.warning
-            : theme.colors.danger;
+          const color = getGlucoseColor(reading.valueMmol);
           return (
             <View
               key={reading.id}

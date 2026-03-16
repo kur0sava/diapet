@@ -5,6 +5,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { useMoreNavigation } from '@navigation/hooks';
 import { useTranslation } from 'react-i18next';
+import i18n from '@shared/i18n';
 import { useTheme } from '@shared/theme';
 import { usePetStore } from '@shared/stores/petStore';
 import { useQuery } from '@tanstack/react-query';
@@ -80,7 +81,7 @@ export default function PetProfileScreen() {
           {activePet.birthYear && renderInfoRow(t('pets.age'), `${new Date().getFullYear() - activePet.birthYear} ${t('pets.years')}`)}
           {renderInfoRow(t('pets.gender'), activePet.gender === 'male' ? t('common.male') : activePet.gender === 'female' ? t('common.female') : t('common.unknown'))}
           {renderInfoRow(t('pets.diabetesType'), diabetesLabels[activePet.diabetesType])}
-          {activePet.diagnosisDate && renderInfoRow(t('pets.diagnosisDate'), new Date(activePet.diagnosisDate).toLocaleDateString('ru-RU'))}
+          {activePet.diagnosisDate && renderInfoRow(t('pets.diagnosisDate'), new Date(activePet.diagnosisDate).toLocaleDateString(i18n.language === 'ru' ? 'ru-RU' : 'en-US'))}
         </Card>
         <Card style={styles.card}>
           <Text style={[styles.cardTitle, { color: theme.colors.textSecondary, fontFamily: theme.fonts.bold }]}>{t('pets.schedule')}</Text>

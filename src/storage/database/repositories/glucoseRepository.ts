@@ -199,6 +199,8 @@ export const glucoseRepository = {
 
   async delete(id: string): Promise<void> {
     const db = await getDatabase();
+    // Nullify symptom FK references before deleting to avoid FK constraint violation
+    await db.runAsync('UPDATE symptoms SET glucose_reading_id = NULL WHERE glucose_reading_id = ?', [id]);
     await db.runAsync('DELETE FROM glucose_readings WHERE id = ?', [id]);
   },
 

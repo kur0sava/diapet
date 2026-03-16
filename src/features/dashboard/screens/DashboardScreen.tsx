@@ -22,6 +22,7 @@ import { GlucoseChart } from '../components/GlucoseChart';
 import { StatusCard } from '../components/StatusCard';
 import { QuickActionButton } from '../components/QuickActionButton';
 import { formatRelative, minutesUntil, formatCountdown, hoursSince } from '@shared/utils/dateUtils';
+import { getGlucoseColor } from '@storage/domain/types';
 import { Ionicons } from '@expo/vector-icons';
 import { usePetStore } from '@shared/stores/petStore';
 import { useSubscription } from '@features/subscription/hooks/useSubscription';
@@ -223,7 +224,7 @@ export default function DashboardScreen() {
             <View style={styles.statusRow}>
               <StatusCard
                 iconName="water-outline"
-                iconColor={latestGlucose ? (latestGlucose.valueMmol < 4 || latestGlucose.valueMmol > 9 ? theme.colors.danger : theme.colors.success) : theme.colors.textTertiary}
+                iconColor={latestGlucose ? getGlucoseColor(latestGlucose.valueMmol) : theme.colors.textTertiary}
                 label={t('dashboard.lastGlucose')}
                 value={latestGlucose
                   ? glucoseUnit === 'mg/dL'
@@ -231,7 +232,7 @@ export default function DashboardScreen() {
                     : `${latestGlucose.valueMmol.toFixed(1)}${trendArrow}`
                   : '\u2014'}
                 unit={glucoseUnit === 'mg/dL' ? t('common.mg_dl') : t('common.mmol_l')}
-                color={latestGlucose ? (latestGlucose.valueMmol < 4 || latestGlucose.valueMmol > 9 ? theme.colors.danger : theme.colors.success) : theme.colors.textTertiary}
+                color={latestGlucose ? getGlucoseColor(latestGlucose.valueMmol) : theme.colors.textTertiary}
                 subtitle={latestGlucose ? formatRelative(latestGlucose.recordedAt) : undefined}
                 index={0}
               />

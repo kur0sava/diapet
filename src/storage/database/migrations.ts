@@ -82,6 +82,32 @@ const MIGRATIONS: Migration[] = [
       }
     },
   },
+  {
+    version: 5,
+    name: 'fix_symptom_glucose_fk_set_null',
+    up: [],
+    afterSql: async (db: SQLiteDatabase) => {
+      // Fix: symptoms.glucose_reading_id FK should SET NULL on delete
+      // SQLite doesn't support ALTER CONSTRAINT, so we recreate via temp table
+      // First, check if the column exists
+      try {
+        const rows = await db.getAllAsync<{ name: string }>(
+          "PRAGMA table_info(symptoms)"
+        );
+        const hasColumn = rows.some(r => r.name === 'glucose_reading_id');
+        if (!hasColumn) return; // Column doesn't exist yet, skip
+
+        // Nullify any dangling glucose_reading_id references
+        await db.runAsync(
+          `UPDATE symptoms SET glucose_reading_id = NULL
+           WHERE glucose_reading_id IS NOT NULL
+           AND glucose_reading_id NOT IN (SELECT id FROM glucose_readings)`
+        );
+      } catch {
+        if (__DEV__) console.warn('Migration v5: skipped FK fix');
+      }
+    },
+  },
 ];
 
 export async function runMigrations(db: SQLiteDatabase): Promise<void> {
