@@ -75,7 +75,7 @@ export default function DashboardScreen() {
   const { t } = useTranslation();
   const { theme } = useTheme();
   const activePet = usePetStore(s => s.activePet);
-  const { isPro } = useSubscription();
+  const { isPro, canAccessAdvanced } = useSubscription();
   const petId = activePet?.id ?? '';
   // H004: respect the user's glucose unit preference
   const glucoseUnit = (storage.getString(StorageKeys.GLUCOSE_UNIT) ?? 'mmol/L') as GlucoseUnit;
@@ -308,6 +308,42 @@ export default function DashboardScreen() {
           </Card>
         </View>
 
+        {/* AI Smart Analysis Card */}
+        <TouchableOpacity
+          style={[styles.aiAnalysisCard, { backgroundColor: theme.colors.surface, ...theme.shadows.sm }]}
+          onPress={() => {
+            if (canAccessAdvanced()) {
+              navigation.navigate('AdvancedAnalytics');
+            } else {
+              rootNavigation.navigate('Paywall');
+            }
+          }}
+          activeOpacity={0.8}
+        >
+          <LinearGradient
+            colors={['#8B5CF6', '#6D28D9']}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+            style={styles.aiAnalysisIcon}
+          >
+            <Ionicons name="sparkles" size={22} color="#fff" />
+          </LinearGradient>
+          <View style={styles.aiAnalysisText}>
+            <Text style={[styles.aiAnalysisTitle, { color: theme.colors.text, fontFamily: theme.fonts.semibold }]}>
+              {t('prediction.title')}
+            </Text>
+            <Text style={[styles.aiAnalysisSubtitle, { color: theme.colors.textSecondary }]}>
+              {t('prediction.dashboardHint')}
+            </Text>
+          </View>
+          {!isPro && (
+            <View style={[styles.proBadgeSmall, { backgroundColor: '#8B5CF620' }]}>
+              <Text style={{ color: '#8B5CF6', fontSize: 10, fontWeight: '700' }}>PRO</Text>
+            </View>
+          )}
+          <Ionicons name="chevron-forward" size={18} color={theme.colors.textTertiary} />
+        </TouchableOpacity>
+
         {/* Feed Guide Banner */}
         <TouchableOpacity
           style={[styles.feedGuideBanner, { backgroundColor: theme.colors.surface, ...theme.shadows.sm }]}
@@ -488,6 +524,12 @@ const styles = StyleSheet.create({
   historyLink: { flex: 1, flexDirection: 'row', alignItems: 'center', gap: 10, padding: 14, borderRadius: 16 },
   historyIcon: { width: 34, height: 34, borderRadius: 17, alignItems: 'center', justifyContent: 'center' },
   historyLinkText: { flex: 1, fontSize: 13 },
+  aiAnalysisCard: { flexDirection: 'row', alignItems: 'center', gap: 12, marginHorizontal: 20, marginTop: 20, padding: 14, borderRadius: 16 },
+  aiAnalysisIcon: { width: 40, height: 40, borderRadius: 20, alignItems: 'center', justifyContent: 'center' },
+  aiAnalysisText: { flex: 1 },
+  aiAnalysisTitle: { fontSize: 14 },
+  aiAnalysisSubtitle: { fontSize: 12, marginTop: 2 },
+  proBadgeSmall: { paddingHorizontal: 6, paddingVertical: 2, borderRadius: 6, marginRight: 4 },
   feedGuideBanner: { flexDirection: 'row', alignItems: 'center', gap: 12, marginHorizontal: 20, marginTop: 20, padding: 14, borderRadius: 16 },
   feedGuideIcon: { width: 40, height: 40, borderRadius: 20, alignItems: 'center', justifyContent: 'center' },
   feedGuideTitle: { fontSize: 14 },

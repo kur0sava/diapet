@@ -37,6 +37,7 @@ import FeedingListScreen from '@features/glucose/screens/FeedingListScreen';
 import SubscriptionScreen from '@features/subscription/screens/SubscriptionScreen';
 import DailyDiaryScreen from '@features/diary/screens/DailyDiaryScreen';
 import AiAssistantScreen from '@features/hints/screens/AiAssistantScreen';
+import AdvancedAnalyticsScreen from '@features/prediction/screens/AdvancedAnalyticsScreen';
 
 const Tab = createBottomTabNavigator<MainTabParamList>();
 
@@ -70,6 +71,7 @@ function HomeStackNavigator() {
       <HomeStack.Screen name="FeedGuideRegion" component={FeedGuideRegionScreen} options={{ headerShown: false }} />
       <HomeStack.Screen name="FeedGuideAlternatives" component={FeedGuideAlternativesScreen} options={{ headerShown: false }} />
       <HomeStack.Screen name="FeedGuideNatural" component={FeedGuideNaturalScreen} options={{ headerShown: false }} />
+      <HomeStack.Screen name="AdvancedAnalytics" component={AdvancedAnalyticsScreen} options={{ headerShown: false }} />
     </HomeStack.Navigator>
   );
 }
@@ -151,6 +153,7 @@ function MoreStackNavigator() {
       <MoreStack.Screen name="FeedCalculator" component={FeedCalculatorScreen} options={{ headerShown: false }} />
       <MoreStack.Screen name="Subscription" component={SubscriptionScreen} options={{ headerShown: false }} />
       <MoreStack.Screen name="AiAssistant" component={AiAssistantScreen} options={{ headerShown: false }} />
+      <MoreStack.Screen name="AdvancedAnalytics" component={AdvancedAnalyticsScreen} options={{ headerShown: false }} />
     </MoreStack.Navigator>
   );
 }

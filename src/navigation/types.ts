@@ -43,6 +43,7 @@ export type HomeStackParamList = {
   FeedGuideRegion: { region: string };
   FeedGuideAlternatives: undefined;
   FeedGuideNatural: undefined;
+  AdvancedAnalytics: undefined;
 };
 
 // Glucose Stack
@@ -80,6 +81,7 @@ export type MoreStackParamList = {
   FeedCalculator: undefined;
   Subscription: undefined;
   AiAssistant: undefined;
+  AdvancedAnalytics: undefined;
 };
 
 // Onboarding Stack
