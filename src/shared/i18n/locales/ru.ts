@@ -747,5 +747,8 @@ export const ru = {
     remissionLow: 'Низкая',
     remissionModerate: 'Умеренная',
     remissionHigh: 'Высокая',
+    errorApiNotConfigured: 'AI-анализ пока недоступен. Сервис настраивается.',
+    errorApiUnavailable: 'AI-сервис временно недоступен. Попробуйте позже.',
+    errorGeneral: 'Что-то пошло не так. Попробуйте ещё раз.',
   },
 };

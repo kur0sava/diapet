@@ -7,7 +7,7 @@ import { useTranslation } from 'react-i18next';
 import { useTheme } from '@shared/theme';
 import { GlucoseReading, getGlucoseColor } from '@storage/domain/types';
 import { formatShortDate } from '@shared/utils/dateUtils';
-import Svg, { Path, Line, Rect } from 'react-native-svg';
+import Svg, { Path, Line } from 'react-native-svg';
 import type { GlucosePredictionPoint } from '../data/predictionTypes';
 
 const CHART_HEIGHT = 140;

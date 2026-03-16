@@ -13,10 +13,16 @@ interface Props {
 export function DisclaimerBanner({ text }: Props) {
   const { theme } = useTheme();
 
+  // Theme-aware amber/warning colors
+  const bgColor = theme.isDark ? '#78350F' : '#FEF3C7';
+  const borderColor = theme.isDark ? '#D97706' : '#F59E0B';
+  const iconColor = theme.isDark ? '#FBBF24' : '#D97706';
+  const textColor = theme.isDark ? '#FDE68A' : '#92400E';
+
   return (
-    <View style={[styles.container, { backgroundColor: '#FEF3C7', borderColor: '#F59E0B' }]}>
-      <Ionicons name="warning" size={18} color="#D97706" style={styles.icon} />
-      <Text style={[styles.text, { color: '#92400E' }]}>{text}</Text>
+    <View style={[styles.container, { backgroundColor: bgColor, borderColor }]}>
+      <Ionicons name="warning" size={18} color={iconColor} style={styles.icon} />
+      <Text style={[styles.text, { color: textColor }]}>{text}</Text>
     </View>
   );
 }

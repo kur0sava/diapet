@@ -747,5 +747,8 @@ export const en = {
     remissionLow: 'Low',
     remissionModerate: 'Moderate',
     remissionHigh: 'High',
+    errorApiNotConfigured: 'AI analysis is not available yet. The service is being set up.',
+    errorApiUnavailable: 'AI service is temporarily unavailable. Please try again later.',
+    errorGeneral: 'Something went wrong. Please try again.',
   },
 };

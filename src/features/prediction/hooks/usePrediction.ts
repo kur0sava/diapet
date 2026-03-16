@@ -3,6 +3,7 @@
  * Manages cache, rate limiting, and manual trigger.
  */
 import { useState, useCallback, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { usePetStore } from '@shared/stores/petStore';
 import i18n from '@shared/i18n';
 import { collectPredictionData } from '../data/predictionDataCollector';
@@ -27,6 +28,7 @@ export interface UsePredictionReturn {
 }
 
 export function usePrediction(): UsePredictionReturn {
+  const { t } = useTranslation();
   const activePet = usePetStore(s => s.activePet);
   const petId = activePet?.id ?? '';
 
@@ -69,7 +71,13 @@ export function usePrediction(): UsePredictionReturn {
       cachePrediction(petId, result);
       setPrediction(result);
     } catch (e) {
-      const msg = e instanceof Error ? e.message : 'Unknown error';
+      const raw = e instanceof Error ? e.message : '';
+      // Map technical errors to user-friendly localized messages
+      const msg = raw.includes('API key not configured')
+        ? t('prediction.errorApiNotConfigured')
+        : raw.includes('API error')
+          ? t('prediction.errorApiUnavailable')
+          : t('prediction.errorGeneral');
       setError(msg);
     } finally {
       setIsLoading(false);

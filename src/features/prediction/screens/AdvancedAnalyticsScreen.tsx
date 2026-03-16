@@ -17,6 +17,8 @@ import { useQuery } from '@tanstack/react-query';
 import { usePetStore } from '@shared/stores/petStore';
 import { glucoseRepository } from '@storage/database';
 import { Card } from '@shared/components/ui';
+import { useSubscription } from '@features/subscription/hooks/useSubscription';
+import { useRootNavigation } from '@navigation/hooks';
 
 import { usePrediction } from '../hooks/usePrediction';
 import { PredictionChart } from '../components/PredictionChart';
@@ -26,9 +28,19 @@ import { DisclaimerBanner } from '../components/DisclaimerBanner';
 
 export default function AdvancedAnalyticsScreen() {
   const navigation = useNavigation();
+  const rootNav = useRootNavigation();
   const { t } = useTranslation();
   const { theme } = useTheme();
   const activePet = usePetStore(s => s.activePet);
+  const { canAccessAdvanced } = useSubscription();
+
+  // Pro-gate: redirect free users to paywall
+  useEffect(() => {
+    if (!canAccessAdvanced()) {
+      rootNav.navigate('Paywall');
+      navigation.goBack();
+    }
+  }, [canAccessAdvanced, rootNav, navigation]);
 
   const {
     prediction,
