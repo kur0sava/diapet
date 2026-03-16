@@ -19,8 +19,11 @@ export interface DryMatterResult {
 
 export function calculateDryMatter(input: MacroInput): DryMatterResult | null {
   const { protein, fat, fiber, ash, moisture } = input;
-  const total = protein + fat + fiber + ash + moisture;
 
+  // Guard against negative inputs
+  if (protein < 0 || fat < 0 || fiber < 0 || ash < 0 || moisture < 0) return null;
+
+  const total = protein + fat + fiber + ash + moisture;
   if (total > 100) return null;
 
   const dryMatter = 100 - moisture;

@@ -16,6 +16,9 @@ export async function sendChatMessage(
     throw new Error('Anthropic API key not configured');
   }
 
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 30_000);
+
   const response = await fetch(API_URL, {
     method: 'POST',
     headers: {
@@ -29,7 +32,10 @@ export async function sendChatMessage(
       system: systemPrompt,
       messages: messages.map(m => ({ role: m.role, content: m.content })),
     }),
+    signal: controller.signal,
   });
+
+  clearTimeout(timeout);
 
   if (!response.ok) {
     const error = await response.text();

@@ -136,7 +136,7 @@ export default function DashboardScreen() {
     glucoseHours < 6 ? theme.colors.success :
     glucoseHours <= 12 ? theme.colors.warning :
     theme.colors.danger;
-  const trend = calculateTrend(glucoseHistory as GlucoseReading[] ?? []);
+  const trend = calculateTrend((glucoseHistory as GlucoseReading[] | undefined) ?? []);
   const trendArrow = getTrendArrow(trend);
   const trendLabel = getTrendLabel(trend, t);
 

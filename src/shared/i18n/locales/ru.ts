@@ -52,6 +52,7 @@ export const ru = {
     injectionTime: 'Время инъекций',
     addInjectionTime: 'Добавить время инъекции',
     minOneInjection: 'Необходимо хотя бы одно время инъекции',
+    minOneFeeding: 'Необходимо хотя бы одно время кормления',
     feedingTime: 'Время кормления',
     addFeedingTime: 'Добавить время кормления',
     vetContact: 'Контакт ветеринара',

@@ -52,6 +52,7 @@ export const en = {
     injectionTime: 'Injection times',
     addInjectionTime: 'Add injection time',
     minOneInjection: 'At least one injection time is required',
+    minOneFeeding: 'At least one feeding time is required',
     feedingTime: 'Feeding times',
     addFeedingTime: 'Add feeding time',
     vetContact: 'Vet contact',

@@ -37,7 +37,7 @@ export default function EmergencyScreen() {
     }
     callingRef.current = true;
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
-    Linking.openURL(`tel:${vetPhone}`);
+    Linking.openURL(`tel:${vetPhone.replace(/[^\d+\-() ]/g, '')}`);
     setTimeout(() => { callingRef.current = false; }, 2000);
   };
 

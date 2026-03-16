@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import {
   Modal,
   View,
@@ -26,7 +26,10 @@ export function AchievementModal() {
 
   const lang = i18n.language?.startsWith('en') ? 'en' : 'ru';
 
-  const styles = makeStyles(theme.colors.card, theme.colors.text, theme.colors.textSecondary, theme.isDark);
+  const styles = useMemo(
+    () => makeStyles(theme.colors.card, theme.colors.text, theme.colors.textSecondary, theme.isDark),
+    [theme.colors.card, theme.colors.text, theme.colors.textSecondary, theme.isDark],
+  );
 
   return (
     <Modal

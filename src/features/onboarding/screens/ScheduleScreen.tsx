@@ -44,6 +44,10 @@ export default function ScheduleScreen() {
       }
       setInjectionTimes(injectionTimes.filter((_, i) => i !== index));
     } else {
+      if (feedingTimes.length <= 1) {
+        Alert.alert(t('onboarding.minOneFeeding'));
+        return;
+      }
       setFeedingTimes(feedingTimes.filter((_, i) => i !== index));
     }
   };
