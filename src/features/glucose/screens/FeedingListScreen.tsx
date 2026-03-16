@@ -9,7 +9,7 @@ import { useInfiniteQuery, useQueryClient } from '@tanstack/react-query';
 import { feedingRepository } from '@storage/database';
 import { usePetStore } from '@shared/stores/petStore';
 import { FeedingLog } from '@storage/domain/types';
-import { formatDateTime } from '@shared/utils/dateUtils';
+import { formatDateTime, formatShortDate, formatFullDateTime } from '@shared/utils/dateUtils';
 import { EmptyState, Card, AnimatedListItem } from '@shared/components/ui';
 import { SimpleBarChart, BarData } from '@shared/components/charts/SimpleBarChart';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -53,7 +53,7 @@ export default function FeedingListScreen() {
 
     const byDay = new Map<string, number>();
     recent.forEach(f => {
-      const day = format(parseISO(f.fedAt), 'dd.MM');
+      const day = formatShortDate(f.fedAt);
       byDay.set(day, (byDay.get(day) ?? 0) + (f.amountGrams ?? 0));
     });
 
@@ -71,7 +71,7 @@ export default function FeedingListScreen() {
   const handleDelete = (id: string) => {
     const item = feedings.find(f => f.id === id);
     const info = item
-      ? `${format(parseISO(item.fedAt), 'dd.MM.yyyy HH:mm')} — ${foodLabel(item.foodType)}${item.amountGrams != null ? `, ${item.amountGrams} ${t('common.grams')}` : ''}`
+      ? `${formatFullDateTime(item.fedAt)} — ${foodLabel(item.foodType)}${item.amountGrams != null ? `, ${item.amountGrams} ${t('common.grams')}` : ''}`
       : '';
     Alert.alert(t('feeding.deleteConfirm'), info || undefined, [
       { text: t('common.cancel'), style: 'cancel' },

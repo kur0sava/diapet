@@ -8,6 +8,7 @@ import {
   Appearance,
 } from 'react-native';
 import i18n from '@shared/i18n';
+import { Colors } from '@shared/theme/colors';
 
 interface ErrorBoundaryProps {
   children: ReactNode;
@@ -19,6 +20,19 @@ interface ErrorBoundaryState {
   error: Error | null;
   errorInfo: ErrorInfo | null;
   showDetails: boolean;
+}
+
+function getSchemeColors() {
+  const isDark = Appearance.getColorScheme() === 'dark';
+  const scheme = isDark ? Colors.dark : Colors.light;
+  return {
+    background: scheme.background,
+    text: scheme.text,
+    textSecondary: scheme.textSecondary,
+    textTertiary: scheme.textTertiary,
+    surface: scheme.surfaceSecondary,
+    primary: Colors.primary,
+  };
 }
 
 export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
@@ -62,18 +76,18 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
       }
 
       const { error, errorInfo, showDetails } = this.state;
+      const c = getSchemeColors();
 
-      const isDark = Appearance.getColorScheme() === 'dark';
       return (
-        <View style={[styles.container, { backgroundColor: isDark ? '#1C1C1E' : '#FFFFFF' }]}>
+        <View style={[styles.container, { backgroundColor: c.background }]}>
           <View style={styles.content}>
             <Text style={styles.icon}>⚠</Text>
-            <Text style={[styles.title, { color: isDark ? '#FFFFFF' : '#1A1A1A' }]}>{i18n.t('errors.title')}</Text>
-            <Text style={[styles.subtitle, { color: isDark ? '#AEAEB2' : '#666666' }]}>
+            <Text style={[styles.title, { color: c.text }]}>{i18n.t('errors.title')}</Text>
+            <Text style={[styles.subtitle, { color: c.textSecondary }]}>
               {i18n.t('errors.subtitle')}
             </Text>
 
-            <TouchableOpacity style={styles.button} onPress={this.handleReset}>
+            <TouchableOpacity style={[styles.button, { backgroundColor: c.primary }]} onPress={this.handleReset}>
               <Text style={styles.buttonText}>{i18n.t('errors.retry')}</Text>
             </TouchableOpacity>
 
@@ -81,18 +95,18 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
               style={styles.detailsToggle}
               onPress={this.toggleDetails}
             >
-              <Text style={styles.detailsToggleText}>
+              <Text style={[styles.detailsToggleText, { color: c.textTertiary }]}>
                 {showDetails ? i18n.t('errors.hideDetails') : i18n.t('errors.showDetails')}
               </Text>
             </TouchableOpacity>
 
             {showDetails && (
-              <ScrollView style={[styles.detailsContainer, { backgroundColor: isDark ? '#2C2C2E' : '#F5F5F5' }]}>
-                <Text style={[styles.detailsText, { color: isDark ? '#AEAEB2' : '#444444' }]}>
+              <ScrollView style={[styles.detailsContainer, { backgroundColor: c.surface }]}>
+                <Text style={[styles.detailsText, { color: c.textSecondary }]}>
                   {error?.toString()}
                 </Text>
                 {errorInfo?.componentStack && (
-                  <Text style={[styles.detailsText, { color: isDark ? '#AEAEB2' : '#444444' }]}>
+                  <Text style={[styles.detailsText, { color: c.textSecondary }]}>
                     {errorInfo.componentStack}
                   </Text>
                 )}
@@ -126,19 +140,16 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 22,
     fontWeight: '700',
-    color: '#1A1A1A',
     marginBottom: 8,
     textAlign: 'center',
   },
   subtitle: {
     fontSize: 15,
-    color: '#666666',
     textAlign: 'center',
     marginBottom: 32,
     lineHeight: 22,
   },
   button: {
-    backgroundColor: '#4A90D9',
     paddingVertical: 14,
     paddingHorizontal: 32,
     borderRadius: 12,
@@ -154,7 +165,6 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   detailsToggleText: {
-    color: '#999999',
     fontSize: 13,
     textDecorationLine: 'underline',
   },

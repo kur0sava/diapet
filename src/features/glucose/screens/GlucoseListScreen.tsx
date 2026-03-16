@@ -13,7 +13,7 @@ import { glucoseRepository, injectionRepository, symptomRepository } from '@stor
 import { usePetStore } from '@shared/stores/petStore';
 import { GlucoseReading, getGlucoseColor, MealRelation } from '../types';
 import { GlucoseFilter, GLUCOSE_RANGES } from '@storage/domain/types';
-import { formatDateTime } from '@shared/utils/dateUtils';
+import { formatDateTime, formatFullDate, formatFullDateTime } from '@shared/utils/dateUtils';
 import { EmptyState, Card, AnimatedListItem } from '@shared/components/ui';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
@@ -173,7 +173,7 @@ export default function GlucoseListScreen() {
     const allItems = data?.pages.flatMap(p => p.data) ?? [];
     const item = allItems.find(r => r.id === id);
     const info = item
-      ? `${format(new Date(item.recordedAt), 'dd.MM.yyyy HH:mm')} — ${item.valueMmol.toFixed(1)} ${unit}`
+      ? `${formatFullDateTime(item.recordedAt)} — ${item.valueMmol.toFixed(1)} ${unit}`
       : '';
     Alert.alert(
       t('glucose.deleteConfirm'),
@@ -319,7 +319,7 @@ export default function GlucoseListScreen() {
               onPress={() => setShowDateFrom(true)}
             >
               <Text style={{ color: filters.dateFrom ? theme.colors.text : theme.colors.textTertiary, fontSize: 14 }}>
-                {filters.dateFrom ? format(new Date(filters.dateFrom), 'dd.MM.yyyy') : t('glucose.filterFrom')}
+                {filters.dateFrom ? formatFullDate(filters.dateFrom) : t('glucose.filterFrom')}
               </Text>
             </TouchableOpacity>
             <Text style={{ color: theme.colors.textTertiary }}>—</Text>
@@ -328,7 +328,7 @@ export default function GlucoseListScreen() {
               onPress={() => setShowDateTo(true)}
             >
               <Text style={{ color: filters.dateTo ? theme.colors.text : theme.colors.textTertiary, fontSize: 14 }}>
-                {filters.dateTo ? format(new Date(filters.dateTo), 'dd.MM.yyyy') : t('glucose.filterTo')}
+                {filters.dateTo ? formatFullDate(filters.dateTo) : t('glucose.filterTo')}
               </Text>
             </TouchableOpacity>
           </View>

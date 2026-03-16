@@ -54,7 +54,7 @@ export default function EmergencyScreen() {
   const cardText = theme.colors.text;
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: '#FF3B30' }]}>
+    <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.danger }]}>
       <StatusBar barStyle="light-content" />
 
       {/* Header — UX-012: emoji → Ionicons */}
@@ -71,24 +71,24 @@ export default function EmergencyScreen() {
 
       {/* UX-011: Call Vet Button at TOP — most critical action */}
       <TouchableOpacity
-        style={[styles.callButton, { marginHorizontal: 16, marginBottom: 12 }]}
+        style={[styles.callButton, { marginHorizontal: 16, marginBottom: 12, backgroundColor: theme.colors.surface }]}
         onPress={callVet}
         activeOpacity={0.85}
       >
         <View style={styles.callButtonContent}>
-          <View style={styles.callIconCircle}>
-            <Ionicons name="call" size={28} color="#FF3B30" />
+          <View style={[styles.callIconCircle, { backgroundColor: theme.colors.dangerLight }]}>
+            <Ionicons name="call" size={28} color={theme.colors.danger} />
           </View>
           <View style={{ flex: 1 }}>
-            <Text style={styles.callButtonTitle}>{t('emergency.callVet')}</Text>
-            {vetName && <Text style={styles.callButtonSub}>{vetName}</Text>}
+            <Text style={[styles.callButtonTitle, { color: theme.colors.danger }]}>{t('emergency.callVet')}</Text>
+            {vetName && <Text style={[styles.callButtonSub, { color: theme.colors.text }]}>{vetName}</Text>}
             {vetPhone ? (
-              <Text style={styles.callButtonPhone}>{vetPhone}</Text>
+              <Text style={[styles.callButtonPhone, { color: theme.colors.primary }]}>{vetPhone}</Text>
             ) : (
-              <Text style={styles.callButtonNoVet}>{t('emergency.tapToAddVet')}</Text>
+              <Text style={[styles.callButtonNoVet, { color: theme.colors.textTertiary }]}>{t('emergency.tapToAddVet')}</Text>
             )}
           </View>
-          <Ionicons name="chevron-forward" size={20} color="#FF3B30" />
+          <Ionicons name="chevron-forward" size={20} color={theme.colors.danger} />
         </View>
       </TouchableOpacity>
 
@@ -128,12 +128,12 @@ export default function EmergencyScreen() {
         {/* Signs — UX-014: theme colors */}
         <Card style={[styles.card, { backgroundColor: cardBg }]}>
           <View style={styles.cardTitleRow}>
-            <Ionicons name="alert-circle" size={20} color="#FF3B30" />
-            <Text style={[styles.cardTitle, { color: '#FF3B30' }]}>{t('emergency.signs')}</Text>
+            <Ionicons name="alert-circle" size={20} color={theme.colors.danger} />
+            <Text style={[styles.cardTitle, { color: theme.colors.danger }]}>{t('emergency.signs')}</Text>
           </View>
           {signs.map((sign, i) => (
             <View key={`sign-${i}`} style={styles.listItem}>
-              <View style={[styles.bullet, { backgroundColor: '#FF3B30' }]} />
+              <View style={[styles.bullet, { backgroundColor: theme.colors.danger }]} />
               <Text style={[styles.listText, { color: cardText }]}>{sign}</Text>
             </View>
           ))}
@@ -147,7 +147,7 @@ export default function EmergencyScreen() {
           </View>
           {steps.map((step, i) => (
             <View key={`step-${i}`} style={styles.stepItem}>
-              <View style={[styles.stepNumber, { backgroundColor: '#FF3B30' }]}>
+              <View style={[styles.stepNumber, { backgroundColor: theme.colors.danger }]}>
                 <Text style={styles.stepNumberText}>{i + 1}</Text>
               </View>
               <Text style={[styles.stepText, { color: cardText }]}>{step}</Text>
@@ -217,7 +217,6 @@ const styles = StyleSheet.create({
   stepNumberText: { color: '#fff', fontWeight: '700', fontSize: 14 },
   stepText: { flex: 1, fontSize: 15, lineHeight: 22 },
   callButton: {
-    backgroundColor: '#fff',
     borderRadius: 16,
     padding: 16,
     shadowColor: '#000',
@@ -231,13 +230,12 @@ const styles = StyleSheet.create({
     width: 52,
     height: 52,
     borderRadius: 26,
-    backgroundColor: '#FFE5E5',
     alignItems: 'center',
     justifyContent: 'center',
   },
-  callButtonTitle: { fontSize: 18, fontWeight: '800', color: '#FF3B30' },
-  callButtonSub: { fontSize: 14, color: '#1C1C1E', marginTop: 2 },
-  callButtonPhone: { fontSize: 16, color: '#4F8EF7', fontWeight: '600', marginTop: 2 },
-  callButtonNoVet: { fontSize: 13, color: '#8E8E93', marginTop: 2, fontStyle: 'italic' },
+  callButtonTitle: { fontSize: 18, fontWeight: '800' },
+  callButtonSub: { fontSize: 14, marginTop: 2 },
+  callButtonPhone: { fontSize: 16, fontWeight: '600', marginTop: 2 },
+  callButtonNoVet: { fontSize: 13, marginTop: 2, fontStyle: 'italic' },
   disclaimer: { fontSize: 12, color: 'rgba(255,255,255,0.7)', textAlign: 'center', lineHeight: 18 },
 });

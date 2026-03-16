@@ -6,6 +6,7 @@ import { useRoute, RouteProp } from '@react-navigation/native';
 import { useMoreNavigation } from '@navigation/hooks';
 import type { MoreStackParamList } from '@navigation/types';
 import { useTranslation } from 'react-i18next';
+import i18n from '@shared/i18n';
 import { useTheme } from '@shared/theme';
 import { Button, Input } from '@shared/components/ui';
 import { expenseRepository } from '@storage/database';
@@ -61,7 +62,7 @@ export default function AddExpenseScreen() {
       if (editId) {
         await expenseRepository.update(editId, { category, amount: numAmount, description: description || undefined, date: originalDate });
       } else {
-        await expenseRepository.create({ petId: activePet.id, category, amount: numAmount, description: description || undefined, currency: 'RUB' });
+        await expenseRepository.create({ petId: activePet.id, category, amount: numAmount, description: description || undefined, currency: i18n.language === 'ru' ? 'RUB' : 'USD' });
       }
       await queryClient.invalidateQueries({ queryKey: ['expenses'] });
       navigation.goBack();
@@ -92,7 +93,7 @@ export default function AddExpenseScreen() {
               </TouchableOpacity>
             ))}
           </View>
-          <Input label={`${t('expenses.amount')} (₽)`} value={amount} onChangeText={setAmount} placeholder="500" keyboardType="decimal-pad" style={{ fontSize: 24, fontWeight: '700', textAlign: 'center' }} />
+          <Input label={`${t('expenses.amount')} (${t('expenses.currency')})`} value={amount} onChangeText={setAmount} placeholder="500" keyboardType="decimal-pad" style={{ fontSize: 24, fontWeight: '700', textAlign: 'center' }} />
           <Input label={t('expenses.notes')} value={description} onChangeText={setDescription} placeholder={t('expenses.notesPlaceholder')} multiline numberOfLines={2} />
           <Button title={t('common.save')} onPress={handleSave} fullWidth size="lg" loading={loading} style={{ marginTop: 24 }} />
         </ScrollView>

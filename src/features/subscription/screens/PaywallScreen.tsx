@@ -120,7 +120,7 @@ export default function PaywallScreen() {
                   {t(f.descKey)}
                 </Text>
               </View>
-              <Ionicons name="checkmark-circle" size={20} color="#34C759" />
+              <Ionicons name="checkmark-circle" size={20} color={theme.colors.success} />
             </View>
           ))}
         </View>
@@ -145,7 +145,7 @@ export default function PaywallScreen() {
                   <Text style={[styles.planName, { color: theme.colors.text, fontFamily: theme.fonts.bold }]}>
                     {t('subscription.yearly')}
                   </Text>
-                  <View style={[styles.saveBadge, { backgroundColor: '#34C759' }]}>
+                  <View style={[styles.saveBadge, { backgroundColor: theme.colors.success }]}>
                     <Text style={styles.saveText}>{t('subscription.yearlySaving', { percent: '30' })}</Text>
                   </View>
                 </View>

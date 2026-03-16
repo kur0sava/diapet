@@ -9,7 +9,7 @@ import { useInfiniteQuery, useQueryClient } from '@tanstack/react-query';
 import { injectionRepository } from '@storage/database';
 import { usePetStore } from '@shared/stores/petStore';
 import { InjectionLog } from '@storage/domain/types';
-import { formatDateTime } from '@shared/utils/dateUtils';
+import { formatDateTime, formatShortDate, formatFullDateTime } from '@shared/utils/dateUtils';
 import { EmptyState, Card, AnimatedListItem } from '@shared/components/ui';
 import { SimpleBarChart, BarData } from '@shared/components/charts/SimpleBarChart';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -46,7 +46,7 @@ export default function InjectionListScreen() {
 
     const byDay = new Map<string, number>();
     recent.forEach(inj => {
-      const day = format(parseISO(inj.administeredAt), 'dd.MM');
+      const day = formatShortDate(inj.administeredAt);
       byDay.set(day, (byDay.get(day) ?? 0) + inj.doseUnits);
     });
 
@@ -58,7 +58,7 @@ export default function InjectionListScreen() {
   const handleDelete = (id: string) => {
     const item = injections.find(inj => inj.id === id);
     const info = item
-      ? `${format(parseISO(item.administeredAt), 'dd.MM.yyyy HH:mm')} — ${item.doseUnits} ${t('common.units')}${item.insulinType ? ` (${item.insulinType})` : ''}`
+      ? `${formatFullDateTime(item.administeredAt)} — ${item.doseUnits} ${t('common.units')}${item.insulinType ? ` (${item.insulinType})` : ''}`
       : '';
     Alert.alert(t('injection.deleteConfirm'), info || undefined, [
       { text: t('common.cancel'), style: 'cancel' },

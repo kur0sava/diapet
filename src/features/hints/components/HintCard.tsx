@@ -111,7 +111,7 @@ function makeStyles(
       borderRadius: 16,
       padding: 16,
       // Shadow (iOS)
-      shadowColor: isDark ? '#000' : '#333',
+      shadowColor: isDark ? '#000' : '#00000033',
       shadowOffset: { width: 0, height: 4 },
       shadowOpacity: isDark ? 0.5 : 0.18,
       shadowRadius: 12,

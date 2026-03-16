@@ -69,11 +69,12 @@ export function Button({
   const getTextColor = () => {
     if (disabled) return theme.colors.textTertiary;
     switch (variant) {
-      case 'primary': return '#FFFFFF';
-      case 'secondary': return '#FFFFFF';
+      case 'primary':
+      case 'secondary':
+      case 'danger':
+        return '#FFFFFF'; // Always white on colored/gradient backgrounds
       case 'outline': return theme.colors.primary;
       case 'ghost': return theme.colors.primary;
-      case 'danger': return '#FFFFFF';
     }
   };
 

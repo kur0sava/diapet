@@ -28,6 +28,36 @@ export function formatDateTime(dateStr: string): string {
   }
 }
 
+export function formatShortDate(dateStr: string): string {
+  try {
+    const locale = getLocale();
+    const pattern = i18n.language === 'ru' ? 'dd.MM' : 'MM/dd';
+    return format(parseISO(dateStr), pattern, { locale });
+  } catch {
+    return dateStr;
+  }
+}
+
+export function formatFullDate(dateStr: string): string {
+  try {
+    const locale = getLocale();
+    const pattern = i18n.language === 'ru' ? 'dd.MM.yyyy' : 'MM/dd/yyyy';
+    return format(parseISO(dateStr), pattern, { locale });
+  } catch {
+    return dateStr;
+  }
+}
+
+export function formatFullDateTime(dateStr: string): string {
+  try {
+    const locale = getLocale();
+    const pattern = i18n.language === 'ru' ? 'dd.MM.yyyy HH:mm' : 'MM/dd/yyyy HH:mm';
+    return format(parseISO(dateStr), pattern, { locale });
+  } catch {
+    return dateStr;
+  }
+}
+
 export function formatTime(dateStr: string): string {
   try {
     return format(parseISO(dateStr), 'HH:mm');

@@ -212,7 +212,7 @@ export default function DashboardScreen() {
               </View>
               <TouchableOpacity
                 onPress={() => rootNavigation.navigate('Emergency')}
-                style={styles.sosButton}
+                style={[styles.sosButton, { backgroundColor: theme.colors.danger }]}
               >
                 <Ionicons name="warning" size={16} color="#FFFFFF" style={{ marginRight: 4 }} />
                 <Text style={[styles.sosText, { fontFamily: theme.fonts.bold }]}>SOS</Text>
@@ -359,7 +359,7 @@ export default function DashboardScreen() {
             activeOpacity={0.8}
           >
             <LinearGradient
-              colors={['#FFB340', '#FF9500']}
+              colors={[...theme.gradients.warm] as [string, string]}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 0 }}
               style={styles.upgradeIconCircle}
@@ -455,7 +455,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 10,
     borderRadius: 20,
-    backgroundColor: '#FF3B30',
     borderWidth: 2,
     borderColor: 'rgba(255,255,255,0.4)',
   },
