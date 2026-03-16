@@ -18,6 +18,7 @@ import { storage, StorageKeys } from '@storage/mmkv/storage';
 import * as Haptics from 'expo-haptics';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { format } from 'date-fns';
+import i18n from '@shared/i18n';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useUnsavedChangesGuard } from '@shared/hooks/useUnsavedChangesGuard';
@@ -291,7 +292,7 @@ export default function LogGlucoseScreen() {
               <View style={styles.dateTimeContent}>
                 <Ionicons name="calendar-outline" size={18} color={theme.colors.primary} style={{ marginRight: 6 }} />
                 <Text style={{ color: theme.colors.text, fontSize: 15, fontFamily: theme.fonts.semibold }}>
-                  {format(recordedAt, 'dd.MM.yyyy')}
+                  {format(recordedAt, i18n.language === 'ru' ? 'dd.MM.yyyy' : 'MM/dd/yyyy')}
                 </Text>
               </View>
             </TouchableOpacity>
@@ -315,7 +316,11 @@ export default function LogGlucoseScreen() {
               maximumDate={new Date()}
               onChange={(_, date) => {
                 setShowDatePicker(false);
-                if (date) setRecordedAt(date);
+                if (date) {
+                  const merged = new Date(date);
+                  merged.setHours(recordedAt.getHours(), recordedAt.getMinutes(), recordedAt.getSeconds());
+                  setRecordedAt(merged);
+                }
               }}
             />
           )}

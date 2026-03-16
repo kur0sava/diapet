@@ -5,6 +5,7 @@ import {
 } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { format } from 'date-fns';
+import i18n from '@shared/i18n';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -14,6 +15,7 @@ import type { HomeStackParamList } from '@navigation/types';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '@shared/theme';
 import { Button, Input, Card } from '@shared/components/ui';
+import { differenceInMinutes } from 'date-fns';
 import { injectionRepository } from '@storage/database';
 import { usePetStore } from '@shared/stores/petStore';
 import { useQueryClient } from '@tanstack/react-query';
@@ -74,18 +76,7 @@ export default function LogInjectionScreen() {
     }
   }, [activePet, dose, insulinType, notes, administeredAt, queryClient, navigation, t, triggerAfterAction]);
 
-  const handleSave = useCallback(async () => {
-    if (savingRef.current || !activePet) return;
-    if (!dose || parseFloat(dose.replace(',', '.')) <= 0) {
-      Alert.alert(t('common.error'), t('injection.doseError'));
-      return;
-    }
-    if (!insulinType.trim()) {
-      Alert.alert(t('common.error'), t('injection.typeError'));
-      return;
-    }
-    // MC002: Warn on unusually high dose (typical cat range: 1–4 units)
-    const doseNum = parseFloat(dose.replace(',', '.'));
+  const proceedWithDoseChecks = useCallback((doseNum: number) => {
     // MH-C1: Hard limit 10 IU (ISFM 2021, Rand 2012 — clinical max for cats)
     if (doseNum > 10) {
       Alert.alert(t('glucose.doseAbsoluteLimit'), t('glucose.doseAbsoluteLimitDesc'));
@@ -106,7 +97,43 @@ export default function LogInjectionScreen() {
       return;
     }
     doSaveInjection();
-  }, [activePet, dose, insulinType, t, doSaveInjection]);
+  }, [t, doSaveInjection]);
+
+  const handleSave = useCallback(async () => {
+    if (savingRef.current || !activePet) return;
+    if (!dose || parseFloat(dose.replace(',', '.')) <= 0) {
+      Alert.alert(t('common.error'), t('injection.doseError'));
+      return;
+    }
+    if (!insulinType.trim()) {
+      Alert.alert(t('common.error'), t('injection.typeError'));
+      return;
+    }
+    const doseNum = parseFloat(dose.replace(',', '.'));
+
+    // X.8: Duplicate injection safety — warn if last injection < 6 hours ago
+    try {
+      const lastInj = await injectionRepository.findLatest(activePet.id);
+      if (lastInj) {
+        const minutesSince = differenceInMinutes(new Date(), new Date(lastInj.administeredAt));
+        if (minutesSince < 360) { // 6 hours
+          const hours = Math.floor(minutesSince / 60);
+          const mins = minutesSince % 60;
+          Alert.alert(
+            t('injection.recentInjectionWarning'),
+            t('injection.recentInjectionWarningDesc', { hours, minutes: mins }),
+            [
+              { text: t('common.cancel'), style: 'cancel' },
+              { text: t('common.confirm'), style: 'destructive', onPress: () => proceedWithDoseChecks(doseNum) },
+            ],
+          );
+          return;
+        }
+      }
+    } catch { /* if DB query fails, proceed without check */ }
+
+    proceedWithDoseChecks(doseNum);
+  }, [activePet, dose, insulinType, t, proceedWithDoseChecks]);
 
   return (
     <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={{ flex: 1 }}>
@@ -172,7 +199,7 @@ export default function LogInjectionScreen() {
               <View style={styles.dateTimeContent}>
                 <Ionicons name="calendar-outline" size={18} color={theme.colors.primary} style={{ marginRight: 6 }} />
                 <Text style={{ color: theme.colors.text, fontSize: 15, fontFamily: theme.fonts.semibold }}>
-                  {format(administeredAt, 'dd.MM.yyyy')}
+                  {format(administeredAt, i18n.language === 'ru' ? 'dd.MM.yyyy' : 'MM/dd/yyyy')}
                 </Text>
               </View>
             </TouchableOpacity>
@@ -196,7 +223,11 @@ export default function LogInjectionScreen() {
               maximumDate={new Date()}
               onChange={(_, date) => {
                 setShowDatePicker(false);
-                if (date) setAdministeredAt(date);
+                if (date) {
+                  const merged = new Date(date);
+                  merged.setHours(administeredAt.getHours(), administeredAt.getMinutes(), administeredAt.getSeconds());
+                  setAdministeredAt(merged);
+                }
               }}
             />
           )}

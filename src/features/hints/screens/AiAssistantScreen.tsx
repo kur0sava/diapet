@@ -254,7 +254,7 @@ export default function AiAssistantScreen() {
           <FlatList
             ref={flatListRef}
             data={messages}
-            keyExtractor={(_, index) => String(index)}
+            keyExtractor={(item, index) => `${item.role}-${index}`}
             renderItem={renderMessage}
             contentContainerStyle={styles.messageList}
             ListEmptyComponent={

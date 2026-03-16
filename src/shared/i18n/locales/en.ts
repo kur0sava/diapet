@@ -211,6 +211,8 @@ export const en = {
     doseChart: 'Doses (last 14 days)',
     deleteConfirm: 'Delete this injection?',
     addEntry: 'Log Injection',
+    recentInjectionWarning: 'Recent injection detected',
+    recentInjectionWarningDesc: 'The last injection was {{hours}}h {{minutes}}m ago. Are you sure you want to log another one? Double dosing can cause dangerous hypoglycemia.',
   },
 
   feeding: {

@@ -6,6 +6,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { format } from 'date-fns';
+import i18n from '@shared/i18n';
 import { Ionicons } from '@expo/vector-icons';
 import { useHomeNavigation } from '@navigation/hooks';
 import { useRoute, RouteProp } from '@react-navigation/native';
@@ -163,7 +164,7 @@ export default function LogFeedingScreen() {
               <View style={styles.dateTimeContent}>
                 <Ionicons name="calendar-outline" size={18} color={theme.colors.primary} style={{ marginRight: 6 }} />
                 <Text style={{ color: theme.colors.text, fontSize: 15, fontWeight: '600' }}>
-                  {format(fedAt, 'dd.MM.yyyy')}
+                  {format(fedAt, i18n.language === 'ru' ? 'dd.MM.yyyy' : 'MM/dd/yyyy')}
                 </Text>
               </View>
             </TouchableOpacity>
@@ -187,7 +188,11 @@ export default function LogFeedingScreen() {
               maximumDate={new Date()}
               onChange={(_, date) => {
                 setShowDatePicker(false);
-                if (date) setFedAt(date);
+                if (date) {
+                  const merged = new Date(date);
+                  merged.setHours(fedAt.getHours(), fedAt.getMinutes(), fedAt.getSeconds());
+                  setFedAt(merged);
+                }
               }}
             />
           )}

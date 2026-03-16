@@ -211,6 +211,8 @@ export const ru = {
     doseChart: 'Дозы (последние 14 дней)',
     deleteConfirm: 'Удалить эту инъекцию?',
     addEntry: 'Записать инъекцию',
+    recentInjectionWarning: 'Обнаружена недавняя инъекция',
+    recentInjectionWarningDesc: 'Последняя инъекция была {{hours}}ч {{minutes}}мин назад. Вы уверены? Двойная доза может вызвать опасную гипогликемию.',
   },
 
   feeding: {
