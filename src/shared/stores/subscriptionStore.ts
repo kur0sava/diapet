@@ -7,6 +7,7 @@ const ENTITLEMENT_ID = 'pro';
 /** Flag set by App.tsx after successful Purchases.configure() */
 let purchasesConfigured = false;
 export function markPurchasesConfigured() { purchasesConfigured = true; }
+export function isPurchasesConfigured() { return purchasesConfigured; }
 const CACHE_TTL_MS = 30 * 24 * 60 * 60 * 1000; // 30 days
 const CACHE_TIMESTAMP_KEY = 'subscriptionCachedAt';
 
