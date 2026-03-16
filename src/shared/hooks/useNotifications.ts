@@ -91,10 +91,22 @@ export function useNotifications() {
     await Notifications.cancelAllScheduledNotificationsAsync();
   };
 
+  /** Cancel only injection/feeding notifications, preserving hint pushes */
+  const cancelScheduleNotifications = async (): Promise<void> => {
+    const scheduled = await Notifications.getAllScheduledNotificationsAsync();
+    for (const n of scheduled) {
+      const type = (n.content.data as { type?: string })?.type;
+      if (type === 'injection' || type === 'feeding') {
+        await Notifications.cancelScheduledNotificationAsync(n.identifier);
+      }
+    }
+  };
+
   return {
     requestPermissions,
     scheduleInjectionReminder,
     scheduleFeedingReminder,
     cancelAllNotifications,
+    cancelScheduleNotifications,
   };
 }

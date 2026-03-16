@@ -41,10 +41,11 @@ export default function EmergencyScreen() {
     setTimeout(() => { callingRef.current = false; }, 2000);
   };
 
-  const hypoSigns = t('emergency.hypoSigns', { returnObjects: true }) as string[];
-  const hypoSteps = t('emergency.hypoSteps', { returnObjects: true }) as string[];
-  const hyperSigns = t('emergency.hyperSigns', { returnObjects: true }) as string[];
-  const hyperSteps = t('emergency.hyperSteps', { returnObjects: true }) as string[];
+  const asArray = (v: unknown): string[] => Array.isArray(v) ? v : [];
+  const hypoSigns = asArray(t('emergency.hypoSigns', { returnObjects: true }));
+  const hypoSteps = asArray(t('emergency.hypoSteps', { returnObjects: true }));
+  const hyperSigns = asArray(t('emergency.hyperSigns', { returnObjects: true }));
+  const hyperSteps = asArray(t('emergency.hyperSteps', { returnObjects: true }));
 
   const signs = activeTab === 'hypoglycemia' ? hypoSigns : hyperSigns;
   const steps = activeTab === 'hypoglycemia' ? hypoSteps : hyperSteps;

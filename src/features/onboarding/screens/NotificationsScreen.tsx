@@ -50,7 +50,9 @@ export default function NotificationsScreen() {
       if (vetName) storage.set('vetName', vetName);
       if (vetPhone) storage.set('vetPhone', vetPhone);
 
-      // Notifications
+      // Notifications — persist user choice so EditPetScreen respects it
+      storage.set(StorageKeys.NOTIFICATIONS_ENABLED, enableNotifications);
+
       if (enableNotifications) {
         const granted = await requestPermissions();
         if (granted) {

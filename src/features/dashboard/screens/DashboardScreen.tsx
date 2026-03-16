@@ -28,9 +28,12 @@ import { usePetStore } from '@shared/stores/petStore';
 import { useSubscription } from '@features/subscription/hooks/useSubscription';
 import { BannerAd, BannerAdSize, TestIds } from 'react-native-google-mobile-ads';
 
-const ADMOB_BANNER_ID = __DEV__
+const ADMOB_BANNER_ID_RAW = __DEV__
   ? TestIds.ADAPTIVE_BANNER
   : 'ca-app-pub-XXXXXXXXXXXXXXXX/XXXXXXXXXX';
+// Guard: don't render BannerAd with placeholder ID — it crashes in production
+const ADMOB_READY = !ADMOB_BANNER_ID_RAW.includes('XXXX');
+const ADMOB_BANNER_ID = ADMOB_BANNER_ID_RAW;
 
 interface GlucoseReading {
   valueMmol: number;
@@ -403,7 +406,7 @@ export default function DashboardScreen() {
         </View>
 
         {/* AdMob banner — only for free users */}
-        {!isPro && (
+        {!isPro && ADMOB_READY && (
           <View style={styles.adBanner}>
             <BannerAd
               unitId={ADMOB_BANNER_ID}

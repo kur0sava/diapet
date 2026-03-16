@@ -20,7 +20,7 @@ export default function EditPetScreen() {
   const activePet = usePetStore(s => s.activePet);
   const refreshActivePet = usePetStore(s => s.refreshActivePet);
   const queryClient = useQueryClient();
-  const { scheduleInjectionReminder, scheduleFeedingReminder, cancelAllNotifications } = useNotifications();
+  const { scheduleInjectionReminder, scheduleFeedingReminder, cancelScheduleNotifications } = useNotifications();
 
   const [name, setName] = useState(activePet?.name ?? '');
   const [weightKg, setWeightKg] = useState(activePet?.weightKg?.toString() ?? '');
@@ -97,7 +97,7 @@ export default function EditPetScreen() {
       // Reschedule notifications after schedule changes
       const notificationsEnabled = storage.getBoolean(StorageKeys.NOTIFICATIONS_ENABLED) !== false;
       if (notificationsEnabled) {
-        await cancelAllNotifications();
+        await cancelScheduleNotifications();
         for (const time of injectionTimes) {
           await scheduleInjectionReminder(time, activePet.name);
         }

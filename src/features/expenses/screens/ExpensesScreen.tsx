@@ -59,8 +59,10 @@ export default function ExpensesScreen() {
     Alert.alert(t('expenses.deleteConfirm'), info || undefined, [
       { text: t('common.cancel'), style: 'cancel' },
       { text: t('common.delete'), style: 'destructive', onPress: async () => {
-        await expenseRepository.delete(id);
-        queryClient.invalidateQueries({ queryKey: ['expenses'] });
+        try {
+          await expenseRepository.delete(id);
+          await queryClient.invalidateQueries({ queryKey: ['expenses'] });
+        } catch { /* swallow — row may already be deleted */ }
       }},
     ]);
   };
