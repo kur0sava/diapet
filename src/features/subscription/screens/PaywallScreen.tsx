@@ -19,6 +19,9 @@ const TERMS_URL = 'https://kur0sava.github.io/diapet/assets/terms-of-service.htm
 const FEATURES: { icon: IoniconName; titleKey: string; descKey: string }[] = [
   { icon: 'paw', titleKey: 'subscription.features.unlimitedPets', descKey: 'subscription.features.unlimitedPetsDesc' },
   { icon: 'document-text', titleKey: 'subscription.features.pdfExport', descKey: 'subscription.features.pdfExportDesc' },
+  { icon: 'sparkles', titleKey: 'subscription.features.aiPrediction', descKey: 'subscription.features.aiPredictionDesc' },
+  { icon: 'calculator', titleKey: 'subscription.features.feedCalculator', descKey: 'subscription.features.feedCalculatorDesc' },
+  { icon: 'chatbubble-ellipses', titleKey: 'subscription.features.aiAssistant', descKey: 'subscription.features.aiAssistantDesc' },
   { icon: 'analytics', titleKey: 'subscription.features.advancedAnalytics', descKey: 'subscription.features.advancedAnalyticsDesc' },
   { icon: 'time', titleKey: 'subscription.features.extendedHistory', descKey: 'subscription.features.extendedHistoryDesc' },
   { icon: 'ban', titleKey: 'subscription.features.noAds', descKey: 'subscription.features.noAdsDesc' },

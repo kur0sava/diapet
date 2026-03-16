@@ -19,8 +19,9 @@
 [##########__________] v1.7 Pre-deploy     (иконка ✅, Android 15/16 ✅, hints ✅)
 [####################] v1.8 Bug Audit      ✅ DONE (14 багов, paranoid audit)
 [##################__] v1.8.1 Full Audit   ✅ ~36 багов (8 агентов, нужен re-run 6+7)
-[____________________] v1.9 Pre-release    ⬅ ТЕКУЩИЙ ЭТАП (оплата, реклама, билд)
-[____________________] v2.0 UX фичи       🔜
+[____________________] v1.9 Pre-release    ⬅ ТЕКУЩИЙ (оплата, реклама, билд)
+[____________________] v2.0 PRO + AI Pred  🔜 (7 фаз: paywall align, AI prediction, charts)
+[____________________] v2.0.1 UX фичи     🔜
 [____________________] v2.1 DevOps         🔜
 [____________________] v2.2 Backend        🔜
 [____________________] v3.0 AI/Smart       🔜
@@ -342,7 +343,66 @@
 
 ---
 
-## ЭТАП 6: v2.0 UX улучшения
+## ЭТАП 6: v2.0 PRO Features + AI Prediction ⬅ СЛЕДУЮЩИЙ
+
+> План: `.claude/plans/federated-skipping-volcano.md`
+> Memory: `project_pro_features_plan.md`
+
+### Phase 1: PRO Feature Alignment
+- [ ] PaywallScreen: 5 -> 8 features (+ Feed Calculator, AI Assistant, AI Prediction)
+- [ ] i18n: add feedCalculator, aiPrediction, aiAssistant subscription keys
+- [ ] Update advancedAnalyticsDesc text
+- [ ] Enforce 30-day history limit (GlucoseListScreen + DailyDiaryScreen) for free users
+- [ ] Commit + tsc check
+
+### Phase 2: Data Collection Layer
+- [ ] `src/features/prediction/data/predictionTypes.ts` — interfaces
+- [ ] `src/features/prediction/data/predictionDataCollector.ts` — full data snapshot
+- [ ] `src/features/prediction/data/predictionStorage.ts` — MMKV cache + rate limits
+- [ ] New StorageKeys in storage.ts
+- [ ] Commit + tsc check
+
+### Phase 3: AI Prediction Prompt + API
+- [ ] `src/features/prediction/data/predictionSystemPrompt.ts` — medical analysis prompt
+- [ ] Extend `aiClient.ts` with maxTokens/timeout params
+- [ ] `src/features/prediction/utils/predictionApiClient.ts` — JSON response parsing
+- [ ] `src/features/prediction/hooks/usePrediction.ts` — React Query + cache hook
+- [ ] Commit + tsc check
+
+### Phase 4: UI Components
+- [ ] `PredictionChart.tsx` — SVG: actual solid + predicted dashed + confidence band
+- [ ] `ChecklistCard.tsx` — actionable recs (feeding/glucose/injection/vet)
+- [ ] `RemissionCard.tsx` — weekly probability report
+- [ ] `DisclaimerBanner.tsx` — non-dismissable amber warning
+- [ ] Commit + tsc check
+
+### Phase 5: AdvancedAnalyticsScreen + Navigation
+- [ ] `AdvancedAnalyticsScreen.tsx` — main screen with all components
+- [ ] Navigation types + registration (HomeStack + MoreStack)
+- [ ] Dashboard "AI Smart Analysis" card entry point
+- [ ] MoreMenuScreen entry point
+- [ ] Commit + tsc check
+
+### Phase 6: i18n (~50 keys)
+- [ ] `prediction` section in en.ts + ru.ts
+- [ ] Update subscription feature descriptions
+- [ ] Commit + tsc check
+
+### Phase 7: Verification
+- [ ] tsc clean
+- [ ] Walkthrough: Dashboard -> AI Analysis
+- [ ] Walkthrough: More -> Advanced Analytics
+- [ ] PaywallScreen shows all 8 features
+- [ ] Free user: 30-day limit, ProGate on Analytics
+- [ ] Both locales (RU/EN)
+- [ ] Insufficient data state
+- [ ] Rate limiting display
+
+> **CHECKPOINT 6**: commit + tsc + full walkthrough on device
+
+---
+
+## ЭТАП 6.5: v2.0.1 UX улучшения
 
 - [ ] F1 Закладки в Энциклопедии (MMKV)
 - [ ] F2 Оглавление для длинных статей (парсинг ##)
@@ -351,7 +411,7 @@
 - [ ] F5 Accessibility: accessibilityLabel на все кнопки (15+), размер шрифта
 - [ ] E6 Быстрый доступ к настройкам глюкозы
 
-> **CHECKPOINT 6**: commit + tsc + test + lint
+> **CHECKPOINT 6.5**: commit + tsc + test + lint
 
 ---
 
@@ -372,22 +432,21 @@
 
 - [ ] REST API (Fastify + PostgreSQL)
 - [ ] Авторизация: Google Sign-In + Email/Password (Firebase Auth или Supabase)
-- [ ] Привязка всех данных (глюкоза, инъекции, кормления, симптомы, питомцы) к аккаунту
+- [ ] Привязка всех данных к аккаунту
 - [ ] Облачная синхронизация (local-first → server sync)
 - [ ] Резервное копирование (шифрованное)
-- [ ] Политика конфиденциальности (обновлённая, с учётом облака)
+- [ ] Политика конфиденциальности (обновлённая)
 - [ ] Кабинет ветеринара
 
 ---
 
-## ЭТАП 9: v3.0 AI/Smart
+## ЭТАП 9: v3.0 Advanced AI/Smart
 
-- [ ] Анализ трендов (статистика)
-- [ ] Предупреждение о риске гипогликемии
 - [ ] Bluetooth-глюкометр (FreeStyle Libre, Dexcom)
 - [ ] Виджет на главный экран (Android/iOS)
 - [ ] Расширение на собак, кроликов, ферретов
 - [ ] Smart symptom analysis: авто-предложение severity + действий
+- [ ] AI-ассистент: голосовой ввод
 
 ---
 

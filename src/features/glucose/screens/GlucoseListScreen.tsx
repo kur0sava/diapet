@@ -23,6 +23,7 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import { format } from 'date-fns';
 import { useSubscription } from '@features/subscription/hooks/useSubscription';
 import { useRootNavigation } from '@navigation/hooks';
+import { subDays } from 'date-fns';
 
 if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
   UIManager.setLayoutAnimationEnabledExperimental(true);
@@ -74,8 +75,9 @@ export default function GlucoseListScreen() {
   const queryClient = useQueryClient();
   const unit = storage.getString(StorageKeys.GLUCOSE_UNIT) ?? 'mmol/L';
   const [exporting, setExporting] = useState(false);
-  const { canExportPDF } = useSubscription();
+  const { canExportPDF, canAccessUnlimitedHistory } = useSubscription();
   const rootNav = useRootNavigation();
+  const historyLimited = !canAccessUnlimitedHistory();
 
   // Filter state
   const [showFilters, setShowFilters] = useState(false);
@@ -93,8 +95,15 @@ export default function GlucoseListScreen() {
       const presets = LEVEL_PRESETS.filter(p => selectedLevels.includes(p.key));
       f.levelRanges = presets.map(p => ({ min: p.min, max: p.max }));
     }
+    // Enforce 30-day history limit for free users
+    if (historyLimited) {
+      const thirtyDaysAgo = subDays(new Date(), 30).toISOString();
+      if (!f.dateFrom || f.dateFrom < thirtyDaysAgo) {
+        f.dateFrom = thirtyDaysAgo;
+      }
+    }
     return f;
-  }, [filters, selectedLevels]);
+  }, [filters, selectedLevels, historyLimited]);
 
   const hasActiveFilters = isFilterActive(computedFilters);
 
@@ -466,9 +475,24 @@ export default function GlucoseListScreen() {
           ) : null
         }
         ListFooterComponent={
-          isFetchingNextPage ? (
-            <ActivityIndicator style={styles.loadingFooter} size="small" color={theme.colors.primary} />
-          ) : null
+          <>
+            {isFetchingNextPage && (
+              <ActivityIndicator style={styles.loadingFooter} size="small" color={theme.colors.primary} />
+            )}
+            {historyLimited && readings.length > 0 && (
+              <TouchableOpacity
+                style={[styles.historyBanner, { backgroundColor: theme.colors.primaryLight, borderColor: theme.colors.primary }]}
+                onPress={() => rootNav.navigate('Paywall')}
+                activeOpacity={0.8}
+              >
+                <Ionicons name="time-outline" size={16} color={theme.colors.primary} />
+                <Text style={[styles.historyBannerText, { color: theme.colors.primary }]}>
+                  {t('subscription.historyLimited')}
+                </Text>
+                <Ionicons name="chevron-forward" size={14} color={theme.colors.primary} />
+              </TouchableOpacity>
+            )}
+          </>
         }
         ListEmptyComponent={
           hasActiveFilters ? (
@@ -559,5 +583,7 @@ const styles = StyleSheet.create({
   fab: { position: 'absolute', bottom: 24, right: 20, width: 56, height: 56, borderRadius: 28, alignItems: 'center', justifyContent: 'center' },
   fabExport: { position: 'absolute', bottom: 90, right: 20, width: 48, height: 48, borderRadius: 24, alignItems: 'center', justifyContent: 'center', elevation: 4, shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.15, shadowRadius: 3, borderWidth: 1.5 },
   loadingFooter: { paddingVertical: 16 },
+  historyBanner: { flexDirection: 'row', alignItems: 'center', gap: 8, padding: 14, borderRadius: 12, borderWidth: 1, marginTop: 8 },
+  historyBannerText: { flex: 1, fontSize: 13, fontWeight: '600' },
   hintText: { fontSize: 12, textAlign: 'center', marginBottom: 8 },
 });

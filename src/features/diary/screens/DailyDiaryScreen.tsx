@@ -18,8 +18,9 @@ import { ru as dateFnsRu, enUS } from 'date-fns/locale';
 import i18next from 'i18next';
 
 import { useTheme } from '@shared/theme';
-import { useHomeNavigation } from '@navigation/hooks';
+import { useHomeNavigation, useRootNavigation } from '@navigation/hooks';
 import { usePetStore } from '@shared/stores/petStore';
+import { useSubscription } from '@features/subscription/hooks/useSubscription';
 import { glucoseRepository } from '@storage/database/repositories/glucoseRepository';
 import { injectionRepository } from '@storage/database/repositories/injectionRepository';
 import { feedingRepository } from '@storage/database/repositories/feedingRepository';
@@ -52,6 +53,9 @@ export default function DailyDiaryScreen() {
   const route = useRoute<RouteProp<HomeStackParamList, 'DailyDiary'>>();
   const activePet = usePetStore(s => s.activePet);
   const petId = activePet?.id ?? '';
+  const rootNav = useRootNavigation();
+  const { canAccessUnlimitedHistory } = useSubscription();
+  const historyLimited = !canAccessUnlimitedHistory();
 
   const glucoseUnit = (storage.getString(StorageKeys.GLUCOSE_UNIT) ?? 'mmol/L') as GlucoseUnit;
 
@@ -66,7 +70,19 @@ export default function DailyDiaryScreen() {
   const dateStr = format(currentDate, 'yyyy-MM-dd');
   const isFuture = startOfDay(currentDate) > startOfDay(new Date());
 
-  const goToPrevDay = useCallback(() => setCurrentDate(d => subDays(d, 1)), []);
+  const historyMinDate = useMemo(() => historyLimited ? subDays(new Date(), 30) : null, [historyLimited]);
+  const canGoPrev = !historyMinDate || startOfDay(currentDate) > startOfDay(historyMinDate);
+
+  const goToPrevDay = useCallback(() => {
+    if (historyLimited) {
+      const minDate = subDays(new Date(), 30);
+      if (startOfDay(subDays(currentDate, 1)) < startOfDay(minDate)) {
+        rootNav.navigate('Paywall');
+        return;
+      }
+    }
+    setCurrentDate(d => subDays(d, 1));
+  }, [historyLimited, currentDate, rootNav]);
   const goToNextDay = useCallback(() => {
     if (!isToday(currentDate)) {
       setCurrentDate(d => addDays(d, 1));
@@ -190,8 +206,8 @@ export default function DailyDiaryScreen() {
 
       {/* Date Navigator */}
       <View style={[styles.dateNav, { backgroundColor: theme.colors.surface, borderBottomColor: theme.colors.divider }]}>
-        <TouchableOpacity onPress={goToPrevDay} style={styles.dateNavBtn} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
-          <Ionicons name="chevron-back" size={20} color={theme.colors.primary} />
+        <TouchableOpacity onPress={goToPrevDay} style={[styles.dateNavBtn, !canGoPrev && styles.dateNavBtnDisabled]} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
+          <Ionicons name="chevron-back" size={20} color={canGoPrev ? theme.colors.primary : theme.colors.textTertiary} />
         </TouchableOpacity>
         <TouchableOpacity
           onPress={() => !isToday(currentDate) && setCurrentDate(new Date())}
