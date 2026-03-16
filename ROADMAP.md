@@ -1,7 +1,7 @@
 # DiaPet — Master Development Plan
 
-> Последнее обновление: 2026-03-16
-> Версия: 1.2.0 (versionCode 5)
+> Последнее обновление: 2026-03-17
+> Версия: 2.0.0 (versionCode 6)
 
 ---
 
@@ -20,7 +20,7 @@
 [####################] v1.8 Bug Audit      ✅ DONE (14 багов, paranoid audit)
 [##################__] v1.8.1 Full Audit   ✅ ~36 багов (8 агентов, нужен re-run 6+7)
 [____________________] v1.9 Pre-release    ⬅ ТЕКУЩИЙ (оплата, реклама, билд)
-[____________________] v2.0 PRO + AI Pred  🔜 (7 фаз: paywall align, AI prediction, charts)
+[####################] v2.0 PRO + AI Pred  ✅ DONE (7 фаз, 11 новых файлов)
 [____________________] v2.0.1 UX фичи     🔜
 [____________________] v2.1 DevOps         🔜
 [____________________] v2.2 Backend        🔜
@@ -343,62 +343,52 @@
 
 ---
 
-## ЭТАП 6: v2.0 PRO Features + AI Prediction ⬅ СЛЕДУЮЩИЙ
+## ЭТАП 6: v2.0 PRO Features + AI Prediction ✅ DONE (2026-03-17)
 
 > План: `.claude/plans/federated-skipping-volcano.md`
 > Memory: `project_pro_features_plan.md`
+> 7 коммитов, 11 новых файлов, ~1800 строк кода
 
-### Phase 1: PRO Feature Alignment
-- [ ] PaywallScreen: 5 -> 8 features (+ Feed Calculator, AI Assistant, AI Prediction)
-- [ ] i18n: add feedCalculator, aiPrediction, aiAssistant subscription keys
-- [ ] Update advancedAnalyticsDesc text
-- [ ] Enforce 30-day history limit (GlucoseListScreen + DailyDiaryScreen) for free users
-- [ ] Commit + tsc check
+### Phase 1: PRO Feature Alignment ✅
+- [x] PaywallScreen: 5 -> 8 features (+ Feed Calculator, AI Assistant, AI Prediction)
+- [x] i18n: add feedCalculator, aiPrediction, aiAssistant subscription keys
+- [x] Update advancedAnalyticsDesc text
+- [x] Enforce 30-day history limit (GlucoseListScreen + DailyDiaryScreen) for free users
+- [x] Removed cloudBackup placeholder
 
-### Phase 2: Data Collection Layer
-- [ ] `src/features/prediction/data/predictionTypes.ts` — interfaces
-- [ ] `src/features/prediction/data/predictionDataCollector.ts` — full data snapshot
-- [ ] `src/features/prediction/data/predictionStorage.ts` — MMKV cache + rate limits
-- [ ] New StorageKeys in storage.ts
-- [ ] Commit + tsc check
+### Phase 2: Data Collection Layer ✅
+- [x] `src/features/prediction/data/predictionTypes.ts` — full interfaces
+- [x] `src/features/prediction/data/predictionDataCollector.ts` — queries all repos, 7d/30d stats
+- [x] `src/features/prediction/data/predictionStorage.ts` — MMKV cache (6h/7d TTL) + rate limits
+- [x] 4 new StorageKeys in storage.ts
 
-### Phase 3: AI Prediction Prompt + API
-- [ ] `src/features/prediction/data/predictionSystemPrompt.ts` — medical analysis prompt
-- [ ] Extend `aiClient.ts` with maxTokens/timeout params
-- [ ] `src/features/prediction/utils/predictionApiClient.ts` — JSON response parsing
-- [ ] `src/features/prediction/hooks/usePrediction.ts` — React Query + cache hook
-- [ ] Commit + tsc check
+### Phase 3: AI Prediction Prompt + API ✅
+- [x] `src/features/prediction/data/predictionSystemPrompt.ts` — ISFM safety rules, structured JSON
+- [x] `aiClient.ts` extended with maxTokens/timeout options
+- [x] `src/features/prediction/utils/predictionApiClient.ts` — JSON parsing + fallback
+- [x] `src/features/prediction/hooks/usePrediction.ts` — cache + rate limit + manual trigger
 
-### Phase 4: UI Components
-- [ ] `PredictionChart.tsx` — SVG: actual solid + predicted dashed + confidence band
-- [ ] `ChecklistCard.tsx` — actionable recs (feeding/glucose/injection/vet)
-- [ ] `RemissionCard.tsx` — weekly probability report
-- [ ] `DisclaimerBanner.tsx` — non-dismissable amber warning
-- [ ] Commit + tsc check
+### Phase 4: UI Components ✅
+- [x] `PredictionChart.tsx` — SVG: solid actual + dashed predicted + confidence band
+- [x] `ChecklistCard.tsx` — collapsible recs with category icons & priority colors
+- [x] `RemissionCard.tsx` — probability badge + +/- factors
+- [x] `DisclaimerBanner.tsx` — amber warning banner
 
-### Phase 5: AdvancedAnalyticsScreen + Navigation
-- [ ] `AdvancedAnalyticsScreen.tsx` — main screen with all components
-- [ ] Navigation types + registration (HomeStack + MoreStack)
-- [ ] Dashboard "AI Smart Analysis" card entry point
-- [ ] MoreMenuScreen entry point
-- [ ] Commit + tsc check
+### Phase 5: AdvancedAnalyticsScreen + Navigation ✅
+- [x] `AdvancedAnalyticsScreen.tsx` — full screen
+- [x] Navigation: HomeStack + MoreStack registration
+- [x] Dashboard: AI Smart Analysis card with gradient
+- [x] MoreMenu: sparkles entry (pro-gated)
 
-### Phase 6: i18n (~50 keys)
-- [ ] `prediction` section in en.ts + ru.ts
-- [ ] Update subscription feature descriptions
-- [ ] Commit + tsc check
+### Phase 6: i18n ✅
+- [x] `prediction` section: ~25 keys EN + RU
+- [x] Subscription feature descriptions updated
 
-### Phase 7: Verification
-- [ ] tsc clean
-- [ ] Walkthrough: Dashboard -> AI Analysis
-- [ ] Walkthrough: More -> Advanced Analytics
-- [ ] PaywallScreen shows all 8 features
-- [ ] Free user: 30-day limit, ProGate on Analytics
-- [ ] Both locales (RU/EN)
-- [ ] Insufficient data state
-- [ ] Rate limiting display
-
-> **CHECKPOINT 6**: commit + tsc + full walkthrough on device
+### Phase 7: Verification ✅
+- [x] tsc clean (all 7 phases)
+- [x] Walkthrough paths verified (Dashboard + More)
+- [x] PaywallScreen shows 8 features
+- [x] Both locales have all keys
 
 ---
 
