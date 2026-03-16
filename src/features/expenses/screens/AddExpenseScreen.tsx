@@ -13,6 +13,7 @@ import { expenseRepository } from '@storage/database';
 import { usePetStore } from '@shared/stores/petStore';
 import { ExpenseCategory, EXPENSE_ICON_NAMES, EXPENSE_COLORS } from '../types';
 import { useQueryClient } from '@tanstack/react-query';
+import { useUnsavedChangesGuard } from '@shared/hooks/useUnsavedChangesGuard';
 
 const CATEGORIES: ExpenseCategory[] = ['insulin','testStrips','vetVisit','medication','food','other'];
 
@@ -30,7 +31,10 @@ export default function AddExpenseScreen() {
   const [description, setDescription] = useState('');
   const [originalDate, setOriginalDate] = useState<string | undefined>();
   const [loading, setLoading] = useState(false);
+  const [guardEnabled, setGuardEnabled] = useState(true);
   const savingRef = useRef(false);
+
+  useUnsavedChangesGuard(guardEnabled && (!!amount || !!description));
 
   const categoryLabels: Record<ExpenseCategory, string> = {
     insulin: t('expenses.insulin'), testStrips: t('expenses.testStrips'),
@@ -65,6 +69,7 @@ export default function AddExpenseScreen() {
         await expenseRepository.create({ petId: activePet.id, category, amount: numAmount, description: description || undefined, currency: i18n.language === 'ru' ? 'RUB' : 'USD' });
       }
       await queryClient.invalidateQueries({ queryKey: ['expenses'] });
+      setGuardEnabled(false);
       navigation.goBack();
     } catch { Alert.alert(t('common.error'), t('expenses.saveError')); }
     finally { savingRef.current = false; setLoading(false); }

@@ -9,6 +9,8 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useHomeNavigation } from '@navigation/hooks';
+import { useRoute, RouteProp } from '@react-navigation/native';
+import type { HomeStackParamList } from '@navigation/types';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '@shared/theme';
 import { Button, Input, Card } from '@shared/components/ui';
@@ -23,6 +25,7 @@ import { useHintTrigger } from '@features/hints/hooks/useHintTrigger';
 
 export default function LogInjectionScreen() {
   const navigation = useHomeNavigation();
+  const route = useRoute<RouteProp<HomeStackParamList, 'LogInjection'>>();
   const { t } = useTranslation();
   const { theme } = useTheme();
   const activePet = usePetStore(s => s.activePet);
@@ -31,7 +34,9 @@ export default function LogInjectionScreen() {
   const [dose, setDose] = useState('');
   const [insulinType, setInsulinType] = useState(activePet?.insulinType ?? '');
   const [notes, setNotes] = useState('');
-  const [administeredAt, setAdministeredAt] = useState(new Date());
+  const [administeredAt, setAdministeredAt] = useState(() =>
+    route.params?.presetDate ? new Date(route.params.presetDate) : new Date(),
+  );
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [showTimePicker, setShowTimePicker] = useState(false);
   const [loading, setLoading] = useState(false);

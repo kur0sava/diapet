@@ -130,7 +130,7 @@ export default function EditPetScreen() {
         <View key={`time-${i}-${time}`} style={[styles.timeRow, { backgroundColor: theme.colors.surfaceSecondary, borderRadius: 12 }]}>
           <Input value={time} onChangeText={v => { const n = [...times]; n[i] = validateTime(v); setTimes(n); }} placeholder="HH:MM" maxLength={5} containerStyle={{ flex: 1 }} />
           <TouchableOpacity onPress={() => {
-            if (type === 'injection' && times.length <= 1) { Alert.alert(t('onboarding.minOneInjection')); return; }
+            if (times.length <= 1) { Alert.alert(type === 'injection' ? t('onboarding.minOneInjection') : t('onboarding.minOneFeeding')); return; }
             setTimes(times.filter((_, idx) => idx !== i));
           }} style={{ padding: 12 }}>
             <Ionicons name="close-circle" size={24} color={theme.colors.danger} />

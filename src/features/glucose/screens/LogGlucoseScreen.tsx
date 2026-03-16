@@ -49,7 +49,9 @@ export default function LogGlucoseScreen() {
   const [insulinType, setInsulinType] = useState(activePet?.insulinType ?? '');
   const [notes, setNotes] = useState('');
   const [loading, setLoading] = useState(false);
-  const [recordedAt, setRecordedAt] = useState(new Date());
+  const [recordedAt, setRecordedAt] = useState(() =>
+    route.params?.presetDate ? new Date(route.params.presetDate) : new Date(),
+  );
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [showTimePicker, setShowTimePicker] = useState(false);
   const { triggerAfterAction } = useHintTrigger();

@@ -4,7 +4,12 @@ import {
   TouchableOpacity, Alert, KeyboardAvoidingView, Platform,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import DateTimePicker from '@react-native-community/datetimepicker';
+import { format } from 'date-fns';
+import { Ionicons } from '@expo/vector-icons';
 import { useHomeNavigation } from '@navigation/hooks';
+import { useRoute, RouteProp } from '@react-navigation/native';
+import type { HomeStackParamList } from '@navigation/types';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '@shared/theme';
 import { Button, Input, Card } from '@shared/components/ui';
@@ -18,6 +23,7 @@ import { useHintTrigger } from '@features/hints/hooks/useHintTrigger';
 
 export default function LogFeedingScreen() {
   const navigation = useHomeNavigation();
+  const route = useRoute<RouteProp<HomeStackParamList, 'LogFeeding'>>();
   const { t } = useTranslation();
 
   const FOOD_TYPE_OPTIONS = useMemo(() => [
@@ -33,6 +39,11 @@ export default function LogFeedingScreen() {
   const [foodType, setFoodType] = useState<string>('dry');
   const [amount, setAmount] = useState('');
   const [notes, setNotes] = useState('');
+  const [fedAt, setFedAt] = useState(() =>
+    route.params?.presetDate ? new Date(route.params.presetDate) : new Date(),
+  );
+  const [showDatePicker, setShowDatePicker] = useState(false);
+  const [showTimePicker, setShowTimePicker] = useState(false);
   const [loading, setLoading] = useState(false);
   const [guardEnabled, setGuardEnabled] = useState(true);
   const { triggerAfterAction } = useHintTrigger();
@@ -64,6 +75,7 @@ export default function LogFeedingScreen() {
         foodType: foodType || undefined,
         amountGrams: amount ? parseFloat(amount.replace(',', '.')) : undefined,
         notes: notes || undefined,
+        fedAt: fedAt.toISOString(),
       });
       await queryClient.invalidateQueries({ queryKey: ['feedings'] });
       await queryClient.invalidateQueries({ queryKey: ['diary'] });
@@ -77,7 +89,7 @@ export default function LogFeedingScreen() {
       savingRef.current = false;
       setLoading(false);
     }
-  }, [activePet, foodType, amount, notes, queryClient, navigation, t, triggerAfterAction]);
+  }, [activePet, foodType, amount, notes, fedAt, queryClient, navigation, t, triggerAfterAction]);
 
   return (
     <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={{ flex: 1 }}>
@@ -141,6 +153,55 @@ export default function LogFeedingScreen() {
             </Text>
           </Card>
 
+          {/* Date & Time */}
+          <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>{t('glucose.date')} & {t('glucose.time')}</Text>
+          <View style={styles.dateTimeRow}>
+            <TouchableOpacity
+              style={[styles.dateTimeBtn, { backgroundColor: theme.colors.surfaceSecondary }]}
+              onPress={() => setShowDatePicker(true)}
+            >
+              <View style={styles.dateTimeContent}>
+                <Ionicons name="calendar-outline" size={18} color={theme.colors.primary} style={{ marginRight: 6 }} />
+                <Text style={{ color: theme.colors.text, fontSize: 15, fontWeight: '600' }}>
+                  {format(fedAt, 'dd.MM.yyyy')}
+                </Text>
+              </View>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.dateTimeBtn, { backgroundColor: theme.colors.surfaceSecondary }]}
+              onPress={() => setShowTimePicker(true)}
+            >
+              <View style={styles.dateTimeContent}>
+                <Ionicons name="time-outline" size={18} color={theme.colors.primary} style={{ marginRight: 6 }} />
+                <Text style={{ color: theme.colors.text, fontSize: 15, fontWeight: '600' }}>
+                  {format(fedAt, 'HH:mm')}
+                </Text>
+              </View>
+            </TouchableOpacity>
+          </View>
+
+          {showDatePicker && (
+            <DateTimePicker
+              value={fedAt}
+              mode="date"
+              maximumDate={new Date()}
+              onChange={(_, date) => {
+                setShowDatePicker(false);
+                if (date) setFedAt(date);
+              }}
+            />
+          )}
+          {showTimePicker && (
+            <DateTimePicker
+              value={fedAt}
+              mode="time"
+              onChange={(_, date) => {
+                setShowTimePicker(false);
+                if (date) setFedAt(date);
+              }}
+            />
+          )}
+
           {/* Notes */}
           <Input
             label={t('glucose.notes')}
@@ -182,4 +243,7 @@ const styles = StyleSheet.create({
   amountCard: { alignItems: 'center', paddingVertical: 24 },
   amountLabel: { fontSize: 13, fontWeight: '500', marginBottom: 12 },
   optionalHint: { fontSize: 12, marginTop: 4 },
+  dateTimeRow: { flexDirection: 'row', gap: 12 },
+  dateTimeBtn: { flex: 1, borderRadius: 12, overflow: 'hidden' },
+  dateTimeContent: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', padding: 14 },
 });

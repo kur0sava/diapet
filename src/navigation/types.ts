@@ -33,9 +33,9 @@ export type MainTabParamList = {
 export type HomeStackParamList = {
   Dashboard: undefined;
   DailyDiary: { date?: string };
-  LogGlucose: { editId?: string };
-  LogInjection: undefined;
-  LogFeeding: undefined;
+  LogGlucose: { editId?: string; presetDate?: string };
+  LogInjection: { presetDate?: string } | undefined;
+  LogFeeding: { presetDate?: string } | undefined;
   AddSymptom: { editId?: string; glucoseReadingId?: string };
   InjectionList: undefined;
   FeedingList: undefined;

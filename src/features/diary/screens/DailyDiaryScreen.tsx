@@ -349,7 +349,7 @@ export default function DailyDiaryScreen() {
           <View style={styles.addRow}>
             <TouchableOpacity
               style={[styles.addBtn, { backgroundColor: theme.colors.primary + '18' }]}
-              onPress={() => navigation.navigate('LogGlucose', {})}
+              onPress={() => navigation.navigate('LogGlucose', { presetDate: currentDate.toISOString() })}
             >
               <Ionicons name="water" size={20} color={theme.colors.primary} />
               <Text style={[styles.addBtnText, { color: theme.colors.primary, fontFamily: theme.fonts.medium }]} numberOfLines={2}>
@@ -358,7 +358,7 @@ export default function DailyDiaryScreen() {
             </TouchableOpacity>
             <TouchableOpacity
               style={[styles.addBtn, { backgroundColor: theme.colors.secondary + '18' }]}
-              onPress={() => navigation.navigate('LogInjection')}
+              onPress={() => navigation.navigate('LogInjection', { presetDate: currentDate.toISOString() })}
             >
               <Ionicons name="medkit" size={20} color={theme.colors.secondary} />
               <Text style={[styles.addBtnText, { color: theme.colors.secondary, fontFamily: theme.fonts.medium }]} numberOfLines={2}>
@@ -367,7 +367,7 @@ export default function DailyDiaryScreen() {
             </TouchableOpacity>
             <TouchableOpacity
               style={[styles.addBtn, { backgroundColor: theme.colors.success + '18' }]}
-              onPress={() => navigation.navigate('LogFeeding')}
+              onPress={() => navigation.navigate('LogFeeding', { presetDate: currentDate.toISOString() })}
             >
               <Ionicons name="restaurant" size={20} color={theme.colors.success} />
               <Text style={[styles.addBtnText, { color: theme.colors.success, fontFamily: theme.fonts.medium }]} numberOfLines={2}>
