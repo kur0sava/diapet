@@ -9,7 +9,6 @@ import { differenceInHours } from 'date-fns';
 const MISSED_CHECK_DATE_KEY = 'hintsMissedCheckDate';
 
 export function useMissedInjection() {
-  const { showHint } = useHintStore();
   const activePet = usePetStore(s => s.activePet);
 
   useEffect(() => {
@@ -42,7 +41,7 @@ export function useMissedInjection() {
           if (useHintStore.getState().currentHint) return;
 
           const hint = selectHint('missed_injection', stage, 'any');
-          if (hint) showHint(hint);
+          if (hint) useHintStore.getState().showHint(hint);
         }
       } catch {
         // Silently fail — hints are non-critical

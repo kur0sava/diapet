@@ -187,7 +187,8 @@ function getLabels(): Labels {
 
 function formatDate(iso: string): string {
   try {
-    return format(new Date(iso), 'dd.MM.yyyy HH:mm', { locale: getDateLocale() });
+    const pattern = isRu() ? 'dd.MM.yyyy HH:mm' : 'MM/dd/yyyy HH:mm';
+    return format(new Date(iso), pattern, { locale: getDateLocale() });
   } catch {
     return iso;
   }
@@ -196,7 +197,8 @@ function formatDate(iso: string): string {
 function formatDateShort(iso: string | undefined): string {
   if (!iso) return '\u2014';
   try {
-    return format(new Date(iso), 'dd.MM.yyyy', { locale: getDateLocale() });
+    const pattern = isRu() ? 'dd.MM.yyyy' : 'MM/dd/yyyy';
+    return format(new Date(iso), pattern, { locale: getDateLocale() });
   } catch {
     return iso;
   }

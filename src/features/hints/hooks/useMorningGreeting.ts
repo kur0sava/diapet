@@ -5,7 +5,6 @@ import { storage, StorageKeys } from '@storage/mmkv/storage';
 import { format } from 'date-fns';
 
 export function useMorningGreeting() {
-  const { showHint, triggerAchievement } = useHintStore();
 
   useEffect(() => {
     const regDate = storage.getString(StorageKeys.HINTS_REGISTRATION_DATE);
@@ -24,7 +23,7 @@ export function useMorningGreeting() {
     const dayNum = getDayNumber(regDate);
     if (dayNum >= 30 && !storage.getBoolean(StorageKeys.HINTS_ACHIEVEMENT_SHOWN)) {
       storage.set(StorageKeys.HINTS_ACHIEVEMENT_SHOWN, true);
-      triggerAchievement();
+      useHintStore.getState().triggerAchievement();
       return; // Don't show greeting alongside achievement
     }
 
@@ -35,7 +34,7 @@ export function useMorningGreeting() {
     const timer = setTimeout(() => {
       if (useHintStore.getState().currentHint) return; // Something else shown
       const hint = selectHint('morning', stage, 'any');
-      if (hint) showHint(hint);
+      if (hint) useHintStore.getState().showHint(hint);
     }, 2000);
 
     return () => clearTimeout(timer);
