@@ -18,6 +18,7 @@
 [####################] v1.6 UI Redesign    ✅ DONE
 [##########__________] v1.7 Pre-deploy     (иконка ✅, Android 15/16 ✅, hints ✅)
 [####################] v1.8 Bug Audit      ✅ DONE (14 багов, paranoid audit)
+[##################__] v1.8.1 Full Audit   ✅ ~36 багов (8 агентов, нужен re-run 6+7)
 [____________________] v1.9 Pre-release    ⬅ ТЕКУЩИЙ ЭТАП (оплата, реклама, билд)
 [____________________] v2.0 UX фичи       🔜
 [____________________] v2.1 DevOps         🔜
@@ -253,9 +254,53 @@
 
 ---
 
+## ЭТАП 4.9.1: v1.8.1 Full Audit — 8 агентов, ~36 багов
+
+> Сессия 2026-03-16. 10 коммитов, 8 агентов в 4 батчах.
+> tsc ✅
+
+### Завершённые агенты:
+- [x] Phase 1: Paranoid Codebase Auditor (batch 1+2)
+- [x] Phase 2: Paranoid UX Auditor
+- [x] Phase 3: Logic Reviewer (standard)
+- [x] Phase 4: Logic Reviewer (deep)
+- [x] Phase 5: Code Auditor (round 1)
+- [x] Phase 8: Medical Auditor
+
+### Требуют повторного запуска в v1.9:
+- [ ] Phase 6: Code Auditor (round 2) — результаты потеряны при компрессии контекста, топ-3 бага исправлены
+- [ ] Phase 7: UX Scenario Tester — результаты потеряны, топ-2 бага исправлены (SOS, paywall)
+
+### Ключевые исправления:
+- [x] Insulin hard stop: 20→10 IU (ISFM 2021, Rand 2012)
+- [x] Hypo protocol: 10→5 min, consciousness check before oral glucose
+- [x] Duplicate injection warning (< 6h safety guard)
+- [x] DateTimePicker date-mode preserves time (3 screens)
+- [x] Locale-aware dates in all log screens (dd.MM.yyyy / MM/dd/yyyy)
+- [x] AdMob placeholder guard (no crash without key)
+- [x] cancelScheduleNotifications (preserves hint pushes)
+- [x] presetDate for all log screens from DailyDiary
+- [x] AI prompt thresholds aligned with app domain types
+- [x] Paywall bypass when RevenueCat not configured
+- [x] SOS button enlarged (48px, accessible)
+- [x] Glucose delete in transaction (FK safety)
+- [x] FlatList keyExtractor fix
+- [x] Stale closures in hint hooks (getState())
+- [x] PDF date formats locale-aware
+- [x] Feeding times min-1 guard
+- [x] NotificationsScreen persists user choice
+- [x] Unsaved changes guard on AddExpenseScreen
+
+---
+
 ## ЭТАП 5.0: v1.9 Pre-release — финальная подготовка ⬅ ТЕКУЩИЙ
 
 > Всё что нужно для публикации в Google Play
+
+### #0 — Re-run аудит агентов (незавершённые)
+- [ ] Code Auditor round 2 (phase 6) — полный re-run, фокус на изменённых файлах
+- [ ] UX Scenario Tester (phase 7) — полный re-run, все пользовательские сценарии
+- [ ] Исправить найденные CRITICAL/HIGH баги
 
 ### #1 — EAS Build
 - [ ] Запустить: `eas build --platform android --profile production --non-interactive`
