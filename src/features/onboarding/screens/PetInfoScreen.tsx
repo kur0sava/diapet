@@ -13,6 +13,7 @@ import { useTheme } from '@shared/theme';
 import { Button, Input } from '@shared/components/ui';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { storage, StorageKeys } from '@storage/mmkv/storage';
+import { parseDateOnly } from '@shared/utils/dateUtils';
 
 export default function PetInfoScreen() {
   const navigation = useOnboardingNavigation();
@@ -34,7 +35,7 @@ export default function PetInfoScreen() {
   const [weightKg, setWeightKg] = useState(draft?.weightKg ?? '');
   const [age, setAge] = useState(draft?.age ?? '');
   const [diabetesType, setDiabetesType] = useState<'type1' | 'type2' | 'unknown'>(draft?.diabetesType ?? 'unknown');
-  const [diagnosisDate, setDiagnosisDate] = useState<Date | null>(draft?.diagnosisDate ? new Date(draft.diagnosisDate) : null);
+  const [diagnosisDate, setDiagnosisDate] = useState<Date | null>(draft?.diagnosisDate ? parseDateOnly(draft.diagnosisDate) : null);
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
 

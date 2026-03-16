@@ -27,12 +27,17 @@ function checkPro(info: CustomerInfo): boolean {
 }
 
 function getCachedPro(): boolean {
-  const cached = storage.getBoolean(StorageKeys.SUBSCRIPTION_CACHED_PRO) ?? false;
-  if (!cached) return false;
-  // If cache is stale (>30 days), don't trust it
-  const cachedAt = storage.getNumber(CACHE_TIMESTAMP_KEY) ?? 0;
-  if (Date.now() - cachedAt > CACHE_TTL_MS) return false;
-  return true;
+  try {
+    const cached = storage.getBoolean(StorageKeys.SUBSCRIPTION_CACHED_PRO) ?? false;
+    if (!cached) return false;
+    // If cache is stale (>30 days), don't trust it
+    const cachedAt = storage.getNumber(CACHE_TIMESTAMP_KEY) ?? 0;
+    if (Date.now() - cachedAt > CACHE_TTL_MS) return false;
+    return true;
+  } catch {
+    // MMKV not yet initialized (module-level evaluation before initStorage)
+    return false;
+  }
 }
 
 function setCachedPro(isPro: boolean): void {

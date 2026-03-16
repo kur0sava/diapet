@@ -6,6 +6,17 @@ export function getLocale() {
   return i18n.language === 'ru' ? ruLocale : undefined;
 }
 
+/**
+ * Parse a date-only string (YYYY-MM-DD) without UTC timezone shift.
+ * Appends T12:00:00 so the date stays correct in any timezone.
+ */
+export function parseDateOnly(dateStr: string): Date {
+  if (/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) {
+    return new Date(`${dateStr}T12:00:00`);
+  }
+  return new Date(dateStr);
+}
+
 export function formatDate(dateStr: string): string {
   try {
     const date = parseISO(dateStr);

@@ -50,7 +50,7 @@ export default function LogFeedingScreen() {
   const { triggerAfterAction } = useHintTrigger();
   // ARCH005: prevent duplicate feeding on double-tap
   const savingRef = useRef(false);
-  useUnsavedChangesGuard(guardEnabled && (!!amount || !!notes));
+  useUnsavedChangesGuard(guardEnabled && (!!amount || !!notes || foodType !== 'dry'));
 
   const handleSave = useCallback(async () => {
     if (savingRef.current) return; // silent guard against double-tap

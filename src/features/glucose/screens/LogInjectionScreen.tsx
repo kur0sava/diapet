@@ -48,7 +48,7 @@ export default function LogInjectionScreen() {
   const commonInsulins = Array.isArray(commonInsulinsRaw) ? commonInsulinsRaw as string[] : [];
   // ARCH005: prevent duplicate injection on double-tap
   const savingRef = useRef(false);
-  useUnsavedChangesGuard(guardEnabled && (!!dose || !!notes));
+  useUnsavedChangesGuard(guardEnabled && (!!dose || !!notes || insulinType !== (activePet?.insulinType ?? '')));
 
   const doSaveInjection = useCallback(async () => {
     if (!activePet || savingRef.current) return;

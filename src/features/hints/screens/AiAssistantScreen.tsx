@@ -23,7 +23,8 @@ import { storageUtils } from '@storage/mmkv/storage';
 import { glucoseRepository, injectionRepository, scheduleRepository } from '@storage/database';
 import { buildAiSystemPrompt, AiPetContext } from '../data/aiSystemPrompt';
 import { sendChatMessage, ChatMessage } from '../utils/aiClient';
-import { differenceInDays, parseISO } from 'date-fns';
+import { differenceInDays } from 'date-fns';
+import { parseDateOnly } from '@shared/utils/dateUtils';
 
 const MAX_HISTORY = 50;
 
@@ -79,7 +80,7 @@ export default function AiAssistantScreen() {
 
       const daysSinceDiagnosis =
         activePet.diagnosisDate
-          ? differenceInDays(new Date(), parseISO(activePet.diagnosisDate))
+          ? differenceInDays(new Date(), parseDateOnly(activePet.diagnosisDate))
           : null;
 
       const injectionScheduleStr =
