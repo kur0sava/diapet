@@ -86,19 +86,19 @@ export default function LogInjectionScreen() {
     }
     // MC002: Warn on unusually high dose (typical cat range: 1–4 units)
     const doseNum = parseFloat(dose.replace(',', '.'));
-    // FORM-004: Hard limit — 20 units is absolute max for cats
-    if (doseNum > 20) {
+    // MH-C1: Hard limit 10 IU (ISFM 2021, Rand 2012 — clinical max for cats)
+    if (doseNum > 10) {
       Alert.alert(t('glucose.doseAbsoluteLimit'), t('glucose.doseAbsoluteLimitDesc'));
       return;
     }
-    if (doseNum > 10) {
+    if (doseNum > 6) {
       Alert.alert(t('glucose.veryHighDoseWarning'), t('glucose.veryHighDoseWarningDesc', { dose: doseNum }), [
         { text: t('common.cancel'), style: 'cancel' },
         { text: t('common.confirm'), style: 'destructive', onPress: () => doSaveInjection() },
       ]);
       return;
     }
-    if (doseNum > 6) {
+    if (doseNum > 4) {
       Alert.alert(t('glucose.highDoseWarning'), t('glucose.highDoseWarningDesc', { dose: doseNum }), [
         { text: t('common.cancel'), style: 'cancel' },
         { text: t('common.confirm'), onPress: () => doSaveInjection() },

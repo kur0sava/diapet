@@ -697,8 +697,8 @@ export const HINTS: HintContent[] = [
     stage: 'week2',
     category: 'medical_fact',
     timeOfDay: 'any',
-    ru: 'Гипогликемия (глюкоза ниже 2.8 ммоль/л) — это экстренная ситуация. Признаки: слабость, дрожь, судороги. Нанеси мёд или сироп на дёсны и немедленно обратись к ветеринару.',
-    en: 'Hypoglycemia (glucose below 2.8 mmol/L) is an emergency. Signs: weakness, trembling, seizures. Apply honey or syrup to the gums and get to a vet immediately.',
+    ru: 'Гипогликемия (глюкоза ниже 2.8 ммоль/л) — экстренная ситуация. При лёгких признаках (дрожь, слабость) и если кот в сознании: нанеси немного мёда или сиропа на дёсны и вызови ветеринара. При судорогах или потере сознания — НЕ давать ничего орально, немедленно в клинику.',
+    en: 'Hypoglycemia (glucose below 2.8 mmol/L) is an emergency. For mild signs (trembling, weakness) if your cat is conscious: apply honey or syrup to the gums and call your vet. If seizures or loss of consciousness — do NOT give anything by mouth. Get to a clinic immediately.',
   },
   {
     id: 'glu_w2_06',

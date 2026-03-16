@@ -179,7 +179,7 @@ export const en = {
     veryHighDoseWarning: 'Dangerously high dose',
     veryHighDoseWarningDesc: '{{dose}} units is a dangerously high dose for a cat. Only administer doses prescribed by your vet. Are you absolutely sure?',
     doseAbsoluteLimit: 'Maximum exceeded',
-    doseAbsoluteLimitDesc: 'Maximum dose for a cat is 20 units. If your vet prescribed more, please consult them for clarification.',
+    doseAbsoluteLimitDesc: 'An insulin dose above 10 units is outside the standard range for cats. The entry was not saved. Please confirm the dose with your vet.',
     ranges: {
       low: '< 4 mmol/L',
       normal: '4–9 mmol/L',
@@ -302,7 +302,7 @@ export const en = {
       'Call your vet',
       'Do NOT give insulin',
       'Keep the animal warm',
-      'Take to clinic if no improvement within 10 minutes',
+      'Take to clinic if no improvement within 5 minutes',
     ],
     hyperSigns: [
       'Lethargy, depression',
