@@ -37,7 +37,7 @@
         "android.permission.READ_MEDIA_IMAGES",
         "android.permission.VIBRATE",
         "android.permission.SCHEDULE_EXACT_ALARM",
-        "android.permission.POST_NOTIFICATIONS",
+        "android.permission.POST_NOTIFICATIONS"
       ]
     },
     "web": {
