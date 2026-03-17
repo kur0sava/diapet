@@ -27,14 +27,6 @@ import { Ionicons } from '@expo/vector-icons';
 import { usePetStore } from '@shared/stores/petStore';
 import { useSubscription } from '@features/subscription/hooks/useSubscription';
 import { useFocusEffect } from '@react-navigation/native';
-import { BannerAd, BannerAdSize, TestIds } from 'react-native-google-mobile-ads';
-
-const ADMOB_BANNER_ID_RAW = __DEV__
-  ? TestIds.ADAPTIVE_BANNER
-  : 'ca-app-pub-XXXXXXXXXXXXXXXX/XXXXXXXXXX';
-// Guard: don't render BannerAd with placeholder ID — it crashes in production
-const ADMOB_READY = !ADMOB_BANNER_ID_RAW.includes('XXXX');
-const ADMOB_BANNER_ID = ADMOB_BANNER_ID_RAW;
 
 interface GlucoseReading {
   valueMmol: number;
@@ -449,16 +441,6 @@ export default function DashboardScreen() {
           </View>
         </View>
 
-        {/* AdMob banner — only for free users */}
-        {!isPro && ADMOB_READY && (
-          <View style={styles.adBanner}>
-            <BannerAd
-              unitId={ADMOB_BANNER_ID}
-              size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER}
-              requestOptions={{ requestNonPersonalizedAdsOnly: false }}
-            />
-          </View>
-        )}
       </ScrollView>
     </SafeAreaView>
   );
@@ -467,7 +449,6 @@ export default function DashboardScreen() {
 const styles = StyleSheet.create({
   container: { flex: 1 },
   scrollContent: { paddingBottom: 100 },
-  adBanner: { alignItems: 'center', marginTop: 8, marginBottom: 16 },
   // Hero
   heroGradient: {
     paddingBottom: 20,
