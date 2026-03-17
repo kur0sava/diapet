@@ -51,7 +51,6 @@ export default function AddSymptomScreen() {
   const dateFnsLocale = (storage.getString(StorageKeys.LANGUAGE) ?? 'ru') === 'ru' ? ruLocale : undefined;
   const [selectedTypes, setSelectedTypes] = useState<SymptomType[]>([]);
   const [severityOverride, setSeverityOverride] = useState<SymptomSeverity | null>(null);
-  const [showSeverityOverride, setShowSeverityOverride] = useState(false);
   const [notes, setNotes] = useState('');
 
   const autoSeverity = selectedTypes.length > 0 ? calculateSeverity(selectedTypes) : null;
@@ -76,7 +75,6 @@ export default function AddSymptomScreen() {
         const auto = calculateSeverity(entry.symptomTypes);
         if (auto.severity !== entry.severity) {
           setSeverityOverride(entry.severity);
-          setShowSeverityOverride(true);
         }
         setNotes(entry.notes ?? '');
         setPhotos(entry.photoUris ?? []);
@@ -224,12 +222,7 @@ export default function AddSymptomScreen() {
           {/* Auto-severity result */}
           {autoSeverity && (
             <View style={[styles.severityCard, { backgroundColor: theme.colors.surface, ...theme.shadows.sm }]}>
-              <View style={styles.severityCardHeader}>
-                <Text style={[styles.sectionTitle, { color: theme.colors.text, marginTop: 0 }]}>{t('symptoms.autoSeverity')}</Text>
-                <TouchableOpacity onPress={() => setShowSeverityOverride(!showSeverityOverride)}>
-                  <Text style={{ color: theme.colors.primary, fontSize: 13, fontWeight: '600' }}>{t('symptoms.changeSeverity')}</Text>
-                </TouchableOpacity>
-              </View>
+              <Text style={[styles.sectionTitle, { color: theme.colors.text, marginTop: 0 }]}>{t('symptoms.autoSeverity')}</Text>
               <View style={[styles.severityBadge, { backgroundColor: `${SEVERITY_OPTIONS.find(o => o.value === severity)?.color ?? '#999'}20` }]}>
                 <Text style={[styles.severityBadgeText, { color: SEVERITY_OPTIONS.find(o => o.value === severity)?.color }]}>
                   {t(`symptoms.${severity}`)}
@@ -251,7 +244,7 @@ export default function AddSymptomScreen() {
           )}
 
           {/* Manual severity override */}
-          {showSeverityOverride && (
+          {autoSeverity && (
             <>
               <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>{t('symptoms.severity')}</Text>
               <View style={styles.severityRow}>
@@ -367,8 +360,8 @@ export default function AddSymptomScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
-  navHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', padding: 16, borderBottomWidth: 0.5 },
-  title: { fontSize: 17, fontWeight: '600' },
+  navHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', padding: 16, borderBottomWidth: 0.5, gap: 8 },
+  title: { fontSize: 17, fontWeight: '600', flex: 1, textAlign: 'center' },
   content: { padding: 20, gap: 14, paddingBottom: 40 },
   sectionTitle: { fontSize: 16, fontWeight: '700', marginTop: 4 },
   symptomGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 10 },

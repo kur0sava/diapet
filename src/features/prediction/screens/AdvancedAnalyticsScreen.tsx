@@ -266,10 +266,10 @@ const styles = StyleSheet.create({
   container: { flex: 1 },
   navHeader: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
-    paddingHorizontal: 16, paddingVertical: 12, borderBottomWidth: 0.5,
+    paddingHorizontal: 16, paddingVertical: 12, borderBottomWidth: 0.5, gap: 8,
   },
   backBtn: { width: 60, minHeight: 44, minWidth: 44, justifyContent: 'center' },
-  headerTitle: { fontSize: 17 },
+  headerTitle: { fontSize: 17, flex: 1, textAlign: 'center' },
   scrollContent: { padding: 16, gap: 12, paddingBottom: 40 },
   section: { gap: 8 },
   sectionTitle: { fontSize: 16, marginTop: 4 },

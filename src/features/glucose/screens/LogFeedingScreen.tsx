@@ -147,7 +147,7 @@ export default function LogFeedingScreen() {
               onChangeText={setAmount}
               placeholder="50"
               keyboardType="decimal-pad"
-              style={{ fontSize: 28, textAlign: 'center', fontWeight: '700' }}
+              style={{ fontSize: 28, textAlign: 'center', fontWeight: '700', minHeight: 48 }}
             />
             <Text style={[styles.optionalHint, { color: theme.colors.textTertiary }]}>
               {t('feeding.optional')}
@@ -240,10 +240,10 @@ const styles = StyleSheet.create({
   container: { flex: 1 },
   navHeader: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
-    paddingHorizontal: 16, paddingVertical: 12, borderBottomWidth: 0.5,
+    paddingHorizontal: 16, paddingVertical: 12, borderBottomWidth: 0.5, gap: 8,
   },
   backBtn: { width: 60, minHeight: 44, minWidth: 44, justifyContent: 'center' },
-  headerTitle: { fontSize: 17, fontWeight: '600' },
+  headerTitle: { fontSize: 17, fontWeight: '600', flex: 1, textAlign: 'center' },
   content: { padding: 20, gap: 16, paddingBottom: 40 },
   sectionTitle: { fontSize: 16, fontWeight: '700', marginTop: 4 },
   chipGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 10 },

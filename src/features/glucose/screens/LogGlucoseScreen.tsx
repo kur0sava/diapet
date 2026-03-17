@@ -414,10 +414,10 @@ const styles = StyleSheet.create({
   container: { flex: 1 },
   navHeader: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
-    paddingHorizontal: 16, paddingVertical: 12, borderBottomWidth: 0.5,
+    paddingHorizontal: 16, paddingVertical: 12, borderBottomWidth: 0.5, gap: 8,
   },
   backBtn: { width: 60, minHeight: 44, minWidth: 44, justifyContent: 'center' },
-  headerTitle: { fontSize: 17 },
+  headerTitle: { fontSize: 17, flex: 1, textAlign: 'center' },
   content: { padding: 20, gap: 16, paddingBottom: 40 },
   mainCard: { alignItems: 'center', paddingVertical: 24 },
   mainLabel: { fontSize: 13, fontWeight: '500', marginBottom: 12 },

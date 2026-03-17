@@ -48,6 +48,8 @@ export function HintCard() {
   const { t } = useTranslation();
   const { theme } = useTheme();
 
+  const styles = useMemo(() => makeStyles(theme.colors.card, theme.colors.text, theme.isDark), [theme.colors.card, theme.colors.text, theme.isDark]);
+
   // Auto-dismiss after 10 seconds
   useEffect(() => {
     if (!currentHint) return;
@@ -58,8 +60,6 @@ export function HintCard() {
   if (!currentHint) return null;
 
   const config = CATEGORY_CONFIG[currentHint.category];
-
-  const styles = useMemo(() => makeStyles(theme.colors.card, theme.colors.text, theme.isDark), [theme.colors.card, theme.colors.text, theme.isDark]);
 
   return (
     <Animated.View

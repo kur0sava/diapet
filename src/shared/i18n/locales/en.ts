@@ -475,6 +475,7 @@ export const en = {
     sometimes: 'Sometimes',
     always: 'Always / Often',
     result: 'Assessment Result',
+    score: 'Score',
     stage: 'Stage',
     recommendations: 'Recommendations',
     stages: {
@@ -714,6 +715,7 @@ export const en = {
     retry: 'Try again',
     showDetails: 'Show details',
     hideDetails: 'Hide details',
+    restartApp: 'Restart',
   },
 
   hints: {

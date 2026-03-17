@@ -475,6 +475,7 @@ export const ru = {
     sometimes: 'Иногда',
     always: 'Всегда / Часто',
     result: 'Результат оценки',
+    score: 'Баллы',
     stage: 'Стадия',
     recommendations: 'Рекомендации',
     stages: {
@@ -714,6 +715,7 @@ export const ru = {
     retry: 'Попробовать снова',
     showDetails: 'Показать детали',
     hideDetails: 'Скрыть детали',
+    restartApp: 'Перезапустить',
   },
 
   hints: {

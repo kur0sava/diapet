@@ -129,8 +129,8 @@ export default function SubscriptionScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
-  navHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', padding: 16, borderBottomWidth: 0.5 },
-  title: { fontSize: 17 },
+  navHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', padding: 16, borderBottomWidth: 0.5, gap: 8 },
+  title: { fontSize: 17, flex: 1, textAlign: 'center' },
   content: { padding: 20, gap: 16 },
   planCard: { alignItems: 'center', paddingVertical: 24, gap: 8 },
   planTitle: { fontSize: 24 },

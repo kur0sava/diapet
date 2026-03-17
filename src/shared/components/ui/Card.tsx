@@ -33,7 +33,5 @@ export function Card({ children, style, padding = 16, shadow = true, bordered = 
 }
 
 const styles = StyleSheet.create({
-  card: {
-    overflow: 'hidden',
-  },
+  card: {},
 });

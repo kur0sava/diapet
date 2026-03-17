@@ -22,14 +22,14 @@ export function AchievementModal() {
   const { t } = useTranslation();
   const { theme } = useTheme();
 
-  if (!showAchievement) return null;
-
-  const lang = i18n.language?.startsWith('en') ? 'en' : 'ru';
-
   const styles = useMemo(
     () => makeStyles(theme.colors.card, theme.colors.text, theme.colors.textSecondary, theme.isDark),
     [theme.colors.card, theme.colors.text, theme.colors.textSecondary, theme.isDark],
   );
+
+  if (!showAchievement) return null;
+
+  const lang = i18n.language?.startsWith('en') ? 'en' : 'ru';
 
   return (
     <Modal

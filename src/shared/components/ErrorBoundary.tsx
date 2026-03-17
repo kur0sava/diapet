@@ -6,6 +6,7 @@ import {
   StyleSheet,
   ScrollView,
   Appearance,
+  BackHandler,
 } from 'react-native';
 import i18n from '@shared/i18n';
 import { Colors } from '@shared/theme/colors';
@@ -92,6 +93,15 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
             </TouchableOpacity>
 
             <TouchableOpacity
+              style={[styles.backButton, { borderColor: c.textTertiary }]}
+              onPress={() => BackHandler.exitApp()}
+            >
+              <Text style={[styles.backButtonText, { color: c.textSecondary }]}>
+                {i18n.t('errors.restartApp', { defaultValue: 'Перезапустить' })}
+              </Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
               style={styles.detailsToggle}
               onPress={this.toggleDetails}
             >
@@ -159,6 +169,17 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     fontSize: 16,
     fontWeight: '600',
+  },
+  backButton: {
+    paddingVertical: 12,
+    paddingHorizontal: 28,
+    borderRadius: 12,
+    borderWidth: 1.5,
+    marginBottom: 16,
+  },
+  backButtonText: {
+    fontSize: 15,
+    fontWeight: '500',
   },
   detailsToggle: {
     padding: 8,

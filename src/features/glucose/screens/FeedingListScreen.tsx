@@ -192,8 +192,8 @@ export default function FeedingListScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
-  navHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', padding: 16, borderBottomWidth: 0.5 },
-  headerTitle: { fontSize: 17, fontWeight: '600' },
+  navHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', padding: 16, borderBottomWidth: 0.5, gap: 8 },
+  headerTitle: { fontSize: 17, fontWeight: '600', flex: 1, textAlign: 'center' },
   list: { padding: 16, gap: 8, paddingBottom: 100 },
   chartCard: { marginBottom: 8 },
   card: { padding: 0, flexDirection: 'row', overflow: 'hidden' },

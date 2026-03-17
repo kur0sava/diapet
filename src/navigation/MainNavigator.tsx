@@ -193,20 +193,7 @@ export default function MainNavigator() {
               EncyclopediaTab: focused ? 'book' : 'book-outline',
               MoreTab: focused ? 'ellipsis-horizontal-circle' : 'ellipsis-horizontal-circle-outline',
             };
-            return (
-              <View style={{ alignItems: 'center' }}>
-                <Ionicons name={icons[route.name] ?? 'home'} size={size} color={color} />
-                {focused && (
-                  <View style={{
-                    width: 4,
-                    height: 4,
-                    borderRadius: 2,
-                    backgroundColor: theme.colors.primary,
-                    marginTop: 3,
-                  }} />
-                )}
-              </View>
-            );
+            return <Ionicons name={icons[route.name] ?? 'home'} size={size} color={color} />;
           },
         })}
       >

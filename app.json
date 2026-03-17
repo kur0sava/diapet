@@ -2,7 +2,7 @@
   "expo": {
     "name": "DiaPet",
     "slug": "diapet",
-    "version": "2.1.0",
+    "version": "2.1.1",
     "orientation": "default",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "automatic",
@@ -30,7 +30,7 @@
         "backgroundColor": "#D42020"
       },
       "package": "com.diapet.app",
-      "versionCode": 8,
+      "versionCode": 9,
       "resizeableActivity": true,
       "permissions": [
         "android.permission.CAMERA",

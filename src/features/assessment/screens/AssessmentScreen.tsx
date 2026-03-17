@@ -131,7 +131,7 @@ export default function AssessmentScreen() {
             </View>
 
             <Text style={[styles.scoreText, { color: theme.colors.textSecondary }]}>
-              {totalScore} / {totalQuestions * 2}
+              {t('assessment.score')}: {totalScore} / {totalQuestions * 2}
             </Text>
 
             <Text style={[styles.stageDescription, { color: theme.colors.text }]}>
@@ -255,8 +255,9 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     padding: 16,
     borderBottomWidth: 0.5,
+    gap: 8,
   },
-  title: { fontSize: 17, fontWeight: '600' },
+  title: { fontSize: 17, fontWeight: '600', flex: 1, textAlign: 'center' },
   content: { padding: 20, gap: 16, paddingBottom: 40 },
   progressBar: {
     height: 6,

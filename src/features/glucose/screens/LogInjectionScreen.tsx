@@ -271,8 +271,8 @@ export default function LogInjectionScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
-  navHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', padding: 16, borderBottomWidth: 0.5 },
-  title: { fontSize: 17, fontWeight: '600' },
+  navHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', padding: 16, borderBottomWidth: 0.5, gap: 8 },
+  title: { fontSize: 17, fontWeight: '600', flex: 1, textAlign: 'center' },
   content: { padding: 20, gap: 14, paddingBottom: 40 },
   mainCard: { alignItems: 'center', paddingVertical: 20 },
   sectionTitle: { fontSize: 15, fontWeight: '700', marginTop: 4 },

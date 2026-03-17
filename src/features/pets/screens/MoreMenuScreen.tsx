@@ -9,6 +9,7 @@ import { usePetStore } from '@shared/stores/petStore';
 import { Ionicons } from '@expo/vector-icons';
 import type { IoniconName } from '@shared/components/ui';
 import { useSubscription } from '@features/subscription/hooks/useSubscription';
+import { isBackendConfigured } from '@shared/stores/subscriptionStore';
 import { ProBadge } from '@features/subscription/components/ProBadge';
 import Constants from 'expo-constants';
 
@@ -39,13 +40,19 @@ export default function MoreMenuScreen() {
     }
   };
 
+  const backendReady = isBackendConfigured();
+
   const menuItems: MenuItem[] = [
-    { iconName: 'star-outline', label: t('subscription.title'), screen: 'Subscription', iconColor: '#FFB340', badge: !isPro ? 'upgrade' : 'active' },
+    // Show subscription only when backend is configured
+    ...(backendReady ? [{ iconName: 'star-outline' as IoniconName, label: t('subscription.title'), screen: 'Subscription' as MenuScreen, iconColor: '#FFB340', badge: !isPro ? 'upgrade' : 'active' }] : []),
     { iconName: 'paw-outline', label: t('pets.title'), screen: 'PetProfile', iconColor: theme.colors.primary, subtitle: activePet?.name },
     { iconName: 'wallet-outline', label: t('expenses.title'), screen: 'Expenses', iconColor: theme.colors.warning },
-    { iconName: 'calculator-outline', label: t('feedCalculator.title'), screen: 'FeedCalculator', iconColor: theme.colors.secondary, proGated: true },
-    { iconName: 'chatbubble-ellipses-outline', label: t('hints.aiAssistant'), screen: 'AiAssistant', iconColor: '#5E5CE6', proGated: true },
-    { iconName: 'sparkles-outline', label: t('prediction.title'), screen: 'AdvancedAnalytics', iconColor: '#8B5CF6', proGated: true },
+    { iconName: 'calculator-outline', label: t('feedCalculator.title'), screen: 'FeedCalculator', iconColor: theme.colors.secondary },
+    // Show AI features only when backend is configured (API key needed)
+    ...(backendReady ? [
+      { iconName: 'chatbubble-ellipses-outline' as IoniconName, label: t('hints.aiAssistant'), screen: 'AiAssistant' as MenuScreen, iconColor: '#5E5CE6', proGated: true },
+      { iconName: 'sparkles-outline' as IoniconName, label: t('prediction.title'), screen: 'AdvancedAnalytics' as MenuScreen, iconColor: '#8B5CF6', proGated: true },
+    ] : []),
     { iconName: 'settings-outline', label: t('settings.title'), screen: 'Settings', iconColor: theme.colors.textSecondary },
   ];
 

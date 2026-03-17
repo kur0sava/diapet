@@ -3,6 +3,7 @@ import { storage, StorageKeys } from '@storage/mmkv/storage';
 import { PUSH_HINTS } from '../data/pushContent';
 import { differenceInDays, parseISO, addDays } from 'date-fns';
 import i18n from '@shared/i18n';
+import { isBackendConfigured } from '@shared/api/subscriptionApi';
 
 /**
  * Schedule hint push notifications for the post-30-day period.
@@ -36,15 +37,19 @@ export async function scheduleHintPushNotifications(): Promise<void> {
   let shownIds: string[] = [];
   try { shownIds = shownRaw ? JSON.parse(shownRaw) : []; } catch { shownIds = []; }
 
+  // Filter out premium-mentioning hints when backend is not configured
+  const backendReady = isBackendConfigured();
+  const eligibleHints = backendReady ? PUSH_HINTS : PUSH_HINTS.filter(h => !h.mentionsPremium);
+
   // Pick 3 unshown hints
-  const available = PUSH_HINTS.filter(h => !shownIds.includes(h.id));
+  const available = eligibleHints.filter(h => !shownIds.includes(h.id));
   if (available.length === 0) {
     // All shown — reset and start over
     shownIds = [];
     storage.set(StorageKeys.HINTS_PUSH_SHOWN_IDS, '[]');
   }
 
-  const toSchedule = (available.length > 0 ? available : PUSH_HINTS).slice(0, 3);
+  const toSchedule = (available.length > 0 ? available : eligibleHints).slice(0, 3);
   const lang = i18n.language?.startsWith('en') ? 'en' : 'ru';
 
   // Cancel previous hint notifications

@@ -53,9 +53,9 @@ export default function SymptomDetailScreen() {
           <Ionicons name="chevron-back" size={22} color={theme.colors.primary} />
           <Text style={{ color: theme.colors.primary }}>{t('common.back')}</Text>
         </TouchableOpacity>
-        <Text style={[styles.title, { color: theme.colors.text, fontFamily: theme.fonts.semibold }]}>{t('symptoms.detailTitle')}</Text>
-        <TouchableOpacity onPress={() => navigation.navigate('AddSymptom', { editId: symptom.id })}>
-          <Text style={{ color: theme.colors.primary }}>{t('common.edit')}</Text>
+        <Text style={[styles.title, { color: theme.colors.text, fontFamily: theme.fonts.semibold }]} numberOfLines={1}>{t('symptoms.detailTitle')}</Text>
+        <TouchableOpacity onPress={() => navigation.navigate('AddSymptom', { editId: symptom.id })} style={styles.navBtn}>
+          <Text style={{ color: theme.colors.primary }} numberOfLines={1}>{t('common.edit')}</Text>
         </TouchableOpacity>
       </View>
 
@@ -107,9 +107,9 @@ export default function SymptomDetailScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
-  navHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', padding: 16, borderBottomWidth: 0.5 },
+  navHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', padding: 16, borderBottomWidth: 0.5, gap: 8 },
   navBtn: { flexDirection: 'row', alignItems: 'center', gap: 2, minHeight: 44, minWidth: 44 },
-  title: { fontSize: 17 },
+  title: { fontSize: 17, flex: 1, textAlign: 'center' },
   content: { padding: 20, gap: 14, paddingBottom: 40 },
   date: { fontSize: 14, textAlign: 'center', marginBottom: 4 },
   card: { gap: 12 },
