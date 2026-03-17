@@ -2,7 +2,7 @@
  * API client for glucose prediction.
  * Calls Claude AI with structured prompt and parses JSON response.
  */
-import { sendChatMessage } from '@features/hints/utils/aiClient';
+import { sendChatMessage, MODEL_SONNET } from '@features/hints/utils/aiClient';
 import { buildPredictionSystemPrompt } from '../data/predictionSystemPrompt';
 import type { PredictionDataSnapshot, PredictionResult } from '../data/predictionTypes';
 
@@ -18,7 +18,7 @@ export async function requestPrediction(
   const rawResponse = await sendChatMessage(
     systemPrompt,
     [{ role: 'user', content: 'Analyze the data and provide the prediction JSON.' }],
-    { maxTokens: 2048, timeoutMs: 45_000 },
+    { maxTokens: 2048, timeoutMs: 45_000, model: MODEL_SONNET },
   );
 
   return parsePredictionResponse(rawResponse);

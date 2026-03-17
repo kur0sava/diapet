@@ -1,110 +1,109 @@
+/**
+ * Subscription store — Prodamus + Supabase backend.
+ * Replaces RevenueCat with web-based payment flow.
+ */
 import { create } from 'zustand';
-import Purchases, { CustomerInfo, PurchasesOffering, PurchasesPackage } from 'react-native-purchases';
 import { storage, StorageKeys } from '@storage/mmkv/storage';
+import {
+  checkSubscription,
+  pollSubscriptionAfterPayment,
+  openPaymentPage,
+  isBackendConfigured,
+  SubscriptionPlan,
+} from '@shared/api/subscriptionApi';
 
-const ENTITLEMENT_ID = 'pro';
-
-/** Flag set by App.tsx after successful Purchases.configure() */
-let purchasesConfigured = false;
-export function markPurchasesConfigured() { purchasesConfigured = true; }
-export function isPurchasesConfigured() { return purchasesConfigured; }
-const CACHE_TTL_MS = 30 * 24 * 60 * 60 * 1000; // 30 days
+const CACHE_TTL_MS = 24 * 60 * 60 * 1000; // 24 hours
 const CACHE_TIMESTAMP_KEY = 'subscriptionCachedAt';
 
 interface SubscriptionStore {
   isPro: boolean;
   isLoading: boolean;
-  isLoadingOfferings: boolean;
-  offerings: PurchasesOffering | null;
+  expiresAt: string | null;
+  plan: SubscriptionPlan | null;
   loadStatus: () => Promise<void>;
-  loadOfferings: () => Promise<void>;
-  purchase: (pkg: PurchasesPackage) => Promise<boolean>;
-  restore: () => Promise<boolean>;
+  openPayment: (plan: SubscriptionPlan) => void;
+  checkAfterPayment: () => Promise<boolean>;
+  refreshStatus: () => Promise<void>;
 }
 
-function checkPro(info: CustomerInfo): boolean {
-  return typeof info.entitlements.active[ENTITLEMENT_ID] !== 'undefined';
-}
-
-function getCachedPro(): boolean {
+function getCachedStatus(): { isPro: boolean; expiresAt: string | null; plan: SubscriptionPlan | null } {
   try {
-    const cached = storage.getBoolean(StorageKeys.SUBSCRIPTION_CACHED_PRO) ?? false;
-    if (!cached) return false;
-    // If cache is stale (>30 days), don't trust it
     const cachedAt = storage.getNumber(CACHE_TIMESTAMP_KEY) ?? 0;
-    if (Date.now() - cachedAt > CACHE_TTL_MS) return false;
-    return true;
+    if (Date.now() - cachedAt > CACHE_TTL_MS) {
+      return { isPro: false, expiresAt: null, plan: null };
+    }
+    const isPro = storage.getBoolean(StorageKeys.SUBSCRIPTION_CACHED_PRO) ?? false;
+    const expiresAt = storage.getString(StorageKeys.SUBSCRIPTION_EXPIRES_AT) ?? null;
+    const plan = (storage.getString('subscriptionPlan') as SubscriptionPlan) ?? null;
+    return { isPro, expiresAt, plan };
   } catch {
-    // MMKV not yet initialized (module-level evaluation before initStorage)
-    return false;
+    return { isPro: false, expiresAt: null, plan: null };
   }
 }
 
-function setCachedPro(isPro: boolean): void {
+function setCachedStatus(isPro: boolean, expiresAt: string | null, plan: SubscriptionPlan | null): void {
   storage.set(StorageKeys.SUBSCRIPTION_CACHED_PRO, isPro);
   storage.set(CACHE_TIMESTAMP_KEY, Date.now());
+  if (expiresAt) storage.set(StorageKeys.SUBSCRIPTION_EXPIRES_AT, expiresAt);
+  if (plan) storage.set('subscriptionPlan', plan);
 }
 
+const cached = getCachedStatus();
+
 export const useSubscriptionStore = create<SubscriptionStore>((set) => ({
-  isPro: getCachedPro(),
+  isPro: cached.isPro,
   isLoading: false,
-  isLoadingOfferings: false,
-  offerings: null,
+  expiresAt: cached.expiresAt,
+  plan: cached.plan,
 
   loadStatus: async () => {
-    if (!purchasesConfigured) { set({ isLoading: false }); return; }
+    if (!isBackendConfigured()) {
+      set({ isLoading: false });
+      return;
+    }
     set({ isLoading: true });
     try {
-      const info = await Purchases.getCustomerInfo();
-      const isPro = checkPro(info);
-      setCachedPro(isPro);
-      set({ isPro, isLoading: false });
+      const status = await checkSubscription();
+      setCachedStatus(status.isPro, status.expiresAt, status.plan);
+      set({ isPro: status.isPro, expiresAt: status.expiresAt, plan: status.plan, isLoading: false });
     } catch (e) {
-      console.error('Failed to load subscription status:', e);
-      // On failure, if cache is stale, default to false
-      set({ isPro: getCachedPro(), isLoading: false });
+      console.error('Failed to check subscription:', e);
+      const fallback = getCachedStatus();
+      set({ isPro: fallback.isPro, expiresAt: fallback.expiresAt, plan: fallback.plan, isLoading: false });
     }
   },
 
-  loadOfferings: async () => {
-    if (!purchasesConfigured) { set({ isLoadingOfferings: false }); return; }
-    set({ isLoadingOfferings: true });
-    try {
-      const offerings = await Purchases.getOfferings();
-      set({ offerings: offerings.current, isLoadingOfferings: false });
-    } catch (e) {
-      console.error('Failed to load offerings:', e);
-      set({ isLoadingOfferings: false });
-    }
+  openPayment: (plan: SubscriptionPlan) => {
+    openPaymentPage(plan);
   },
 
-  purchase: async (pkg: PurchasesPackage) => {
-    if (!purchasesConfigured) return false;
+  checkAfterPayment: async () => {
+    set({ isLoading: true });
     try {
-      const { customerInfo } = await Purchases.purchasePackage(pkg);
-      const isPro = checkPro(customerInfo);
-      setCachedPro(isPro);
-      set({ isPro });
-      return isPro;
-    } catch (e: unknown) {
-      if (!(e instanceof Object && 'userCancelled' in e && e.userCancelled)) {
-        console.error('Purchase error:', e);
-      }
+      const status = await pollSubscriptionAfterPayment();
+      setCachedStatus(status.isPro, status.expiresAt, status.plan);
+      set({ isPro: status.isPro, expiresAt: status.expiresAt, plan: status.plan, isLoading: false });
+      return status.isPro;
+    } catch {
+      set({ isLoading: false });
       return false;
     }
   },
 
-  restore: async () => {
-    if (!purchasesConfigured) return false;
+  refreshStatus: async () => {
+    if (!isBackendConfigured()) return;
     try {
-      const info = await Purchases.restorePurchases();
-      const isPro = checkPro(info);
-      setCachedPro(isPro);
-      set({ isPro });
-      return isPro;
-    } catch (e) {
-      console.error('Restore error:', e);
-      return false;
+      const status = await checkSubscription();
+      setCachedStatus(status.isPro, status.expiresAt, status.plan);
+      set({ isPro: status.isPro, expiresAt: status.expiresAt, plan: status.plan });
+    } catch {
+      // silent
     }
   },
 }));
+
+/**
+ * Returns true if the backend (Supabase) is configured.
+ * When not configured, useSubscription grants all features (dev/bypass mode).
+ */
+export { isBackendConfigured } from '@shared/api/subscriptionApi';

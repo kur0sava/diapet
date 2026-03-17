@@ -115,7 +115,7 @@ export default function LogInjectionScreen() {
     try {
       const lastInj = await injectionRepository.findLatest(activePet.id);
       if (lastInj) {
-        const minutesSince = differenceInMinutes(new Date(), new Date(lastInj.administeredAt));
+        const minutesSince = differenceInMinutes(administeredAt, new Date(lastInj.administeredAt));
         if (minutesSince < 360) { // 6 hours
           const hours = Math.floor(minutesSince / 60);
           const mins = minutesSince % 60;
@@ -237,7 +237,11 @@ export default function LogInjectionScreen() {
               mode="time"
               onChange={(_, date) => {
                 setShowTimePicker(false);
-                if (date) setAdministeredAt(date);
+                if (date) {
+                  const merged = new Date(administeredAt);
+                  merged.setHours(date.getHours(), date.getMinutes(), date.getSeconds());
+                  setAdministeredAt(merged);
+                }
               }}
             />
           )}

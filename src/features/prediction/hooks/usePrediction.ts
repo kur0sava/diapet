@@ -51,12 +51,12 @@ export function usePrediction(): UsePredictionReturn {
 
   const requestNewPrediction = useCallback(async () => {
     if (!activePet || !petId) {
-      setError('No active pet');
+      setError(t('prediction.errorGeneral'));
       return;
     }
 
     if (!canRequestPrediction(petId)) {
-      setError('Rate limited — try again later');
+      setError(t('prediction.rateLimited'));
       return;
     }
 

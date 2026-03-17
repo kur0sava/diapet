@@ -202,7 +202,11 @@ export default function LogFeedingScreen() {
               mode="time"
               onChange={(_, date) => {
                 setShowTimePicker(false);
-                if (date) setFedAt(date);
+                if (date) {
+                  const merged = new Date(fedAt);
+                  merged.setHours(date.getHours(), date.getMinutes(), date.getSeconds());
+                  setFedAt(merged);
+                }
               }}
             />
           )}

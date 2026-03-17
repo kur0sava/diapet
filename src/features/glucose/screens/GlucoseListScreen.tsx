@@ -274,7 +274,7 @@ export default function GlucoseListScreen() {
                 )}
               </View>
               <View style={{ alignItems: 'center', gap: 8 }}>
-                <TouchableOpacity onPress={() => handleDelete(item.id)} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
+                <TouchableOpacity onPress={() => handleDelete(item.id)} hitSlop={{ top: 13, bottom: 13, left: 13, right: 13 }}>
                   <Ionicons name="trash-outline" size={18} color={theme.colors.danger} />
                 </TouchableOpacity>
                 <Ionicons name="chevron-forward" size={16} color={theme.colors.textTertiary} />
@@ -580,8 +580,8 @@ const styles = StyleSheet.create({
   readingValue: { fontSize: 20, fontWeight: '700' },
   readingTime: { fontSize: 13, marginTop: 2 },
   readingInsulin: { fontSize: 12, marginTop: 4 },
-  fab: { position: 'absolute', bottom: 24, right: 20, width: 56, height: 56, borderRadius: 28, alignItems: 'center', justifyContent: 'center' },
-  fabExport: { position: 'absolute', bottom: 90, right: 20, width: 48, height: 48, borderRadius: 24, alignItems: 'center', justifyContent: 'center', elevation: 4, shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.15, shadowRadius: 3, borderWidth: 1.5 },
+  fab: { position: 'absolute', bottom: 32, right: 20, width: 56, height: 56, borderRadius: 28, alignItems: 'center', justifyContent: 'center' },
+  fabExport: { position: 'absolute', bottom: 104, right: 20, width: 48, height: 48, borderRadius: 24, alignItems: 'center', justifyContent: 'center', elevation: 4, shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.15, shadowRadius: 3, borderWidth: 1.5 },
   loadingFooter: { paddingVertical: 16 },
   historyBanner: { flexDirection: 'row', alignItems: 'center', gap: 8, padding: 14, borderRadius: 12, borderWidth: 1, marginTop: 8 },
   historyBannerText: { flex: 1, fontSize: 13, fontWeight: '600' },

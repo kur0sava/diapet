@@ -13,6 +13,7 @@ import Animated, { FadeInDown } from 'react-native-reanimated';
 import { useOnboardingNavigation } from '@navigation/hooks';
 import { useTranslation } from 'react-i18next';
 import { changeLanguage } from '@shared/i18n';
+import { storage, StorageKeys } from '@storage/mmkv/storage';
 import { useTheme } from '@shared/theme';
 import { Button } from '@shared/components/ui';
 
@@ -25,7 +26,9 @@ export default function LanguageScreen() {
   const navigation = useOnboardingNavigation();
   const { t } = useTranslation();
   const { theme } = useTheme();
-  const [selected, setSelected] = useState<'ru' | 'en'>('ru');
+  const [selected, setSelected] = useState<'ru' | 'en'>(
+    storage.getString(StorageKeys.LANGUAGE) === 'en' ? 'en' : 'ru'
+  );
 
   const handleContinue = () => {
     changeLanguage(selected);

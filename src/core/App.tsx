@@ -1,7 +1,7 @@
 import 'react-native-gesture-handler';
 import React, { useEffect, useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { ActivityIndicator, View, Text, StyleSheet } from 'react-native';
+import { ActivityIndicator, View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ThemeProvider, useTheme } from '@shared/theme';
 import { ErrorBoundary } from '@shared/components/ErrorBoundary';
@@ -22,8 +22,8 @@ import {
   Inter_700Bold,
 } from '@expo-google-fonts/inter';
 import * as SplashScreen from 'expo-splash-screen';
-import Purchases from 'react-native-purchases';
-import { useSubscriptionStore, markPurchasesConfigured } from '@shared/stores/subscriptionStore';
+import { useSubscriptionStore } from '@shared/stores/subscriptionStore';
+import { getDeviceId } from '@shared/utils/deviceId';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -81,19 +81,9 @@ export default function App() {
         if (storage.getBoolean(StorageKeys.ONBOARDING_COMPLETE) && !storage.getString(StorageKeys.HINTS_REGISTRATION_DATE)) {
           storage.set(StorageKeys.HINTS_REGISTRATION_DATE, new Date().toISOString());
         }
-        // Init RevenueCat — replace the key below with your real RevenueCat API key
-        const REVENUECAT_API_KEY = 'YOUR_REVENUECAT_API_KEY';
-        try {
-          if (!REVENUECAT_API_KEY.startsWith('YOUR_')) {
-            Purchases.configure({ apiKey: REVENUECAT_API_KEY });
-            markPurchasesConfigured();
-            useSubscriptionStore.getState().loadStatus();
-          } else {
-            console.warn('RevenueCat: placeholder API key — subscription features disabled. Replace REVENUECAT_API_KEY in App.tsx.');
-          }
-        } catch (e) {
-          console.error('RevenueCat init failed:', e);
-        }
+        // Init device ID + check subscription status via Supabase
+        getDeviceId();
+        useSubscriptionStore.getState().loadStatus();
         setReady(true);
       })
       .catch((err) => {
@@ -121,9 +111,15 @@ export default function App() {
   if (storageError) {
     return (
       <View style={styles.loading}>
-        <Text style={{ textAlign: 'center', padding: 24, fontSize: 16 }}>
-          {'Failed to initialize secure storage.\nPlease restart the app.'}
+        <Text style={{ textAlign: 'center', padding: 24, fontSize: 16, color: '#333' }}>
+          {'Ошибка инициализации хранилища.\nStorage initialization failed.'}
         </Text>
+        <TouchableOpacity
+          style={{ marginTop: 16, backgroundColor: '#D42020', paddingHorizontal: 24, paddingVertical: 12, borderRadius: 8 }}
+          onPress={() => { setStorageError(false); initStorage().then(() => setReady(true)).catch(() => setStorageError(true)); }}
+        >
+          <Text style={{ color: '#fff', fontWeight: '600', fontSize: 15 }}>{'Повторить / Retry'}</Text>
+        </TouchableOpacity>
       </View>
     );
   }

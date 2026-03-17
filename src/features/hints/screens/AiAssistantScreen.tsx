@@ -19,7 +19,7 @@ import { useTheme } from '@shared/theme';
 import { useMoreNavigation, useRootNavigation } from '@navigation/hooks';
 import { useSubscription } from '@features/subscription/hooks/useSubscription';
 import { usePetStore } from '@shared/stores/petStore';
-import { storageUtils } from '@storage/mmkv/storage';
+import { storage, StorageKeys, storageUtils } from '@storage/mmkv/storage';
 import { glucoseRepository, injectionRepository, scheduleRepository } from '@storage/database';
 import { buildAiSystemPrompt, AiPetContext } from '../data/aiSystemPrompt';
 import { sendChatMessage, ChatMessage } from '../utils/aiClient';
@@ -27,6 +27,30 @@ import { differenceInDays } from 'date-fns';
 import { parseDateOnly } from '@shared/utils/dateUtils';
 
 const MAX_HISTORY = 50;
+const DAILY_MESSAGE_LIMIT = 20;
+
+function getDailyChatCount(): number {
+  const today = new Date().toISOString().slice(0, 10);
+  const storedDate = storage.getString(StorageKeys.AI_CHAT_DAILY_DATE);
+  if (storedDate !== today) return 0;
+  return storage.getNumber(StorageKeys.AI_CHAT_DAILY_COUNT) ?? 0;
+}
+
+function incrementDailyChatCount(): void {
+  const today = new Date().toISOString().slice(0, 10);
+  const storedDate = storage.getString(StorageKeys.AI_CHAT_DAILY_DATE);
+  if (storedDate !== today) {
+    storage.set(StorageKeys.AI_CHAT_DAILY_DATE, today);
+    storage.set(StorageKeys.AI_CHAT_DAILY_COUNT, 1);
+  } else {
+    const count = storage.getNumber(StorageKeys.AI_CHAT_DAILY_COUNT) ?? 0;
+    storage.set(StorageKeys.AI_CHAT_DAILY_COUNT, count + 1);
+  }
+}
+
+function getRemainingMessages(): number {
+  return Math.max(0, DAILY_MESSAGE_LIMIT - getDailyChatCount());
+}
 
 export default function AiAssistantScreen() {
   const navigation = useMoreNavigation();
@@ -139,9 +163,21 @@ export default function AiAssistantScreen() {
     updateMessages(prev => [...prev, errorMsg]);
   }, [updateMessages]);
 
+  const [remaining, setRemaining] = useState(getRemainingMessages());
+
   const handleSend = useCallback(async () => {
     const text = inputText.trim();
     if (!text || isLoading) return;
+
+    // Daily message limit
+    if (getDailyChatCount() >= DAILY_MESSAGE_LIMIT) {
+      appendErrorMessage(
+        i18n.language?.startsWith('en')
+          ? `Daily limit reached (${DAILY_MESSAGE_LIMIT} messages). Try again tomorrow.`
+          : `Дневной лимит исчерпан (${DAILY_MESSAGE_LIMIT} сообщений). Попробуйте завтра.`,
+      );
+      return;
+    }
 
     const userMsg: ChatMessage = { role: 'user', content: text };
     setInputText('');
@@ -152,6 +188,8 @@ export default function AiAssistantScreen() {
       // messagesRef holds current messages synchronously after the update
       const history = [...messagesRef.current];
       const response = await sendChatMessage(systemPrompt, history);
+      incrementDailyChatCount();
+      setRemaining(getRemainingMessages());
 
       const assistantMsg: ChatMessage = { role: 'assistant', content: response };
       updateMessages(prev => [...prev, assistantMsg]);
@@ -278,10 +316,15 @@ export default function AiAssistantScreen() {
             </View>
           )}
 
-          {/* Disclaimer */}
-          <Text style={[styles.disclaimer, { color: theme.colors.textTertiary }]}>
-            {t('hints.aiDisclaimer')}
-          </Text>
+          {/* Disclaimer + message counter */}
+          <View style={styles.disclaimerRow}>
+            <Text style={[styles.disclaimer, { color: theme.colors.textTertiary, flex: 1 }]}>
+              {t('hints.aiDisclaimer')}
+            </Text>
+            <Text style={[styles.counterText, { color: remaining <= 3 ? theme.colors.danger : theme.colors.textTertiary }]}>
+              {remaining}/{DAILY_MESSAGE_LIMIT}
+            </Text>
+          </View>
 
           {/* Input row */}
           <View style={[styles.inputRow, { backgroundColor: theme.colors.surface, borderTopColor: theme.colors.border }]}>
@@ -458,12 +501,21 @@ const styles = StyleSheet.create({
   },
 
   // Disclaimer
-  disclaimer: {
-    fontSize: 11,
-    textAlign: 'center',
+  disclaimerRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
     paddingHorizontal: 20,
     paddingTop: 4,
     paddingBottom: 6,
+  },
+  disclaimer: {
+    fontSize: 11,
+    textAlign: 'center',
+  },
+  counterText: {
+    fontSize: 11,
+    fontWeight: '600',
+    marginLeft: 8,
   },
 
   // Input

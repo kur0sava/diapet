@@ -282,7 +282,7 @@
 - [x] cancelScheduleNotifications (preserves hint pushes)
 - [x] presetDate for all log screens from DailyDiary
 - [x] AI prompt thresholds aligned with app domain types
-- [x] Paywall bypass when RevenueCat not configured
+- [x] Paywall bypass when backend not configured
 - [x] SOS button enlarged (48px, accessible)
 - [x] Glucose delete in transaction (FK safety)
 - [x] FlatList keyExtractor fix
@@ -300,17 +300,36 @@
 
 ### #0 — Re-run аудит агентов (незавершённые)
 - [ ] Code Auditor round 2 (phase 6) — полный re-run, фокус на изменённых файлах
-- [ ] UX Scenario Tester (phase 7) — полный re-run, все пользовательские сценарии
+- [x] UX Scenario Tester (phase 7) — 18 багов найдено, 7 HIGH+MEDIUM исправлены
 - [ ] Исправить найденные CRITICAL/HIGH баги
 
 ### #1 — EAS Build
 - [ ] Запустить: `eas build --platform android --profile production --non-interactive`
 - [ ] Скачать AAB → загрузить в Google Play Console (закрытое тестирование)
 
-### #2 — RevenueCat (подписки)
-- [ ] Google Play Console → создать подписки: `diapet_pro_monthly`, `diapet_pro_yearly`
-- [ ] RevenueCat → проект DiaPet, Entitlement `pro`, Offering с продуктами
-- [ ] `src/core/App.tsx` → заменить `YOUR_REVENUECAT_API_KEY`
+### #2 — Prodamus + Supabase (подписки)
+
+**Архитектура**: Prodamus (платёжный провайдер, РФ) → webhook → Supabase Edge Function → PostgreSQL
+**Причина**: Google Play не выводит деньги в РФ; Prodamus принимает Visa/MC/Мир/СБП, выплачивает на ИП/самозанятость
+
+**Код уже готов (заглушки):**
+- [x] `src/shared/utils/deviceId.ts` — UUID привязка устройства
+- [x] `src/shared/api/subscriptionApi.ts` — API клиент (Supabase + Prodamus)
+- [x] `src/shared/stores/subscriptionStore.ts` — rewrite без RevenueCat
+- [x] `src/features/subscription/hooks/useSubscription.ts` — bypass при !isBackendConfigured()
+- [x] `src/features/subscription/screens/PaywallScreen.tsx` — web paywall flow
+- [x] `src/core/App.tsx` — убран RevenueCat, deviceId + loadStatus
+- [x] `app.config.ts` — supabaseUrl, supabaseAnonKey, prodamusShopUrl
+- [x] `.env` / `.env.example` — обновлены переменные
+- [x] `react-native-purchases` — удалён из package.json
+
+**Осталось (внешние сервисы):**
+- [ ] Зарегать Prodamus (ИП/самозанятость) → создать магазин → 2 товара (monthly/yearly)
+- [ ] Зарегать Supabase → создать проект → таблица `subscriptions`
+- [ ] Supabase Edge Function: `check-subscription` (GET, по device_id)
+- [ ] Supabase Edge Function: `prodamus-webhook` (POST, верифицирует подпись, записывает)
+- [ ] Заполнить `.env`: SUPABASE_URL, SUPABASE_ANON_KEY, PRODAMUS_SHOP_URL
+- [ ] Протестировать полный флоу: оплата → webhook → проверка статуса
 
 ### #3 — AdMob (реклама)
 - [ ] Google AdMob → создать приложение, получить App ID → `app.json` androidAppId
@@ -389,6 +408,15 @@
 - [x] Walkthrough paths verified (Dashboard + More)
 - [x] PaywallScreen shows 8 features
 - [x] Both locales have all keys
+
+### Post-implementation fixes ✅
+- [x] Pro-gate on AdvancedAnalyticsScreen (useEffect redirect to Paywall)
+- [x] DisclaimerBanner dark mode colors (theme.isDark conditional)
+- [x] Raw API errors → localized user-friendly strings (3 error types)
+- [x] Unused Rect import removed from PredictionChart
+- [x] API key security: .env → app.config.ts → Constants.expoConfig (dotenv)
+- [x] Real key removed from git-tracked app.json
+- [x] dotenv installed as devDependency
 
 ---
 

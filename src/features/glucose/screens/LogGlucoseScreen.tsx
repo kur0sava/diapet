@@ -331,7 +331,11 @@ export default function LogGlucoseScreen() {
               mode="time"
               onChange={(_, date) => {
                 setShowTimePicker(false);
-                if (date) setRecordedAt(date);
+                if (date) {
+                  const merged = new Date(recordedAt);
+                  merged.setHours(date.getHours(), date.getMinutes(), date.getSeconds());
+                  setRecordedAt(merged);
+                }
               }}
             />
           )}

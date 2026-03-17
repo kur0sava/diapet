@@ -1,12 +1,11 @@
-import { useSubscriptionStore } from '@shared/stores/subscriptionStore';
-import { isPurchasesConfigured } from '@shared/stores/subscriptionStore';
+import { useSubscriptionStore, isBackendConfigured } from '@shared/stores/subscriptionStore';
 
 export function useSubscription() {
   const isPro = useSubscriptionStore(s => s.isPro);
 
-  // If RevenueCat is not configured (placeholder key), grant all features
-  // so users are not blocked by a broken paywall.
-  const effectivePro = isPro || !isPurchasesConfigured();
+  // If backend is not configured (no Supabase URL), grant all features
+  // so users are not blocked by a broken paywall during development.
+  const effectivePro = isPro || !isBackendConfigured();
 
   return {
     isPro: effectivePro,

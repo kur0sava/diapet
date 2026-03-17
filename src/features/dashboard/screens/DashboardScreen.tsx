@@ -26,6 +26,7 @@ import { getGlucoseColor } from '@storage/domain/types';
 import { Ionicons } from '@expo/vector-icons';
 import { usePetStore } from '@shared/stores/petStore';
 import { useSubscription } from '@features/subscription/hooks/useSubscription';
+import { useFocusEffect } from '@react-navigation/native';
 import { BannerAd, BannerAdSize, TestIds } from 'react-native-google-mobile-ads';
 
 const ADMOB_BANNER_ID_RAW = __DEV__
@@ -111,6 +112,13 @@ export default function DashboardScreen() {
   });
 
   const [refreshing, setRefreshing] = React.useState(false);
+
+  // Refetch data when tab gains focus
+  useFocusEffect(useCallback(() => {
+    refetchGlucose();
+    refetchHistory();
+    refetchLastInjection();
+  }, [refetchGlucose, refetchHistory, refetchLastInjection]));
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true);

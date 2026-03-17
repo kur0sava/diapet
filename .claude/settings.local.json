@@ -40,7 +40,15 @@
       "Bash(grep:*)",
       "Bash(npx depcheck:*)",
       "Bash(xargs wc:*)",
-      "Bash(git:*)"
+      "Bash(git:*)",
+      "Bash(npx eas build --platform android --profile production --non-interactive 2>&1 | head -50)",
+      "Bash(npx eas build:view 96f87ed7-0775-4e49-b015-ef536673f344 2>&1 | head -30)",
+      "Bash(ANDROID_SERIAL=111615546K006735 npx expo run:android 2>&1)",
+      "Bash(grep -n \"useUnsavedChangesGuard\" /c/Users/Admin/DIAPET/src/features/glucose/screens/LogFeedingScreen.tsx 2>/dev/null || find /c/Users/Admin/DIAPET/src -name \"*Feed*Screen*\" | head -5)",
+      "Bash(ANDROID_SERIAL=111615546K006735 eas build --platform android --profile production --non-interactive 2>&1)",
+      "Bash(python3 -c \"from PIL import Image; print\\('PIL available'\\)\" 2>/dev/null || python -c \"from PIL import Image; print\\('PIL available'\\)\" 2>/dev/null || pip install Pillow 2>&1 | tail -3)",
+      "Bash(pip3 install:*)",
+      "Bash(py -m pip install Pillow 2>&1 | tail -5)"
     ]
   }
 }

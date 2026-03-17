@@ -29,9 +29,12 @@ export default function ScheduleScreen() {
   const [showPicker, setShowPicker] = useState<{ type: 'injection' | 'feeding'; index: number } | null>(null);
 
   const addTime = (type: 'injection' | 'feeding') => {
+    const MAX_TIMES = 8;
     if (type === 'injection') {
+      if (injectionTimes.length >= MAX_TIMES) return;
       setInjectionTimes([...injectionTimes, '12:00']);
     } else {
+      if (feedingTimes.length >= MAX_TIMES) return;
       setFeedingTimes([...feedingTimes, '12:00']);
     }
   };

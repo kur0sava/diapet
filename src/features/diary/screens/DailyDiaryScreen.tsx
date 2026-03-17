@@ -206,7 +206,7 @@ export default function DailyDiaryScreen() {
 
       {/* Date Navigator */}
       <View style={[styles.dateNav, { backgroundColor: theme.colors.surface, borderBottomColor: theme.colors.divider }]}>
-        <TouchableOpacity onPress={goToPrevDay} style={[styles.dateNavBtn, !canGoPrev && styles.dateNavBtnDisabled]} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
+        <TouchableOpacity onPress={goToPrevDay} disabled={!canGoPrev} style={[styles.dateNavBtn, !canGoPrev && styles.dateNavBtnDisabled]} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
           <Ionicons name="chevron-back" size={20} color={canGoPrev ? theme.colors.primary : theme.colors.textTertiary} />
         </TouchableOpacity>
         <TouchableOpacity

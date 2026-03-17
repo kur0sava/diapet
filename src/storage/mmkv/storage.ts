@@ -111,4 +111,8 @@ export const StorageKeys = {
   PREDICTION_LAST_REQUEST: 'predictionLastRequest',
   REMISSION_CACHE: 'remissionCache',
   REMISSION_LAST_REQUEST: 'remissionLastRequest',
+  AI_CHAT_DAILY_COUNT: 'aiChatDailyCount',
+  AI_CHAT_DAILY_DATE: 'aiChatDailyDate',
+  DEVICE_ID: 'deviceId',
+  SUBSCRIPTION_EXPIRES_AT: 'subscriptionExpiresAt',
 } as const;

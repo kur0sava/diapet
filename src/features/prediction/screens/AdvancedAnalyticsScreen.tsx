@@ -2,10 +2,10 @@
  * Advanced Analytics screen — AI glucose prediction, checklist, remission report.
  * Pro-gated: free users see paywall prompt.
  */
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   View, Text, StyleSheet, ScrollView,
-  TouchableOpacity, ActivityIndicator, RefreshControl,
+  TouchableOpacity, ActivityIndicator, RefreshControl, AppState,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
@@ -21,6 +21,7 @@ import { useSubscription } from '@features/subscription/hooks/useSubscription';
 import { useRootNavigation } from '@navigation/hooks';
 
 import { usePrediction } from '../hooks/usePrediction';
+import { timeUntilNextPrediction } from '../data/predictionStorage';
 import { PredictionChart } from '../components/PredictionChart';
 import { ChecklistCard } from '../components/ChecklistCard';
 import { RemissionCard } from '../components/RemissionCard';
@@ -32,13 +33,14 @@ export default function AdvancedAnalyticsScreen() {
   const { t } = useTranslation();
   const { theme } = useTheme();
   const activePet = usePetStore(s => s.activePet);
+  const petId = activePet?.id;
   const { canAccessAdvanced } = useSubscription();
 
   // Pro-gate: redirect free users to paywall
   useEffect(() => {
     if (!canAccessAdvanced()) {
       rootNav.navigate('Paywall');
-      navigation.goBack();
+      if (navigation.canGoBack()) navigation.goBack();
     }
   }, [canAccessAdvanced, rootNav, navigation]);
 
@@ -66,7 +68,7 @@ export default function AdvancedAnalyticsScreen() {
     return `${hours}${t('prediction.hours')} ${minutes}${t('prediction.minutes')}`;
   }, [t]);
 
-  // Countdown state for rate limit display
+  // Countdown state for rate limit display — recalculates on app resume
   const [countdown, setCountdown] = useState(nextAvailableIn);
   useEffect(() => {
     setCountdown(nextAvailableIn);
@@ -74,8 +76,13 @@ export default function AdvancedAnalyticsScreen() {
     const interval = setInterval(() => {
       setCountdown(prev => Math.max(0, prev - 60_000));
     }, 60_000);
-    return () => clearInterval(interval);
-  }, [nextAvailableIn]);
+    const sub = AppState.addEventListener('change', (state) => {
+      if (state === 'active' && petId) {
+        setCountdown(timeUntilNextPrediction(petId));
+      }
+    });
+    return () => { clearInterval(interval); sub.remove(); };
+  }, [nextAvailableIn, petId]);
 
   const hasPrediction = prediction && prediction.status !== 'error';
   const isInsufficientData = prediction?.status === 'insufficient_data';

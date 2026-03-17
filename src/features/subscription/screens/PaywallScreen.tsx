@@ -1,7 +1,7 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View, Text, StyleSheet, ScrollView,
-  TouchableOpacity, Alert, ActivityIndicator, Linking,
+  TouchableOpacity, Alert, ActivityIndicator, Linking, AppState,
 } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
@@ -9,9 +9,11 @@ import type { IoniconName } from '@shared/components/ui';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useTheme } from '@shared/theme';
 import { useTranslation } from 'react-i18next';
-import { useSubscriptionStore } from '@shared/stores/subscriptionStore';
+import { useSubscriptionStore, isBackendConfigured } from '@shared/stores/subscriptionStore';
 import { useNavigation } from '@react-navigation/native';
+import { PLANS, SubscriptionPlan } from '@shared/api/subscriptionApi';
 import * as Haptics from 'expo-haptics';
+import i18n from 'i18next';
 
 const PRIVACY_URL = 'https://kur0sava.github.io/diapet/assets/privacy-policy.html';
 const TERMS_URL = 'https://kur0sava.github.io/diapet/assets/terms-of-service.html';
@@ -27,64 +29,63 @@ const FEATURES: { icon: IoniconName; titleKey: string; descKey: string }[] = [
   { icon: 'ban', titleKey: 'subscription.features.noAds', descKey: 'subscription.features.noAdsDesc' },
 ];
 
+function getPriceDisplay(plan: SubscriptionPlan): string {
+  const isRu = i18n.language?.startsWith('ru');
+  return isRu ? PLANS[plan].priceDisplay : PLANS[plan].priceDisplayEn;
+}
+
 export default function PaywallScreen() {
   const navigation = useNavigation();
   const { t } = useTranslation();
   const { theme } = useTheme();
   const insets = useSafeAreaInsets();
-  const { offerings, loadOfferings, purchase, restore, isLoadingOfferings } = useSubscriptionStore();
-  const [selectedPlan, setSelectedPlan] = useState<'monthly' | 'yearly'>('yearly');
-  const [purchasing, setPurchasing] = useState(false);
+  const { openPayment, checkAfterPayment, refreshStatus, isLoading } = useSubscriptionStore();
+  const [selectedPlan, setSelectedPlan] = useState<SubscriptionPlan>('yearly');
+  const [waitingForPayment, setWaitingForPayment] = useState(false);
 
-  const loadOfferingsIfNeeded = useCallback(() => {
-    if (!offerings) loadOfferings();
-  }, [offerings, loadOfferings]);
-
+  // After user returns from browser, check payment status
   useEffect(() => {
-    loadOfferingsIfNeeded();
-  }, [loadOfferingsIfNeeded]);
+    if (!waitingForPayment) return;
+    const sub = AppState.addEventListener('change', async (state) => {
+      if (state === 'active' && waitingForPayment) {
+        setWaitingForPayment(false);
+        const success = await checkAfterPayment();
+        if (success) {
+          Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+          Alert.alert(t('common.success'), t('subscription.purchaseSuccess'));
+          navigation.goBack();
+        }
+      }
+    });
+    return () => sub.remove();
+  }, [waitingForPayment, checkAfterPayment, navigation, t]);
 
-  const monthlyPkg = offerings?.monthly;
-  const yearlyPkg = offerings?.annual;
-  const hasOfferings = !!monthlyPkg || !!yearlyPkg;
-
-  const handlePurchase = async () => {
-    const pkg = selectedPlan === 'yearly' ? yearlyPkg : monthlyPkg;
-    if (!pkg) {
-      Alert.alert(t('common.error'), t('subscription.purchaseError'));
+  const handlePurchase = () => {
+    if (!isBackendConfigured()) {
+      Alert.alert(t('common.error'), t('subscription.notAvailable'));
       return;
     }
-    setPurchasing(true);
-    const success = await purchase(pkg);
-    setPurchasing(false);
-    if (success) {
-      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-      navigation.goBack();
-    }
+    setWaitingForPayment(true);
+    openPayment(selectedPlan);
   };
 
-  const handleRestore = async () => {
-    setPurchasing(true);
-    const success = await restore();
-    setPurchasing(false);
-    if (success) {
+  const handleRefresh = async () => {
+    await refreshStatus();
+    const { isPro } = useSubscriptionStore.getState();
+    if (isPro) {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       Alert.alert(t('common.success'), t('subscription.restoreSuccess'));
       navigation.goBack();
     } else {
-      Alert.alert(t('common.error'), t('subscription.restoreEmpty'));
+      Alert.alert(t('common.info'), t('subscription.noActiveSubscription'));
     }
   };
 
-  // UX-034: Don't show hardcoded fallback prices — only show real prices from store
-  const monthlyPrice = monthlyPkg?.product?.priceString;
-  const yearlyPrice = yearlyPkg?.product?.priceString;
-
-  // UX-032: Subscribe button shows price
+  const monthlyPrice = getPriceDisplay('monthly');
+  const yearlyPrice = getPriceDisplay('yearly');
   const selectedPrice = selectedPlan === 'yearly' ? yearlyPrice : monthlyPrice;
-  const subscribeBtnText = selectedPrice
-    ? `${t('subscription.subscribe')} — ${selectedPrice}`
-    : t('subscription.subscribe');
+
+  const subscribeBtnText = `${t('subscription.subscribe')} — ${selectedPrice}`;
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.background }]}>
@@ -96,7 +97,7 @@ export default function PaywallScreen() {
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scroll}>
         {/* Hero */}
         <LinearGradient
-          colors={[...theme.gradients.headerRich] as [string, string, ...string[]]}
+          colors={[...(theme.isDark ? theme.gradients.headerRichDark : theme.gradients.headerRich)] as [string, string, ...string[]]}
           style={styles.hero}
         >
           <Ionicons name="star" size={48} color="#FFD700" />
@@ -128,11 +129,29 @@ export default function PaywallScreen() {
           ))}
         </View>
 
-        {/* Plan toggle — only show if offerings loaded */}
-        {hasOfferings ? (
-          <View style={styles.plans}>
-            {/* Yearly */}
-            {yearlyPkg && (
+        {/* Coming Soon / Plan selection */}
+        {!isBackendConfigured() ? (
+          <View style={styles.comingSoonBlock}>
+            <View style={[styles.comingSoonBadge, { backgroundColor: theme.colors.primary }]}>
+              <Ionicons name="time-outline" size={16} color="#fff" />
+              <Text style={[styles.comingSoonBadgeText, { fontFamily: theme.fonts.bold }]}>
+                {t('subscription.comingSoon')}
+              </Text>
+            </View>
+            <View style={[styles.comingSoonCard, { backgroundColor: theme.colors.surface }]}>
+              <Ionicons name="gift-outline" size={32} color={theme.colors.success} />
+              <Text style={[styles.comingSoonTitle, { color: theme.colors.success, fontFamily: theme.fonts.semibold }]}>
+                {t('subscription.allFeaturesUnlocked')}
+              </Text>
+              <Text style={[styles.comingSoonDesc, { color: theme.colors.textSecondary }]}>
+                {t('subscription.comingSoonDesc')}
+              </Text>
+            </View>
+          </View>
+        ) : (
+          <>
+            <View style={styles.plans}>
+              {/* Yearly */}
               <TouchableOpacity
                 style={[
                   styles.planCard,
@@ -149,17 +168,15 @@ export default function PaywallScreen() {
                     {t('subscription.yearly')}
                   </Text>
                   <View style={[styles.saveBadge, { backgroundColor: theme.colors.success }]}>
-                    <Text style={styles.saveText}>{t('subscription.yearlySaving', { percent: '30' })}</Text>
+                    <Text style={styles.saveText}>{t('subscription.yearlySaving', { percent: '29' })}</Text>
                   </View>
                 </View>
                 <Text style={[styles.planPrice, { color: theme.colors.text, fontFamily: theme.fonts.bold }]}>
                   {t('subscription.yearlyPrice', { price: yearlyPrice })}
                 </Text>
               </TouchableOpacity>
-            )}
 
-            {/* Monthly */}
-            {monthlyPkg && (
+              {/* Monthly */}
               <TouchableOpacity
                 style={[
                   styles.planCard,
@@ -178,67 +195,45 @@ export default function PaywallScreen() {
                   {t('subscription.monthlyPrice', { price: monthlyPrice })}
                 </Text>
               </TouchableOpacity>
-            )}
-          </View>
-        ) : isLoadingOfferings ? (
-          <View style={styles.loadingPrices}>
-            <ActivityIndicator size="small" color={theme.colors.primary} />
-            <Text style={[styles.loadingText, { color: theme.colors.textSecondary }]}>
-              {t('common.loading')}
+            </View>
+
+            {/* Subscribe button */}
+            <TouchableOpacity
+              style={[styles.subscribeBtn, { opacity: isLoading || waitingForPayment ? 0.7 : 1 }]}
+              onPress={handlePurchase}
+              disabled={isLoading || waitingForPayment}
+            >
+              <LinearGradient
+                colors={[...theme.gradients.primary] as [string, string]}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 0 }}
+                style={styles.subscribeBtnInner}
+              >
+                {isLoading || waitingForPayment ? (
+                  <ActivityIndicator color="#fff" />
+                ) : (
+                  <Text style={[styles.subscribeBtnText, { fontFamily: theme.fonts.bold }]}>
+                    {subscribeBtnText}
+                  </Text>
+                )}
+              </LinearGradient>
+            </TouchableOpacity>
+
+            {/* Disclosure */}
+            <Text style={[styles.autoRenewText, { color: theme.colors.textTertiary }]}>
+              {t('subscription.prodamusDisclosure')}
             </Text>
-          </View>
-        ) : (
-          <TouchableOpacity style={styles.loadingPrices} onPress={() => loadOfferings()}>
-            <Ionicons name="refresh-outline" size={20} color={theme.colors.primary} />
-            <Text style={[styles.loadingText, { color: theme.colors.primary }]}>
-              {t('subscription.retryLoading')}
-            </Text>
-          </TouchableOpacity>
+
+            {/* Check subscription status */}
+            <TouchableOpacity onPress={handleRefresh} disabled={isLoading} style={styles.restoreBtn}>
+              <Text style={[styles.restoreText, { color: theme.colors.textSecondary }]}>
+                {t('subscription.checkStatus')}
+              </Text>
+            </TouchableOpacity>
+          </>
         )}
 
-        {/* Trial badge */}
-        <View style={[styles.trialBadge, { backgroundColor: `${theme.colors.primary}10` }]}>
-          <Ionicons name="gift-outline" size={18} color={theme.colors.primary} />
-          <Text style={[styles.trialText, { color: theme.colors.primary, fontFamily: theme.fonts.semibold }]}>
-            {t('subscription.freeTrial')}
-          </Text>
-        </View>
-
-        {/* Subscribe button — UX-032: shows price */}
-        <TouchableOpacity
-          style={[styles.subscribeBtn, { opacity: purchasing || !hasOfferings ? 0.7 : 1 }]}
-          onPress={handlePurchase}
-          disabled={purchasing || !hasOfferings}
-        >
-          <LinearGradient
-            colors={[...theme.gradients.primary] as [string, string]}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 0 }}
-            style={styles.subscribeBtnInner}
-          >
-            {purchasing ? (
-              <ActivityIndicator color="#fff" />
-            ) : (
-              <Text style={[styles.subscribeBtnText, { fontFamily: theme.fonts.bold }]}>
-                {subscribeBtnText}
-              </Text>
-            )}
-          </LinearGradient>
-        </TouchableOpacity>
-
-        {/* UX-033: Auto-renew disclosure */}
-        <Text style={[styles.autoRenewText, { color: theme.colors.textTertiary }]}>
-          {t('subscription.autoRenewDisclosure', { price: selectedPrice ?? '' })}
-        </Text>
-
-        {/* Restore */}
-        <TouchableOpacity onPress={handleRestore} disabled={purchasing} style={styles.restoreBtn}>
-          <Text style={[styles.restoreText, { color: theme.colors.textSecondary }]}>
-            {t('subscription.restore')}
-          </Text>
-        </TouchableOpacity>
-
-        {/* UX-031: Legal — clickable links */}
+        {/* Legal */}
         <View style={styles.legal}>
           <View style={styles.legalRow}>
             <TouchableOpacity onPress={() => Linking.openURL(TERMS_URL)}>
@@ -279,10 +274,12 @@ const styles = StyleSheet.create({
   planPrice: { fontSize: 20, marginTop: 4 },
   saveBadge: { paddingHorizontal: 8, paddingVertical: 3, borderRadius: 8 },
   saveText: { color: '#fff', fontSize: 11, fontWeight: '700' },
-  loadingPrices: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, paddingVertical: 24 },
-  loadingText: { fontSize: 14 },
-  trialBadge: { flexDirection: 'row', alignItems: 'center', gap: 6, alignSelf: 'center', paddingHorizontal: 16, paddingVertical: 8, borderRadius: 20, marginTop: 20 },
-  trialText: { fontSize: 14 },
+  comingSoonBlock: { alignItems: 'center', paddingHorizontal: 20, gap: 12, marginBottom: 8 },
+  comingSoonBadge: { flexDirection: 'row', alignItems: 'center', gap: 6, paddingHorizontal: 16, paddingVertical: 8, borderRadius: 20 },
+  comingSoonBadgeText: { color: '#fff', fontSize: 14 },
+  comingSoonCard: { width: '100%', alignItems: 'center', padding: 24, borderRadius: 16, gap: 8 },
+  comingSoonTitle: { fontSize: 16, textAlign: 'center' },
+  comingSoonDesc: { fontSize: 13, textAlign: 'center', lineHeight: 18 },
   subscribeBtn: { marginHorizontal: 20, marginTop: 20, borderRadius: 28, overflow: 'hidden' },
   subscribeBtnInner: { paddingVertical: 16, alignItems: 'center' },
   subscribeBtnText: { color: '#fff', fontSize: 17 },

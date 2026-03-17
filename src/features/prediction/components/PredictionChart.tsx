@@ -27,6 +27,7 @@ export function PredictionChart({ actualData, predictions }: Props) {
   const CHART_WIDTH = screenWidth - 80 - Y_AXIS_WIDTH;
 
   if (actualData.length === 0 && predictions.length === 0) return null;
+  if (actualData.length === 0) return null; // Need actual data to anchor predictions
 
   // Combine all values for scale
   const actualValues = actualData.map(d => d.valueMmol);

@@ -5,7 +5,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
-import { useHomeNavigation } from '@navigation/hooks';
+import { useHomeNavigation, useRootNavigation } from '@navigation/hooks';
 import { useRoute, RouteProp } from '@react-navigation/native';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '@shared/theme';
@@ -38,6 +38,7 @@ const SEVERITY_OPTIONS: { value: SymptomSeverity; color: string; labelKey: strin
 
 export default function AddSymptomScreen() {
   const navigation = useHomeNavigation();
+  const rootNav = useRootNavigation();
   const route = useRoute<RouteProp<HomeStackParamList, 'AddSymptom'>>();
   const { t } = useTranslation();
   const { theme } = useTheme();
@@ -240,7 +241,7 @@ export default function AddSymptomScreen() {
               {severity === 'severe' && (
                 <TouchableOpacity
                   style={[styles.emergencyBtn, { backgroundColor: '#FF3B30' }]}
-                  onPress={() => navigation.navigate('Emergency' as never)}
+                  onPress={() => rootNav.navigate('Emergency')}
                 >
                   <Ionicons name="warning" size={16} color="#fff" style={{ marginRight: 6 }} />
                   <Text style={{ color: '#fff', fontWeight: '700', fontSize: 14 }}>{t('emergency.emergencyMode')}</Text>

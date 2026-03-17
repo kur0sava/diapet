@@ -26,11 +26,11 @@
 
 ### Шаг 2 — Ключи и конфигурация
 - [ ] `app.json` → `extra.anthropicApiKey` → реальный ключ (или серверный proxy URL)
-- [ ] `src/core/App.tsx` → `YOUR_REVENUECAT_API_KEY` → реальный ключ RevenueCat
+- [ ] Зарегать Prodamus → создать магазин → 2 товара (monthly 399₽, yearly 3390₽)
+- [ ] Зарегать Supabase → проект → таблица subscriptions + Edge Functions
+- [ ] `.env` → SUPABASE_URL, SUPABASE_ANON_KEY, PRODAMUS_SHOP_URL
 - [ ] `app.json` → `react-native-google-mobile-ads.android_app_id` → реальный AdMob ID
 - [ ] `DashboardScreen.tsx` → `ADMOB_BANNER_ID` → реальный Banner Ad Unit ID
-- [ ] Google Play Console → создать подписки `diapet_pro_monthly`, `diapet_pro_yearly`
-- [ ] RevenueCat Dashboard → проект DiaPet, Entitlement `pro`, Offering с продуктами
 
 ### Шаг 3 — Версия и билд
 - [ ] `package.json` version → `1.2.0`

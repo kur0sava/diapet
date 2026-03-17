@@ -7,9 +7,14 @@ export interface ChatMessage {
 
 const API_URL = 'https://api.anthropic.com/v1/messages';
 
+// Model constants
+export const MODEL_HAIKU = 'claude-haiku-4-5-20251001';
+export const MODEL_SONNET = 'claude-sonnet-4-20250514';
+
 export interface AiClientOptions {
   maxTokens?: number;
   timeoutMs?: number;
+  model?: string;
 }
 
 export async function sendChatMessage(
@@ -24,6 +29,7 @@ export async function sendChatMessage(
 
   const maxTokens = options?.maxTokens ?? 1024;
   const timeoutMs = options?.timeoutMs ?? 30_000;
+  const model = options?.model ?? MODEL_HAIKU;
 
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), timeoutMs);
@@ -36,7 +42,7 @@ export async function sendChatMessage(
       'anthropic-version': '2023-06-01',
     },
     body: JSON.stringify({
-      model: 'claude-sonnet-4-20250514',
+      model,
       max_tokens: maxTokens,
       system: systemPrompt,
       messages: messages.map(m => ({ role: m.role, content: m.content })),
