@@ -110,3 +110,77 @@ export function useNotifications() {
     cancelScheduleNotifications,
   };
 }
+
+/**
+ * Restore injection/feeding notifications on app startup.
+ * Android may drop scheduled notifications after app update, force-stop,
+ * or battery optimization. This re-registers them from the DB schedules.
+ */
+export async function restoreScheduleNotifications(): Promise<void> {
+  const { storage, StorageKeys } = await import('@storage/mmkv/storage');
+  const { scheduleRepository, petRepository } = await import('@storage/database');
+
+  // Only restore if user enabled notifications
+  if (storage.getBoolean(StorageKeys.NOTIFICATIONS_ENABLED) === false) return;
+
+  // Check permissions without prompting
+  const { status } = await Notifications.getPermissionsAsync();
+  if (status !== 'granted') return;
+
+  // Get active pet
+  const activePetId = storage.getString(StorageKeys.ACTIVE_PET_ID);
+  if (!activePetId) return;
+
+  const pet = await petRepository.findById(activePetId);
+  if (!pet) return;
+
+  // Cancel existing schedule notifications (keep hint pushes)
+  const scheduled = await Notifications.getAllScheduledNotificationsAsync();
+  for (const n of scheduled) {
+    const type = (n.content.data as { type?: string })?.type;
+    if (type === 'injection' || type === 'feeding') {
+      await Notifications.cancelScheduledNotificationAsync(n.identifier);
+    }
+  }
+
+  // Re-schedule from DB
+  const injectionTimes = await scheduleRepository.getInjectionTimes(activePetId);
+  for (const s of injectionTimes) {
+    const [hours, minutes] = s.timeOfDay.split(':').map(Number);
+    if (isNaN(hours) || isNaN(minutes)) continue;
+    await Notifications.scheduleNotificationAsync({
+      content: {
+        title: i18n.t('notifications.injectionTitle', { petName: pet.name }),
+        body: i18n.t('notifications.injectionBody'),
+        sound: true,
+        data: { type: 'injection' },
+      },
+      trigger: {
+        type: Notifications.SchedulableTriggerInputTypes.DAILY,
+        hour: hours,
+        minute: minutes,
+        channelId: 'injections',
+      },
+    });
+  }
+
+  const feedingTimes = await scheduleRepository.getFeedingTimes(activePetId);
+  for (const s of feedingTimes) {
+    const [hours, minutes] = s.timeOfDay.split(':').map(Number);
+    if (isNaN(hours) || isNaN(minutes)) continue;
+    await Notifications.scheduleNotificationAsync({
+      content: {
+        title: i18n.t('notifications.feedingTitle', { petName: pet.name }),
+        body: i18n.t('notifications.feedingBody'),
+        sound: true,
+        data: { type: 'feeding' },
+      },
+      trigger: {
+        type: Notifications.SchedulableTriggerInputTypes.DAILY,
+        hour: hours,
+        minute: minutes,
+        channelId: 'feedings',
+      },
+    });
+  }
+}

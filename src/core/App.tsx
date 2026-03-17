@@ -10,6 +10,7 @@ import { HintProvider } from '@features/hints/components/HintProvider';
 import { useMorningGreeting } from '@features/hints/hooks/useMorningGreeting';
 import { useMissedInjection } from '@features/hints/hooks/useMissedInjection';
 import { scheduleHintPushNotifications } from '@features/hints/utils/hintScheduler';
+import { restoreScheduleNotifications } from '@shared/hooks/useNotifications';
 import { usePetStore } from '@shared/stores/petStore';
 import { initStorage, storage, StorageKeys } from '@storage/mmkv/storage';
 import { restoreLanguage } from '@shared/i18n';
@@ -49,9 +50,9 @@ function AppContent() {
   useMissedInjection();
 
   useEffect(() => {
-    scheduleHintPushNotifications().catch(() => {
-      // Non-critical — silently ignore
-    });
+    // Restore injection/feeding notifications that Android may have dropped
+    restoreScheduleNotifications().catch(() => {});
+    scheduleHintPushNotifications().catch(() => {});
   }, []);
 
   return (
