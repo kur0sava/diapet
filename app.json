@@ -30,7 +30,7 @@
         "backgroundColor": "#D42020"
       },
       "package": "com.diapet.app",
-      "versionCode": 7,
+      "versionCode": 8,
       "resizeableActivity": true,
       "permissions": [
         "android.permission.CAMERA",
