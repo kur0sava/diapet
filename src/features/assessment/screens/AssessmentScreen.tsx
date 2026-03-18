@@ -90,10 +90,11 @@ export default function AssessmentScreen() {
 
   const handleBack = useCallback(() => {
     if (currentIndex > 0) {
-      setSelectedAnswer(null);
+      const prevQuestion = QUESTIONS[currentIndex - 1];
+      setSelectedAnswer(answers[prevQuestion] ?? null);
       setCurrentIndex(prev => prev - 1);
     }
-  }, [currentIndex]);
+  }, [currentIndex, answers]);
 
   const handleRestart = useCallback(() => {
     setAnswers({});
@@ -112,7 +113,7 @@ export default function AssessmentScreen() {
           <TouchableOpacity onPress={() => navigation.goBack()} style={{ minHeight: 44, minWidth: 44, justifyContent: 'center' }}>
             <Text style={{ color: theme.colors.primary }}>{'\u2190'} {t('common.back')}</Text>
           </TouchableOpacity>
-          <Text style={[styles.title, { color: theme.colors.text }]}>{t('assessment.title')}</Text>
+          <Text numberOfLines={1} style={[styles.title, { color: theme.colors.text }]}>{t('assessment.title')}</Text>
           <View style={{ width: 60 }} />
         </View>
 
@@ -180,7 +181,7 @@ export default function AssessmentScreen() {
         <TouchableOpacity onPress={currentIndex > 0 ? handleBack : () => navigation.goBack()} style={{ minHeight: 44, minWidth: 44, justifyContent: 'center' }}>
           <Text style={{ color: theme.colors.primary }}>{'\u2190'} {t('common.back')}</Text>
         </TouchableOpacity>
-        <Text style={[styles.title, { color: theme.colors.text }]}>{t('assessment.title')}</Text>
+        <Text numberOfLines={1} style={[styles.title, { color: theme.colors.text }]}>{t('assessment.title')}</Text>
         <View style={{ width: 60 }} />
       </View>
 

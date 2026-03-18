@@ -150,7 +150,7 @@ export default function DailyDiaryScreen() {
 
     for (const feed of feedings) {
       const parts: string[] = [];
-      if (feed.foodType) parts.push(feed.foodType);
+      if (feed.foodType) parts.push(t(`feeding.${feed.foodType}`));
       if (feed.amountGrams) parts.push(`${feed.amountGrams} ${t('common.grams')}`);
       events.push({
         id: feed.id,
@@ -198,7 +198,7 @@ export default function DailyDiaryScreen() {
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backBtn} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
           <Ionicons name="chevron-back" size={24} color={theme.colors.text} />
         </TouchableOpacity>
-        <Text style={[styles.screenTitle, { color: theme.colors.text, fontFamily: theme.fonts.bold }]}>
+        <Text numberOfLines={1} style={[styles.screenTitle, { color: theme.colors.text, fontFamily: theme.fonts.bold }]}>
           {t('diary.title')}
         </Text>
         <View style={{ width: 40 }} />
@@ -365,7 +365,12 @@ export default function DailyDiaryScreen() {
           <View style={styles.addRow}>
             <TouchableOpacity
               style={[styles.addBtn, { backgroundColor: theme.colors.primary + '18' }]}
-              onPress={() => navigation.navigate('LogGlucose', { presetDate: currentDate.toISOString() })}
+              onPress={() => {
+                const preset = new Date(currentDate);
+                const now = new Date();
+                preset.setHours(now.getHours(), now.getMinutes(), now.getSeconds());
+                navigation.navigate('LogGlucose', { presetDate: preset.toISOString() });
+              }}
             >
               <Ionicons name="water" size={20} color={theme.colors.primary} />
               <Text style={[styles.addBtnText, { color: theme.colors.primary, fontFamily: theme.fonts.medium }]} numberOfLines={2}>
@@ -374,7 +379,12 @@ export default function DailyDiaryScreen() {
             </TouchableOpacity>
             <TouchableOpacity
               style={[styles.addBtn, { backgroundColor: theme.colors.secondary + '18' }]}
-              onPress={() => navigation.navigate('LogInjection', { presetDate: currentDate.toISOString() })}
+              onPress={() => {
+                const preset = new Date(currentDate);
+                const now = new Date();
+                preset.setHours(now.getHours(), now.getMinutes(), now.getSeconds());
+                navigation.navigate('LogInjection', { presetDate: preset.toISOString() });
+              }}
             >
               <Ionicons name="medkit" size={20} color={theme.colors.secondary} />
               <Text style={[styles.addBtnText, { color: theme.colors.secondary, fontFamily: theme.fonts.medium }]} numberOfLines={2}>
@@ -383,7 +393,12 @@ export default function DailyDiaryScreen() {
             </TouchableOpacity>
             <TouchableOpacity
               style={[styles.addBtn, { backgroundColor: theme.colors.success + '18' }]}
-              onPress={() => navigation.navigate('LogFeeding', { presetDate: currentDate.toISOString() })}
+              onPress={() => {
+                const preset = new Date(currentDate);
+                const now = new Date();
+                preset.setHours(now.getHours(), now.getMinutes(), now.getSeconds());
+                navigation.navigate('LogFeeding', { presetDate: preset.toISOString() });
+              }}
             >
               <Ionicons name="restaurant" size={20} color={theme.colors.success} />
               <Text style={[styles.addBtnText, { color: theme.colors.success, fontFamily: theme.fonts.medium }]} numberOfLines={2}>

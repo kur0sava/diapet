@@ -5,7 +5,7 @@
 import { storage, StorageKeys, storageUtils } from '@storage/mmkv/storage';
 import type { PredictionResult, RemissionReport } from './predictionTypes';
 
-const PREDICTION_CACHE_TTL_MS = 12 * 60 * 60 * 1000; // 12 hours
+const PREDICTION_CACHE_TTL_MS = 6 * 60 * 60 * 1000; // 6 hours (matches PredictionResult.expiresAt)
 const REMISSION_CACHE_TTL_MS = 7 * 24 * 60 * 60 * 1000; // 7 days
 
 // ─── Cache Keys ───

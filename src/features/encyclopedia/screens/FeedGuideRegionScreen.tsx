@@ -130,8 +130,8 @@ export default function FeedGuideRegionScreen() {
               {t('feedGuide.fatDM')}: {food.fatDM}%
             </Text>
           )}
-          <View style={[styles.typeBadge, { backgroundColor: food.type === 'wet' ? '#E3F2FD' : '#FFF3E0' }]}>
-            <Text style={{ fontSize: 11, color: food.type === 'wet' ? '#1565C0' : '#E65100' }}>
+          <View style={[styles.typeBadge, { backgroundColor: food.type === 'wet' ? theme.colors.primary + '15' : theme.colors.warning + '15' }]}>
+            <Text style={{ fontSize: 11, color: food.type === 'wet' ? theme.colors.primary : theme.colors.warning }}>
               {food.type === 'wet' ? t('feedGuide.wet') : food.type === 'dry' ? t('feedGuide.dry') : t('feedGuide.all')}
             </Text>
           </View>
@@ -195,7 +195,7 @@ export default function FeedGuideRegionScreen() {
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
           <Ionicons name="arrow-back" size={24} color={theme.colors.text} />
         </TouchableOpacity>
-        <Text style={[styles.title, { color: theme.colors.text }]}>
+        <Text style={[styles.title, { color: theme.colors.text }]} numberOfLines={1}>
           {t(`feedGuide.regions.${region}`)}
         </Text>
       </View>
@@ -255,8 +255,8 @@ const styles = StyleSheet.create({
   container: { flex: 1 },
   header: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 16, paddingTop: 8, paddingBottom: 12, gap: 12 },
   backButton: { padding: 4, minHeight: 44, minWidth: 44, justifyContent: 'center' },
-  title: { fontSize: 22, fontWeight: '800' },
-  filterRow: { flexDirection: 'row', paddingHorizontal: 16, gap: 8, paddingBottom: 8 },
+  title: { fontSize: 22, fontWeight: '800', flex: 1 },
+  filterRow: { flexDirection: 'row', flexWrap: 'wrap', paddingHorizontal: 16, gap: 8, paddingBottom: 8 },
   filterChip: { flexDirection: 'row', alignItems: 'center', gap: 4, paddingHorizontal: 12, paddingVertical: 7, borderRadius: 20, borderWidth: 1 },
   list: { padding: 16, paddingBottom: 100 },
   sectionHeader: { fontSize: 17, fontWeight: '700', paddingVertical: 8 },

@@ -114,7 +114,7 @@ export default function InjectionListScreen() {
         <TouchableOpacity onPress={() => navigation.goBack()} style={{ minHeight: 44, minWidth: 44, justifyContent: 'center' }}>
           <Text style={{ color: theme.colors.primary }}>{'← '}{t('common.back')}</Text>
         </TouchableOpacity>
-        <Text style={[styles.headerTitle, { color: theme.colors.text, fontFamily: theme.fonts.bold }]}>{t('injection.history')}</Text>
+        <Text numberOfLines={1} style={[styles.headerTitle, { color: theme.colors.text, fontFamily: theme.fonts.bold }]}>{t('injection.history')}</Text>
         <View style={{ width: 60 }} />
       </View>
 

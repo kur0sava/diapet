@@ -31,9 +31,8 @@ export default function EditPetScreen() {
   const [feedingTimes, setFeedingTimes] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
   const [isDirty, setIsDirty] = useState(false);
-  const [guardEnabled, setGuardEnabled] = useState(true);
   const initialLoaded = useRef(false);
-  useUnsavedChangesGuard(guardEnabled && isDirty);
+  const disableGuard = useUnsavedChangesGuard(isDirty);
 
   // Track changes after initial load
   useEffect(() => {
@@ -108,7 +107,7 @@ export default function EditPetScreen() {
       await refreshActivePet();
       await queryClient.invalidateQueries({ queryKey: ['pet'] });
       await queryClient.invalidateQueries({ queryKey: ['schedule'] });
-      setGuardEnabled(false);
+      disableGuard();
       navigation.goBack();
     } catch { Alert.alert(t('pets.saveError')); }
     finally { savingRef.current = false; setLoading(false); }
@@ -137,7 +136,10 @@ export default function EditPetScreen() {
           </TouchableOpacity>
         </View>
       ))}
-      <TouchableOpacity style={[styles.addBtn, { borderColor: theme.colors.primary, borderRadius: 12 }]} onPress={() => setTimes([...times, '12:00'])}>
+      <TouchableOpacity style={[styles.addBtn, { borderColor: theme.colors.primary, borderRadius: 12 }]} onPress={() => {
+        const newTime = times.includes('12:00') ? '13:00' : '12:00';
+        setTimes([...times, newTime]);
+      }}>
         <Text style={{ color: theme.colors.primary, fontFamily: theme.fonts.semibold }}>+ {type === 'injection' ? t('pets.addInjection') : t('pets.addFeeding')}</Text>
       </TouchableOpacity>
     </View>

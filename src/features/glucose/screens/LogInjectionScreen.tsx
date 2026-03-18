@@ -42,13 +42,12 @@ export default function LogInjectionScreen() {
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [showTimePicker, setShowTimePicker] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [guardEnabled, setGuardEnabled] = useState(true);
   const { triggerAfterAction } = useHintTrigger();
   const commonInsulinsRaw = t('injection.commonInsulins', { returnObjects: true });
   const commonInsulins = Array.isArray(commonInsulinsRaw) ? commonInsulinsRaw as string[] : [];
   // ARCH005: prevent duplicate injection on double-tap
   const savingRef = useRef(false);
-  useUnsavedChangesGuard(guardEnabled && (!!dose || !!notes || insulinType !== (activePet?.insulinType ?? '')));
+  const disableGuard = useUnsavedChangesGuard(!!dose || !!notes || insulinType !== (activePet?.insulinType ?? ''));
 
   const doSaveInjection = useCallback(async () => {
     if (!activePet || savingRef.current) return;
@@ -64,7 +63,7 @@ export default function LogInjectionScreen() {
       });
       await queryClient.invalidateQueries({ queryKey: ['injections'] });
       await queryClient.invalidateQueries({ queryKey: ['diary'] });
-      setGuardEnabled(false);
+      disableGuard();
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       triggerAfterAction('injection');
       navigation.goBack();
@@ -115,7 +114,7 @@ export default function LogInjectionScreen() {
     try {
       const lastInj = await injectionRepository.findLatest(activePet.id);
       if (lastInj) {
-        const minutesSince = differenceInMinutes(administeredAt, new Date(lastInj.administeredAt));
+        const minutesSince = Math.abs(differenceInMinutes(administeredAt, new Date(lastInj.administeredAt)));
         if (minutesSince < 360) { // 6 hours
           const hours = Math.floor(minutesSince / 60);
           const mins = minutesSince % 60;
@@ -133,7 +132,7 @@ export default function LogInjectionScreen() {
     } catch { /* if DB query fails, proceed without check */ }
 
     proceedWithDoseChecks(doseNum);
-  }, [activePet, dose, insulinType, t, proceedWithDoseChecks]);
+  }, [activePet, dose, insulinType, administeredAt, t, proceedWithDoseChecks]);
 
   return (
     <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={{ flex: 1 }}>
@@ -143,7 +142,7 @@ export default function LogInjectionScreen() {
             <TouchableOpacity onPress={() => navigation.goBack()} style={{ minHeight: 44, minWidth: 44, justifyContent: 'center' }}>
               <Text style={{ color: theme.colors.primary }}>{'\u2190 '}{t('common.back')}</Text>
             </TouchableOpacity>
-            <Text style={[styles.title, { color: theme.colors.text }]}>{t('injection.title')}</Text>
+            <Text style={[styles.title, { color: theme.colors.text }]} numberOfLines={1}>{t('injection.title')}</Text>
             <View style={{ width: 60 }} />
           </View>
           <LinearGradient colors={[...theme.gradients.secondary] as [string, string]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} style={{ height: 3 }} />
@@ -158,6 +157,7 @@ export default function LogInjectionScreen() {
               onChangeText={setDose}
               placeholder="2.0"
               keyboardType="decimal-pad"
+              containerStyle={{ width: '100%' }}
               style={{ fontSize: 28, textAlign: 'center', fontWeight: '700' }}
               rightElement={<Text style={{ fontSize: 18, color: theme.colors.textSecondary, fontWeight: '600' }}>{t('common.units')}</Text>}
             />

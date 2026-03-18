@@ -23,13 +23,22 @@ export default function FeedCalculatorScreen() {
 
   const result = useMemo(() => {
     if (!allFilled) return null;
-    const p = (v: string) => parseFloat(v.replace(',', '.')) || 0;
+    const p = (v: string) => {
+      const n = parseFloat(v.replace(',', '.'));
+      return isNaN(n) ? null : n;
+    };
+    const pv = p(protein);
+    const fv = p(fat);
+    const fbv = p(fiber);
+    const av = p(ash);
+    const mv = p(moisture);
+    if (pv === null || fv === null || fbv === null || av === null || mv === null) return null;
     return calculateDryMatter({
-      protein: p(protein),
-      fat: p(fat),
-      fiber: p(fiber),
-      ash: p(ash),
-      moisture: p(moisture),
+      protein: pv,
+      fat: fv,
+      fiber: fbv,
+      ash: av,
+      moisture: mv,
     });
   }, [protein, fat, fiber, ash, moisture, allFilled]);
 
@@ -45,7 +54,7 @@ export default function FeedCalculatorScreen() {
         <TouchableOpacity onPress={() => navigation.goBack()} style={{ minHeight: 44, minWidth: 44, justifyContent: 'center' }}>
           <Text style={{ color: theme.colors.primary }}>{'← '}{t('common.back')}</Text>
         </TouchableOpacity>
-        <Text style={[styles.headerTitle, { color: theme.colors.text }]}>{t('feedCalculator.title')}</Text>
+        <Text numberOfLines={1} style={[styles.headerTitle, { color: theme.colors.text }]}>{t('feedCalculator.title')}</Text>
         <View style={{ width: 60 }} />
       </View>
 

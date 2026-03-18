@@ -52,7 +52,7 @@ export default function SubscriptionScreen() {
       </View>
       <LinearGradient colors={[...theme.gradients.primary] as [string, string]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} style={{ height: 3 }} />
 
-      <ScrollView contentContainerStyle={styles.content}>
+      <ScrollView contentContainerStyle={[styles.content, { paddingBottom: 40 }]}>
         {/* Current plan */}
         <Card style={styles.planCard}>
           {!isBackendConfigured() ? (

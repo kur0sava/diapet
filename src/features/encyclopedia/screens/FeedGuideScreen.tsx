@@ -76,7 +76,7 @@ export default function FeedGuideScreen() {
           onPress={() => navigation.navigate('FeedGuideAlternatives')}
           activeOpacity={0.7}
         >
-          <View style={[styles.sectionCardIcon, { backgroundColor: '#FFF3E0' }]}>
+          <View style={[styles.sectionCardIcon, { backgroundColor: theme.colors.warning + '15' }]}>
             <Text style={{ fontSize: 24 }}>🔍</Text>
           </View>
           <View style={styles.sectionCardContent}>
@@ -96,7 +96,7 @@ export default function FeedGuideScreen() {
           onPress={() => navigation.navigate('FeedGuideNatural')}
           activeOpacity={0.7}
         >
-          <View style={[styles.sectionCardIcon, { backgroundColor: '#E8F5E9' }]}>
+          <View style={[styles.sectionCardIcon, { backgroundColor: theme.colors.success + '15' }]}>
             <Text style={{ fontSize: 24 }}>🥩</Text>
           </View>
           <View style={styles.sectionCardContent}>

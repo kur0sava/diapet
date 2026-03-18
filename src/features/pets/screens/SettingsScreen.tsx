@@ -87,7 +87,7 @@ export default function SettingsScreen() {
     <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.background }]}>
       <View style={[styles.navHeader, { borderBottomColor: theme.colors.border }]}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={{ minHeight: 44, minWidth: 44, justifyContent: 'center' }}><Text style={{ color: theme.colors.primary }}>← {t('common.back')}</Text></TouchableOpacity>
-        <Text style={[styles.headerTitle, { color: theme.colors.text }]}>{t('settings.title')}</Text>
+        <Text numberOfLines={1} style={[styles.headerTitle, { color: theme.colors.text }]}>{t('settings.title')}</Text>
         <View style={{ width: 60 }} />
       </View>
       <ScrollView contentContainerStyle={styles.content}>

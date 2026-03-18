@@ -1,8 +1,6 @@
 import React from 'react';
-import { View, Text, StyleSheet, Dimensions } from 'react-native';
+import { View, Text, StyleSheet, useWindowDimensions } from 'react-native';
 import { useTheme } from '@shared/theme';
-
-const SCREEN_WIDTH = Dimensions.get('window').width;
 
 export interface BarData {
   label: string;
@@ -19,12 +17,13 @@ interface Props {
 
 export function SimpleBarChart({ data, title, height = 140, unit }: Props) {
   const { theme } = useTheme();
+  const { width: screenWidth } = useWindowDimensions();
 
   if (data.length === 0) return null;
 
   const maxVal = Math.max(...data.map(d => d.value), 1);
   const barWidth = Math.min(
-    (SCREEN_WIDTH - 80) / data.length - 4,
+    (screenWidth - 80) / data.length - 4,
     32
   );
 

@@ -13,6 +13,7 @@ import { expenseRepository } from '@storage/database';
 import { usePetStore } from '@shared/stores/petStore';
 import { ExpenseCategory, EXPENSE_ICON_NAMES, EXPENSE_COLORS } from '../types';
 import { useQueryClient } from '@tanstack/react-query';
+import * as Haptics from 'expo-haptics';
 import { useUnsavedChangesGuard } from '@shared/hooks/useUnsavedChangesGuard';
 
 const CATEGORIES: ExpenseCategory[] = ['insulin','testStrips','vetVisit','medication','food','other'];
@@ -31,10 +32,9 @@ export default function AddExpenseScreen() {
   const [description, setDescription] = useState('');
   const [originalDate, setOriginalDate] = useState<string | undefined>();
   const [loading, setLoading] = useState(false);
-  const [guardEnabled, setGuardEnabled] = useState(true);
   const savingRef = useRef(false);
 
-  useUnsavedChangesGuard(guardEnabled && (!!amount || !!description));
+  const disableGuard = useUnsavedChangesGuard(!!amount || !!description);
 
   const categoryLabels: Record<ExpenseCategory, string> = {
     insulin: t('expenses.insulin'), testStrips: t('expenses.testStrips'),
@@ -69,7 +69,8 @@ export default function AddExpenseScreen() {
         await expenseRepository.create({ petId: activePet.id, category, amount: numAmount, description: description || undefined, currency: i18n.language === 'ru' ? 'RUB' : 'USD' });
       }
       await queryClient.invalidateQueries({ queryKey: ['expenses'] });
-      setGuardEnabled(false);
+      disableGuard();
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       navigation.goBack();
     } catch { Alert.alert(t('common.error'), t('expenses.saveError')); }
     finally { savingRef.current = false; setLoading(false); }
@@ -83,7 +84,7 @@ export default function AddExpenseScreen() {
             <Ionicons name="chevron-back" size={22} color={theme.colors.primary} />
             <Text style={{ color: theme.colors.primary }}>{t('common.back')}</Text>
           </TouchableOpacity>
-          <Text style={[styles.title, { color: theme.colors.text, fontFamily: theme.fonts.semibold }]}>{editId ? t('expenses.editExpense') : t('expenses.addExpense')}</Text>
+          <Text numberOfLines={1} style={[styles.title, { color: theme.colors.text, fontFamily: theme.fonts.semibold }]}>{editId ? t('expenses.editExpense') : t('expenses.addExpense')}</Text>
           <View style={{ width: 60 }} />
         </View>
         <ScrollView contentContainerStyle={styles.content}>

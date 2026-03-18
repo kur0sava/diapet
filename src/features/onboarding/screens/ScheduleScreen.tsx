@@ -30,12 +30,14 @@ export default function ScheduleScreen() {
 
   const addTime = (type: 'injection' | 'feeding') => {
     const MAX_TIMES = 8;
+    const times = type === 'injection' ? injectionTimes : feedingTimes;
+    if (times.length >= MAX_TIMES) return;
+    // Find a time that doesn't duplicate existing entries
+    const newTime = times.includes('12:00') ? '13:00' : '12:00';
     if (type === 'injection') {
-      if (injectionTimes.length >= MAX_TIMES) return;
-      setInjectionTimes([...injectionTimes, '12:00']);
+      setInjectionTimes([...injectionTimes, newTime]);
     } else {
-      if (feedingTimes.length >= MAX_TIMES) return;
-      setFeedingTimes([...feedingTimes, '12:00']);
+      setFeedingTimes([...feedingTimes, newTime]);
     }
   };
 
@@ -90,7 +92,7 @@ export default function ScheduleScreen() {
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.background }]}>
-      <ScrollView style={styles.scroll} showsVerticalScrollIndicator={false}>
+      <ScrollView style={styles.scroll} showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 40 }}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backBtn}>
           <Text style={{ color: theme.colors.primary, fontSize: 16 }}>← {t('common.back')}</Text>
         </TouchableOpacity>
@@ -117,7 +119,9 @@ export default function ScheduleScreen() {
           {renderTimeList('feeding', feedingTimes)}
         </View>
 
-        <Button title={t('onboarding.next')} onPress={handleContinue} fullWidth size="lg" style={{ margin: 24 }} />
+        <View style={{ paddingHorizontal: 24, paddingVertical: 24 }}>
+          <Button title={t('onboarding.next')} onPress={handleContinue} fullWidth size="lg" />
+        </View>
       </ScrollView>
 
       {/* H008: DateTimePicker for editing existing time slots */}

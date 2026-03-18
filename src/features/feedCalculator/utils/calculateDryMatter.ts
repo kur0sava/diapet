@@ -30,6 +30,7 @@ export function calculateDryMatter(input: MacroInput): DryMatterResult | null {
   if (dryMatter <= 0) return null;
 
   const carbs = 100 - protein - fat - fiber - ash - moisture;
+  if (carbs < 0) return null;
   const carbsDM = (carbs / dryMatter) * 100;
   const proteinDM = (protein / dryMatter) * 100;
   const fatDM = (fat / dryMatter) * 100;

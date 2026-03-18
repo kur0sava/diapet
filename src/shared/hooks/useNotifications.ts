@@ -120,8 +120,8 @@ export async function restoreScheduleNotifications(): Promise<void> {
   const { storage, StorageKeys } = await import('@storage/mmkv/storage');
   const { scheduleRepository, petRepository } = await import('@storage/database');
 
-  // Only restore if user enabled notifications
-  if (storage.getBoolean(StorageKeys.NOTIFICATIONS_ENABLED) === false) return;
+  // Only restore if user explicitly enabled notifications
+  if (storage.getBoolean(StorageKeys.NOTIFICATIONS_ENABLED) !== true) return;
 
   // Check permissions without prompting
   const { status } = await Notifications.getPermissionsAsync();

@@ -53,7 +53,7 @@ export default function ArticleDetailScreen() {
       updated = [...current, article.id];
     }
     storageUtils.setObject(StorageKeys.BOOKMARKED_ARTICLES, updated);
-    setIsBookmarked(!isBookmarked);
+    setIsBookmarked(prev => !prev);
   }, [article, isBookmarked]);
 
   // TOC state

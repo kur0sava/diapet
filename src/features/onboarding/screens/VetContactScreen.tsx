@@ -28,7 +28,7 @@ export default function VetContactScreen() {
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.background }]}>
-      <ScrollView showsVerticalScrollIndicator={false}>
+      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 40 }}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backBtn}>
           <Text style={{ color: theme.colors.primary, fontSize: 16 }}>← {t('common.back')}</Text>
         </TouchableOpacity>

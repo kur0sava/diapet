@@ -139,8 +139,10 @@ function makeStyles(
     gotItButton: {
       alignSelf: 'flex-end',
       paddingHorizontal: 18,
-      paddingVertical: 8,
+      paddingVertical: 12,
       borderRadius: 20,
+      minHeight: 44,
+      justifyContent: 'center' as const,
     },
     gotItText: {
       color: '#FFFFFF',

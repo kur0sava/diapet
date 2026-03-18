@@ -58,13 +58,12 @@ export default function AddSymptomScreen() {
   const [photos, setPhotos] = useState<string[]>([]);
   const [removedPhotos, setRemovedPhotos] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
-  const [guardEnabled, setGuardEnabled] = useState(true);
   // ARCH005: prevent duplicate symptom save on double-tap
   const savingRef = useRef(false);
   const [selectedGlucoseId, setSelectedGlucoseId] = useState<string | undefined>(
     route.params?.glucoseReadingId
   );
-  useUnsavedChangesGuard(guardEnabled && (selectedTypes.length > 0 || !!notes));
+  const disableGuard = useUnsavedChangesGuard(selectedTypes.length > 0 || !!notes);
 
   useEffect(() => {
     if (editId) {
@@ -164,7 +163,7 @@ export default function AddSymptomScreen() {
         FileSystem.deleteAsync(uri, { idempotent: true }).catch(() => {});
       }
       await queryClient.invalidateQueries({ queryKey: ['symptoms'] });
-      setGuardEnabled(false);
+      disableGuard();
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       navigation.goBack();
     } catch {
@@ -182,7 +181,7 @@ export default function AddSymptomScreen() {
           <TouchableOpacity onPress={() => navigation.goBack()} style={{ minHeight: 44, minWidth: 44, justifyContent: 'center' }}>
             <Text style={{ color: theme.colors.primary }}>{'\u2190 '}{t('common.back')}</Text>
           </TouchableOpacity>
-          <Text style={[styles.title, { color: theme.colors.text }]}>{editId ? t('symptoms.editSymptom') : t('symptoms.addSymptom')}</Text>
+          <Text numberOfLines={1} style={[styles.title, { color: theme.colors.text }]}>{editId ? t('symptoms.editSymptom') : t('symptoms.addSymptom')}</Text>
           <View style={{ width: 60 }} />
         </View>
 

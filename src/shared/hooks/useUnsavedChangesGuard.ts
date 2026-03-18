@@ -7,8 +7,9 @@ import { useTranslation } from 'react-i18next';
  * Shows a confirmation dialog when user tries to navigate away with unsaved changes.
  * @param hasUnsavedChanges - whether the form has unsaved data
  *
- * Uses a ref so that disabling the guard and calling goBack() in the same
- * synchronous block works without a stale-closure race.
+ * Returns a disableGuard() function that synchronously clears the ref,
+ * so callers can do: disableGuard(); navigation.goBack() without the
+ * "unsaved changes" dialog flashing.
  */
 export function useUnsavedChangesGuard(hasUnsavedChanges: boolean) {
   const navigation = useNavigation();
@@ -33,4 +34,9 @@ export function useUnsavedChangesGuard(hasUnsavedChanges: boolean) {
 
     return unsubscribe;
   }, [navigation, t]);
+
+  /** Call before navigation.goBack() to prevent the guard from firing */
+  const disableGuard = () => { enabledRef.current = false; };
+
+  return disableGuard;
 }

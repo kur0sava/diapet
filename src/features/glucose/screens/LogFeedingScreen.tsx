@@ -46,11 +46,10 @@ export default function LogFeedingScreen() {
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [showTimePicker, setShowTimePicker] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [guardEnabled, setGuardEnabled] = useState(true);
   const { triggerAfterAction } = useHintTrigger();
   // ARCH005: prevent duplicate feeding on double-tap
   const savingRef = useRef(false);
-  useUnsavedChangesGuard(guardEnabled && (!!amount || !!notes || foodType !== 'dry'));
+  const disableGuard = useUnsavedChangesGuard(!!amount || !!notes || foodType !== 'dry');
 
   const handleSave = useCallback(async () => {
     if (savingRef.current) return; // silent guard against double-tap
@@ -80,7 +79,7 @@ export default function LogFeedingScreen() {
       });
       await queryClient.invalidateQueries({ queryKey: ['feedings'] });
       await queryClient.invalidateQueries({ queryKey: ['diary'] });
-      setGuardEnabled(false);
+      disableGuard();
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       triggerAfterAction('feeding');
       navigation.goBack();

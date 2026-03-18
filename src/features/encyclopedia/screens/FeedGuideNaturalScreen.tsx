@@ -108,9 +108,9 @@ export default function FeedGuideNaturalScreen() {
         </View>
 
         {food.warnings && (
-          <View style={[styles.warningRow, { backgroundColor: '#FFF3E0' }]}>
-            <Ionicons name="warning-outline" size={14} color="#E65100" />
-            <Text style={[styles.warningText, { color: '#E65100' }]}>
+          <View style={[styles.warningRow, { backgroundColor: theme.colors.warning + '15' }]}>
+            <Ionicons name="warning-outline" size={14} color={theme.colors.warning} />
+            <Text style={[styles.warningText, { color: theme.colors.warning }]}>
               {food.warnings[lang]}
             </Text>
           </View>
@@ -128,13 +128,13 @@ export default function FeedGuideNaturalScreen() {
       return (
         <View style={styles.infoSection}>
           {/* Disclaimer */}
-          <View style={[styles.disclaimerCard, { backgroundColor: '#FFEBEE' }]}>
-            <Ionicons name="alert-circle" size={20} color="#C62828" />
+          <View style={[styles.disclaimerCard, { backgroundColor: theme.colors.danger + '15' }]}>
+            <Ionicons name="alert-circle" size={20} color={theme.colors.danger} />
             <View style={{ flex: 1 }}>
-              <Text style={[styles.disclaimerTitle, { color: '#C62828' }]}>
+              <Text style={[styles.disclaimerTitle, { color: theme.colors.danger }]}>
                 {t('feedGuide.natural.disclaimerTitle')}
               </Text>
-              <Text style={[styles.disclaimerText, { color: '#C62828' }]}>
+              <Text style={[styles.disclaimerText, { color: theme.colors.danger }]}>
                 {guide.disclaimer[lang]}
               </Text>
             </View>

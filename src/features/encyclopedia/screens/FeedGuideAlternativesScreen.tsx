@@ -70,8 +70,8 @@ export default function FeedGuideAlternativesScreen() {
               {t('feedGuide.fatDM')}: {item.fatDM}%
             </Text>
           )}
-          <View style={[styles.typeBadge, { backgroundColor: item.type === 'wet' ? '#E3F2FD' : item.type === 'both' ? '#E8F5E9' : '#FFF3E0' }]}>
-            <Text style={{ fontSize: 11, color: item.type === 'wet' ? '#1565C0' : item.type === 'both' ? '#2E7D32' : '#E65100' }}>
+          <View style={[styles.typeBadge, { backgroundColor: item.type === 'wet' ? theme.colors.primary + '15' : item.type === 'both' ? theme.colors.success + '15' : theme.colors.warning + '15' }]}>
+            <Text style={{ fontSize: 11, color: item.type === 'wet' ? theme.colors.primary : item.type === 'both' ? theme.colors.success : theme.colors.warning }}>
               {item.type === 'wet' ? t('feedGuide.wet') : item.type === 'both' ? t('feedGuide.wet') + ' + ' + t('feedGuide.dry') : t('feedGuide.dry')}
             </Text>
           </View>

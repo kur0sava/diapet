@@ -82,7 +82,7 @@ export function usePrediction(): UsePredictionReturn {
     } finally {
       setIsLoading(false);
     }
-  }, [activePet, petId]);
+  }, [activePet, petId, t]);
 
   return {
     prediction,

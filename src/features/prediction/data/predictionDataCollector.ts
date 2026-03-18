@@ -58,9 +58,9 @@ function computeGlucoseStats(all: GlucoseReading[]): GlucoseStats {
   let trend7d = 'unknown';
   if (vals7.length >= 4) {
     const mid = Math.floor(vals7.length / 2);
-    // readings are sorted newest-first from repo
-    const recentHalf = average(vals7.slice(0, mid)) ?? 0;
-    const olderHalf = average(vals7.slice(mid)) ?? 0;
+    // readings are sorted oldest-first (ASC) from repo
+    const olderHalf = average(vals7.slice(0, mid)) ?? 0;
+    const recentHalf = average(vals7.slice(mid)) ?? 0;
     const diff = recentHalf - olderHalf;
     if (diff > 1.0) trend7d = 'rising';
     else if (diff < -1.0) trend7d = 'falling';

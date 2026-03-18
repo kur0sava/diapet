@@ -12,7 +12,7 @@ import { Button, Input, Card } from '@shared/components/ui';
 import { glucoseRepository } from '@storage/database';
 import { usePetStore } from '@shared/stores/petStore';
 import { MealRelation, GlucoseUnit, getGlucoseLevel, getGlucoseColor } from '../types';
-import { MGDL_PER_MMOLL, MAX_REASONABLE_GLUCOSE_MMOL, MAX_REASONABLE_GLUCOSE_MGDL } from '@storage/domain/types';
+import { MGDL_PER_MMOLL, MAX_REASONABLE_GLUCOSE_MMOL, MAX_REASONABLE_GLUCOSE_MGDL, mgdlToMmol } from '@storage/domain/types';
 import { useQueryClient } from '@tanstack/react-query';
 import { storage, StorageKeys } from '@storage/mmkv/storage';
 import * as Haptics from 'expo-haptics';
@@ -58,8 +58,6 @@ export default function LogGlucoseScreen() {
   const { triggerAfterAction } = useHintTrigger();
   // H003: prevent double-tap save
   const savingRef = useRef(false);
-  // GUARD-001: allow disabling guard during intentional navigation (after save)
-  const [guardEnabled, setGuardEnabled] = useState(true);
   // H002: track initial values to avoid false dirty-guard on edit load
   const initialValuesRef = useRef({
     value: '',
@@ -70,16 +68,14 @@ export default function LogGlucoseScreen() {
     unit: savedUnit as GlucoseUnit,
     recordedAt: new Date(recordedAt).getTime(),
   });
-  useUnsavedChangesGuard(
-    guardEnabled && (
-      value !== initialValuesRef.current.value ||
-      insulinDose !== initialValuesRef.current.insulinDose ||
-      insulinType !== initialValuesRef.current.insulinType ||
-      notes !== initialValuesRef.current.notes ||
-      mealRelation !== initialValuesRef.current.mealRelation ||
-      unit !== initialValuesRef.current.unit ||
-      recordedAt.getTime() !== initialValuesRef.current.recordedAt
-    )
+  const disableGuard = useUnsavedChangesGuard(
+    value !== initialValuesRef.current.value ||
+    insulinDose !== initialValuesRef.current.insulinDose ||
+    insulinType !== initialValuesRef.current.insulinType ||
+    notes !== initialValuesRef.current.notes ||
+    mealRelation !== initialValuesRef.current.mealRelation ||
+    unit !== initialValuesRef.current.unit ||
+    recordedAt.getTime() !== initialValuesRef.current.recordedAt
   );
 
   useEffect(() => {
@@ -116,8 +112,8 @@ export default function LogGlucoseScreen() {
 
   const glucosePreview = isValidValue
     ? {
-        level: getGlucoseLevel(unit === 'mmol/L' ? numValue : numValue / MGDL_PER_MMOLL),
-        color: getGlucoseColor(unit === 'mmol/L' ? numValue : numValue / MGDL_PER_MMOLL),
+        level: getGlucoseLevel(unit === 'mmol/L' ? numValue : mgdlToMmol(numValue)),
+        color: getGlucoseColor(unit === 'mmol/L' ? numValue : mgdlToMmol(numValue)),
       }
     : null;
 
@@ -160,7 +156,7 @@ export default function LogGlucoseScreen() {
       await queryClient.invalidateQueries({ queryKey: ['glucose'] });
       await queryClient.invalidateQueries({ queryKey: ['diary'] });
       // Disable guard for the navigation we're about to trigger
-      setGuardEnabled(false);
+      disableGuard();
       syncInitialValues();
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       if (!editId) {
