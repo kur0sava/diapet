@@ -50,11 +50,11 @@ export default function AddSymptomScreen() {
   const glucoseUnit = storage.getString(StorageKeys.GLUCOSE_UNIT) ?? 'mmol/L';
   const dateFnsLocale = (storage.getString(StorageKeys.LANGUAGE) ?? 'ru') === 'ru' ? ruLocale : undefined;
   const [selectedTypes, setSelectedTypes] = useState<SymptomType[]>([]);
-  const [severityOverride, setSeverityOverride] = useState<SymptomSeverity | null>(null);
+  // Severity is always auto-calculated — no manual override
   const [notes, setNotes] = useState('');
 
   const autoSeverity = selectedTypes.length > 0 ? calculateSeverity(selectedTypes) : null;
-  const severity: SymptomSeverity = severityOverride ?? autoSeverity?.severity ?? 'mild';
+  const severity: SymptomSeverity = autoSeverity?.severity ?? 'mild';
   const [photos, setPhotos] = useState<string[]>([]);
   const [removedPhotos, setRemovedPhotos] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
@@ -71,11 +71,7 @@ export default function AddSymptomScreen() {
       symptomRepository.findById(editId).then(entry => {
         if (!entry) return;
         setSelectedTypes(entry.symptomTypes);
-        // If stored severity differs from auto-calculated, treat as override
-        const auto = calculateSeverity(entry.symptomTypes);
-        if (auto.severity !== entry.severity) {
-          setSeverityOverride(entry.severity);
-        }
+        // Severity is auto-calculated from symptom types
         setNotes(entry.notes ?? '');
         setPhotos(entry.photoUris ?? []);
         setSelectedGlucoseId(entry.glucoseReadingId);
@@ -243,28 +239,7 @@ export default function AddSymptomScreen() {
             </View>
           )}
 
-          {/* Manual severity override */}
-          {autoSeverity && (
-            <>
-              <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>{t('symptoms.severity')}</Text>
-              <View style={styles.severityRow}>
-                {SEVERITY_OPTIONS.map(opt => (
-                  <TouchableOpacity
-                    key={opt.value}
-                    style={[
-                      styles.severityBtn,
-                      { backgroundColor: severity === opt.value ? opt.color : theme.colors.surfaceSecondary, flex: 1 },
-                    ]}
-                    onPress={() => setSeverityOverride(opt.value)}
-                  >
-                    <Text style={{ color: severity === opt.value ? '#fff' : theme.colors.text, fontWeight: '600' }}>
-                      {t(opt.labelKey)}
-                    </Text>
-                  </TouchableOpacity>
-                ))}
-              </View>
-            </>
-          )}
+          {/* Severity is auto-calculated — no manual override */}
 
           <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>{t('symptoms.photo')}</Text>
           <View style={styles.photoRow}>
@@ -374,8 +349,7 @@ const styles = StyleSheet.create({
   severityBadgeText: { fontSize: 15, fontWeight: '700' },
   severityExplanation: { fontSize: 13, lineHeight: 18 },
   emergencyBtn: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', padding: 14, borderRadius: 12, marginTop: 4 },
-  severityRow: { flexDirection: 'row', gap: 10 },
-  severityBtn: { padding: 14, borderRadius: 12, alignItems: 'center' },
+  // severity override removed — auto-calculated only
   photoRow: { flexDirection: 'row', gap: 12 },
   photoBtn: { flex: 1, padding: 16, alignItems: 'center', gap: 6 },
   photosGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },

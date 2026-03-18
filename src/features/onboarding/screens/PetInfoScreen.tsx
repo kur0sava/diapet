@@ -206,7 +206,9 @@ export default function PetInfoScreen() {
           </View>
         </View>
 
-        <Button title={t('onboarding.next')} onPress={handleContinue} fullWidth size="lg" style={{ margin: 24 }} />
+        <View style={{ paddingHorizontal: 24, paddingVertical: 24 }}>
+          <Button title={t('onboarding.next')} onPress={handleContinue} fullWidth size="lg" />
+        </View>
       </ScrollView>
     </SafeAreaView>
   );

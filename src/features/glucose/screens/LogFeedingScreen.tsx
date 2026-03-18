@@ -147,6 +147,7 @@ export default function LogFeedingScreen() {
               onChangeText={setAmount}
               placeholder="50"
               keyboardType="decimal-pad"
+              containerStyle={{ width: '100%' }}
               style={{ fontSize: 28, textAlign: 'center', fontWeight: '700', minHeight: 48 }}
             />
             <Text style={[styles.optionalHint, { color: theme.colors.textTertiary }]}>
