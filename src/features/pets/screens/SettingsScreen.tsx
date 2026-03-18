@@ -58,10 +58,16 @@ export default function SettingsScreen() {
               storage.delete(StorageKeys.HINTS_PUSH_SHOWN_IDS);
               storage.delete(StorageKeys.HINTS_PUSH_LAST_SCHEDULED);
               storage.delete('hintsMissedCheckDate');
-              // Clean up AI chat history for all pets
+              // Clean up AI chat history and prediction cache for all pets
               const allKeys = storage.getAllKeys();
               for (const key of allKeys) {
-                if (key.startsWith('aiChatHistory_')) storage.delete(key);
+                if (key.startsWith('aiChatHistory_') ||
+                    key.startsWith('predictionCache_') ||
+                    key.startsWith('predictionLastRequest_') ||
+                    key.startsWith('remissionCache_') ||
+                    key.startsWith('remissionLastRequest_')) {
+                  storage.delete(key);
+                }
               }
               // H006: cancel all scheduled notifications for deleted pets
               await Notifications.cancelAllScheduledNotificationsAsync();

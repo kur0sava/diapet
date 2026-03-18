@@ -326,6 +326,8 @@ export const en = {
     noVetContact: 'No vet contact added',
     addVetContact: 'Add a vet contact in pet settings to enable quick calling.',
     call112: 'Call 112',
+    callFailed: 'Call failed',
+    callFailedDesc: 'Please check the vet phone number in pet settings.',
     goToSettings: 'Go to settings',
     tapToAddVet: 'Tap to add vet contact',
     disclaimer: 'This information is for reference only. In any emergency, contact your veterinarian immediately.',
