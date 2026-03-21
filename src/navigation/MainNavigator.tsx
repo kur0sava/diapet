@@ -88,7 +88,6 @@ function GlucoseStackNavigator() {
       }}
     >
       <GlucoseStack.Screen name="GlucoseList" component={GlucoseListScreen} options={{ headerShown: false }} />
-      <GlucoseStack.Screen name="LogGlucose" component={LogGlucoseScreen} options={{ headerShown: false }} />
     </GlucoseStack.Navigator>
   );
 }
@@ -153,7 +152,6 @@ function MoreStackNavigator() {
       <MoreStack.Screen name="FeedCalculator" component={FeedCalculatorScreen} options={{ headerShown: false }} />
       <MoreStack.Screen name="Subscription" component={SubscriptionScreen} options={{ headerShown: false }} />
       <MoreStack.Screen name="AiAssistant" component={AiAssistantScreen} options={{ headerShown: false }} />
-      <MoreStack.Screen name="AdvancedAnalytics" component={AdvancedAnalyticsScreen} options={{ headerShown: false }} />
     </MoreStack.Navigator>
   );
 }

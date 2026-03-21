@@ -46,10 +46,9 @@ export type HomeStackParamList = {
   AdvancedAnalytics: undefined;
 };
 
-// Glucose Stack
+// Glucose Stack (history only — glucose input via Home tab)
 export type GlucoseStackParamList = {
   GlucoseList: undefined;
-  LogGlucose: { editId?: string };
 };
 
 // Symptoms Stack
@@ -81,7 +80,6 @@ export type MoreStackParamList = {
   FeedCalculator: undefined;
   Subscription: undefined;
   AiAssistant: undefined;
-  AdvancedAnalytics: undefined;
 };
 
 // Onboarding Stack

@@ -22,6 +22,7 @@ export default function MoreMenuScreen() {
   const { isPro, canAccessAdvanced } = useSubscription();
 
   type MenuScreen = 'Subscription' | 'PetProfile' | 'Expenses' | 'FeedCalculator' | 'Settings' | 'AiAssistant' | 'AdvancedAnalytics';
+  type MoreScreen = Exclude<MenuScreen, 'AdvancedAnalytics'>;
   interface MenuItem {
     iconName: IoniconName;
     label: string;
@@ -34,7 +35,11 @@ export default function MoreMenuScreen() {
 
   const handleProScreen = (screen: MenuScreen) => {
     if (canAccessAdvanced()) {
-      navigation.navigate(screen);
+      if (screen === 'AdvancedAnalytics') {
+        rootNavigation.navigate('Main', { screen: 'Home', params: { screen: 'AdvancedAnalytics' } });
+      } else {
+        navigation.navigate(screen as MoreScreen);
+      }
     } else {
       rootNavigation.navigate('Paywall');
     }
@@ -88,7 +93,7 @@ export default function MoreMenuScreen() {
           <TouchableOpacity
             key={item.screen}
             style={[styles.menuItem, { backgroundColor: theme.colors.surface, ...theme.shadows.sm }]}
-            onPress={() => item.proGated ? handleProScreen(item.screen) : navigation.navigate(item.screen)}
+            onPress={() => item.proGated ? handleProScreen(item.screen) : navigation.navigate(item.screen as MoreScreen)}
             activeOpacity={0.8}
           >
             <View style={[styles.menuIcon, { backgroundColor: `${item.iconColor}20` }]}>

@@ -5,7 +5,7 @@ import {
   LayoutAnimation, Platform, UIManager,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useGlucoseNavigation } from '@navigation/hooks';
+import { useRootNavigation } from '@navigation/hooks';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '@shared/theme';
 import { useInfiniteQuery, useQuery, useQueryClient } from '@tanstack/react-query';
@@ -15,14 +15,12 @@ import { GlucoseReading, getGlucoseColor, MealRelation } from '../types';
 import { GlucoseFilter, GLUCOSE_RANGES, mmolToMgdl } from '@storage/domain/types';
 import { formatDateTime, formatFullDate, formatFullDateTime } from '@shared/utils/dateUtils';
 import { EmptyState, Card, AnimatedListItem } from '@shared/components/ui';
-import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { storage, StorageKeys } from '@storage/mmkv/storage';
 import { generateVetReportPdf } from '@shared/utils/pdfExport';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { format } from 'date-fns';
 import { useSubscription } from '@features/subscription/hooks/useSubscription';
-import { useRootNavigation } from '@navigation/hooks';
 import { subDays } from 'date-fns';
 
 if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
@@ -68,7 +66,6 @@ function countActiveFilters(filters: GlucoseFilter): number {
 }
 
 export default function GlucoseListScreen() {
-  const navigation = useGlucoseNavigation();
   const { t } = useTranslation();
   const { theme } = useTheme();
   const activePet = usePetStore(s => s.activePet);
@@ -249,7 +246,7 @@ export default function GlucoseListScreen() {
     return (
       <AnimatedListItem index={index}>
         <TouchableOpacity
-          onPress={() => navigation.navigate('LogGlucose', { editId: item.id })}
+          onPress={() => rootNav.navigate('Main', { screen: 'Home', params: { screen: 'LogGlucose', params: { editId: item.id } } })}
           onLongPress={() => handleDelete(item.id)}
           activeOpacity={0.8}
         >
@@ -284,7 +281,7 @@ export default function GlucoseListScreen() {
         </TouchableOpacity>
       </AnimatedListItem>
     );
-  }, [unit, theme, navigation, handleDelete, mealLabels, t]);
+  }, [unit, theme, rootNav, handleDelete, mealLabels, t]);
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.background }]}>
@@ -511,7 +508,7 @@ export default function GlucoseListScreen() {
               title={t('glucose.title')}
               subtitle={t('glucose.noReadings')}
               actionLabel={t('glucose.addReading')}
-              onAction={() => navigation.navigate('LogGlucose', {})}
+              onAction={() => rootNav.navigate('Main', { screen: 'Home', params: { screen: 'LogGlucose', params: {} } })}
             />
           )
         }
@@ -533,20 +530,6 @@ export default function GlucoseListScreen() {
         </TouchableOpacity>
       )}
 
-      {/* FAB */}
-      <TouchableOpacity
-        onPress={() => navigation.navigate('LogGlucose', {})}
-        activeOpacity={0.8}
-      >
-        <LinearGradient
-          colors={theme.gradients.primary}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 1 }}
-          style={[styles.fab, theme.shadows.primarySm]}
-        >
-          <Ionicons name="add" size={28} color="#fff" />
-        </LinearGradient>
-      </TouchableOpacity>
     </SafeAreaView>
   );
 }
@@ -580,8 +563,7 @@ const styles = StyleSheet.create({
   readingValue: { fontSize: 20, fontWeight: '700' },
   readingTime: { fontSize: 13, marginTop: 2 },
   readingInsulin: { fontSize: 12, marginTop: 4 },
-  fab: { position: 'absolute', bottom: 32, right: 20, width: 56, height: 56, borderRadius: 28, alignItems: 'center', justifyContent: 'center' },
-  fabExport: { position: 'absolute', bottom: 104, right: 20, width: 48, height: 48, borderRadius: 24, alignItems: 'center', justifyContent: 'center', elevation: 4, shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.15, shadowRadius: 3, borderWidth: 1.5 },
+  fabExport: { position: 'absolute', bottom: 32, right: 20, width: 48, height: 48, borderRadius: 24, alignItems: 'center', justifyContent: 'center', elevation: 4, shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.15, shadowRadius: 3, borderWidth: 1.5 },
   loadingFooter: { paddingVertical: 16 },
   historyBanner: { flexDirection: 'row', alignItems: 'center', gap: 8, padding: 14, borderRadius: 12, borderWidth: 1, marginTop: 8 },
   historyBannerText: { flex: 1, fontSize: 13, fontWeight: '600' },
