@@ -152,12 +152,15 @@ export default function DailyDiaryScreen() {
       const parts: string[] = [];
       if (feed.foodType) parts.push(t(`feeding.${feed.foodType}`));
       if (feed.amountGrams) parts.push(`${feed.amountGrams} ${t('common.grams')}`);
+      const subtitleParts: string[] = [];
+      if (feed.foodBrand) subtitleParts.push(feed.foodBrand);
+      if (feed.notes) subtitleParts.push(feed.notes);
       events.push({
         id: feed.id,
         time: feed.fedAt,
         type: 'feeding',
         title: parts.length > 0 ? parts.join(' · ') : t('diary.feeding'),
-        subtitle: feed.notes ?? undefined,
+        subtitle: subtitleParts.length > 0 ? subtitleParts.join(' — ') : undefined,
         color: theme.colors.success,
       });
     }

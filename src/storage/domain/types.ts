@@ -143,6 +143,15 @@ export interface FeedingLog {
   notes?: string;
   fedAt: string;
   createdAt: string;
+  foodBrand?: string;
+  foodProduct?: string;
+  protein?: number;
+  fat?: number;
+  fiber?: number;
+  ash?: number;
+  moisture?: number;
+  carbsDM?: number;
+  verdict?: string;
 }
 
 export interface CreateFeedingDTO {
@@ -151,6 +160,15 @@ export interface CreateFeedingDTO {
   amountGrams?: number;
   notes?: string;
   fedAt?: string;
+  foodBrand?: string;
+  foodProduct?: string;
+  protein?: number;
+  fat?: number;
+  fiber?: number;
+  ash?: number;
+  moisture?: number;
+  carbsDM?: number;
+  verdict?: string;
 }
 
 export const GLUCOSE_RANGES = {

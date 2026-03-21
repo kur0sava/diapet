@@ -108,6 +108,31 @@ const MIGRATIONS: Migration[] = [
       }
     },
   },
+  {
+    version: 6,
+    name: 'add_feeding_nutrition_fields',
+    up: [],
+    afterSql: async (db: SQLiteDatabase) => {
+      const columns = [
+        'food_brand TEXT',
+        'food_product TEXT',
+        'protein REAL',
+        'fat REAL',
+        'fiber REAL',
+        'ash REAL',
+        'moisture REAL',
+        'carbs_dm REAL',
+        'verdict TEXT',
+      ];
+      for (const col of columns) {
+        try {
+          await db.execAsync(`ALTER TABLE feedings ADD COLUMN ${col}`);
+        } catch {
+          // Column already exists — safe to ignore
+        }
+      }
+    },
+  },
 ];
 
 export async function runMigrations(db: SQLiteDatabase): Promise<void> {

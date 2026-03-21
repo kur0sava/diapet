@@ -10,6 +10,15 @@ interface FeedingRow {
   notes: string | null;
   fed_at: string;
   created_at: string;
+  food_brand: string | null;
+  food_product: string | null;
+  protein: number | null;
+  fat: number | null;
+  fiber: number | null;
+  ash: number | null;
+  moisture: number | null;
+  carbs_dm: number | null;
+  verdict: string | null;
 }
 
 export const feedingRepository = {
@@ -18,10 +27,15 @@ export const feedingRepository = {
     const id = uuid.v4() as string;
     const now = new Date().toISOString();
     await db.runAsync(
-      `INSERT INTO feedings (id, pet_id, food_type, amount_grams, notes, fed_at, created_at)
-       VALUES (?, ?, ?, ?, ?, ?, ?)`,
+      `INSERT INTO feedings (id, pet_id, food_type, amount_grams, notes, fed_at, created_at,
+        food_brand, food_product, protein, fat, fiber, ash, moisture, carbs_dm, verdict)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       [id, dto.petId, dto.foodType ?? null, dto.amountGrams ?? null,
-       dto.notes ?? null, dto.fedAt ?? now, now]
+       dto.notes ?? null, dto.fedAt ?? now, now,
+       dto.foodBrand ?? null, dto.foodProduct ?? null,
+       dto.protein ?? null, dto.fat ?? null, dto.fiber ?? null,
+       dto.ash ?? null, dto.moisture ?? null, dto.carbsDM ?? null,
+       dto.verdict ?? null]
     );
     const result = await this.findById(id);
     if (!result) throw new Error(`Failed to read back feeding ${id} after insert`);
@@ -91,5 +105,14 @@ function mapRow(row: FeedingRow): FeedingLog {
     notes: row.notes ?? undefined,
     fedAt: row.fed_at,
     createdAt: row.created_at,
+    foodBrand: row.food_brand ?? undefined,
+    foodProduct: row.food_product ?? undefined,
+    protein: row.protein ?? undefined,
+    fat: row.fat ?? undefined,
+    fiber: row.fiber ?? undefined,
+    ash: row.ash ?? undefined,
+    moisture: row.moisture ?? undefined,
+    carbsDM: row.carbs_dm ?? undefined,
+    verdict: row.verdict ?? undefined,
   };
 }
