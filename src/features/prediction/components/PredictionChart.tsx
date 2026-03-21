@@ -118,12 +118,12 @@ export function PredictionChart({ actualData, predictions }: Props) {
 
   return (
     <View style={styles.container}>
-      {/* Y-axis */}
+      {/* Y-axis — positioned to match actual data scale */}
       <View style={styles.yAxis}>
-        <Text style={[styles.axisLabel, { color: theme.colors.textTertiary }]}>{maxVal.toFixed(0)}</Text>
-        <Text style={[styles.axisLabel, { color: theme.colors.success }]}>{NORMAL_MAX}</Text>
-        <Text style={[styles.axisLabel, { color: theme.colors.success }]}>{NORMAL_MIN}</Text>
-        <Text style={[styles.axisLabel, { color: theme.colors.textTertiary }]}>{minVal.toFixed(0)}</Text>
+        <Text style={[styles.axisLabel, { color: theme.colors.textTertiary, position: 'absolute', top: getY(maxVal) - 5 }]}>{maxVal.toFixed(0)}</Text>
+        <Text style={[styles.axisLabel, { color: theme.colors.success, position: 'absolute', top: getY(NORMAL_MAX) - 5 }]}>{NORMAL_MAX}</Text>
+        <Text style={[styles.axisLabel, { color: theme.colors.success, position: 'absolute', top: getY(NORMAL_MIN) - 5 }]}>{NORMAL_MIN}</Text>
+        <Text style={[styles.axisLabel, { color: theme.colors.textTertiary, position: 'absolute', top: getY(minVal) - 5 }]}>{minVal.toFixed(0)}</Text>
       </View>
 
       {/* Chart area */}
@@ -253,7 +253,7 @@ export function PredictionChart({ actualData, predictions }: Props) {
 
 const styles = StyleSheet.create({
   container: { paddingVertical: 8 },
-  yAxis: { position: 'absolute', left: 0, top: 0, height: CHART_HEIGHT, justifyContent: 'space-between', width: Y_AXIS_WIDTH },
+  yAxis: { position: 'absolute', left: 0, top: 0, height: CHART_HEIGHT, width: Y_AXIS_WIDTH },
   axisLabel: { fontSize: 9 },
   chart: { marginLeft: Y_AXIS_WIDTH + 4, position: 'relative' },
   normalZone: { position: 'absolute', left: 0, right: 0 },

@@ -50,6 +50,7 @@ export default function SettingsScreen() {
               storage.delete(StorageKeys.SUBSCRIPTION_CACHED_PRO);
               storage.delete(StorageKeys.SUBSCRIPTION_EXPIRES_AT);
               storage.delete('subscriptionCachedAt');
+              storage.delete('subscriptionPlan');
               storage.delete(StorageKeys.ONBOARDING_DRAFT);
               // Clean up hints-related keys so hints system resets properly
               storage.delete(StorageKeys.HINTS_REGISTRATION_DATE);

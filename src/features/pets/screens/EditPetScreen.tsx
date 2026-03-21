@@ -62,7 +62,8 @@ export default function EditPetScreen() {
   const isValidTime = (time: string) => /^\d{1,2}:\d{2}$/.test(time);
 
   const handleSave = async () => {
-    if (savingRef.current || !activePet || !name.trim()) { Alert.alert(t('pets.enterName')); return; }
+    if (savingRef.current || !activePet) return;
+    if (!name.trim()) { Alert.alert(t('pets.enterName')); return; }
     // Validate weight: if provided, must be positive
     if (weightKg) {
       const parsedWeight = parseFloat(weightKg.replace(',', '.'));
@@ -75,6 +76,11 @@ export default function EditPetScreen() {
     const allTimes = [...injectionTimes, ...feedingTimes];
     if (allTimes.some(t => !isValidTime(t))) {
       Alert.alert(t('common.error'), t('pets.invalidTimeFormat'));
+      return;
+    }
+    // Check for duplicate times within each schedule
+    if (new Set(injectionTimes).size !== injectionTimes.length || new Set(feedingTimes).size !== feedingTimes.length) {
+      Alert.alert(t('common.error'), t('onboarding.duplicateTime'));
       return;
     }
     savingRef.current = true;
