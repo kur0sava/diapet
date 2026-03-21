@@ -39,6 +39,7 @@ export default function LogInjectionScreen() {
   const [administeredAt, setAdministeredAt] = useState(() =>
     route.params?.presetDate ? new Date(route.params.presetDate) : new Date(),
   );
+  const initialAdministeredAt = useRef(administeredAt.getTime());
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [showTimePicker, setShowTimePicker] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -47,7 +48,8 @@ export default function LogInjectionScreen() {
   const commonInsulins = Array.isArray(commonInsulinsRaw) ? commonInsulinsRaw as string[] : [];
   // ARCH005: prevent duplicate injection on double-tap
   const savingRef = useRef(false);
-  const disableGuard = useUnsavedChangesGuard(!!dose || !!notes || insulinType !== (activePet?.insulinType ?? ''));
+  const dateChanged = administeredAt.getTime() !== initialAdministeredAt.current;
+  const disableGuard = useUnsavedChangesGuard(!!dose || !!notes || dateChanged || insulinType !== (activePet?.insulinType ?? ''));
 
   const doSaveInjection = useCallback(async () => {
     if (!activePet || savingRef.current) return;

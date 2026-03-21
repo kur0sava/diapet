@@ -41,14 +41,14 @@ export default function PetInfoScreen() {
 
   const validate = () => {
     const newErrors: Record<string, string> = {};
-    if (!name.trim()) newErrors.name = t('common.error');
+    if (!name.trim()) newErrors.name = t('onboarding.nameRequired', { defaultValue: t('common.error') });
     if (weightKg) {
       const w = parseFloat(weightKg.replace(',', '.'));
       if (isNaN(w) || w <= 0 || w > 30) newErrors.weightKg = t('pets.invalidWeight');
     }
     if (age) {
       const a = parseInt(age, 10);
-      if (isNaN(a) || a < 0 || a > 30) newErrors.age = t('common.error');
+      if (isNaN(a) || a < 0 || a > 30) newErrors.age = t('onboarding.ageInvalid', { defaultValue: t('common.error') });
     }
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;

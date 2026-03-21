@@ -34,7 +34,7 @@ export default function AddExpenseScreen() {
   const [loading, setLoading] = useState(false);
   const savingRef = useRef(false);
 
-  const disableGuard = useUnsavedChangesGuard(!!amount || !!description);
+  const disableGuard = useUnsavedChangesGuard(!!amount || !!description || category !== 'insulin');
 
   const categoryLabels: Record<ExpenseCategory, string> = {
     insulin: t('expenses.insulin'), testStrips: t('expenses.testStrips'),

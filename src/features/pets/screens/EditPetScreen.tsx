@@ -137,7 +137,13 @@ export default function EditPetScreen() {
         </View>
       ))}
       <TouchableOpacity style={[styles.addBtn, { borderColor: theme.colors.primary, borderRadius: 12 }]} onPress={() => {
-        const newTime = times.includes('12:00') ? '13:00' : '12:00';
+        if (times.length >= 8) return;
+        const existingSet = new Set(times);
+        let newTime = '12:00';
+        for (let h = 6; h < 24; h++) {
+          const candidate = `${h.toString().padStart(2, '0')}:00`;
+          if (!existingSet.has(candidate)) { newTime = candidate; break; }
+        }
         setTimes([...times, newTime]);
       }}>
         <Text style={{ color: theme.colors.primary, fontFamily: theme.fonts.semibold }}>+ {type === 'injection' ? t('pets.addInjection') : t('pets.addFeeding')}</Text>

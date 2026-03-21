@@ -32,13 +32,21 @@ export default function ScheduleScreen() {
     const MAX_TIMES = 8;
     const times = type === 'injection' ? injectionTimes : feedingTimes;
     if (times.length >= MAX_TIMES) return;
-    // Find a time that doesn't duplicate existing entries
-    const newTime = times.includes('12:00') ? '13:00' : '12:00';
+    // Find a unique time that doesn't collide with existing entries
+    const existingSet = new Set(times);
+    let newTime = '12:00';
+    for (let h = 6; h < 24; h++) {
+      const candidate = `${h.toString().padStart(2, '0')}:00`;
+      if (!existingSet.has(candidate)) { newTime = candidate; break; }
+    }
+    const newIndex = times.length;
     if (type === 'injection') {
       setInjectionTimes([...injectionTimes, newTime]);
     } else {
       setFeedingTimes([...feedingTimes, newTime]);
     }
+    // Immediately open picker for the newly added time
+    setShowPicker({ type, index: newIndex });
   };
 
   const removeTime = (type: 'injection' | 'feeding', index: number) => {
@@ -141,10 +149,17 @@ export default function ScheduleScreen() {
               const hh = date.getHours().toString().padStart(2, '0');
               const mm = date.getMinutes().toString().padStart(2, '0');
               const newTime = `${hh}:${mm}`;
+              const times = showPicker.type === 'injection' ? injectionTimes : feedingTimes;
+              // Prevent duplicate times
+              if (times.some((existing, i) => i !== showPicker.index && existing === newTime)) {
+                Alert.alert(t('onboarding.duplicateTime', { defaultValue: 'This time already exists' }));
+                setShowPicker(null);
+                return;
+              }
               if (showPicker.type === 'injection') {
-                setInjectionTimes(prev => prev.map((t, i) => i === showPicker.index ? newTime : t));
+                setInjectionTimes(prev => prev.map((existing, i) => i === showPicker.index ? newTime : existing));
               } else {
-                setFeedingTimes(prev => prev.map((t, i) => i === showPicker.index ? newTime : t));
+                setFeedingTimes(prev => prev.map((existing, i) => i === showPicker.index ? newTime : existing));
               }
             }
             setShowPicker(null);

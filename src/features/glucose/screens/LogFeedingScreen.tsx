@@ -43,13 +43,15 @@ export default function LogFeedingScreen() {
   const [fedAt, setFedAt] = useState(() =>
     route.params?.presetDate ? new Date(route.params.presetDate) : new Date(),
   );
+  const initialFedAt = useRef(fedAt.getTime());
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [showTimePicker, setShowTimePicker] = useState(false);
   const [loading, setLoading] = useState(false);
   const { triggerAfterAction } = useHintTrigger();
   // ARCH005: prevent duplicate feeding on double-tap
   const savingRef = useRef(false);
-  const disableGuard = useUnsavedChangesGuard(!!amount || !!notes || foodType !== 'dry');
+  const dateChanged = fedAt.getTime() !== initialFedAt.current;
+  const disableGuard = useUnsavedChangesGuard(!!amount || !!notes || dateChanged || foodType !== 'dry');
 
   const handleSave = useCallback(async () => {
     if (savingRef.current) return; // silent guard against double-tap
