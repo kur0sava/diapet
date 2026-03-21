@@ -50,11 +50,10 @@ export default function NotificationsScreen() {
       if (vetName) storage.set('vetName', vetName);
       if (vetPhone) storage.set('vetPhone', vetPhone);
 
-      // Notifications — persist user choice so EditPetScreen respects it
-      storage.set(StorageKeys.NOTIFICATIONS_ENABLED, enableNotifications);
-
+      // Notifications — set flag AFTER OS permission check to avoid mismatch
       if (enableNotifications) {
         const granted = await requestPermissions();
+        storage.set(StorageKeys.NOTIFICATIONS_ENABLED, granted);
         if (granted) {
           for (const time of (injectionTimes ?? [])) {
             await scheduleInjectionReminder(time, pet.name);
@@ -63,6 +62,8 @@ export default function NotificationsScreen() {
             await scheduleFeedingReminder(time, pet.name);
           }
         }
+      } else {
+        storage.set(StorageKeys.NOTIFICATIONS_ENABLED, false);
       }
 
       // Mark onboarding complete & clear draft

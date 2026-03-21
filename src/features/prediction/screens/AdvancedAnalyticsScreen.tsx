@@ -35,14 +35,16 @@ export default function AdvancedAnalyticsScreen() {
   const activePet = usePetStore(s => s.activePet);
   const petId = activePet?.id;
   const { canAccessAdvanced } = useSubscription();
+  const hasAccess = canAccessAdvanced();
 
-  // Pro-gate: redirect free users to paywall
+  // Pro-gate: redirect free users to paywall (run once on mount)
   useEffect(() => {
-    if (!canAccessAdvanced()) {
+    if (!hasAccess) {
       rootNav.navigate('Paywall');
       if (navigation.canGoBack()) navigation.goBack();
     }
-  }, [canAccessAdvanced, rootNav, navigation]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const {
     prediction,

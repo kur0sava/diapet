@@ -177,6 +177,10 @@ export default function LogGlucoseScreen() {
     if (!isValidValue) { Alert.alert(t('common.error'), t('glucose.invalidValue')); return; }
     // MC002: Warn on unusually high insulin dose (typical cat range: 1–4 units)
     const doseNum = insulinDose ? parseFloat(insulinDose.replace(',', '.')) : 0;
+    if (insulinDose && (isNaN(doseNum) || doseNum <= 0)) {
+      Alert.alert(t('common.error'), t('injection.doseError'));
+      return;
+    }
     // MH-C1: Hard limit 10 IU (ISFM 2021, Rand 2012 — clinical max for cats)
     if (doseNum > 10) {
       Alert.alert(t('glucose.doseAbsoluteLimit'), t('glucose.doseAbsoluteLimitDesc'));

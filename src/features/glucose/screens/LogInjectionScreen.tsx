@@ -100,7 +100,8 @@ export default function LogInjectionScreen() {
 
   const handleSave = useCallback(async () => {
     if (savingRef.current || !activePet) return;
-    if (!dose || parseFloat(dose.replace(',', '.')) <= 0) {
+    const doseNum = parseFloat(dose.replace(',', '.'));
+    if (!dose || isNaN(doseNum) || doseNum <= 0) {
       Alert.alert(t('common.error'), t('injection.doseError'));
       return;
     }
@@ -108,7 +109,6 @@ export default function LogInjectionScreen() {
       Alert.alert(t('common.error'), t('injection.typeError'));
       return;
     }
-    const doseNum = parseFloat(dose.replace(',', '.'));
 
     // X.8: Duplicate injection safety — warn if last injection < 6 hours ago
     try {

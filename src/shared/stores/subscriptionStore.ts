@@ -48,9 +48,11 @@ function setCachedStatus(isPro: boolean, expiresAt: string | null, plan: Subscri
   if (plan) storage.set('subscriptionPlan', plan);
 }
 
-const cached = getCachedStatus();
-
-export const useSubscriptionStore = create<SubscriptionStore>((set) => ({
+// Lazy init: getCachedStatus() called inside create() callback,
+// which Zustand invokes on first store access — not at module import time.
+export const useSubscriptionStore = create<SubscriptionStore>((set) => {
+  const cached = getCachedStatus();
+  return {
   isPro: cached.isPro,
   isLoading: false,
   expiresAt: cached.expiresAt,
@@ -100,7 +102,7 @@ export const useSubscriptionStore = create<SubscriptionStore>((set) => ({
       // silent
     }
   },
-}));
+};});
 
 /**
  * Returns true if the backend (Supabase) is configured.
