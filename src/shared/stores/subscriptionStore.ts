@@ -44,8 +44,16 @@ function getCachedStatus(): { isPro: boolean; expiresAt: string | null; plan: Su
 function setCachedStatus(isPro: boolean, expiresAt: string | null, plan: SubscriptionPlan | null): void {
   storage.set(StorageKeys.SUBSCRIPTION_CACHED_PRO, isPro);
   storage.set(CACHE_TIMESTAMP_KEY, Date.now());
-  if (expiresAt) storage.set(StorageKeys.SUBSCRIPTION_EXPIRES_AT, expiresAt);
-  if (plan) storage.set('subscriptionPlan', plan);
+  if (expiresAt) {
+    storage.set(StorageKeys.SUBSCRIPTION_EXPIRES_AT, expiresAt);
+  } else {
+    storage.delete(StorageKeys.SUBSCRIPTION_EXPIRES_AT);
+  }
+  if (plan) {
+    storage.set('subscriptionPlan', plan);
+  } else {
+    storage.delete('subscriptionPlan');
+  }
 }
 
 // Lazy init: getCachedStatus() called inside create() callback,

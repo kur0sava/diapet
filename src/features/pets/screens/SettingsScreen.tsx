@@ -48,6 +48,8 @@ export default function SettingsScreen() {
               storage.delete(StorageKeys.LAST_BACKUP);
               storage.delete(StorageKeys.BOOKMARKED_ARTICLES);
               storage.delete(StorageKeys.SUBSCRIPTION_CACHED_PRO);
+              storage.delete(StorageKeys.SUBSCRIPTION_EXPIRES_AT);
+              storage.delete('subscriptionCachedAt');
               storage.delete(StorageKeys.ONBOARDING_DRAFT);
               // Clean up hints-related keys so hints system resets properly
               storage.delete(StorageKeys.HINTS_REGISTRATION_DATE);
@@ -58,10 +60,11 @@ export default function SettingsScreen() {
               storage.delete(StorageKeys.HINTS_PUSH_SHOWN_IDS);
               storage.delete(StorageKeys.HINTS_PUSH_LAST_SCHEDULED);
               storage.delete('hintsMissedCheckDate');
-              // Clean up AI chat history and prediction cache for all pets
+              // Clean up AI chat history, daily limits, and prediction cache for all pets
               const allKeys = storage.getAllKeys();
               for (const key of allKeys) {
                 if (key.startsWith('aiChatHistory_') ||
+                    key.startsWith('aiChatDaily') ||
                     key.startsWith('predictionCache_') ||
                     key.startsWith('predictionLastRequest_') ||
                     key.startsWith('remissionCache_') ||
