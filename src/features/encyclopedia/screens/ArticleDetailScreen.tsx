@@ -193,6 +193,13 @@ export default function ArticleDetailScreen() {
           {lang(article.summaryKey)}
         </Text>
 
+        <View style={[styles.disclaimerBanner, { backgroundColor: `${theme.colors.warning}15`, borderColor: `${theme.colors.warning}40` }]}>
+          <Ionicons name="information-circle-outline" size={16} color={theme.colors.warning} style={{ marginTop: 2 }} />
+          <Text style={[styles.disclaimerText, { color: theme.colors.textSecondary }]}>
+            {t('encyclopedia.disclaimer')}
+          </Text>
+        </View>
+
         {showToc && (
           <View style={[styles.tocContainer, { backgroundColor: theme.colors.surface, borderColor: theme.colors.border }]}>
             <TouchableOpacity
@@ -255,7 +262,9 @@ const styles = StyleSheet.create({
   articleTitle: { fontSize: 24, fontWeight: '800', lineHeight: 32, marginBottom: 12 },
   meta: { flexDirection: 'row', marginBottom: 16 },
   metaText: { fontSize: 13 },
-  summary: { fontSize: 15, lineHeight: 22, padding: 16, borderRadius: 12, marginBottom: 24 },
+  summary: { fontSize: 15, lineHeight: 22, padding: 16, borderRadius: 12, marginBottom: 12 },
+  disclaimerBanner: { flexDirection: 'row', alignItems: 'flex-start', gap: 8, padding: 12, borderRadius: 10, borderWidth: 1, marginBottom: 20 },
+  disclaimerText: { fontSize: 12, lineHeight: 18, flex: 1 },
   articleContent: { gap: 4 },
   h2: { fontSize: 20, fontWeight: '800', marginTop: 20, marginBottom: 8 },
   h3: { fontSize: 17, fontWeight: '700', marginTop: 16, marginBottom: 6 },

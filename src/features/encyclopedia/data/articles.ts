@@ -431,8 +431,9 @@ Remember: your attention and care are already half the treatment.`,
 
 **Обычные влажные корма с низкими углеводами:**
 - Fancy Feast Classic (тунец, курица, говядина)
-- Sheba (многие варианты)
-- Felix (влажный)
+- Sheba (некоторые варианты — проверяйте состав!)
+
+Проверяйте состав каждой разновидности — содержание углеводов может сильно отличаться даже внутри одной линейки. Используйте встроенный калькулятор в приложении для расчёта сухого вещества.
 
 Не переживайте, если диабетический корм недоступен — хороший влажный корм с низкими углеводами тоже отлично работает!
 
@@ -457,11 +458,10 @@ Remember: your attention and care are already half the treatment.`,
 
 ### Снижение веса — мягко и постепенно
 
-Если у котика лишний вес — худеть нужно, но аккуратно:
+Если у котика лишний вес — обсудите план снижения веса с ветеринаром. Обычно рекомендуется:
 - Не более 1-2% массы тела в неделю
-- Резкое голодание опасно — может привести к проблемам с печенью
-- Целевой вес для большинства кошек: 3.5-5 кг
-- Ваш ветеринар поможет составить план
+- Резкое голодание опасно — может привести к проблемам с печенью (липидоз)
+- Ваш ветеринар определит целевой вес и безопасный темп похудения
 
 ### Как перейти на новый корм
 
@@ -502,8 +502,9 @@ The difference is huge! Switching to wet food is one of the simplest and most ef
 
 **Regular wet foods with low carbohydrates:**
 - Fancy Feast Classic (tuna, chicken, beef)
-- Sheba (many varieties)
-- Felix (wet)
+- Sheba (some varieties — always check the label!)
+
+Always check the ingredients of each variety — carbohydrate content can vary significantly even within the same product line. Use the built-in calculator in the app to check dry matter basis.
 
 Don't worry if diabetic food isn't available — a good low-carb wet food works wonderfully too!
 
@@ -528,11 +529,10 @@ Don't worry if diabetic food isn't available — a good low-carb wet food works 
 
 ### Weight Loss — Gently and Gradually
 
-If your kitty is carrying extra weight, losing it helps, but it must be done carefully:
+If your kitty is carrying extra weight, discuss a weight loss plan with your vet. Typical safe guidance includes:
 - No more than 1-2% of body weight per week
-- Crash dieting is dangerous — it can lead to liver problems
-- Target weight for most cats: 3.5-5 kg
-- Your vet will help create a plan
+- Crash dieting is dangerous — it can lead to liver problems (hepatic lipidosis)
+- Your vet will determine the target weight and safe pace
 
 ### How to Transition to New Food
 

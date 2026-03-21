@@ -354,6 +354,7 @@ export const en = {
     searchPlaceholder: 'Search articles...',
     articleNotFound: 'Article not found',
     tableOfContents: 'Table of Contents',
+    disclaimer: 'This information is for educational purposes and does not replace veterinary advice.',
     categories: {
       basics: 'Basics',
       treatment: 'Treatment',

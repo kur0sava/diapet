@@ -354,6 +354,7 @@ export const ru = {
     searchPlaceholder: 'Поиск статей...',
     articleNotFound: 'Статья не найдена',
     tableOfContents: 'Оглавление',
+    disclaimer: 'Информация носит образовательный характер и не заменяет консультацию ветеринара.',
     categories: {
       basics: 'Основы',
       treatment: 'Лечение',
