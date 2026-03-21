@@ -424,7 +424,9 @@ const styles = StyleSheet.create({
     paddingVertical: 14,
   },
   backButton: {
-    width: 36,
+    width: 44,
+    minHeight: 44,
+    justifyContent: 'center',
     alignItems: 'flex-start',
   },
   headerTitleContainer: {
@@ -438,7 +440,7 @@ const styles = StyleSheet.create({
     color: '#fff',
   },
   headerRight: {
-    width: 36,
+    width: 44,
   },
 
   // Messages

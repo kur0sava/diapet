@@ -33,8 +33,15 @@ export default function AddExpenseScreen() {
   const [originalDate, setOriginalDate] = useState<string | undefined>();
   const [loading, setLoading] = useState(false);
   const savingRef = useRef(false);
+  const [isDirty, setIsDirty] = useState(false);
+  const initialLoaded = useRef(!editId); // new expense = dirty tracking starts immediately
 
-  const disableGuard = useUnsavedChangesGuard(!!amount || !!description || category !== 'insulin');
+  const disableGuard = useUnsavedChangesGuard(isDirty);
+
+  // Track changes after initial load for edit mode
+  useEffect(() => {
+    if (initialLoaded.current) setIsDirty(!!amount || !!description || category !== 'insulin');
+  }, [amount, description, category]);
 
   const categoryLabels: Record<ExpenseCategory, string> = {
     insulin: t('expenses.insulin'), testStrips: t('expenses.testStrips'),
@@ -51,6 +58,8 @@ export default function AddExpenseScreen() {
         setAmount(exp.amount.toString());
         if (exp.description) setDescription(exp.description);
         if (exp.date) setOriginalDate(exp.date);
+        // Mark initial load done so dirty tracking starts after this
+        setTimeout(() => { initialLoaded.current = true; }, 0);
       });
     }
     return () => { cancelled = true; };

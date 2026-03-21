@@ -166,7 +166,7 @@ export default function EditPetScreen() {
           <View style={{ width: 60 }} />
         </View>
         <ScrollView contentContainerStyle={styles.content}>
-          <Input label={t('pets.name')} value={name} onChangeText={setName} placeholder="Барсик" />
+          <Input label={t('pets.name')} value={name} onChangeText={setName} placeholder="Барсик" maxLength={50} />
           <Input label={`${t('pets.weight')} (${t('common.kg')})`} value={weightKg} onChangeText={setWeightKg} placeholder="4.5" keyboardType="decimal-pad" />
           <Input label={t('pets.insulinType')} value={insulinType} onChangeText={setInsulinType} placeholder="Протафан" />
           <View style={styles.sectionHeader}>

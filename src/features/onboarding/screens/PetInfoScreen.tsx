@@ -5,6 +5,8 @@ import {
   StyleSheet,
   ScrollView,
   TouchableOpacity,
+  KeyboardAvoidingView,
+  Platform,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useOnboardingNavigation } from '@navigation/hooks';
@@ -85,8 +87,9 @@ export default function PetInfoScreen() {
   ];
 
   return (
+    <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={{ flex: 1 }}>
     <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.background }]}>
-      <ScrollView style={styles.scroll} showsVerticalScrollIndicator={false}>
+      <ScrollView style={styles.scroll} showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 40 }}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backBtn}>
           <Text style={{ color: theme.colors.primary, fontSize: 16 }}>← {t('common.back')}</Text>
         </TouchableOpacity>
@@ -104,6 +107,7 @@ export default function PetInfoScreen() {
             onChangeText={setName}
             placeholder={t('onboarding.petNamePlaceholder')}
             error={errors.name}
+            maxLength={50}
           />
 
           <View style={styles.field}>
@@ -211,6 +215,7 @@ export default function PetInfoScreen() {
         </View>
       </ScrollView>
     </SafeAreaView>
+    </KeyboardAvoidingView>
   );
 }
 

@@ -129,7 +129,7 @@ export default function SettingsScreen() {
         <Card style={styles.card}>
           <View style={styles.langRow}>
             {(['mmol/L', 'mg/dL'] as const).map(unit => (
-              <TouchableOpacity key={unit} style={[styles.langBtn, { backgroundColor: glucoseUnit === unit ? theme.colors.primary : theme.colors.surfaceSecondary, flex: 1 }]} onPress={() => { storage.set(StorageKeys.GLUCOSE_UNIT, unit); setGlucoseUnit(unit); }}>
+              <TouchableOpacity key={unit} style={[styles.langBtn, { backgroundColor: glucoseUnit === unit ? theme.colors.primary : theme.colors.surfaceSecondary, flex: 1 }]} onPress={() => { storage.set(StorageKeys.GLUCOSE_UNIT, unit); setGlucoseUnit(unit); queryClient.invalidateQueries({ queryKey: ['glucose'] }); }}>
                 <Text style={{ color: glucoseUnit === unit ? '#fff' : theme.colors.text, fontWeight: '600' }}>{unit}</Text>
               </TouchableOpacity>
             ))}

@@ -205,7 +205,7 @@ export default function DashboardScreen() {
                 <View style={styles.petAvatar}>
                   <Ionicons name="paw" size={20} color="#FFFFFF" />
                 </View>
-                <View>
+                <View style={{ flexShrink: 1 }}>
                   <Text style={[styles.greeting, { fontFamily: theme.fonts.medium }]}>
                     {t('dashboard.title')}
                   </Text>
@@ -467,6 +467,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 12,
+    flex: 1,
+    minWidth: 0,
   },
   petAvatar: {
     width: 44,
