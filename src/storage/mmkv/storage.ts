@@ -115,4 +115,5 @@ export const StorageKeys = {
   AI_CHAT_DAILY_DATE: 'aiChatDailyDate',
   DEVICE_ID: 'deviceId',
   SUBSCRIPTION_EXPIRES_AT: 'subscriptionExpiresAt',
+  SUBSCRIPTION_PLAN: 'subscriptionPlan',
 } as const;

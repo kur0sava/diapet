@@ -99,7 +99,7 @@ export default function LogFeedingScreen() {
 
     if (amount) {
       const parsedAmount = parseFloat(amount.replace(',', '.'));
-      if (isNaN(parsedAmount) || parsedAmount <= 0) {
+      if (isNaN(parsedAmount) || !isFinite(parsedAmount) || parsedAmount <= 0 || parsedAmount > 2000) {
         Alert.alert(t('common.error'), t('feeding.amountError'));
         return;
       }

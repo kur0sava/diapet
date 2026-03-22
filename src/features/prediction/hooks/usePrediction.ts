@@ -2,7 +2,7 @@
  * React hook for glucose prediction.
  * Manages cache, rate limiting, and manual trigger.
  */
-import { useState, useCallback, useMemo } from 'react';
+import { useState, useCallback, useMemo, useRef, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { usePetStore } from '@shared/stores/petStore';
 import i18n from '@shared/i18n';
@@ -34,6 +34,9 @@ export function usePrediction(): UsePredictionReturn {
 
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const mountedRef = useRef(true);
+  useEffect(() => () => { mountedRef.current = false; }, []);
+
   const [prediction, setPrediction] = useState<PredictionResult | null>(() => {
     if (!petId) return null;
     return getCachedPrediction(petId);
@@ -68,11 +71,14 @@ export function usePrediction(): UsePredictionReturn {
       const snapshot = await collectPredictionData(petId, activePet, language);
       const result = await requestPrediction(snapshot);
 
-      cachePrediction(petId, result);
+      if (!mountedRef.current) return;
+      if (result.status !== 'error') {
+        cachePrediction(petId, result);
+      }
       setPrediction(result);
     } catch (e) {
+      if (!mountedRef.current) return;
       const raw = e instanceof Error ? e.message : '';
-      // Map technical errors to user-friendly localized messages
       const msg = raw.includes('API key not configured')
         ? t('prediction.errorApiNotConfigured')
         : raw.includes('API error')
@@ -80,7 +86,7 @@ export function usePrediction(): UsePredictionReturn {
           : t('prediction.errorGeneral');
       setError(msg);
     } finally {
-      setIsLoading(false);
+      if (mountedRef.current) setIsLoading(false);
     }
   }, [activePet, petId, t]);
 

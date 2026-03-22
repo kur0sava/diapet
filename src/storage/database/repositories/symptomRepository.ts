@@ -128,6 +128,7 @@ export const symptomRepository = {
       if ('photoUris' in dto) { sets.push('photo_uris=?'); params.push(dto.photoUris ? JSON.stringify(dto.photoUris) : null); }
       if ('notes' in dto) { sets.push('notes=?'); params.push(dto.notes ?? null); }
       if ('glucoseReadingId' in dto) { sets.push('glucose_reading_id=?'); params.push(dto.glucoseReadingId ?? null); }
+      if (dto.recordedAt !== undefined) { sets.push('recorded_at=?'); params.push(dto.recordedAt); }
       if (sets.length > 0) {
         sets.push('updated_at=?');
         params.push(now, id);

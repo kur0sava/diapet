@@ -34,7 +34,7 @@ function getCachedStatus(): { isPro: boolean; expiresAt: string | null; plan: Su
     }
     const isPro = storage.getBoolean(StorageKeys.SUBSCRIPTION_CACHED_PRO) ?? false;
     const expiresAt = storage.getString(StorageKeys.SUBSCRIPTION_EXPIRES_AT) ?? null;
-    const plan = (storage.getString('subscriptionPlan') as SubscriptionPlan) ?? null;
+    const plan = (storage.getString(StorageKeys.SUBSCRIPTION_PLAN) as SubscriptionPlan) ?? null;
     return { isPro, expiresAt, plan };
   } catch {
     return { isPro: false, expiresAt: null, plan: null };
@@ -50,9 +50,9 @@ function setCachedStatus(isPro: boolean, expiresAt: string | null, plan: Subscri
     storage.delete(StorageKeys.SUBSCRIPTION_EXPIRES_AT);
   }
   if (plan) {
-    storage.set('subscriptionPlan', plan);
+    storage.set(StorageKeys.SUBSCRIPTION_PLAN, plan);
   } else {
-    storage.delete('subscriptionPlan');
+    storage.delete(StorageKeys.SUBSCRIPTION_PLAN);
   }
 }
 

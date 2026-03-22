@@ -1,10 +1,9 @@
 import * as SQLite from 'expo-sqlite';
-import * as SecureStore from 'expo-secure-store';
-import * as Crypto from 'expo-crypto';
 import { CREATE_TABLES_SQL, DB_NAME } from './schema';
 import { runMigrations } from './migrations';
 
-const SQLITE_KEY_STORE = 'diapet-sqlite-key';
+// Note: expo-sqlite uses stock SQLite (not SQLCipher), so PRAGMA key is a no-op.
+// Encryption relies on OS-level protection (Android FBE / iOS Data Protection).
 
 let db: SQLite.SQLiteDatabase | null = null;
 let dbInitPromise: Promise<SQLite.SQLiteDatabase> | null = null;
@@ -13,19 +12,7 @@ export async function getDatabase(): Promise<SQLite.SQLiteDatabase> {
   if (db) return db;
   if (dbInitPromise) return dbInitPromise;
   dbInitPromise = (async () => {
-    // CFG003: retrieve or generate per-device SQLCipher key
-    let sqliteKey = await SecureStore.getItemAsync(SQLITE_KEY_STORE);
-    if (!sqliteKey) {
-      sqliteKey = Crypto.randomUUID();
-      await SecureStore.setItemAsync(SQLITE_KEY_STORE, sqliteKey);
-    }
     const database = await SQLite.openDatabaseAsync(DB_NAME);
-    // Must be first operation before any reads/writes
-    // Validate key is a UUID (hex + hyphens only) to prevent SQL injection
-    if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(sqliteKey)) {
-      throw new Error('Invalid SQLite encryption key format');
-    }
-    await database.runAsync(`PRAGMA key = '${sqliteKey}'`);
     await initializeDatabase(database);
     db = database;
     return database;

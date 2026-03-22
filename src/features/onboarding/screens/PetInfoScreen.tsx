@@ -46,7 +46,7 @@ export default function PetInfoScreen() {
     if (!name.trim()) newErrors.name = t('onboarding.nameRequired', { defaultValue: t('common.error') });
     if (weightKg) {
       const w = parseFloat(weightKg.replace(',', '.'));
-      if (isNaN(w) || w <= 0 || w > 30) newErrors.weightKg = t('pets.invalidWeight');
+      if (isNaN(w) || w <= 0 || w > 15) newErrors.weightKg = t('pets.invalidWeight');
     }
     if (age) {
       const a = parseInt(age, 10);

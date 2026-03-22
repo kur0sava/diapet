@@ -62,7 +62,10 @@ export default function DailyDiaryScreen() {
   const [currentDate, setCurrentDate] = useState<Date>(() => {
     if (route.params?.date) {
       const parsed = parseISO(route.params.date);
-      return isValid(parsed) ? parsed : new Date();
+      if (isValid(parsed)) {
+        // Clamp to today — prevent future dates via route params
+        return parsed > new Date() ? new Date() : parsed;
+      }
     }
     return new Date();
   });

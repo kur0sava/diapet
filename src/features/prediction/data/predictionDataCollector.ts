@@ -121,14 +121,31 @@ function computeFeedingStats(all: FeedingLog[]): FeedingStats {
     avgFeedingsPerDay7d = Math.round((last7.length / Math.max(days.size, 1)) * 10) / 10;
   }
 
-  // Feeding regularity: check if feeding times are consistent (±2h from avg)
+  // Feeding regularity: group by day and check consistency of per-day meal count and timing
   let feedingRegular = false;
   if (last7.length >= 4) {
-    const hours = last7.map(f => {
+    // Group feedings by day
+    const byDay = new Map<string, number[]>();
+    for (const f of last7) {
       const d = safeParseISO(f.fedAt);
-      return d ? d.getHours() + d.getMinutes() / 60 : 12;
-    });
-    feedingRegular = stdDev(hours) < 2;
+      if (!d) continue;
+      const dayKey = f.fedAt.slice(0, 10);
+      const hours = byDay.get(dayKey) ?? [];
+      hours.push(d.getHours() + d.getMinutes() / 60);
+      byDay.set(dayKey, hours);
+    }
+    // Check consistency: same number of meals per day and each meal slot is consistent
+    const dayCounts = [...byDay.values()].map(h => h.length);
+    const countConsistent = dayCounts.length >= 2 && stdDev(dayCounts) < 0.5;
+    // Sort each day's hours and check consistency of each slot across days
+    const sortedDays = [...byDay.values()].map(h => h.sort((a, b) => a - b));
+    const mealsPerDay = Math.round(average(dayCounts) ?? 2);
+    let slotConsistent = true;
+    for (let slot = 0; slot < mealsPerDay; slot++) {
+      const slotHours = sortedDays.filter(d => d.length > slot).map(d => d[slot]);
+      if (slotHours.length >= 2 && stdDev(slotHours) > 2) { slotConsistent = false; break; }
+    }
+    feedingRegular = countConsistent && slotConsistent;
   }
 
   // Most common food type

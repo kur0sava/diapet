@@ -31,7 +31,7 @@ export default function EmergencyScreen() {
       // Предлагаем только звонок 112, добавить ветеринара можно после.
       Alert.alert(t('emergency.noVetContact'), t('emergency.addVetContact'), [
         { text: t('common.cancel'), style: 'cancel' },
-        { text: t('emergency.call112'), onPress: () => Linking.openURL('tel:112') },
+        { text: t('emergency.call112'), onPress: () => Linking.openURL('tel:112').catch(() => Alert.alert(t('emergency.callFailed'), t('emergency.callFailedDesc'))) },
       ]);
       return;
     }

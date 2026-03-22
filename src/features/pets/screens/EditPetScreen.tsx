@@ -67,7 +67,7 @@ export default function EditPetScreen() {
     // Validate weight: if provided, must be positive
     if (weightKg) {
       const parsedWeight = parseFloat(weightKg.replace(',', '.'));
-      if (isNaN(parsedWeight) || parsedWeight <= 0 || parsedWeight > 30) {
+      if (isNaN(parsedWeight) || parsedWeight <= 0 || parsedWeight > 15) {
         Alert.alert(t('common.error'), t('pets.invalidWeight'));
         return;
       }

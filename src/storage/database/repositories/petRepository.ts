@@ -60,7 +60,7 @@ export const petRepository = {
     const sets: string[] = [];
     const params: (string | number | null)[] = [];
     const fields: Array<[string, keyof UpdatePetDTO]> = [
-      ['name', 'name'], ['breed', 'breed'], ['gender', 'gender'],
+      ['name', 'name'], ['species', 'species'], ['breed', 'breed'], ['gender', 'gender'],
       ['birth_year', 'birthYear'], ['weight_kg', 'weightKg'],
       ['diagnosis_date', 'diagnosisDate'], ['diabetes_type', 'diabetesType'],
       ['insulin_type', 'insulinType'], ['photo_uri', 'photoUri'],

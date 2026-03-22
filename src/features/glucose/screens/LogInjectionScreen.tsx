@@ -114,7 +114,7 @@ export default function LogInjectionScreen() {
 
     // X.8: Duplicate injection safety — warn if last injection < 6 hours ago
     try {
-      const lastInj = await injectionRepository.findLatest(activePet.id);
+      const lastInj = await injectionRepository.findNearestTo(activePet.id, administeredAt.toISOString());
       if (lastInj) {
         const minutesSince = Math.abs(differenceInMinutes(administeredAt, new Date(lastInj.administeredAt)));
         if (minutesSince < 360) { // 6 hours

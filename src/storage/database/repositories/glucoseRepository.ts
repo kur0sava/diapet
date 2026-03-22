@@ -177,9 +177,10 @@ export const glucoseRepository = {
     const sets: string[] = [];
     const params: (string | number | null)[] = [];
 
-    if (dto.value !== undefined && dto.unit) {
-      const valueMgdl = dto.unit === 'mg/dL' ? dto.value : mmolToMgdl(dto.value);
-      const valueMmol = dto.unit === 'mmol/L' ? dto.value : mgdlToMmol(dto.value);
+    if (dto.value !== undefined) {
+      const unit = dto.unit ?? 'mmol/L';
+      const valueMgdl = unit === 'mg/dL' ? dto.value : mmolToMgdl(dto.value);
+      const valueMmol = unit === 'mmol/L' ? dto.value : mgdlToMmol(dto.value);
       sets.push('value_mmol=?', 'value_mgdl=?');
       params.push(valueMmol, valueMgdl);
     }

@@ -75,6 +75,15 @@ export const CREATE_TABLES_SQL = `
     notes TEXT,
     fed_at TEXT NOT NULL DEFAULT (datetime('now')),
     created_at TEXT NOT NULL DEFAULT (datetime('now')),
+    food_brand TEXT,
+    food_product TEXT,
+    protein REAL,
+    fat REAL,
+    fiber REAL,
+    ash REAL,
+    moisture REAL,
+    carbs_dm REAL,
+    verdict TEXT,
     FOREIGN KEY (pet_id) REFERENCES pets(id) ON DELETE CASCADE
   );
 

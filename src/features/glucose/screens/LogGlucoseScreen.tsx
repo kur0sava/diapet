@@ -23,6 +23,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useUnsavedChangesGuard } from '@shared/hooks/useUnsavedChangesGuard';
 import { useHintTrigger } from '@features/hints/hooks/useHintTrigger';
+import { clearPredictionCache } from '@features/prediction/data/predictionStorage';
 import type { IoniconName } from '@shared/components/ui';
 
 const MEAL_OPTIONS: { value: MealRelation; labelKey: string; iconName: IoniconName; iconColor: string }[] = [
@@ -155,6 +156,7 @@ export default function LogGlucoseScreen() {
       }
       await queryClient.invalidateQueries({ queryKey: ['glucose'] });
       await queryClient.invalidateQueries({ queryKey: ['diary'] });
+      if (activePet) clearPredictionCache(activePet.id);
       // Disable guard for the navigation we're about to trigger
       disableGuard();
       syncInitialValues();

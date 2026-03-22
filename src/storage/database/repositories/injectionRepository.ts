@@ -43,6 +43,17 @@ export const injectionRepository = {
     return row ? mapRow(row) : null;
   },
 
+  /** Find the injection closest in time to a given ISO datetime (for duplicate check). */
+  async findNearestTo(petId: string, isoDateTime: string): Promise<InjectionLog | null> {
+    const db = await getDatabase();
+    const row = await db.getFirstAsync<InjectionRow>(
+      `SELECT * FROM injections WHERE pet_id = ?
+       ORDER BY ABS(julianday(administered_at) - julianday(?)) ASC LIMIT 1`,
+      [petId, isoDateTime]
+    );
+    return row ? mapRow(row) : null;
+  },
+
   async findByPetId(petId: string, limit = 50, cursor?: string): Promise<PaginatedResult<InjectionLog>> {
     const db = await getDatabase();
     const rows = await db.getAllAsync<InjectionRow>(

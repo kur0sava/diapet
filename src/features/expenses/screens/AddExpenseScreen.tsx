@@ -68,7 +68,7 @@ export default function AddExpenseScreen() {
   const handleSave = async () => {
     if (savingRef.current || !activePet) return;
     const numAmount = parseFloat(amount.replace(',', '.'));
-    if (!amount || isNaN(numAmount) || numAmount <= 0) { Alert.alert(t('common.error'), t('expenses.amountError')); return; }
+    if (!amount || isNaN(numAmount) || !isFinite(numAmount) || numAmount <= 0 || numAmount > 10_000_000) { Alert.alert(t('common.error'), t('expenses.amountError')); return; }
     savingRef.current = true;
     setLoading(true);
     try {
