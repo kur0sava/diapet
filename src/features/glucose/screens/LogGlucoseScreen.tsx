@@ -19,7 +19,7 @@ import * as Haptics from 'expo-haptics';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { format } from 'date-fns';
 import i18n from '@shared/i18n';
-import { Ionicons } from '@expo/vector-icons';
+import { Icon } from '@shared/components/ui/Icon';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useUnsavedChangesGuard } from '@shared/hooks/useUnsavedChangesGuard';
 import { useHintTrigger } from '@features/hints/hooks/useHintTrigger';
@@ -292,7 +292,7 @@ export default function LogGlucoseScreen() {
               onPress={() => setShowDatePicker(true)}
             >
               <View style={styles.dateTimeContent}>
-                <Ionicons name="calendar-outline" size={18} color={theme.colors.primary} style={{ marginRight: 6 }} />
+                <Icon name="calendar-outline" size={18} color={theme.colors.primary} style={{ marginRight: 6 }} />
                 <Text style={{ color: theme.colors.text, fontSize: 15, fontFamily: theme.fonts.semibold }}>
                   {format(recordedAt, i18n.language === 'ru' ? 'dd.MM.yyyy' : 'MM/dd/yyyy')}
                 </Text>
@@ -303,7 +303,7 @@ export default function LogGlucoseScreen() {
               onPress={() => setShowTimePicker(true)}
             >
               <View style={styles.dateTimeContent}>
-                <Ionicons name="time-outline" size={18} color={theme.colors.primary} style={{ marginRight: 6 }} />
+                <Icon name="time-outline" size={18} color={theme.colors.primary} style={{ marginRight: 6 }} />
                 <Text style={{ color: theme.colors.text, fontSize: 15, fontFamily: theme.fonts.semibold }}>
                   {format(recordedAt, 'HH:mm')}
                 </Text>
@@ -359,7 +359,7 @@ export default function LogGlucoseScreen() {
                 ]}
                 onPress={() => setMealRelation(opt.value)}
               >
-                <Ionicons name={opt.iconName} size={24} color={mealRelation === opt.value ? theme.colors.primary : opt.iconColor} />
+                <Icon name={opt.iconName} size={24} color={mealRelation === opt.value ? theme.colors.primary : opt.iconColor} />
                 <Text style={[styles.mealLabel, { color: mealRelation === opt.value ? theme.colors.primary : theme.colors.text, fontFamily: theme.fonts.semibold }]} numberOfLines={2} adjustsFontSizeToFit minimumFontScale={0.8}>
                   {t(opt.labelKey)}
                 </Text>

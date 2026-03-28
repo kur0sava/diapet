@@ -7,7 +7,7 @@ import {
   StyleSheet,
 } from 'react-native';
 import { useTranslation } from 'react-i18next';
-import { Ionicons } from '@expo/vector-icons';
+import { Icon } from '@shared/components/ui/Icon';
 import { useTheme } from '@shared/theme';
 import { useHintStore } from '../store/hintStore';
 import { ACHIEVEMENT_HERO } from '../data/hintsContent';
@@ -44,7 +44,7 @@ export function AchievementModal() {
         <View style={styles.card}>
           {/* Gold star decoration */}
           <View style={styles.iconWrapper}>
-            <Ionicons name="star" size={48} color={GOLD} />
+            <Icon name="star" size={48} color={GOLD} />
           </View>
 
           {/* Achievement label */}

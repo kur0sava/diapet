@@ -1,4 +1,4 @@
-import React, { ComponentProps } from 'react';
+import React from 'react';
 import {
   TouchableOpacity,
   Text,
@@ -10,11 +10,11 @@ import {
   StyleProp,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '@shared/theme';
 import * as Haptics from 'expo-haptics';
+import { Icon, type IconName } from './Icon';
 
-export type IoniconName = ComponentProps<typeof Ionicons>['name'];
+export type IoniconName = IconName;
 
 type ButtonVariant = 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger';
 type ButtonSize = 'sm' | 'md' | 'lg';
@@ -30,7 +30,7 @@ interface ButtonProps {
   style?: StyleProp<ViewStyle>;
   textStyle?: StyleProp<TextStyle>;
   haptic?: boolean;
-  icon?: IoniconName;
+  icon?: IconName;
   iconPosition?: 'left' | 'right';
 }
 
@@ -110,7 +110,7 @@ export function Button({
       ) : (
         <>
           {icon && iconPosition === 'left' && (
-            <Ionicons name={icon} size={iconSize} color={textColor} style={{ marginRight: 6 }} />
+            <Icon name={icon} size={iconSize} color={textColor} style={{ marginRight: 6 }} />
           )}
           <Text
             style={[
@@ -127,7 +127,7 @@ export function Button({
             {title}
           </Text>
           {icon && iconPosition === 'right' && (
-            <Ionicons name={icon} size={iconSize} color={textColor} style={{ marginLeft: 6 }} />
+            <Icon name={icon} size={iconSize} color={textColor} style={{ marginLeft: 6 }} />
           )}
         </>
       )}

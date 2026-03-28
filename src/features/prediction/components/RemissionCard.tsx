@@ -3,7 +3,7 @@
  */
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+import { Icon } from '@shared/components/ui/Icon';
 import { useTheme } from '@shared/theme';
 import { useTranslation } from 'react-i18next';
 import type { RemissionReport, RemissionProbability } from '../data/predictionTypes';
@@ -30,7 +30,7 @@ export function RemissionCard({ report }: Props) {
     <View style={[styles.container, { backgroundColor: theme.colors.surface, ...theme.shadows.sm }]}>
       {/* Header with probability badge */}
       <View style={styles.header}>
-        <Ionicons name="trending-up" size={20} color={config.color} />
+        <Icon name="trending-up" size={20} color={config.color} />
         <Text style={[styles.headerTitle, { color: theme.colors.text, fontFamily: theme.fonts.bold }]}>
           {t('prediction.remissionTitle')}
         </Text>
@@ -51,7 +51,7 @@ export function RemissionCard({ report }: Props) {
 
           return (
             <View key={i} style={styles.factorRow}>
-              <Ionicons name={icon} size={16} color={color} />
+              <Icon name={icon} size={16} color={color} />
               <Text style={[styles.factorText, { color: theme.colors.text }]}>{text}</Text>
             </View>
           );

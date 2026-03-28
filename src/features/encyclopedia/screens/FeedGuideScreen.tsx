@@ -6,7 +6,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useEncyclopediaNavigation } from '@navigation/hooks';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '@shared/theme';
-import { Ionicons } from '@expo/vector-icons';
+import { Icon } from '@shared/components/ui/Icon';
 import { DIABETIC_NUTRITION_GUIDELINES, type Region } from '../data/diabeticFoods';
 
 const REGIONS: { key: Region; emoji: string }[] = [
@@ -29,7 +29,7 @@ export default function FeedGuideScreen() {
     <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.background }]}>
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
-          <Ionicons name="arrow-back" size={24} color={theme.colors.text} />
+          <Icon name="arrow-back" size={24} color={theme.colors.text} />
         </TouchableOpacity>
         <View style={styles.headerText}>
           <Text style={[styles.title, { color: theme.colors.text }]}>{t('feedGuide.title')}</Text>
@@ -40,7 +40,7 @@ export default function FeedGuideScreen() {
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
         {/* Disclaimer */}
         <View style={[styles.disclaimerCard, { backgroundColor: theme.colors.primaryLight }]}>
-          <Ionicons name="information-circle" size={20} color={theme.colors.primary} />
+          <Icon name="information-circle" size={20} color={theme.colors.primary} />
           <Text style={[styles.disclaimerText, { color: theme.colors.primary }]}>
             {t('feedGuide.disclaimer')}
           </Text>
@@ -65,7 +65,7 @@ export default function FeedGuideScreen() {
               <Text style={[styles.regionLabel, { color: theme.colors.text }]}>
                 {t(`feedGuide.regions.${key}`)}
               </Text>
-              <Ionicons name="chevron-forward" size={16} color={theme.colors.textTertiary} />
+              <Icon name="chevron-forward" size={16} color={theme.colors.textTertiary} />
             </TouchableOpacity>
           ))}
         </View>
@@ -87,7 +87,7 @@ export default function FeedGuideScreen() {
               {t('feedGuide.alternativesDesc')}
             </Text>
           </View>
-          <Ionicons name="chevron-forward" size={20} color={theme.colors.textTertiary} />
+          <Icon name="chevron-forward" size={20} color={theme.colors.textTertiary} />
         </TouchableOpacity>
 
         {/* Natural Food */}
@@ -107,7 +107,7 @@ export default function FeedGuideScreen() {
               {t('feedGuide.naturalFoodDesc')}
             </Text>
           </View>
-          <Ionicons name="chevron-forward" size={20} color={theme.colors.textTertiary} />
+          <Icon name="chevron-forward" size={20} color={theme.colors.textTertiary} />
         </TouchableOpacity>
 
         {/* Feeding Tips */}

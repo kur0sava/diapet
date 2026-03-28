@@ -9,7 +9,7 @@ import { useTranslation } from 'react-i18next';
 import { useTheme } from '@shared/theme';
 import { articles } from '../data/articles';
 import { Article, ArticleCategory, BilingualText } from '../types';
-import { Ionicons } from '@expo/vector-icons';
+import { Icon } from '@shared/components/ui/Icon';
 import type { IoniconName } from '@shared/components/ui';
 
 const useLang = () => {
@@ -63,7 +63,7 @@ export default function ArticleListScreen() {
     >
       <View style={styles.articleHeader}>
         <View style={[styles.categoryBadge, { backgroundColor: CATEGORY_ICONS[item.category].color + '15' }]}>
-          <Ionicons name={CATEGORY_ICONS[item.category].name} size={14} color={CATEGORY_ICONS[item.category].color} />
+          <Icon name={CATEGORY_ICONS[item.category].name} size={14} color={CATEGORY_ICONS[item.category].color} />
           <Text style={[styles.categoryLabel, { color: CATEGORY_ICONS[item.category].color }]}>
             {categoryLabels[item.category]}
           </Text>
@@ -94,7 +94,7 @@ export default function ArticleListScreen() {
       </View>
 
       <View style={[styles.searchContainer, { backgroundColor: theme.colors.surfaceSecondary, margin: 16 }]}>
-        <Ionicons name="search" size={18} color={theme.colors.textTertiary} />
+        <Icon name="search" size={18} color={theme.colors.textTertiary} />
         <TextInput
           style={[styles.searchInput, { color: theme.colors.text }]}
           placeholder={t('encyclopedia.searchPlaceholder')}
@@ -104,7 +104,7 @@ export default function ArticleListScreen() {
         />
         {search ? (
           <TouchableOpacity onPress={() => setSearch('')}>
-            <Ionicons name="close-circle" size={18} color={theme.colors.textTertiary} />
+            <Icon name="close-circle" size={18} color={theme.colors.textTertiary} />
           </TouchableOpacity>
         ) : null}
       </View>
@@ -128,7 +128,7 @@ export default function ArticleListScreen() {
             ]}
             onPress={() => setSelectedCategory(selectedCategory === item ? null : item)}
           >
-            <Ionicons name={CATEGORY_ICONS[item].name} size={16} color={selectedCategory === item ? '#fff' : CATEGORY_ICONS[item].color} />
+            <Icon name={CATEGORY_ICONS[item].name} size={16} color={selectedCategory === item ? '#fff' : CATEGORY_ICONS[item].color} />
             <Text style={{ color: selectedCategory === item ? '#fff' : theme.colors.text, fontSize: 13, fontWeight: '500' }}>
               {categoryLabels[item]}
             </Text>
@@ -149,13 +149,13 @@ export default function ArticleListScreen() {
             activeOpacity={0.8}
           >
             <View style={styles.feedGuideBannerIcon}>
-              <Ionicons name="restaurant" size={24} color="#FFFFFF" />
+              <Icon name="restaurant" size={24} color="#FFFFFF" />
             </View>
             <View style={styles.feedGuideBannerContent}>
               <Text style={styles.feedGuideBannerTitle}>{t('feedGuide.title')}</Text>
               <Text style={styles.feedGuideBannerDesc}>{t('feedGuide.subtitle')}</Text>
             </View>
-            <Ionicons name="chevron-forward" size={20} color="rgba(255,255,255,0.7)" />
+            <Icon name="chevron-forward" size={20} color="rgba(255,255,255,0.7)" />
           </TouchableOpacity>
         }
       />

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Ionicons } from '@expo/vector-icons';
+import { Icon } from '@shared/components/ui/Icon';
 import { useMoreNavigation } from '@navigation/hooks';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '@shared/theme';
@@ -75,7 +75,7 @@ export default function ExpensesScreen() {
     >
       <Card style={styles.expenseCard}>
         <View style={[styles.expenseIcon, { backgroundColor: `${EXPENSE_COLORS[item.category as ExpenseCategory]}20` }]}>
-          <Ionicons name={EXPENSE_ICON_NAMES[item.category as ExpenseCategory]} size={22} color={EXPENSE_COLORS[item.category as ExpenseCategory]} />
+          <Icon name={EXPENSE_ICON_NAMES[item.category as ExpenseCategory]} size={22} color={EXPENSE_COLORS[item.category as ExpenseCategory]} />
         </View>
         <View style={styles.expenseInfo}>
           <Text style={[styles.expenseCategory, { color: theme.colors.text, fontFamily: theme.fonts.semibold }]}>{categoryLabels[item.category as ExpenseCategory]}</Text>
@@ -85,7 +85,7 @@ export default function ExpensesScreen() {
         <View style={{ alignItems: 'flex-end', gap: 8 }}>
           <Text style={[styles.expenseAmount, { color: theme.colors.text, fontFamily: theme.fonts.bold }]}>{item.amount.toLocaleString()} {t('expenses.currency')}</Text>
           <TouchableOpacity onPress={() => handleDelete(item.id)} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
-            <Ionicons name="trash-outline" size={18} color={theme.colors.danger} />
+            <Icon name="trash-outline" size={18} color={theme.colors.danger} />
           </TouchableOpacity>
         </View>
       </Card>
@@ -96,11 +96,11 @@ export default function ExpensesScreen() {
     <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.background }]}>
       <View style={[styles.monthRow, { backgroundColor: theme.colors.surface, borderBottomColor: theme.colors.border }]}>
         <TouchableOpacity onPress={() => { if (month === 1) { setMonth(12); setYear(y => y-1); } else setMonth(m => m-1); }} style={styles.monthBtn}>
-          <Ionicons name="chevron-back" size={20} color={theme.colors.primary} />
+          <Icon name="chevron-back" size={20} color={theme.colors.primary} />
         </TouchableOpacity>
         <Text style={[styles.monthTitle, { color: theme.colors.text, fontFamily: theme.fonts.bold }]}>{t(`expenses.months.${monthKeys[month-1]}`)} {year}</Text>
         <TouchableOpacity onPress={() => { if (month === 12) { setMonth(1); setYear(y => y+1); } else setMonth(m => m+1); }} style={styles.monthBtn}>
-          <Ionicons name="chevron-forward" size={20} color={theme.colors.primary} />
+          <Icon name="chevron-forward" size={20} color={theme.colors.primary} />
         </TouchableOpacity>
       </View>
 
@@ -119,7 +119,7 @@ export default function ExpensesScreen() {
               <View style={styles.categoryStats}>
                 {Object.entries(byCategory).map(([cat, amount]) => (
                   <View key={cat} style={[styles.categoryStat, { backgroundColor: theme.colors.surface, ...theme.shadows.sm }]}>
-                    <Ionicons name={EXPENSE_ICON_NAMES[cat as ExpenseCategory]} size={20} color={EXPENSE_COLORS[cat as ExpenseCategory]} />
+                    <Icon name={EXPENSE_ICON_NAMES[cat as ExpenseCategory]} size={20} color={EXPENSE_COLORS[cat as ExpenseCategory]} />
                     <Text style={[styles.catLabel, { color: theme.colors.textSecondary }]} numberOfLines={1}>{categoryLabels[cat as ExpenseCategory]}</Text>
                     <Text style={[styles.catAmount, { color: theme.colors.text, fontFamily: theme.fonts.bold }]}>{amount.toLocaleString()} {t('expenses.currency')}</Text>
                   </View>
@@ -135,7 +135,7 @@ export default function ExpensesScreen() {
         }
       />
       <TouchableOpacity style={[styles.fab, { backgroundColor: theme.colors.primary }]} onPress={() => navigation.navigate('AddExpense', {})}>
-        <Ionicons name="add" size={28} color="#fff" />
+        <Icon name="add" size={28} color="#fff" />
       </TouchableOpacity>
     </SafeAreaView>
   );

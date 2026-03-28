@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+import { Icon } from '@shared/components/ui/Icon';
 import { useTheme } from '@shared/theme';
 import { useTranslation } from 'react-i18next';
 import { useSubscription } from '../hooks/useSubscription';
@@ -23,7 +23,7 @@ export function FeatureGate({ children, fallback }: FeatureGateProps) {
 
   return (
     <View style={[styles.container, { backgroundColor: theme.colors.surface }]}>
-      <Ionicons name="lock-closed" size={32} color={theme.colors.primary} />
+      <Icon name="lock-closed" size={32} color={theme.colors.primary} />
       <Text style={[styles.title, { color: theme.colors.text, fontFamily: theme.fonts.semibold }]}>
         {t('subscription.upgradeRequired')}
       </Text>

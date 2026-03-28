@@ -1,13 +1,12 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '@shared/theme';
 import { Button } from './Button';
-import type { IoniconName } from './Button';
+import { Icon, type IconName } from './Icon';
 
 interface Props {
   icon?: string;
-  iconName?: IoniconName;
+  iconName?: IconName;
   iconColor?: string;
   title: string;
   subtitle?: string;
@@ -23,7 +22,7 @@ export function EmptyState({ icon = '📋', iconName, iconColor, title, subtitle
     <View style={styles.container}>
       {iconName ? (
         <View style={[styles.iconCircle, { backgroundColor: color + '15' }]}>
-          <Ionicons name={iconName} size={32} color={color} />
+          <Icon name={iconName} size={32} color={color} />
         </View>
       ) : (
         <Text style={styles.icon}>{icon}</Text>

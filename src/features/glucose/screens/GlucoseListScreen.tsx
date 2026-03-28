@@ -15,7 +15,7 @@ import { GlucoseReading, getGlucoseColor, MealRelation } from '../types';
 import { GlucoseFilter, GLUCOSE_RANGES, mmolToMgdl } from '@storage/domain/types';
 import { formatDateTime, formatFullDate, formatFullDateTime } from '@shared/utils/dateUtils';
 import { EmptyState, Card, AnimatedListItem } from '@shared/components/ui';
-import { Ionicons } from '@expo/vector-icons';
+import { Icon } from '@shared/components/ui/Icon';
 import { storage, StorageKeys } from '@storage/mmkv/storage';
 import { generateVetReportPdf } from '@shared/utils/pdfExport';
 import DateTimePicker from '@react-native-community/datetimepicker';
@@ -263,7 +263,7 @@ export default function GlucoseListScreen() {
                 </Text>
                 {item.insulinDose && (
                   <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 4, gap: 4 }}>
-                    <Ionicons name="medkit-outline" size={12} color={theme.colors.textTertiary} />
+                    <Icon name="medkit-outline" size={12} color={theme.colors.textTertiary} />
                     <Text style={[styles.readingInsulin, { color: theme.colors.textTertiary, fontFamily: theme.fonts.regular }]}>
                       {item.insulinDose} {t('common.units')} {item.insulinType ?? ''}
                     </Text>
@@ -272,9 +272,9 @@ export default function GlucoseListScreen() {
               </View>
               <View style={{ alignItems: 'center', gap: 8 }}>
                 <TouchableOpacity onPress={() => handleDelete(item.id)} hitSlop={{ top: 13, bottom: 13, left: 13, right: 13 }}>
-                  <Ionicons name="trash-outline" size={18} color={theme.colors.danger} />
+                  <Icon name="trash-outline" size={18} color={theme.colors.danger} />
                 </TouchableOpacity>
-                <Ionicons name="chevron-forward" size={16} color={theme.colors.textTertiary} />
+                <Icon name="chevron-forward" size={16} color={theme.colors.textTertiary} />
               </View>
             </View>
           </Card>
@@ -299,7 +299,7 @@ export default function GlucoseListScreen() {
           onPress={toggleFilterPanel}
           activeOpacity={0.7}
         >
-          <Ionicons
+          <Icon
             name={showFilters ? 'filter' : 'filter-outline'}
             size={18}
             color={hasActiveFilters ? theme.colors.primary : theme.colors.text}
@@ -420,7 +420,7 @@ export default function GlucoseListScreen() {
           {/* Clear filters */}
           {hasActiveFilters && (
             <TouchableOpacity style={styles.clearBtn} onPress={clearFilters}>
-              <Ionicons name="close-circle-outline" size={16} color={theme.colors.danger} />
+              <Icon name="close-circle-outline" size={16} color={theme.colors.danger} />
               <Text style={[styles.clearBtnText, { color: theme.colors.danger }]}>
                 {t('glucose.clearFilters')}
               </Text>
@@ -482,11 +482,11 @@ export default function GlucoseListScreen() {
                 onPress={() => rootNav.navigate('Paywall')}
                 activeOpacity={0.8}
               >
-                <Ionicons name="time-outline" size={16} color={theme.colors.primary} />
+                <Icon name="time-outline" size={16} color={theme.colors.primary} />
                 <Text style={[styles.historyBannerText, { color: theme.colors.primary }]}>
                   {t('subscription.historyLimited')}
                 </Text>
-                <Ionicons name="chevron-forward" size={14} color={theme.colors.primary} />
+                <Icon name="chevron-forward" size={14} color={theme.colors.primary} />
               </TouchableOpacity>
             )}
           </>
@@ -525,7 +525,7 @@ export default function GlucoseListScreen() {
           {exporting ? (
             <ActivityIndicator size="small" color={theme.colors.primary} />
           ) : (
-            <Ionicons name="document-text-outline" size={22} color={theme.colors.primary} />
+            <Icon name="document-text-outline" size={22} color={theme.colors.primary} />
           )}
         </TouchableOpacity>
       )}

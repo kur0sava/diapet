@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity, Alert, ActivityIndicator } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Ionicons } from '@expo/vector-icons';
+import { Icon } from '@shared/components/ui/Icon';
 import { useHomeNavigation } from '@navigation/hooks';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '@shared/theme';
@@ -15,7 +15,7 @@ import { SimpleBarChart, BarData } from '@shared/components/charts/SimpleBarChar
 import { LinearGradient } from 'expo-linear-gradient';
 import { format, parseISO, subDays, isAfter } from 'date-fns';
 
-const FOOD_TYPE_ICONS: Record<string, keyof typeof Ionicons.glyphMap> = {
+const FOOD_TYPE_ICONS: Record<string, string> = {
   dry: 'nutrition-outline',
   wet: 'flask-outline',
   medical: 'medical-outline',
@@ -96,7 +96,7 @@ export default function FeedingListScreen() {
           <View style={styles.cardContent}>
             <View style={{ flex: 1 }}>
               <View style={styles.foodTypeRow}>
-                <Ionicons
+                <Icon
                   name={FOOD_TYPE_ICONS[item.foodType ?? 'other'] ?? 'restaurant-outline'}
                   size={18}
                   color={theme.colors.success}
@@ -120,7 +120,7 @@ export default function FeedingListScreen() {
               </Text>
             )}
             <TouchableOpacity onPress={() => handleDelete(item.id)} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }} style={{ alignSelf: 'flex-start' }}>
-              <Ionicons name="trash-outline" size={18} color={theme.colors.danger} />
+              <Icon name="trash-outline" size={18} color={theme.colors.danger} />
             </TouchableOpacity>
           </View>
         </Card>
@@ -184,7 +184,7 @@ export default function FeedingListScreen() {
           end={{ x: 1, y: 1 }}
           style={[styles.fab, theme.shadows.primarySm]}
         >
-          <Ionicons name="add" size={28} color="#fff" />
+          <Icon name="add" size={28} color="#fff" />
         </LinearGradient>
       </TouchableOpacity>
     </SafeAreaView>

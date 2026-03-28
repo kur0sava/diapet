@@ -8,7 +8,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
-import { Ionicons } from '@expo/vector-icons';
+import { Icon } from '@shared/components/ui/Icon';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 import { useOnboardingNavigation } from '@navigation/hooks';
 import { useTranslation } from 'react-i18next';
@@ -44,7 +44,7 @@ export default function LanguageScreen() {
             colors={theme.gradients.primary as [string, string]}
             style={styles.logoGradient}
           >
-            <Ionicons name="paw" size={40} color="#fff" />
+            <Icon name="paw" size={40} color="#fff" />
           </LinearGradient>
           <Text style={[styles.title, { color: theme.colors.text, fontFamily: theme.fonts.bold }]}>DiaPet</Text>
           <Text style={[styles.subtitle, { color: theme.colors.textSecondary, fontFamily: theme.fonts.medium }]}>
@@ -75,7 +75,7 @@ export default function LanguageScreen() {
               </View>
               {selected === lang.code && (
                 <View style={[styles.check, { backgroundColor: theme.colors.primary }]}>
-                  <Ionicons name="checkmark" size={18} color="#fff" />
+                  <Icon name="checkmark" size={18} color="#fff" />
                 </View>
               )}
             </TouchableOpacity>

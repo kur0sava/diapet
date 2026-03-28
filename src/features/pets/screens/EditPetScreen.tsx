@@ -8,7 +8,7 @@ import { Button, Input } from '@shared/components/ui';
 import { petRepository, scheduleRepository, getDatabase } from '@storage/database';
 import { usePetStore } from '@shared/stores/petStore';
 import { useQueryClient } from '@tanstack/react-query';
-import { Ionicons } from '@expo/vector-icons';
+import { Icon } from '@shared/components/ui/Icon';
 import { storage, StorageKeys } from '@storage/mmkv/storage';
 import { useUnsavedChangesGuard } from '@shared/hooks/useUnsavedChangesGuard';
 import { useNotifications } from '@shared/hooks/useNotifications';
@@ -138,7 +138,7 @@ export default function EditPetScreen() {
             if (times.length <= 1) { Alert.alert(type === 'injection' ? t('onboarding.minOneInjection') : t('onboarding.minOneFeeding')); return; }
             setTimes(times.filter((_, idx) => idx !== i));
           }} style={{ padding: 12 }}>
-            <Ionicons name="close-circle" size={24} color={theme.colors.danger} />
+            <Icon name="close-circle" size={24} color={theme.colors.danger} />
           </TouchableOpacity>
         </View>
       ))}
@@ -170,17 +170,17 @@ export default function EditPetScreen() {
           <Input label={`${t('pets.weight')} (${t('common.kg')})`} value={weightKg} onChangeText={setWeightKg} placeholder="4.5" keyboardType="decimal-pad" />
           <Input label={t('pets.insulinType')} value={insulinType} onChangeText={setInsulinType} placeholder="Протафан" />
           <View style={styles.sectionHeader}>
-            <Ionicons name="medkit-outline" size={20} color={theme.colors.primary} style={{ marginRight: 8 }} />
+            <Icon name="medkit-outline" size={20} color={theme.colors.primary} style={{ marginRight: 8 }} />
             <Text style={[styles.sectionTitle, { color: theme.colors.text, fontFamily: theme.fonts.bold }]}>{t('pets.injectionSchedule')}</Text>
           </View>
           {renderTimeList('injection', injectionTimes, setInjectionTimes)}
           <View style={styles.sectionHeader}>
-            <Ionicons name="restaurant-outline" size={20} color={theme.colors.warning} style={{ marginRight: 8 }} />
+            <Icon name="restaurant-outline" size={20} color={theme.colors.warning} style={{ marginRight: 8 }} />
             <Text style={[styles.sectionTitle, { color: theme.colors.text, fontFamily: theme.fonts.bold }]}>{t('pets.feedingSchedule')}</Text>
           </View>
           {renderTimeList('feeding', feedingTimes, setFeedingTimes)}
           <View style={styles.sectionHeader}>
-            <Ionicons name="medical-outline" size={20} color={theme.colors.success} style={{ marginRight: 8 }} />
+            <Icon name="medical-outline" size={20} color={theme.colors.success} style={{ marginRight: 8 }} />
             <Text style={[styles.sectionTitle, { color: theme.colors.text, fontFamily: theme.fonts.bold }]}>{t('pets.vetContact')}</Text>
           </View>
           <Input label={t('onboarding.vetName')} value={vetName} onChangeText={setVetName} placeholder="Др. Иванова" />

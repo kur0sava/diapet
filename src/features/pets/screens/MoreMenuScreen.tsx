@@ -6,7 +6,7 @@ import { useMoreNavigation, useRootNavigation } from '@navigation/hooks';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '@shared/theme';
 import { usePetStore } from '@shared/stores/petStore';
-import { Ionicons } from '@expo/vector-icons';
+import { Icon } from '@shared/components/ui/Icon';
 import type { IoniconName } from '@shared/components/ui';
 import { useSubscription } from '@features/subscription/hooks/useSubscription';
 import { isBackendConfigured } from '@shared/stores/subscriptionStore';
@@ -73,7 +73,7 @@ export default function MoreMenuScreen() {
             style={styles.petCard}
           >
             <View style={styles.petAvatar}>
-              <Ionicons name="paw" size={28} color="#fff" />
+              <Icon name="paw" size={28} color="#fff" />
             </View>
             <View style={styles.petInfo}>
               <Text style={[styles.petName, { fontFamily: theme.fonts.bold }]}>{activePet.name}</Text>
@@ -83,7 +83,7 @@ export default function MoreMenuScreen() {
                 {activePet.diabetesType !== 'unknown' ? ` · ${t('pets.diabetesType')} ${activePet.diabetesType === 'type1' ? '1' : '2'}` : ''}
               </Text>
             </View>
-            <Ionicons name="chevron-forward" size={20} color="rgba(255,255,255,0.7)" />
+            <Icon name="chevron-forward" size={20} color="rgba(255,255,255,0.7)" />
           </LinearGradient>
         </TouchableOpacity>
       )}
@@ -97,7 +97,7 @@ export default function MoreMenuScreen() {
             activeOpacity={0.8}
           >
             <View style={[styles.menuIcon, { backgroundColor: `${item.iconColor}20` }]}>
-              <Ionicons name={item.iconName} size={22} color={item.iconColor ?? theme.colors.primary} />
+              <Icon name={item.iconName} size={22} color={item.iconColor ?? theme.colors.primary} />
             </View>
             <View style={styles.menuText}>
               <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
@@ -111,11 +111,11 @@ export default function MoreMenuScreen() {
               </View>
               {item.subtitle && <Text style={[styles.menuSub, { color: theme.colors.textSecondary }]}>{item.subtitle}</Text>}
             </View>
-            <Ionicons name="chevron-forward" size={18} color={theme.colors.textTertiary} />
+            <Icon name="chevron-forward" size={18} color={theme.colors.textTertiary} />
           </TouchableOpacity>
         ))}
         <TouchableOpacity style={[styles.emergencyBtn, { marginTop: 16 }]} onPress={() => rootNavigation.navigate('Emergency')} activeOpacity={0.8}>
-          <Ionicons name="warning" size={20} color="#fff" style={{ marginRight: 8 }} />
+          <Icon name="warning" size={20} color="#fff" style={{ marginRight: 8 }} />
           <Text style={[styles.emergencyText, { fontFamily: theme.fonts.bold }]}>{t('emergency.emergencyMode')}</Text>
         </TouchableOpacity>
         <Text style={[styles.version, { color: theme.colors.textTertiary }]}>DiaPet v{Constants.expoConfig?.version ?? '1.0.0'}</Text>

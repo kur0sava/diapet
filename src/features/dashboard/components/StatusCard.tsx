@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { useTheme } from '@shared/theme';
-import { Ionicons } from '@expo/vector-icons';
+import { Icon } from '@shared/components/ui/Icon';
 import Animated, { FadeInUp } from 'react-native-reanimated';
 import type { IoniconName } from '@shared/components/ui';
 
@@ -36,7 +36,7 @@ export function StatusCard({ iconName, iconColor, label, value, unit, color, sub
       ]}
     >
       <View style={[styles.iconCircle, { backgroundColor: `${accentColor}15` }]}>
-        <Ionicons name={iconName} size={22} color={iconColor} />
+        <Icon name={iconName} size={22} color={iconColor} />
       </View>
       <Text style={[styles.value, { color: accentColor, fontFamily: theme.fonts.bold }]}>{value}</Text>
       {unit && <Text style={[styles.unit, { color: theme.colors.textSecondary }]}>{unit}</Text>}

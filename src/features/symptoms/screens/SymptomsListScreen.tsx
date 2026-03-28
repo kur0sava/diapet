@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity, Alert, ActivityIndicator } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Ionicons } from '@expo/vector-icons';
+import { Icon } from '@shared/components/ui/Icon';
 import { useSymptomsNavigation } from '@navigation/hooks';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '@shared/theme';
@@ -79,7 +79,7 @@ export default function SymptomsListScreen() {
           <View style={styles.cardHeader}>
             <View style={styles.iconsRow}>
               {item.symptomTypes.slice(0, 4).map(type => (
-                <Ionicons key={type} name={SYMPTOM_ICONS[type]} size={18} color={theme.colors.textSecondary} style={{ marginRight: 4 }} />
+                <Icon key={type} name={SYMPTOM_ICONS[type]} size={18} color={theme.colors.textSecondary} style={{ marginRight: 4 }} />
               ))}
               {item.symptomTypes.length > 4 && (
                 <Text style={[styles.moreCount, { color: theme.colors.textSecondary }]}>
@@ -101,14 +101,14 @@ export default function SymptomsListScreen() {
           <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
             {item.photoUris.length > 0 ? (
               <View style={styles.photosRow}>
-                <Ionicons name="camera-outline" size={15} color={theme.colors.primary} />
+                <Icon name="camera-outline" size={15} color={theme.colors.primary} />
                 <Text style={[styles.photos, { color: theme.colors.primary }]}>
                   {item.photoUris.length} {t('symptoms.photos')}
                 </Text>
               </View>
             ) : <View />}
             <TouchableOpacity onPress={() => handleDelete(item.id)} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
-              <Ionicons name="trash-outline" size={18} color={theme.colors.danger} />
+              <Icon name="trash-outline" size={18} color={theme.colors.danger} />
             </TouchableOpacity>
           </View>
         </Card>
@@ -133,7 +133,7 @@ export default function SymptomsListScreen() {
               activeOpacity={0.8}
             >
               <View style={[styles.assessmentIcon, { backgroundColor: `${theme.colors.success}20` }]}>
-                <Ionicons name="fitness-outline" size={22} color={theme.colors.success} />
+                <Icon name="fitness-outline" size={22} color={theme.colors.success} />
               </View>
               <View style={{ flex: 1 }}>
                 <Text style={[styles.assessmentTitle, { color: theme.colors.text, fontFamily: theme.fonts.semibold }]}>
@@ -143,7 +143,7 @@ export default function SymptomsListScreen() {
                   {t('symptoms.takeAssessmentSub')}
                 </Text>
               </View>
-              <Ionicons name="chevron-forward" size={18} color={theme.colors.textTertiary} />
+              <Icon name="chevron-forward" size={18} color={theme.colors.textTertiary} />
             </TouchableOpacity>
             {symptoms.length > 0 && (
               <Text style={[styles.hintText, { color: theme.colors.textTertiary }]}>{t('common.longPressToDelete')}</Text>
@@ -170,7 +170,7 @@ export default function SymptomsListScreen() {
         style={[styles.fab, { backgroundColor: theme.colors.primary }]}
         onPress={() => navigation.navigate('AddSymptom', {})}
       >
-        <Ionicons name="add" size={28} color="#fff" />
+        <Icon name="add" size={28} color="#fff" />
       </TouchableOpacity>
     </SafeAreaView>
   );

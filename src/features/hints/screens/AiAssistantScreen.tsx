@@ -13,7 +13,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
-import { Ionicons } from '@expo/vector-icons';
+import { Icon } from '@shared/components/ui/Icon';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '@shared/theme';
 import { useMoreNavigation, useRootNavigation } from '@navigation/hooks';
@@ -266,10 +266,10 @@ export default function AiAssistantScreen() {
           style={styles.backButton}
           hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
         >
-          <Ionicons name="chevron-back" size={24} color="#fff" />
+          <Icon name="chevron-back" size={24} color="#fff" />
         </TouchableOpacity>
         <View style={styles.headerTitleContainer}>
-          <Ionicons name="chatbubble-ellipses" size={20} color="#fff" style={{ marginRight: 8 }} />
+          <Icon name="chatbubble-ellipses" size={20} color="#fff" style={{ marginRight: 8 }} />
           <Text style={[styles.headerTitle, { fontFamily: theme.fonts.semibold }]}>
             {t('hints.aiAssistant')}
           </Text>
@@ -299,7 +299,7 @@ export default function AiAssistantScreen() {
             contentContainerStyle={styles.messageList}
             ListEmptyComponent={
               <View style={styles.emptyContainer}>
-                <Ionicons name="chatbubble-ellipses-outline" size={48} color={theme.colors.textTertiary} />
+                <Icon name="chatbubble-ellipses-outline" size={48} color={theme.colors.textTertiary} />
                 <Text style={[styles.emptyText, { color: theme.colors.textSecondary, fontFamily: theme.fonts.regular }]}>
                   {t('hints.aiPlaceholder')}
                 </Text>
@@ -359,7 +359,7 @@ export default function AiAssistantScreen() {
               disabled={!inputText.trim() || isLoading}
               activeOpacity={0.8}
             >
-              <Ionicons
+              <Icon
                 name="send"
                 size={20}
                 color={inputText.trim() && !isLoading ? '#fff' : theme.colors.textTertiary}
@@ -385,7 +385,7 @@ function ProGate({ theme, t, onUpgrade }: ProGateProps) {
     <View style={[styles.proGate, { backgroundColor: theme.colors.background }]}>
       <View style={[styles.proCard, { backgroundColor: theme.colors.surface, ...theme.shadows.md }]}>
         <View style={[styles.proIconContainer, { backgroundColor: `${theme.colors.primary}15` }]}>
-          <Ionicons name="chatbubble-ellipses" size={40} color={theme.colors.primary} />
+          <Icon name="chatbubble-ellipses" size={40} color={theme.colors.primary} />
         </View>
         <Text style={[styles.proTitle, { color: theme.colors.text, fontFamily: theme.fonts.bold }]}>
           {t('hints.aiAssistant')}
@@ -403,7 +403,7 @@ function ProGate({ theme, t, onUpgrade }: ProGateProps) {
             end={{ x: 1, y: 0 }}
             style={styles.upgradeButtonInner}
           >
-            <Ionicons name="star" size={18} color="#fff" />
+            <Icon name="star" size={18} color="#fff" />
             <Text style={[styles.upgradeButtonText, { fontFamily: theme.fonts.bold }]}>
               {t('subscription.upgrade')}
             </Text>

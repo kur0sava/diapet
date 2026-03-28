@@ -11,7 +11,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
-import { Ionicons } from '@expo/vector-icons';
+import { Icon } from '@shared/components/ui/Icon';
 import { useQuery } from '@tanstack/react-query';
 import { format, parseISO, isToday, isYesterday, addDays, subDays, startOfDay, isValid } from 'date-fns';
 import { ru as dateFnsRu, enUS } from 'date-fns/locale';
@@ -202,7 +202,7 @@ export default function DailyDiaryScreen() {
       {/* Header */}
       <SafeAreaView edges={['top']} style={[styles.header, { backgroundColor: theme.colors.surface, borderBottomColor: theme.colors.divider }]}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backBtn} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
-          <Ionicons name="chevron-back" size={24} color={theme.colors.text} />
+          <Icon name="chevron-back" size={24} color={theme.colors.text} />
         </TouchableOpacity>
         <Text numberOfLines={1} style={[styles.screenTitle, { color: theme.colors.text, fontFamily: theme.fonts.bold }]}>
           {t('diary.title')}
@@ -213,7 +213,7 @@ export default function DailyDiaryScreen() {
       {/* Date Navigator */}
       <View style={[styles.dateNav, { backgroundColor: theme.colors.surface, borderBottomColor: theme.colors.divider }]}>
         <TouchableOpacity onPress={goToPrevDay} disabled={!canGoPrev} style={[styles.dateNavBtn, !canGoPrev && styles.dateNavBtnDisabled]} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
-          <Ionicons name="chevron-back" size={20} color={canGoPrev ? theme.colors.primary : theme.colors.textTertiary} />
+          <Icon name="chevron-back" size={20} color={canGoPrev ? theme.colors.primary : theme.colors.textTertiary} />
         </TouchableOpacity>
         <TouchableOpacity
           onPress={() => !isToday(currentDate) && setCurrentDate(new Date())}
@@ -235,20 +235,20 @@ export default function DailyDiaryScreen() {
           disabled={isToday(currentDate)}
           hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
         >
-          <Ionicons name="chevron-forward" size={20} color={isToday(currentDate) ? theme.colors.textTertiary : theme.colors.primary} />
+          <Icon name="chevron-forward" size={20} color={isToday(currentDate) ? theme.colors.textTertiary : theme.colors.primary} />
         </TouchableOpacity>
       </View>
 
       {!petId && (
         <View style={styles.centered}>
-          <Ionicons name="paw-outline" size={40} color={theme.colors.textTertiary} style={{ marginBottom: 10 }} />
+          <Icon name="paw-outline" size={40} color={theme.colors.textTertiary} style={{ marginBottom: 10 }} />
           <Text style={[styles.emptyText, { color: theme.colors.textSecondary }]}>{t('common.noData')}</Text>
         </View>
       )}
 
       {isError && petId && (
         <View style={styles.centered}>
-          <Ionicons name="alert-circle-outline" size={32} color={theme.colors.danger} style={{ marginBottom: 8 }} />
+          <Icon name="alert-circle-outline" size={32} color={theme.colors.danger} style={{ marginBottom: 8 }} />
           <Text style={[styles.emptyText, { color: theme.colors.textSecondary }]}>{t('common.error')}</Text>
         </View>
       )}
@@ -301,7 +301,7 @@ export default function DailyDiaryScreen() {
                   key={i}
                   style={[styles.recCard, { backgroundColor: recColor + '18', borderLeftColor: recColor }]}
                 >
-                  <Ionicons name={recIcon as never} size={18} color={recColor} style={{ marginRight: 8 }} />
+                  <Icon name={recIcon as never} size={18} color={recColor} style={{ marginRight: 8 }} />
                   <Text style={[styles.recText, { color: theme.colors.text }]}>
                     {t(rec.messageKey, rec.params ?? {})}
                   </Text>
@@ -325,7 +325,7 @@ export default function DailyDiaryScreen() {
 
           {!isLoading && timeline.length === 0 && (
             <View style={styles.emptyState}>
-              <Ionicons name="calendar-outline" size={40} color={theme.colors.textTertiary} style={{ marginBottom: 10 }} />
+              <Icon name="calendar-outline" size={40} color={theme.colors.textTertiary} style={{ marginBottom: 10 }} />
               <Text style={[styles.emptyText, { color: theme.colors.textSecondary }]}>
                 {isFuture ? t('diary.futureDate') : t('diary.noEvents')}
               </Text>
@@ -337,7 +337,7 @@ export default function DailyDiaryScreen() {
               {/* Connector line */}
               <View style={styles.timelineLeft}>
                 <View style={[styles.timelineDot, { backgroundColor: event.color }]}>
-                  <Ionicons name={getEventIcon(event.type) as never} size={12} color="#fff" />
+                  <Icon name={getEventIcon(event.type) as never} size={12} color="#fff" />
                 </View>
                 {index < timeline.length - 1 && (
                   <View style={[styles.timelineLine, { backgroundColor: theme.colors.divider }]} />
@@ -378,7 +378,7 @@ export default function DailyDiaryScreen() {
                 navigation.navigate('LogGlucose', { presetDate: preset.toISOString() });
               }}
             >
-              <Ionicons name="water" size={20} color={theme.colors.primary} />
+              <Icon name="water" size={20} color={theme.colors.primary} />
               <Text style={[styles.addBtnText, { color: theme.colors.primary, fontFamily: theme.fonts.medium }]} numberOfLines={2}>
                 {t('dashboard.logGlucose')}
               </Text>
@@ -392,7 +392,7 @@ export default function DailyDiaryScreen() {
                 navigation.navigate('LogInjection', { presetDate: preset.toISOString() });
               }}
             >
-              <Ionicons name="medkit" size={20} color={theme.colors.secondary} />
+              <Icon name="medkit" size={20} color={theme.colors.secondary} />
               <Text style={[styles.addBtnText, { color: theme.colors.secondary, fontFamily: theme.fonts.medium }]} numberOfLines={2}>
                 {t('dashboard.logInjection')}
               </Text>
@@ -406,7 +406,7 @@ export default function DailyDiaryScreen() {
                 navigation.navigate('LogFeeding', { presetDate: preset.toISOString() });
               }}
             >
-              <Ionicons name="restaurant" size={20} color={theme.colors.success} />
+              <Icon name="restaurant" size={20} color={theme.colors.success} />
               <Text style={[styles.addBtnText, { color: theme.colors.success, fontFamily: theme.fonts.medium }]} numberOfLines={2}>
                 {t('dashboard.logFeeding')}
               </Text>

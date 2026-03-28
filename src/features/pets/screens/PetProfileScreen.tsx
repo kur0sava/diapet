@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
-import { Ionicons } from '@expo/vector-icons';
+import { Icon } from '@shared/components/ui/Icon';
 import { useMoreNavigation } from '@navigation/hooks';
 import { useTranslation } from 'react-i18next';
 import i18n from '@shared/i18n';
@@ -52,7 +52,7 @@ export default function PetProfileScreen() {
     <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.background }]}>
       <View style={[styles.navHeader, { borderBottomColor: theme.colors.border }]}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.navBtn}>
-          <Ionicons name="chevron-back" size={22} color={theme.colors.primary} />
+          <Icon name="chevron-back" size={22} color={theme.colors.primary} />
           <Text style={{ color: theme.colors.primary, fontFamily: theme.fonts.medium }}>{t('common.back')}</Text>
         </TouchableOpacity>
         <Text style={[styles.headerTitle, { color: theme.colors.text, fontFamily: theme.fonts.semibold }]} numberOfLines={1}>{t('pets.title')}</Text>
@@ -66,12 +66,12 @@ export default function PetProfileScreen() {
             colors={theme.gradients.primary as [string, string]}
             style={styles.avatar}
           >
-            <Ionicons name="paw" size={48} color="#fff" />
+            <Icon name="paw" size={48} color="#fff" />
           </LinearGradient>
           <Text style={[styles.petName, { color: theme.colors.text, fontFamily: theme.fonts.bold }]}>{activePet.name}</Text>
           {activePet.insulinType && (
             <View style={[styles.insulinBadge, { backgroundColor: theme.colors.secondaryLight }]}>
-              <Ionicons name="fitness-outline" size={16} color={theme.colors.secondary} />
+              <Icon name="fitness-outline" size={16} color={theme.colors.secondary} />
               <Text style={[styles.insulinText, { color: theme.colors.secondary, fontFamily: theme.fonts.semibold }]}>{activePet.insulinType}</Text>
             </View>
           )}
@@ -87,12 +87,12 @@ export default function PetProfileScreen() {
         <Card style={styles.card}>
           <Text style={[styles.cardTitle, { color: theme.colors.textSecondary, fontFamily: theme.fonts.bold }]}>{t('pets.schedule')}</Text>
           <View style={styles.scheduleLabelRow}>
-            <Ionicons name="fitness-outline" size={18} color={theme.colors.primary} />
+            <Icon name="fitness-outline" size={18} color={theme.colors.primary} />
             <Text style={[styles.scheduleLabel, { color: theme.colors.text, fontFamily: theme.fonts.semibold }]}>{t('pets.injections')}</Text>
           </View>
           <View style={styles.timeChips}>{injectionTimes.map(s => (<View key={s.id} style={[styles.timeChip, { backgroundColor: theme.colors.primaryLight }]}><Text style={[styles.timeText, { color: theme.colors.primary, fontFamily: theme.fonts.bold }]}>{s.timeOfDay}</Text></View>))}</View>
           <View style={[styles.scheduleLabelRow, { marginTop: 12 }]}>
-            <Ionicons name="restaurant-outline" size={18} color={theme.colors.success} />
+            <Icon name="restaurant-outline" size={18} color={theme.colors.success} />
             <Text style={[styles.scheduleLabel, { color: theme.colors.text, fontFamily: theme.fonts.semibold }]}>{t('pets.feedings')}</Text>
           </View>
           <View style={styles.timeChips}>{feedingTimes.map(s => (<View key={s.id} style={[styles.timeChip, { backgroundColor: theme.colors.successLight }]}><Text style={[styles.timeText, { color: theme.colors.success, fontFamily: theme.fonts.bold }]}>{s.timeOfDay}</Text></View>))}</View>

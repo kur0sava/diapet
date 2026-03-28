@@ -4,7 +4,7 @@ import {
   TouchableOpacity, Linking, Alert, StatusBar,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Ionicons } from '@expo/vector-icons';
+import { Icon } from '@shared/components/ui/Icon';
 import { useRootNavigation } from '@navigation/hooks';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '@shared/theme';
@@ -64,10 +64,10 @@ export default function EmergencyScreen() {
       {/* Header — UX-012: emoji → Ionicons */}
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.closeBtn}>
-          <Ionicons name="close" size={20} color="#fff" />
+          <Icon name="close" size={20} color="#fff" />
         </TouchableOpacity>
         <View style={styles.headerCenter}>
-          <Ionicons name="warning" size={28} color="#fff" style={{ marginBottom: 2 }} />
+          <Icon name="warning" size={28} color="#fff" style={{ marginBottom: 2 }} />
           <Text style={styles.headerTitle}>{t('emergency.title')}</Text>
         </View>
         <View style={{ width: 44 }} />
@@ -81,7 +81,7 @@ export default function EmergencyScreen() {
       >
         <View style={styles.callButtonContent}>
           <View style={[styles.callIconCircle, { backgroundColor: theme.colors.dangerLight }]}>
-            <Ionicons name="call" size={28} color={theme.colors.danger} />
+            <Icon name="call" size={28} color={theme.colors.danger} />
           </View>
           <View style={{ flex: 1 }}>
             <Text style={[styles.callButtonTitle, { color: theme.colors.danger }]}>{t('emergency.callVet')}</Text>
@@ -92,7 +92,7 @@ export default function EmergencyScreen() {
               <Text style={[styles.callButtonNoVet, { color: theme.colors.textTertiary }]}>{t('emergency.tapToAddVet')}</Text>
             )}
           </View>
-          <Ionicons name="chevron-forward" size={20} color={theme.colors.danger} />
+          <Icon name="chevron-forward" size={20} color={theme.colors.danger} />
         </View>
       </TouchableOpacity>
 
@@ -105,7 +105,7 @@ export default function EmergencyScreen() {
           ]}
           onPress={() => setActiveTab('hypoglycemia')}
         >
-          <Ionicons name="trending-down" size={16} color="#fff" style={{ marginRight: 4 }} />
+          <Icon name="trending-down" size={16} color="#fff" style={{ marginRight: 4 }} />
           <Text style={[styles.tabText, { fontWeight: activeTab === 'hypoglycemia' ? '700' : '400' }]}>
             {t('emergency.hypoglycemia')}
           </Text>
@@ -117,7 +117,7 @@ export default function EmergencyScreen() {
           ]}
           onPress={() => setActiveTab('hyperglycemia')}
         >
-          <Ionicons name="trending-up" size={16} color="#fff" style={{ marginRight: 4 }} />
+          <Icon name="trending-up" size={16} color="#fff" style={{ marginRight: 4 }} />
           <Text style={[styles.tabText, { fontWeight: activeTab === 'hyperglycemia' ? '700' : '400' }]}>
             {t('emergency.hyperglycemia')}
           </Text>
@@ -132,7 +132,7 @@ export default function EmergencyScreen() {
         {/* Signs — UX-014: theme colors */}
         <Card style={[styles.card, { backgroundColor: cardBg }]}>
           <View style={styles.cardTitleRow}>
-            <Ionicons name="alert-circle" size={20} color={theme.colors.danger} />
+            <Icon name="alert-circle" size={20} color={theme.colors.danger} />
             <Text style={[styles.cardTitle, { color: theme.colors.danger }]}>{t('emergency.signs')}</Text>
           </View>
           {signs.map((sign, i) => (
@@ -146,7 +146,7 @@ export default function EmergencyScreen() {
         {/* Steps — UX-014: theme colors */}
         <Card style={[styles.card, { backgroundColor: cardBg }]}>
           <View style={styles.cardTitleRow}>
-            <Ionicons name="list" size={20} color={cardText} />
+            <Icon name="list" size={20} color={cardText} />
             <Text style={[styles.cardTitle, { color: cardText }]}>{t('emergency.steps')}</Text>
           </View>
           {steps.map((step, i) => (

@@ -7,7 +7,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { format } from 'date-fns';
 import i18n from '@shared/i18n';
-import { Ionicons } from '@expo/vector-icons';
+import { Icon } from '@shared/components/ui/Icon';
 import { useHomeNavigation } from '@navigation/hooks';
 import { useRoute, RouteProp } from '@react-navigation/native';
 import type { HomeStackParamList } from '@navigation/types';
@@ -222,14 +222,14 @@ export default function LogFeedingScreen() {
             style={[styles.selectFoodBtn, { backgroundColor: theme.colors.surfaceSecondary, borderColor: theme.colors.border }]}
             onPress={() => setShowFoodSelector(true)}
           >
-            <Ionicons name="search-outline" size={18} color={theme.colors.primary} />
+            <Icon name="search-outline" size={18} color={theme.colors.primary} />
             <Text style={[styles.selectFoodText, { color: theme.colors.primary }]}>
               {selectedFood?.foodBrand
                 ? `${selectedFood.foodBrand}${selectedFood.foodProduct ? ` — ${selectedFood.foodProduct}` : ''}`
                 : t('feeding.selectFood', { defaultValue: i18n.language === 'ru' ? 'Выбрать корм из базы' : 'Select food from database' })
               }
             </Text>
-            <Ionicons name="chevron-forward" size={16} color={theme.colors.textTertiary} />
+            <Icon name="chevron-forward" size={16} color={theme.colors.textTertiary} />
           </TouchableOpacity>
 
           {/* Nutrition Card from DB */}
@@ -250,7 +250,7 @@ export default function LogFeedingScreen() {
               </Text>
               {selectedFood.carbsDM !== undefined && selectedFood.carbsDM > 15 && (
                 <View style={[styles.warningRow, { backgroundColor: '#FF3B3015' }]}>
-                  <Ionicons name="warning" size={14} color="#FF3B30" />
+                  <Icon name="warning" size={14} color="#FF3B30" />
                   <Text style={[styles.warningText, { color: '#FF3B30' }]}>
                     {t('feeding.carbsWarning', { defaultValue: i18n.language === 'ru' ? 'Высокое содержание углеводов (>15% СВ)' : 'High carbs (>15% DM)' })}
                   </Text>
@@ -305,7 +305,7 @@ export default function LogFeedingScreen() {
               )}
               {manualResult && manualResult.carbsDM > 15 && (
                 <View style={[styles.warningRow, { backgroundColor: '#FF3B3015' }]}>
-                  <Ionicons name="warning" size={14} color="#FF3B30" />
+                  <Icon name="warning" size={14} color="#FF3B30" />
                   <Text style={[styles.warningText, { color: '#FF3B30' }]}>
                     {t('feeding.carbsWarning', { defaultValue: i18n.language === 'ru' ? 'Высокое содержание углеводов (>15% СВ)' : 'High carbs (>15% DM)' })}
                   </Text>
@@ -320,7 +320,7 @@ export default function LogFeedingScreen() {
               style={[styles.toggleManualBtn]}
               onPress={() => setShowManualNutrition(true)}
             >
-              <Ionicons name="calculator-outline" size={16} color={theme.colors.textSecondary} />
+              <Icon name="calculator-outline" size={16} color={theme.colors.textSecondary} />
               <Text style={[styles.toggleManualText, { color: theme.colors.textSecondary }]}>
                 {t('feeding.manualNutrition', { defaultValue: i18n.language === 'ru' ? 'Ввести состав вручную' : 'Enter nutrition manually' })}
               </Text>
@@ -353,7 +353,7 @@ export default function LogFeedingScreen() {
               onPress={() => setShowDatePicker(true)}
             >
               <View style={styles.dateTimeContent}>
-                <Ionicons name="calendar-outline" size={18} color={theme.colors.primary} style={{ marginRight: 6 }} />
+                <Icon name="calendar-outline" size={18} color={theme.colors.primary} style={{ marginRight: 6 }} />
                 <Text style={{ color: theme.colors.text, fontSize: 15, fontWeight: '600' }}>
                   {format(fedAt, i18n.language === 'ru' ? 'dd.MM.yyyy' : 'MM/dd/yyyy')}
                 </Text>
@@ -364,7 +364,7 @@ export default function LogFeedingScreen() {
               onPress={() => setShowTimePicker(true)}
             >
               <View style={styles.dateTimeContent}>
-                <Ionicons name="time-outline" size={18} color={theme.colors.primary} style={{ marginRight: 6 }} />
+                <Icon name="time-outline" size={18} color={theme.colors.primary} style={{ marginRight: 6 }} />
                 <Text style={{ color: theme.colors.text, fontSize: 15, fontWeight: '600' }}>
                   {format(fedAt, 'HH:mm')}
                 </Text>

@@ -3,7 +3,7 @@ import {
   View, Text, StyleSheet, Modal, FlatList,
   TouchableOpacity, TextInput, SafeAreaView,
 } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+import { Icon } from '@shared/components/ui/Icon';
 import { useTranslation } from 'react-i18next';
 import i18n from '@shared/i18n';
 import { useTheme } from '@shared/theme';
@@ -176,12 +176,12 @@ export default function FoodSelector({ visible, onClose, onSelect, filterCategor
             {t('feeding.selectFood', { defaultValue: i18n.language === 'ru' ? 'Выбрать корм' : 'Select food' })}
           </Text>
           <TouchableOpacity onPress={onClose} style={styles.closeBtn}>
-            <Ionicons name="close" size={24} color={theme.colors.text} />
+            <Icon name="close" size={24} color={theme.colors.text} />
           </TouchableOpacity>
         </View>
 
         <View style={[styles.searchRow, { backgroundColor: theme.colors.surfaceSecondary }]}>
-          <Ionicons name="search" size={18} color={theme.colors.textTertiary} />
+          <Icon name="search" size={18} color={theme.colors.textTertiary} />
           <TextInput
             style={[styles.searchInput, { color: theme.colors.text }]}
             placeholder={t('common.search', { defaultValue: i18n.language === 'ru' ? 'Поиск...' : 'Search...' })}
@@ -192,7 +192,7 @@ export default function FoodSelector({ visible, onClose, onSelect, filterCategor
           />
           {search.length > 0 && (
             <TouchableOpacity onPress={() => setSearch('')}>
-              <Ionicons name="close-circle" size={18} color={theme.colors.textTertiary} />
+              <Icon name="close-circle" size={18} color={theme.colors.textTertiary} />
             </TouchableOpacity>
           )}
         </View>
@@ -251,7 +251,7 @@ export default function FoodSelector({ visible, onClose, onSelect, filterCategor
             onClose();
           }}
         >
-          <Ionicons name="create-outline" size={18} color={theme.colors.primary} />
+          <Icon name="create-outline" size={18} color={theme.colors.primary} />
           <Text style={[styles.manualBtnText, { color: theme.colors.primary }]}>
             {t('feeding.manualNutrition', { defaultValue: i18n.language === 'ru' ? 'Ввести вручную' : 'Enter manually' })}
           </Text>

@@ -4,7 +4,7 @@ import {
   TouchableOpacity, Alert, ActivityIndicator, Linking, AppState,
 } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
-import { Ionicons } from '@expo/vector-icons';
+import { Icon } from '@shared/components/ui/Icon';
 import type { IoniconName } from '@shared/components/ui';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useTheme } from '@shared/theme';
@@ -91,7 +91,7 @@ export default function PaywallScreen() {
     <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.background }]}>
       {/* Close button */}
       <TouchableOpacity style={[styles.closeBtn, { top: insets.top + 8 }]} onPress={() => navigation.goBack()}>
-        <Ionicons name="close" size={28} color={theme.colors.text} />
+        <Icon name="close" size={28} color={theme.colors.text} />
       </TouchableOpacity>
 
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scroll}>
@@ -100,7 +100,7 @@ export default function PaywallScreen() {
           colors={[...(theme.isDark ? theme.gradients.headerRichDark : theme.gradients.headerRich)] as [string, string, ...string[]]}
           style={styles.hero}
         >
-          <Ionicons name="star" size={48} color="#FFD700" />
+          <Icon name="star" size={48} color="#FFD700" />
           <Text style={[styles.heroTitle, { fontFamily: theme.fonts.bold }]}>
             {t('subscription.title')}
           </Text>
@@ -114,7 +114,7 @@ export default function PaywallScreen() {
           {FEATURES.map((f, i) => (
             <View key={i} style={styles.featureRow}>
               <View style={[styles.featureIcon, { backgroundColor: `${theme.colors.primary}15` }]}>
-                <Ionicons name={f.icon} size={22} color={theme.colors.primary} />
+                <Icon name={f.icon} size={22} color={theme.colors.primary} />
               </View>
               <View style={styles.featureText}>
                 <Text style={[styles.featureTitle, { color: theme.colors.text, fontFamily: theme.fonts.semibold }]}>
@@ -124,7 +124,7 @@ export default function PaywallScreen() {
                   {t(f.descKey)}
                 </Text>
               </View>
-              <Ionicons name="checkmark-circle" size={20} color={theme.colors.success} />
+              <Icon name="checkmark-circle" size={20} color={theme.colors.success} />
             </View>
           ))}
         </View>
@@ -133,13 +133,13 @@ export default function PaywallScreen() {
         {!isBackendConfigured() ? (
           <View style={styles.comingSoonBlock}>
             <View style={[styles.comingSoonBadge, { backgroundColor: theme.colors.primary }]}>
-              <Ionicons name="time-outline" size={16} color="#fff" />
+              <Icon name="time-outline" size={16} color="#fff" />
               <Text style={[styles.comingSoonBadgeText, { fontFamily: theme.fonts.bold }]}>
                 {t('subscription.comingSoon')}
               </Text>
             </View>
             <View style={[styles.comingSoonCard, { backgroundColor: theme.colors.surface }]}>
-              <Ionicons name="gift-outline" size={32} color={theme.colors.success} />
+              <Icon name="gift-outline" size={32} color={theme.colors.success} />
               <Text style={[styles.comingSoonTitle, { color: theme.colors.success, fontFamily: theme.fonts.semibold }]}>
                 {t('subscription.allFeaturesUnlocked')}
               </Text>

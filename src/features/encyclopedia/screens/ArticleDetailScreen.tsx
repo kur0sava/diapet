@@ -9,7 +9,7 @@ import { useEncyclopediaNavigation } from '@navigation/hooks';
 import type { EncyclopediaStackParamList } from '@navigation/types';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '@shared/theme';
-import { Ionicons } from '@expo/vector-icons';
+import { Icon } from '@shared/components/ui/Icon';
 import { articles } from '../data/articles';
 import { BilingualText } from '../types';
 import { storageUtils, StorageKeys } from '@storage/mmkv/storage';
@@ -174,7 +174,7 @@ export default function ArticleDetailScreen() {
           {t('encyclopedia.title')}
         </Text>
         <TouchableOpacity onPress={toggleBookmark} style={styles.bookmarkButton}>
-          <Ionicons
+          <Icon
             name={isBookmarked ? 'star' : 'star-outline'}
             size={24}
             color={isBookmarked ? '#F5A623' : theme.colors.textTertiary}
@@ -194,7 +194,7 @@ export default function ArticleDetailScreen() {
         </Text>
 
         <View style={[styles.disclaimerBanner, { backgroundColor: `${theme.colors.warning}15`, borderColor: `${theme.colors.warning}40` }]}>
-          <Ionicons name="information-circle-outline" size={16} color={theme.colors.warning} style={{ marginTop: 2 }} />
+          <Icon name="information-circle-outline" size={16} color={theme.colors.warning} style={{ marginTop: 2 }} />
           <Text style={[styles.disclaimerText, { color: theme.colors.textSecondary }]}>
             {t('encyclopedia.disclaimer')}
           </Text>
@@ -208,12 +208,12 @@ export default function ArticleDetailScreen() {
               activeOpacity={0.7}
             >
               <View style={styles.tocHeaderLeft}>
-                <Ionicons name="list-outline" size={18} color={theme.colors.primary} />
+                <Icon name="list-outline" size={18} color={theme.colors.primary} />
                 <Text style={[styles.tocTitle, { color: theme.colors.text }]}>
                   {t('encyclopedia.tableOfContents')}
                 </Text>
               </View>
-              <Ionicons
+              <Icon
                 name={tocExpanded ? 'chevron-up' : 'chevron-down'}
                 size={18}
                 color={theme.colors.textSecondary}

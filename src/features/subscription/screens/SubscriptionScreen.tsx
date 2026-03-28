@@ -4,7 +4,7 @@ import {
   TouchableOpacity, Alert, Linking, Platform,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Ionicons } from '@expo/vector-icons';
+import { Icon } from '@shared/components/ui/Icon';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useTheme } from '@shared/theme';
 import { useTranslation } from 'react-i18next';
@@ -56,12 +56,12 @@ export default function SubscriptionScreen() {
         <Card style={styles.planCard}>
           {!isBackendConfigured() ? (
             <>
-              <Ionicons name="gift-outline" size={40} color={theme.colors.success} />
+              <Icon name="gift-outline" size={40} color={theme.colors.success} />
               <Text style={[styles.planTitle, { color: theme.colors.success, fontFamily: theme.fonts.bold }]}>
                 {t('subscription.allFeaturesUnlocked')}
               </Text>
               <View style={[styles.comingSoonBadge, { backgroundColor: theme.colors.primary }]}>
-                <Ionicons name="time-outline" size={14} color="#fff" />
+                <Icon name="time-outline" size={14} color="#fff" />
                 <Text style={{ color: '#fff', fontSize: 12, fontWeight: '700' }}>
                   {t('subscription.comingSoon')}
                 </Text>
@@ -72,7 +72,7 @@ export default function SubscriptionScreen() {
             </>
           ) : (
             <>
-              <Ionicons name={isPro ? 'star' : 'star-outline'} size={40} color={isPro ? '#FFD700' : theme.colors.textSecondary} />
+              <Icon name={isPro ? 'star' : 'star-outline'} size={40} color={isPro ? '#FFD700' : theme.colors.textSecondary} />
               <Text style={[styles.planTitle, { color: theme.colors.text, fontFamily: theme.fonts.bold }]}>
                 {isPro ? t('subscription.pro') : t('subscription.free')}
               </Text>
@@ -85,11 +85,11 @@ export default function SubscriptionScreen() {
 
         {isBackendConfigured() && isPro && (
           <TouchableOpacity style={[styles.actionBtn, { backgroundColor: theme.colors.surface }]} onPress={handleManage}>
-            <Ionicons name="settings-outline" size={20} color={theme.colors.primary} />
+            <Icon name="settings-outline" size={20} color={theme.colors.primary} />
             <Text style={[styles.actionText, { color: theme.colors.text, fontFamily: theme.fonts.semibold }]}>
               {t('subscription.manageSubscription')}
             </Text>
-            <Ionicons name="chevron-forward" size={18} color={theme.colors.textTertiary} />
+            <Icon name="chevron-forward" size={18} color={theme.colors.textTertiary} />
           </TouchableOpacity>
         )}
 
@@ -105,7 +105,7 @@ export default function SubscriptionScreen() {
                 end={{ x: 1, y: 0 }}
                 style={styles.upgradeBtnInner}
               >
-                <Ionicons name="star" size={20} color="#fff" />
+                <Icon name="star" size={20} color="#fff" />
                 <Text style={[styles.upgradeBtnText, { fontFamily: theme.fonts.bold }]}>
                   {t('subscription.upgrade')}
                 </Text>
@@ -113,11 +113,11 @@ export default function SubscriptionScreen() {
             </TouchableOpacity>
 
             <TouchableOpacity style={[styles.actionBtn, { backgroundColor: theme.colors.surface }]} onPress={handleCheckStatus}>
-              <Ionicons name="refresh-outline" size={20} color={theme.colors.primary} />
+              <Icon name="refresh-outline" size={20} color={theme.colors.primary} />
               <Text style={[styles.actionText, { color: theme.colors.text, fontFamily: theme.fonts.semibold }]}>
                 {t('subscription.checkStatus')}
               </Text>
-              <Ionicons name="chevron-forward" size={18} color={theme.colors.textTertiary} />
+              <Icon name="chevron-forward" size={18} color={theme.colors.textTertiary} />
             </TouchableOpacity>
           </>
         )}

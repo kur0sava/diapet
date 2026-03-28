@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import Animated, { FadeOut, SlideInDown, Easing } from 'react-native-reanimated';
-import { Ionicons } from '@expo/vector-icons';
+import { Icon } from '@shared/components/ui/Icon';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '@shared/theme';
 import { useHintStore } from '../store/hintStore';
@@ -11,7 +11,7 @@ import type { HintCategory } from '../store/hintStore';
 // Category config
 // ---------------------------------------------------------------------------
 
-type IoniconName = React.ComponentProps<typeof Ionicons>['name'];
+type IoniconName = string;
 
 interface CategoryConfig {
   icon: IoniconName;
@@ -69,7 +69,7 @@ export function HintCard() {
     >
       {/* Header row: icon + category label */}
       <View style={styles.header}>
-        <Ionicons name={config.icon} size={18} color={config.color} />
+        <Icon name={config.icon} size={18} color={config.color} />
         <Text style={[styles.categoryLabel, { color: config.color }]}>
           {t(config.labelKey)}
         </Text>

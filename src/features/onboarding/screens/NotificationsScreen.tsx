@@ -7,7 +7,7 @@ import type { OnboardingStackParamList } from '@navigation/types';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '@shared/theme';
 import { Button } from '@shared/components/ui';
-import { Ionicons } from '@expo/vector-icons';
+import { Icon } from '@shared/components/ui/Icon';
 import { storage, StorageKeys } from '@storage/mmkv/storage';
 import { petRepository, scheduleRepository } from '@storage/database';
 import { usePetStore } from '@shared/stores/petStore';
@@ -91,7 +91,7 @@ export default function NotificationsScreen() {
         <Text style={{ color: theme.colors.primary, fontSize: 16 }}>← {t('common.back')}</Text>
       </TouchableOpacity>
       <View style={styles.content}>
-        <Ionicons name="notifications-outline" size={72} color={theme.colors.primary} style={{ marginBottom: 24 }} />
+        <Icon name="notifications-outline" size={72} color={theme.colors.primary} style={{ marginBottom: 24 }} />
         <Text style={[styles.title, { color: theme.colors.text }]}>{t('onboarding.setupNotifications')}</Text>
         <Text style={[styles.subtitle, { color: theme.colors.textSecondary }]}>
           {t('onboarding.notificationsDesc')}

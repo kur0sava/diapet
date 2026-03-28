@@ -6,7 +6,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useEncyclopediaNavigation } from '@navigation/hooks';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '@shared/theme';
-import { Ionicons } from '@expo/vector-icons';
+import { Icon } from '@shared/components/ui/Icon';
 import { NATURAL_FEEDING_GUIDE } from '../data/naturalFoods';
 import type { NaturalFood, NaturalFoodCategory, NaturalFoodSuitability } from '../types';
 
@@ -101,7 +101,7 @@ export default function FeedGuideNaturalScreen() {
         </View>
 
         <View style={styles.tipRow}>
-          <Ionicons name="restaurant-outline" size={14} color={theme.colors.primary} />
+          <Icon name="restaurant-outline" size={14} color={theme.colors.primary} />
           <Text style={[styles.tipText, { color: theme.colors.textSecondary }]}>
             {food.preparationTips[lang]}
           </Text>
@@ -109,7 +109,7 @@ export default function FeedGuideNaturalScreen() {
 
         {food.warnings && (
           <View style={[styles.warningRow, { backgroundColor: theme.colors.warning + '15' }]}>
-            <Ionicons name="warning-outline" size={14} color={theme.colors.warning} />
+            <Icon name="warning-outline" size={14} color={theme.colors.warning} />
             <Text style={[styles.warningText, { color: theme.colors.warning }]}>
               {food.warnings[lang]}
             </Text>
@@ -129,7 +129,7 @@ export default function FeedGuideNaturalScreen() {
         <View style={styles.infoSection}>
           {/* Disclaimer */}
           <View style={[styles.disclaimerCard, { backgroundColor: theme.colors.danger + '15' }]}>
-            <Ionicons name="alert-circle" size={20} color={theme.colors.danger} />
+            <Icon name="alert-circle" size={20} color={theme.colors.danger} />
             <View style={{ flex: 1 }}>
               <Text style={[styles.disclaimerTitle, { color: theme.colors.danger }]}>
                 {t('feedGuide.natural.disclaimerTitle')}
@@ -225,7 +225,7 @@ export default function FeedGuideNaturalScreen() {
     <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.background }]}>
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
-          <Ionicons name="arrow-back" size={24} color={theme.colors.text} />
+          <Icon name="arrow-back" size={24} color={theme.colors.text} />
         </TouchableOpacity>
         <Text style={[styles.title, { color: theme.colors.text }]}>{t('feedGuide.natural.title')}</Text>
       </View>

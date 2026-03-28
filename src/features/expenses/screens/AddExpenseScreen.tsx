@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert, KeyboardAvoidingView, Platform } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Ionicons } from '@expo/vector-icons';
+import { Icon } from '@shared/components/ui/Icon';
 import { useRoute, RouteProp } from '@react-navigation/native';
 import { useMoreNavigation } from '@navigation/hooks';
 import type { MoreStackParamList } from '@navigation/types';
@@ -90,7 +90,7 @@ export default function AddExpenseScreen() {
       <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.background }]}>
         <View style={[styles.navHeader, { borderBottomColor: theme.colors.border }]}>
           <TouchableOpacity onPress={() => navigation.goBack()} style={styles.navBtn}>
-            <Ionicons name="chevron-back" size={22} color={theme.colors.primary} />
+            <Icon name="chevron-back" size={22} color={theme.colors.primary} />
             <Text style={{ color: theme.colors.primary }}>{t('common.back')}</Text>
           </TouchableOpacity>
           <Text numberOfLines={1} style={[styles.title, { color: theme.colors.text, fontFamily: theme.fonts.semibold }]}>{editId ? t('expenses.editExpense') : t('expenses.addExpense')}</Text>
@@ -102,7 +102,7 @@ export default function AddExpenseScreen() {
             {CATEGORIES.map(cat => (
               <TouchableOpacity key={cat} style={[styles.categoryBtn, { backgroundColor: category === cat ? `${EXPENSE_COLORS[cat]}20` : theme.colors.surface, borderColor: category === cat ? EXPENSE_COLORS[cat] : 'transparent', borderWidth: 2, ...theme.shadows.sm }]} onPress={() => setCategory(cat)}>
                 <View style={[styles.categoryIconCircle, { backgroundColor: `${EXPENSE_COLORS[cat]}15` }]}>
-                  <Ionicons name={EXPENSE_ICON_NAMES[cat]} size={24} color={EXPENSE_COLORS[cat]} />
+                  <Icon name={EXPENSE_ICON_NAMES[cat]} size={24} color={EXPENSE_COLORS[cat]} />
                 </View>
                 <Text style={[styles.categoryLabel, { color: category === cat ? EXPENSE_COLORS[cat] : theme.colors.text, fontFamily: theme.fonts.semibold }]}>{categoryLabels[cat]}</Text>
               </TouchableOpacity>

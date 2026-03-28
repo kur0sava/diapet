@@ -7,7 +7,7 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import { format } from 'date-fns';
 import i18n from '@shared/i18n';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Ionicons } from '@expo/vector-icons';
+import { Icon } from '@shared/components/ui/Icon';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useHomeNavigation } from '@navigation/hooks';
 import { useRoute, RouteProp } from '@react-navigation/native';
@@ -152,7 +152,7 @@ export default function LogInjectionScreen() {
 
         <ScrollView contentContainerStyle={styles.content}>
           <Card style={styles.mainCard}>
-            <Ionicons name="medkit-outline" size={48} color={theme.colors.primary} style={{ marginBottom: 8 }} />
+            <Icon name="medkit-outline" size={48} color={theme.colors.primary} style={{ marginBottom: 8 }} />
             <Input
               label={t('injection.dose')}
               value={dose}
@@ -199,7 +199,7 @@ export default function LogInjectionScreen() {
               onPress={() => setShowDatePicker(true)}
             >
               <View style={styles.dateTimeContent}>
-                <Ionicons name="calendar-outline" size={18} color={theme.colors.primary} style={{ marginRight: 6 }} />
+                <Icon name="calendar-outline" size={18} color={theme.colors.primary} style={{ marginRight: 6 }} />
                 <Text style={{ color: theme.colors.text, fontSize: 15, fontFamily: theme.fonts.semibold }}>
                   {format(administeredAt, i18n.language === 'ru' ? 'dd.MM.yyyy' : 'MM/dd/yyyy')}
                 </Text>
@@ -210,7 +210,7 @@ export default function LogInjectionScreen() {
               onPress={() => setShowTimePicker(true)}
             >
               <View style={styles.dateTimeContent}>
-                <Ionicons name="time-outline" size={18} color={theme.colors.primary} style={{ marginRight: 6 }} />
+                <Icon name="time-outline" size={18} color={theme.colors.primary} style={{ marginRight: 6 }} />
                 <Text style={{ color: theme.colors.text, fontSize: 15, fontFamily: theme.fonts.semibold }}>
                   {format(administeredAt, 'HH:mm')}
                 </Text>

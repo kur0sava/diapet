@@ -23,7 +23,7 @@ import { StatusCard } from '../components/StatusCard';
 import { QuickActionButton } from '../components/QuickActionButton';
 import { formatRelative, minutesUntil, formatCountdown, hoursSince } from '@shared/utils/dateUtils';
 import { getGlucoseColor } from '@storage/domain/types';
-import { Ionicons } from '@expo/vector-icons';
+import { Icon } from '@shared/components/ui/Icon';
 import { usePetStore } from '@shared/stores/petStore';
 import { useSubscription } from '@features/subscription/hooks/useSubscription';
 import { useFocusEffect } from '@react-navigation/native';
@@ -201,7 +201,7 @@ export default function DashboardScreen() {
             <View style={styles.heroTop}>
               <View style={styles.heroLeft}>
                 <View style={styles.petAvatar}>
-                  <Ionicons name="paw" size={20} color="#FFFFFF" />
+                  <Icon name="paw" size={20} color="#FFFFFF" />
                 </View>
                 <View style={{ flexShrink: 1 }}>
                   <Text style={[styles.greeting, { fontFamily: theme.fonts.medium }]}>
@@ -216,7 +216,7 @@ export default function DashboardScreen() {
                 onPress={() => rootNavigation.navigate('Emergency')}
                 style={[styles.sosButton, { backgroundColor: theme.colors.danger }]}
               >
-                <Ionicons name="warning" size={16} color="#FFFFFF" style={{ marginRight: 4 }} />
+                <Icon name="warning" size={16} color="#FFFFFF" style={{ marginRight: 4 }} />
                 <Text style={[styles.sosText, { fontFamily: theme.fonts.bold }]}>SOS</Text>
               </TouchableOpacity>
             </View>
@@ -297,7 +297,7 @@ export default function DashboardScreen() {
               <GlucoseChart data={glucoseHistory} />
             ) : (
               <View style={styles.noData}>
-                <Ionicons name="analytics-outline" size={32} color={theme.colors.textTertiary} style={{ marginBottom: 8 }} />
+                <Icon name="analytics-outline" size={32} color={theme.colors.textTertiary} style={{ marginBottom: 8 }} />
                 <Text style={[styles.noDataText, { color: theme.colors.textSecondary }]}>
                   {t('dashboard.noGlucoseData')}
                 </Text>
@@ -324,7 +324,7 @@ export default function DashboardScreen() {
             end={{ x: 1, y: 1 }}
             style={styles.aiAnalysisIcon}
           >
-            <Ionicons name="sparkles" size={22} color="#fff" />
+            <Icon name="sparkles" size={22} color="#fff" />
           </LinearGradient>
           <View style={styles.aiAnalysisText}>
             <Text style={[styles.aiAnalysisTitle, { color: theme.colors.text, fontFamily: theme.fonts.semibold }]}>
@@ -339,7 +339,7 @@ export default function DashboardScreen() {
               <Text style={{ color: '#8B5CF6', fontSize: 10, fontWeight: '700' }}>PRO</Text>
             </View>
           )}
-          <Ionicons name="chevron-forward" size={18} color={theme.colors.textTertiary} />
+          <Icon name="chevron-forward" size={18} color={theme.colors.textTertiary} />
         </TouchableOpacity>
 
         {/* Feed Guide Banner */}
@@ -349,7 +349,7 @@ export default function DashboardScreen() {
           activeOpacity={0.8}
         >
           <View style={[styles.feedGuideIcon, { backgroundColor: theme.colors.successLight }]}>
-            <Ionicons name="nutrition-outline" size={22} color={theme.colors.success} />
+            <Icon name="nutrition-outline" size={22} color={theme.colors.success} />
           </View>
           <View style={{ flex: 1 }}>
             <Text style={[styles.feedGuideTitle, { color: theme.colors.text, fontFamily: theme.fonts.semibold }]}>
@@ -359,7 +359,7 @@ export default function DashboardScreen() {
               {t('dashboard.feedGuideSub')}
             </Text>
           </View>
-          <Ionicons name="chevron-forward" size={18} color={theme.colors.textTertiary} />
+          <Icon name="chevron-forward" size={18} color={theme.colors.textTertiary} />
         </TouchableOpacity>
 
         {/* Last Injection Info */}
@@ -374,7 +374,7 @@ export default function DashboardScreen() {
             <Card>
               <View style={styles.injectionRow}>
                 <View style={[styles.injectionIcon, { backgroundColor: theme.colors.secondaryLight }]}>
-                  <Ionicons name="medkit" size={24} color={theme.colors.secondary} />
+                  <Icon name="medkit" size={24} color={theme.colors.secondary} />
                 </View>
                 <View style={{ flex: 1 }}>
                   <Text style={[styles.injectionDose, { color: theme.colors.text, fontFamily: theme.fonts.semibold }]}>
@@ -402,12 +402,12 @@ export default function DashboardScreen() {
               end={{ x: 1, y: 0 }}
               style={styles.upgradeIconCircle}
             >
-              <Ionicons name="star" size={16} color="#fff" />
+              <Icon name="star" size={16} color="#fff" />
             </LinearGradient>
             <Text style={[styles.upgradeText, { color: theme.colors.text, fontFamily: theme.fonts.semibold }]}>
               {t('subscription.upgradePrompt')}
             </Text>
-            <Ionicons name="chevron-forward" size={16} color={theme.colors.textTertiary} />
+            <Icon name="chevron-forward" size={16} color={theme.colors.textTertiary} />
           </TouchableOpacity>
         )}
 
@@ -420,10 +420,10 @@ export default function DashboardScreen() {
               activeOpacity={0.8}
             >
               <View style={[styles.historyIcon, { backgroundColor: theme.colors.secondaryLight }]}>
-                <Ionicons name="medkit-outline" size={18} color={theme.colors.secondary} />
+                <Icon name="medkit-outline" size={18} color={theme.colors.secondary} />
               </View>
               <Text style={[styles.historyLinkText, { color: theme.colors.text, fontFamily: theme.fonts.semibold }]}>{t('injection.history')}</Text>
-              <Ionicons name="chevron-forward" size={16} color={theme.colors.textTertiary} />
+              <Icon name="chevron-forward" size={16} color={theme.colors.textTertiary} />
             </TouchableOpacity>
             <TouchableOpacity
               style={[styles.historyLink, { backgroundColor: theme.colors.surface, ...theme.shadows.sm }]}
@@ -431,10 +431,10 @@ export default function DashboardScreen() {
               activeOpacity={0.8}
             >
               <View style={[styles.historyIcon, { backgroundColor: theme.colors.successLight }]}>
-                <Ionicons name="restaurant-outline" size={18} color={theme.colors.success} />
+                <Icon name="restaurant-outline" size={18} color={theme.colors.success} />
               </View>
               <Text style={[styles.historyLinkText, { color: theme.colors.text, fontFamily: theme.fonts.semibold }]}>{t('feeding.history')}</Text>
-              <Ionicons name="chevron-forward" size={16} color={theme.colors.textTertiary} />
+              <Icon name="chevron-forward" size={16} color={theme.colors.textTertiary} />
             </TouchableOpacity>
           </View>
         </View>

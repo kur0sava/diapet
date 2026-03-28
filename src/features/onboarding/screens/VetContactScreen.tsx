@@ -7,7 +7,7 @@ import type { OnboardingStackParamList } from '@navigation/types';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '@shared/theme';
 import { Button, Input } from '@shared/components/ui';
-import { Ionicons } from '@expo/vector-icons';
+import { Icon } from '@shared/components/ui/Icon';
 
 export default function VetContactScreen() {
   const navigation = useOnboardingNavigation();
@@ -34,7 +34,7 @@ export default function VetContactScreen() {
           <Text style={{ color: theme.colors.primary, fontSize: 16 }}>← {t('common.back')}</Text>
         </TouchableOpacity>
         <View style={styles.content}>
-          <Ionicons name="medical-outline" size={64} color={theme.colors.success} style={{ marginBottom: 16, marginTop: 40 }} />
+          <Icon name="medical-outline" size={64} color={theme.colors.success} style={{ marginBottom: 16, marginTop: 40 }} />
           <Text style={[styles.title, { color: theme.colors.text }]}>{t('onboarding.vetContact')}</Text>
           <Text style={[styles.subtitle, { color: theme.colors.textSecondary }]}>
             {t('onboarding.vetContactDesc')}

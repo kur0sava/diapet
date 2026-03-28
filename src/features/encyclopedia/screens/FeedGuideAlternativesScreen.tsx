@@ -6,7 +6,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useEncyclopediaNavigation } from '@navigation/hooks';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '@shared/theme';
-import { Ionicons } from '@expo/vector-icons';
+import { Icon } from '@shared/components/ui/Icon';
 import { ALTERNATIVE_FOODS } from '../data/alternativeFoods';
 import type { AlternativeFood, AlternativeFoodVerdict } from '../types';
 
@@ -87,7 +87,7 @@ export default function FeedGuideAlternativesScreen() {
 
         {item.source && (
           <View style={styles.sourceRow}>
-            <Ionicons name="link-outline" size={12} color={theme.colors.textTertiary} />
+            <Icon name="link-outline" size={12} color={theme.colors.textTertiary} />
             <Text style={[styles.sourceText, { color: theme.colors.textTertiary }]}>
               {t('feedGuide.source')}: {item.source}
             </Text>
@@ -103,13 +103,13 @@ export default function FeedGuideAlternativesScreen() {
     <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.background }]}>
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
-          <Ionicons name="arrow-back" size={24} color={theme.colors.text} />
+          <Icon name="arrow-back" size={24} color={theme.colors.text} />
         </TouchableOpacity>
         <Text style={[styles.title, { color: theme.colors.text }]}>{t('feedGuide.alternatives')}</Text>
       </View>
 
       <View style={[styles.infoCard, { backgroundColor: theme.colors.primaryLight }]}>
-        <Ionicons name="information-circle" size={18} color={theme.colors.primary} />
+        <Icon name="information-circle" size={18} color={theme.colors.primary} />
         <Text style={[styles.infoText, { color: theme.colors.primary }]}>
           {t('feedGuide.alternativesInfo')}
         </Text>

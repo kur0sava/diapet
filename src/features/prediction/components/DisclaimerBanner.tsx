@@ -3,7 +3,7 @@
  */
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+import { Icon } from '@shared/components/ui/Icon';
 import { useTheme } from '@shared/theme';
 
 interface Props {
@@ -21,7 +21,7 @@ export function DisclaimerBanner({ text }: Props) {
 
   return (
     <View style={[styles.container, { backgroundColor: bgColor, borderColor }]}>
-      <Ionicons name="warning" size={18} color={iconColor} style={styles.icon} />
+      <Icon name="warning" size={18} color={iconColor} style={styles.icon} />
       <Text style={[styles.text, { color: textColor }]}>{text}</Text>
     </View>
   );

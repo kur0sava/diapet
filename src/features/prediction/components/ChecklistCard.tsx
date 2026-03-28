@@ -3,16 +3,15 @@
  */
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '@shared/theme';
-import type { IoniconName } from '@shared/components/ui';
+import { Icon } from '@shared/components/ui/Icon';
 import type { PredictionChecklist, ChecklistCategory, ChecklistPriority } from '../data/predictionTypes';
 
 interface Props {
   items: PredictionChecklist[];
 }
 
-const CATEGORY_ICONS: Record<ChecklistCategory, IoniconName> = {
+const CATEGORY_ICONS: Record<ChecklistCategory, string> = {
   feeding: 'restaurant-outline',
   glucose_check: 'water-outline',
   injection: 'medkit-outline',
@@ -53,7 +52,7 @@ function ChecklistItem({ item, theme }: { item: PredictionChecklist; theme: Retu
       activeOpacity={0.7}
     >
       <View style={styles.itemHeader}>
-        <Ionicons name={icon} size={18} color={color} style={styles.icon} />
+        <Icon name={icon} size={18} color={color} style={styles.icon} />
         <Text style={[styles.title, { color: theme.colors.text }]} numberOfLines={expanded ? undefined : 2}>
           {item.title}
         </Text>

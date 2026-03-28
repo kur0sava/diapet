@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity, Alert, ActivityIndicator } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Ionicons } from '@expo/vector-icons';
+import { Icon } from '@shared/components/ui/Icon';
 import { useHomeNavigation } from '@navigation/hooks';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '@shared/theme';
@@ -82,7 +82,7 @@ export default function InjectionListScreen() {
           <View style={styles.cardContent}>
             <View style={{ flex: 1 }}>
               <View style={styles.doseRow}>
-                <Ionicons name="medkit-outline" size={18} color={theme.colors.primary} />
+                <Icon name="medkit-outline" size={18} color={theme.colors.primary} />
                 <Text style={[styles.dose, { color: theme.colors.text, fontFamily: theme.fonts.bold }]}>
                   {item.doseUnits} {t('common.units')}
                 </Text>
@@ -100,7 +100,7 @@ export default function InjectionListScreen() {
               </Text>
             )}
             <TouchableOpacity onPress={() => handleDelete(item.id)} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }} style={{ alignSelf: 'flex-start' }}>
-              <Ionicons name="trash-outline" size={18} color={theme.colors.danger} />
+              <Icon name="trash-outline" size={18} color={theme.colors.danger} />
             </TouchableOpacity>
           </View>
         </Card>
@@ -169,7 +169,7 @@ export default function InjectionListScreen() {
           end={{ x: 1, y: 1 }}
           style={[styles.fab, theme.shadows.primarySm]}
         >
-          <Ionicons name="add" size={28} color="#fff" />
+          <Icon name="add" size={28} color="#fff" />
         </LinearGradient>
       </TouchableOpacity>
     </SafeAreaView>

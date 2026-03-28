@@ -1,7 +1,7 @@
 import React from 'react';
 import { Text, StyleSheet, Pressable } from 'react-native';
 import { useTheme } from '@shared/theme';
-import { Ionicons } from '@expo/vector-icons';
+import { Icon } from '@shared/components/ui/Icon';
 import { LinearGradient } from 'expo-linear-gradient';
 import Animated, { useSharedValue, useAnimatedStyle, withSpring } from 'react-native-reanimated';
 import * as Haptics from 'expo-haptics';
@@ -50,7 +50,7 @@ export function QuickActionButton({ iconName, label, color, onPress }: Props) {
         end={{ x: 1, y: 1 }}
         style={styles.iconContainer}
       >
-        <Ionicons name={iconName} size={26} color="#FFFFFF" />
+        <Icon name={iconName} size={26} color="#FFFFFF" />
       </LinearGradient>
       <Text style={[styles.label, { color: theme.colors.text, fontFamily: theme.fonts.semibold }]} numberOfLines={2}>{label}</Text>
     </AnimatedPressable>

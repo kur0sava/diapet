@@ -1,10 +1,12 @@
 import { Platform } from 'react-native';
 
 export const FontFamily = {
-  regular: 'Inter_400Regular',
-  medium: 'Inter_500Medium',
-  semibold: 'Inter_600SemiBold',
-  bold: 'Inter_700Bold',
+  regular: 'Manrope_400Regular',
+  medium: 'Manrope_500Medium',
+  semibold: 'Manrope_600SemiBold',
+  bold: 'Manrope_700Bold',
+  display: 'CormorantGaramond_600SemiBold',
+  displayBold: 'CormorantGaramond_700Bold',
   mono: Platform.OS === 'ios' ? 'Courier' : 'monospace',
 };
 

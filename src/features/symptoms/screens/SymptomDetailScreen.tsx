@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image, ActivityIndicator } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Ionicons } from '@expo/vector-icons';
+import { Icon } from '@shared/components/ui/Icon';
 import { useRoute, RouteProp } from '@react-navigation/native';
 import { useSymptomsNavigation } from '@navigation/hooks';
 import type { SymptomsStackParamList } from '@navigation/types';
@@ -50,7 +50,7 @@ export default function SymptomDetailScreen() {
     <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.background }]}>
       <View style={[styles.navHeader, { borderBottomColor: theme.colors.border }]}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.navBtn}>
-          <Ionicons name="chevron-back" size={22} color={theme.colors.primary} />
+          <Icon name="chevron-back" size={22} color={theme.colors.primary} />
           <Text style={{ color: theme.colors.primary }}>{t('common.back')}</Text>
         </TouchableOpacity>
         <Text style={[styles.title, { color: theme.colors.text, fontFamily: theme.fonts.semibold }]} numberOfLines={1}>{t('symptoms.detailTitle')}</Text>
@@ -76,7 +76,7 @@ export default function SymptomDetailScreen() {
           {symptom.symptomTypes.map(type => (
             <View key={type} style={styles.symptomRow}>
               <View style={[styles.symptomIconCircle, { backgroundColor: `${SYMPTOM_COLORS[type]}15` }]}>
-                <Ionicons name={SYMPTOM_ICONS[type]} size={20} color={SYMPTOM_COLORS[type]} />
+                <Icon name={SYMPTOM_ICONS[type]} size={20} color={SYMPTOM_COLORS[type]} />
               </View>
               <Text style={[styles.symptomText, { color: theme.colors.text }]}>{t(`symptoms.types.${type}`)}</Text>
             </View>

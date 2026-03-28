@@ -8,7 +8,7 @@ import { useEncyclopediaNavigation } from '@navigation/hooks';
 import type { EncyclopediaStackScreenProps } from '@navigation/types';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '@shared/theme';
-import { Ionicons } from '@expo/vector-icons';
+import { Icon } from '@shared/components/ui/Icon';
 import type { IoniconName } from '@shared/components/ui';
 import {
   getPrescriptionFoods, getOtcFoods, getFoodsByCarbs,
@@ -85,7 +85,7 @@ export default function FeedGuideRegionScreen() {
 
   const renderStoreChip = (store: StoreEntry) => (
     <View key={store.id} style={[styles.storeChip, { backgroundColor: theme.colors.surfaceSecondary }]}>
-      <Ionicons name={STORE_TYPE_ICONS[store.type] ?? 'storefront-outline'} size={16} color={theme.colors.primary} />
+      <Icon name={STORE_TYPE_ICONS[store.type] ?? 'storefront-outline'} size={16} color={theme.colors.primary} />
       <Text style={[styles.storeName, { color: theme.colors.text }]}>
         {isRu && store.nameRu ? store.nameRu : store.name}
       </Text>
@@ -139,7 +139,7 @@ export default function FeedGuideRegionScreen() {
 
         {food.prescriptionRequired && (
           <View style={styles.prescriptionRow}>
-            <Ionicons name="document-text-outline" size={14} color={theme.colors.textTertiary} />
+            <Icon name="document-text-outline" size={14} color={theme.colors.textTertiary} />
             <Text style={[styles.prescriptionText, { color: theme.colors.textTertiary }]}>
               {t('feedGuide.prescriptionRequired')}
             </Text>
@@ -152,7 +152,7 @@ export default function FeedGuideRegionScreen() {
 
         {buyList.length > 0 && (
           <View style={styles.buyRow}>
-            <Ionicons name="bag-outline" size={14} color={theme.colors.primary} />
+            <Icon name="bag-outline" size={14} color={theme.colors.primary} />
             <Text style={[styles.buyText, { color: theme.colors.primary }]} numberOfLines={2}>
               {buyList.join(' • ')}
             </Text>
@@ -193,7 +193,7 @@ export default function FeedGuideRegionScreen() {
     <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.background }]}>
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
-          <Ionicons name="arrow-back" size={24} color={theme.colors.text} />
+          <Icon name="arrow-back" size={24} color={theme.colors.text} />
         </TouchableOpacity>
         <Text style={[styles.title, { color: theme.colors.text }]} numberOfLines={1}>
           {t(`feedGuide.regions.${region}`)}
@@ -222,7 +222,7 @@ export default function FeedGuideRegionScreen() {
           ]}
           onPress={() => setSortByCarbs(!sortByCarbs)}
         >
-          <Ionicons name="arrow-up" size={14} color={sortByCarbs ? '#fff' : theme.colors.text} />
+          <Icon name="arrow-up" size={14} color={sortByCarbs ? '#fff' : theme.colors.text} />
           <Text style={{ color: sortByCarbs ? '#fff' : theme.colors.text, fontSize: 13, fontWeight: '500' }}>
             {t('feedGuide.sortByCarbs')}
           </Text>

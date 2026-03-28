@@ -14,7 +14,7 @@ import type { OnboardingStackParamList } from '@navigation/types';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '@shared/theme';
 import { Button } from '@shared/components/ui';
-import { Ionicons } from '@expo/vector-icons';
+import { Icon } from '@shared/components/ui/Icon';
 import DateTimePicker from '@react-native-community/datetimepicker';
 
 export default function ScheduleScreen() {
@@ -82,7 +82,7 @@ export default function ScheduleScreen() {
             <Text style={{ color: theme.colors.text, fontSize: 18, fontWeight: '600', padding: 14 }}>{time}</Text>
           </TouchableOpacity>
           <TouchableOpacity onPress={() => removeTime(type, index)} style={styles.removeBtn}>
-            <Ionicons name="close-circle" size={24} color={theme.colors.danger} />
+            <Icon name="close-circle" size={24} color={theme.colors.danger} />
           </TouchableOpacity>
         </View>
       ))}
@@ -90,7 +90,7 @@ export default function ScheduleScreen() {
         style={[styles.addBtn, { borderColor: theme.colors.primary, borderRadius: 12 }]}
         onPress={() => addTime(type)}
       >
-        <Ionicons name="add-circle-outline" size={20} color={theme.colors.primary} />
+        <Icon name="add-circle-outline" size={20} color={theme.colors.primary} />
         <Text style={{ color: theme.colors.primary, fontWeight: '600' }}>
           {type === 'injection' ? t('onboarding.addInjectionTime') : t('onboarding.addFeedingTime')}
         </Text>
@@ -113,7 +113,7 @@ export default function ScheduleScreen() {
 
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
-            <Ionicons name="medkit-outline" size={22} color={theme.colors.primary} />
+            <Icon name="medkit-outline" size={22} color={theme.colors.primary} />
             <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>{t('onboarding.injectionTime')}</Text>
           </View>
           {renderTimeList('injection', injectionTimes)}
@@ -121,7 +121,7 @@ export default function ScheduleScreen() {
 
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
-            <Ionicons name="restaurant-outline" size={22} color={theme.colors.warning} />
+            <Icon name="restaurant-outline" size={22} color={theme.colors.warning} />
             <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>{t('onboarding.feedingTime')}</Text>
           </View>
           {renderTimeList('feeding', feedingTimes)}

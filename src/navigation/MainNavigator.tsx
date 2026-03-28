@@ -2,12 +2,11 @@ import React from 'react';
 import { View } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '@shared/theme';
 import { useTranslation } from 'react-i18next';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { MainTabParamList, HomeStackParamList, GlucoseStackParamList, SymptomsStackParamList, EncyclopediaStackParamList, MoreStackParamList } from './types';
-import type { IoniconName } from '@shared/components/ui';
+import { Icon } from '@shared/components/ui';
 
 // Screens
 import DashboardScreen from '@features/dashboard/screens/DashboardScreen';
@@ -181,17 +180,17 @@ export default function MainNavigator() {
           tabBarLabelStyle: {
             fontSize: 10,
             fontWeight: '500',
-            fontFamily: 'Inter_500Medium',
+            fontFamily: 'Manrope_500Medium',
           },
-          tabBarIcon: ({ focused, color, size }) => {
-            const icons: Record<string, IoniconName> = {
-              Home: focused ? 'home' : 'home-outline',
-              GlucoseTab: focused ? 'water' : 'water-outline',
-              SymptomsTab: focused ? 'paw' : 'paw-outline',
-              EncyclopediaTab: focused ? 'book' : 'book-outline',
-              MoreTab: focused ? 'ellipsis-horizontal-circle' : 'ellipsis-horizontal-circle-outline',
+          tabBarIcon: ({ color, size }) => {
+            const icons: Record<string, string> = {
+              Home: 'home-outline',
+              GlucoseTab: 'water-outline',
+              SymptomsTab: 'paw-outline',
+              EncyclopediaTab: 'book-outline',
+              MoreTab: 'ellipsis-horizontal-circle-outline',
             };
-            return <Ionicons name={icons[route.name] ?? 'home'} size={size} color={color} />;
+            return <Icon name={icons[route.name] ?? 'home-outline'} size={size} color={color} strokeWidth={1.5} />;
           },
         })}
       >

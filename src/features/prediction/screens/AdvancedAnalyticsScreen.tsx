@@ -8,7 +8,7 @@ import {
   TouchableOpacity, ActivityIndicator, RefreshControl, AppState,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Ionicons } from '@expo/vector-icons';
+import { Icon } from '@shared/components/ui/Icon';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '@shared/theme';
@@ -131,7 +131,7 @@ export default function AdvancedAnalyticsScreen() {
         {/* Error state */}
         {error && (
           <Card style={[styles.errorCard, { borderColor: theme.colors.danger }]}>
-            <Ionicons name="alert-circle" size={20} color={theme.colors.danger} />
+            <Icon name="alert-circle" size={20} color={theme.colors.danger} />
             <Text style={[styles.errorText, { color: theme.colors.danger }]}>{error}</Text>
           </Card>
         )}
@@ -139,7 +139,7 @@ export default function AdvancedAnalyticsScreen() {
         {/* No prediction yet */}
         {!hasPrediction && !isLoading && !error && (
           <Card style={styles.emptyCard}>
-            <Ionicons name="sparkles" size={40} color={theme.colors.primary} />
+            <Icon name="sparkles" size={40} color={theme.colors.primary} />
             <Text style={[styles.emptyTitle, { color: theme.colors.text, fontFamily: theme.fonts.bold }]}>
               {t('prediction.emptyTitle')}
             </Text>
@@ -152,7 +152,7 @@ export default function AdvancedAnalyticsScreen() {
         {/* Insufficient data */}
         {isInsufficientData && prediction && (
           <Card style={styles.insufficientCard}>
-            <Ionicons name="information-circle" size={24} color={theme.colors.warning} />
+            <Icon name="information-circle" size={24} color={theme.colors.warning} />
             <Text style={[styles.insufficientTitle, { color: theme.colors.text, fontFamily: theme.fonts.semibold }]}>
               {t('prediction.insufficientData')}
             </Text>
@@ -180,7 +180,7 @@ export default function AdvancedAnalyticsScreen() {
         {/* Summary */}
         {prediction?.status === 'success' && prediction.summary && (
           <Card style={styles.summaryCard}>
-            <Ionicons name="analytics" size={20} color={theme.colors.primary} style={{ marginRight: 8 }} />
+            <Icon name="analytics" size={20} color={theme.colors.primary} style={{ marginRight: 8 }} />
             <Text style={[styles.summaryText, { color: theme.colors.text }]}>
               {prediction.summary}
             </Text>
@@ -208,7 +208,7 @@ export default function AdvancedAnalyticsScreen() {
         {recentReadings.length > 0 && (
           <Card style={styles.dataQualityCard}>
             <View style={styles.dataQualityRow}>
-              <Ionicons name="stats-chart" size={16} color={theme.colors.textSecondary} />
+              <Icon name="stats-chart" size={16} color={theme.colors.textSecondary} />
               <Text style={[styles.dataQualityText, { color: theme.colors.textSecondary }]}>
                 {t('prediction.readingsCount', { count: recentReadings.length })}
               </Text>
@@ -235,7 +235,7 @@ export default function AdvancedAnalyticsScreen() {
               <ActivityIndicator color="#fff" />
             ) : (
               <>
-                <Ionicons name="sparkles" size={20} color="#fff" style={{ marginRight: 8 }} />
+                <Icon name="sparkles" size={20} color="#fff" style={{ marginRight: 8 }} />
                 <Text style={[styles.requestBtnText, { fontFamily: theme.fonts.bold }]}>
                   {canRequestNew
                     ? t('prediction.requestAnalysis')
