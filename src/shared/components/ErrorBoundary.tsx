@@ -7,6 +7,7 @@ import {
   ScrollView,
   Appearance,
   BackHandler,
+  Platform,
 } from 'react-native';
 import i18n from '@shared/i18n';
 import { Colors } from '@shared/theme/colors';
@@ -198,7 +199,7 @@ const styles = StyleSheet.create({
   },
   detailsText: {
     fontSize: 11,
-    fontFamily: 'monospace',
+    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
   },
 });
 

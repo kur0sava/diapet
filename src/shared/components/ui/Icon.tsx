@@ -82,6 +82,10 @@ import {
   ShoppingCart,
   ShoppingBag,
   ArrowUp,
+  CheckCircle2,
+  Footprints,
+  BedDouble,
+  Ban,
   type LucideIcon,
 } from 'lucide-react-native';
 
@@ -262,6 +266,12 @@ const ICON_MAP: Record<string, LucideIcon> = {
   'arrow-up': ArrowUp,
   'arrow-up-outline': ArrowUp,
   'stats-chart': BarChart3,
+  'checkmark-circle-outline': CheckCircle2,
+  'walk-outline': Footprints,
+  'walk': Footprints,
+  'bed-outline': BedDouble,
+  'bed': BedDouble,
+  'ban': Ban,
   'ellipsis-vertical': MoreVertical,
   'scale-outline': Scale,
   'barbell-outline': Dumbbell,
@@ -306,5 +316,6 @@ export {
   CreditCard, Sparkles, TrendingUp, TrendingDown, Plus,
   Minus, Filter, MoreVertical, User, Activity, Scale,
   Lock, MinusCircle, Wallet, ShoppingCart, ShoppingBag, ArrowUp,
+  CheckCircle2, Footprints, BedDouble, Ban,
   type LucideIcon,
 };

@@ -180,7 +180,7 @@ export default function MainNavigator() {
           tabBarLabelStyle: {
             fontSize: 10,
             fontWeight: '500',
-            fontFamily: 'Manrope_500Medium',
+            fontFamily: theme.fonts.medium,
           },
           tabBarIcon: ({ color, size }) => {
             const icons: Record<string, string> = {
@@ -190,7 +190,7 @@ export default function MainNavigator() {
               EncyclopediaTab: 'book-outline',
               MoreTab: 'ellipsis-horizontal-circle-outline',
             };
-            return <Icon name={icons[route.name] ?? 'home-outline'} size={size} color={color} strokeWidth={1.5} />;
+            return <Icon name={icons[route.name] ?? 'home-outline'} size={size} color={color} strokeWidth={2} />;
           },
         })}
       >
