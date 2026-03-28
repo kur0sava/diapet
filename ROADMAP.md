@@ -1,6 +1,6 @@
 # DiaPet — Master Development Plan
 
-> Последнее обновление: 2026-03-28
+> Последнее обновление: 2026-03-29
 > Версия: 2.3 (versionCode 11)
 
 ---
@@ -23,8 +23,8 @@
 [####################] v2.1 Audit+Features ✅ DONE (9 stages, 48 багов)
 [####################] v2.2 Google Play    ✅ DONE (AAB билд)
 [####################] v2.3 Deep Audit x4  ✅ DONE (80+ багов за 4 раунда)
-[____________________] v2.4 Design Refresh ⬅ ТЕКУЩИЙ (Manrope + Lucide)
-[____________________] v2.5 Backend        🔜 (Prodamus + Supabase)
+[####################] v2.4 Design Refresh ✅ DONE (Manrope + Lucide)
+[____________________] v2.5 Backend        ⬅ СЛЕДУЮЩИЙ (Prodamus + Supabase)
 [____________________] v2.6 Cloud Backup   🔜
 [____________________] v3.0 AI/Smart       🔜
 ```
@@ -188,8 +188,8 @@
 - [x] Gradient цветовые пары (header, primary, secondary, success, danger, warm)
 - [x] Типографика: Inter (400/500/600/700) через @expo-google-fonts/inter
 - [x] Card: subtle border по умолчанию (bordered prop)
-- [x] Button: gradient primary, icon prop (Ionicons)
-- [x] EmptyState: iconName + iconColor (Ionicons в цветном круге)
+- [x] Button: gradient primary, icon prop (Lucide via Icon.tsx)
+- [x] EmptyState: iconName + iconColor (Lucide в цветном круге)
 - [x] AnimatedListItem: reanimated FadeInRight с задержкой
 - [x] primarySm shadow для FAB кнопок
 - [x] expo-splash-screen для загрузки шрифтов
@@ -443,18 +443,24 @@
 
 ---
 
-## ЭТАП 7: v2.4 Design Refresh ⬅ ТЕКУЩИЙ
+## ЭТАП 7: v2.4 Design Refresh ✅ DONE (2026-03-29)
 
-> Обновление визуального стиля: шрифты и иконки
+> 2 коммита, 50 файлов. Полная миграция шрифтов и иконок.
 
-### Шрифты
-- [ ] Manrope (UI text) — замена Inter
-- [ ] Cormorant Garamond (заголовки/акценты)
-- [ ] Обновить theme/typography
+### Шрифты ✅
+- [x] Manrope (UI text) — замена Inter (400/500/600/700)
+- [x] Cormorant Garamond (display/accent — 600/700)
+- [x] typography.ts: FontFamily обновлён
+- [x] App.tsx: useFonts с 6 вариантами
+- [x] MainNavigator: tabBarLabel → Manrope_500Medium
+- [x] @expo-google-fonts/inter удалён из package.json
 
-### Иконки
-- [ ] Lucide Icons — замена Ionicons/emoji
-- [ ] Обновить все экраны
+### Иконки ✅
+- [x] Новый Icon.tsx — wrapper над Lucide Icons (120+ маппингов)
+- [x] 41 экран/компонент мигрирован: Ionicons → `<Icon name="..." />`
+- [x] lucide-react-native добавлен в зависимости
+- [x] @expo/vector-icons больше не импортируется нигде
+- [x] 5 пропущенных маппингов найдены аудитом и добавлены (wallet, cart, bag, arrow-up, stats-chart)
 
 ---
 
@@ -534,7 +540,7 @@
 | Victory Native peer deps | `--legacy-peer-deps` |
 | jest v30 не совместим с jest-expo | Использовать jest v29 |
 | babel-preset-expo | Должен быть в devDependencies для Jest |
-| @expo/vector-icons types | Предсуществующая проблема, не блокирует |
+| @expo/vector-icons | Удалён, заменён на lucide-react-native + Icon.tsx wrapper |
 | ThemeContext readonly types | Предсуществующая, косметическая |
 | SQLCipher | Убран (OS-level encryption only, no PRAGMA key) |
 | MMKV ключ | expo-crypto → expo-secure-store |
