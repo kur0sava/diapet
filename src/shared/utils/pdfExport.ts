@@ -229,7 +229,7 @@ function buildHtml(
       <tr>
         <td>${formatDate(r.recordedAt)}</td>
         <td><strong>${r.valueMmol.toFixed(1)}</strong></td>
-        <td>${r.valueMgdl}</td>
+        <td>${Math.round(r.valueMgdl)}</td>
         <td>${L.mealLabels[r.mealRelation]}</td>
         <td>${escapeHtml(r.notes)}</td>
       </tr>`,

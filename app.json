@@ -3,7 +3,7 @@
     "name": "DiaPet",
     "slug": "diapet",
     "version": "2.3",
-    "orientation": "default",
+    "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
@@ -49,8 +49,7 @@
       [
         "expo-sqlite",
         {
-          "enableFTS": true,
-          "useSQLCipher": true
+          "enableFTS": true
         }
       ],
       "expo-font",
@@ -62,7 +61,7 @@
       "eas": {
         "projectId": "b4a89637-64fe-470c-94a7-732162d80caa"
       },
-      "anthropicApiKey": "YOUR_ANTHROPIC_API_KEY"
+      "anthropicApiKey": ""
     },
     "owner": "kurosava"
   }

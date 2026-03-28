@@ -21,10 +21,11 @@ export function SimpleBarChart({ data, title, height = 140, unit }: Props) {
 
   if (data.length === 0) return null;
 
-  const maxVal = Math.max(...data.map(d => d.value), 1);
-  const barWidth = Math.min(
-    (screenWidth - 80) / data.length - 4,
-    32
+  const vals = data.map(d => d.value);
+  const maxVal = vals.reduce((a, b) => Math.max(a, b), 1);
+  const barWidth = Math.max(
+    Math.min((screenWidth - 80) / data.length - 4, 32),
+    4,
   );
 
   return (
@@ -99,7 +100,7 @@ export function SimpleHorizontalBarChart({ data, title }: HBarProps) {
 
   if (data.length === 0) return null;
 
-  const maxVal = Math.max(...data.map(d => d.value), 1);
+  const maxVal = data.map(d => d.value).reduce((a, b) => Math.max(a, b), 1);
 
   return (
     <View style={styles.container}>

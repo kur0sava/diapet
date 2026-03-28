@@ -22,11 +22,10 @@ export default function SubscriptionScreen() {
   const refreshStatus = useSubscriptionStore(s => s.refreshStatus);
 
   const handleManage = () => {
-    if (Platform.OS === 'android') {
-      Linking.openURL('https://play.google.com/store/account/subscriptions');
-    } else {
-      Linking.openURL('https://apps.apple.com/account/subscriptions');
-    }
+    const url = Platform.OS === 'android'
+      ? 'https://play.google.com/store/account/subscriptions'
+      : 'https://apps.apple.com/account/subscriptions';
+    Linking.openURL(url).catch(() => {});
   };
 
   const handleCheckStatus = async () => {

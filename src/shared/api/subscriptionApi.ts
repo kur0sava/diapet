@@ -98,7 +98,7 @@ export function openPaymentPage(plan: SubscriptionPlan): void {
   });
 
   const url = `${PRODAMUS_SHOP_URL}?${params.toString()}`;
-  Linking.openURL(url);
+  Linking.openURL(url).catch(e => console.warn('Failed to open payment URL:', e));
 }
 
 /**

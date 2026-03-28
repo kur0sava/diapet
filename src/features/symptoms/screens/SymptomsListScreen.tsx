@@ -58,8 +58,12 @@ export default function SymptomsListScreen() {
     Alert.alert(t('symptoms.deleteConfirm'), info || undefined, [
       { text: t('common.cancel'), style: 'cancel' },
       { text: t('common.delete'), style: 'destructive', onPress: async () => {
-        await symptomRepository.delete(id);
-        queryClient.invalidateQueries({ queryKey: ['symptoms'] });
+        try {
+          await symptomRepository.delete(id);
+          queryClient.invalidateQueries({ queryKey: ['symptoms'] });
+        } catch {
+          Alert.alert(t('common.error'));
+        }
       }},
     ]);
   };

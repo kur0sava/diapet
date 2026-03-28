@@ -6,7 +6,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '@shared/theme';
 import { useTranslation } from 'react-i18next';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { MainTabParamList } from './types';
+import { MainTabParamList, HomeStackParamList, GlucoseStackParamList, SymptomsStackParamList, EncyclopediaStackParamList, MoreStackParamList } from './types';
 import type { IoniconName } from '@shared/components/ui';
 
 // Screens
@@ -42,11 +42,11 @@ import AdvancedAnalyticsScreen from '@features/prediction/screens/AdvancedAnalyt
 const Tab = createBottomTabNavigator<MainTabParamList>();
 
 // Stack navigators for each tab
-const HomeStack = createNativeStackNavigator();
-const GlucoseStack = createNativeStackNavigator();
-const SymptomsStack = createNativeStackNavigator();
-const EncyclopediaStack = createNativeStackNavigator();
-const MoreStack = createNativeStackNavigator();
+const HomeStack = createNativeStackNavigator<HomeStackParamList>();
+const GlucoseStack = createNativeStackNavigator<GlucoseStackParamList>();
+const SymptomsStack = createNativeStackNavigator<SymptomsStackParamList>();
+const EncyclopediaStack = createNativeStackNavigator<EncyclopediaStackParamList>();
+const MoreStack = createNativeStackNavigator<MoreStackParamList>();
 
 function HomeStackNavigator() {
   const { theme } = useTheme();

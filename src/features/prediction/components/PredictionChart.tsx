@@ -24,20 +24,20 @@ export function PredictionChart({ actualData, predictions }: Props) {
   const { t } = useTranslation();
   const { theme } = useTheme();
   const { width: screenWidth } = useWindowDimensions();
-  const CHART_WIDTH = screenWidth - 80 - Y_AXIS_WIDTH;
+  const CHART_WIDTH = Math.max(screenWidth - 80 - Y_AXIS_WIDTH, 50);
 
   if (actualData.length === 0 && predictions.length === 0) return null;
   if (actualData.length === 0) return null; // Need actual data to anchor predictions
 
-  // Combine all values for scale
+  // Combine all values for scale — use reduce to avoid stack overflow on large arrays
   const actualValues = actualData.map(d => d.valueMmol);
   const predValues = predictions.map(p => p.predictedMmol);
   const confLow = predictions.map(p => p.confidenceLow);
   const confHigh = predictions.map(p => p.confidenceHigh);
   const allValues = [...actualValues, ...predValues, ...confLow, ...confHigh];
 
-  const minVal = Math.min(...allValues, NORMAL_MIN) - 1;
-  const maxVal = Math.max(...allValues, NORMAL_MAX) + 1;
+  const minVal = allValues.reduce((a, b) => Math.min(a, b), NORMAL_MIN) - 1;
+  const maxVal = allValues.reduce((a, b) => Math.max(a, b), NORMAL_MAX) + 1;
   const range = maxVal - minVal;
 
   const totalPoints = actualData.length + predictions.length;

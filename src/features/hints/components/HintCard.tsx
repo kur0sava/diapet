@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
-import Animated, { SlideInDown, SlideOutDown } from 'react-native-reanimated';
+import Animated, { FadeOut, SlideInDown, Easing } from 'react-native-reanimated';
 import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '@shared/theme';
@@ -63,8 +63,8 @@ export function HintCard() {
 
   return (
     <Animated.View
-      entering={SlideInDown.springify().damping(18)}
-      exiting={SlideOutDown}
+      entering={SlideInDown.duration(400).easing(Easing.out(Easing.cubic))}
+      exiting={FadeOut.duration(250)}
       style={styles.card}
     >
       {/* Header row: icon + category label */}

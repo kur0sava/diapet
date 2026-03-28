@@ -236,13 +236,13 @@ export default function PaywallScreen() {
         {/* Legal */}
         <View style={styles.legal}>
           <View style={styles.legalRow}>
-            <TouchableOpacity onPress={() => Linking.openURL(TERMS_URL)}>
+            <TouchableOpacity onPress={() => Linking.openURL(TERMS_URL).catch(() => {})}>
               <Text style={[styles.legalLink, { color: theme.colors.primary }]}>
                 {t('subscription.terms')}
               </Text>
             </TouchableOpacity>
             <Text style={[styles.legalText, { color: theme.colors.textTertiary }]}> • </Text>
-            <TouchableOpacity onPress={() => Linking.openURL(PRIVACY_URL)}>
+            <TouchableOpacity onPress={() => Linking.openURL(PRIVACY_URL).catch(() => {})}>
               <Text style={[styles.legalLink, { color: theme.colors.primary }]}>
                 {t('subscription.privacy')}
               </Text>

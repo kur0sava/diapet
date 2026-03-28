@@ -19,6 +19,7 @@ const FOOD_TYPE_ICONS: Record<string, keyof typeof Ionicons.glyphMap> = {
   dry: 'nutrition-outline',
   wet: 'flask-outline',
   medical: 'medical-outline',
+  natural: 'leaf-outline',
   other: 'restaurant-outline',
 };
 

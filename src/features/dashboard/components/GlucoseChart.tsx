@@ -19,13 +19,13 @@ export function GlucoseChart({ data }: Props) {
   const { t } = useTranslation();
   const { theme } = useTheme();
   const { width: screenWidth } = useWindowDimensions();
-  const CHART_WIDTH = screenWidth - 80 - Y_AXIS_WIDTH;
+  const CHART_WIDTH = Math.max(screenWidth - 80 - Y_AXIS_WIDTH, 50);
 
   if (data.length === 0) return null;
 
   const values = data.map(d => d.valueMmol);
-  const minVal = Math.min(...values, NORMAL_MIN) - 1;
-  const maxVal = Math.max(...values, NORMAL_MAX) + 1;
+  const minVal = values.reduce((a, b) => Math.min(a, b), NORMAL_MIN) - 1;
+  const maxVal = values.reduce((a, b) => Math.max(a, b), NORMAL_MAX) + 1;
   const range = maxVal - minVal;
 
   const getY = (v: number) => CHART_HEIGHT - ((v - minVal) / range) * CHART_HEIGHT;

@@ -150,18 +150,19 @@ export const symptomRepository = {
 
   async delete(id: string): Promise<void> {
     const db = await getDatabase();
-    // Clean up photo files before deleting the record
+    // Read photo URIs before deleting the record
     const row = await db.getFirstAsync<{ photo_uris: string | null }>(
       'SELECT photo_uris FROM symptoms WHERE id = ?', [id]
     );
+    // Delete DB row first (atomic) — CASCADE handles symptom_entry_types
+    await db.runAsync('DELETE FROM symptoms WHERE id = ?', [id]);
+    // Then clean up photo files (orphaned files are harmless)
     if (row?.photo_uris) {
       const uris = safeJsonParse<string[]>(row.photo_uris, []);
       for (const uri of uris) {
         try { await FileSystem.deleteAsync(uri, { idempotent: true }); } catch { /* ignore */ }
       }
     }
-    // CASCADE handles symptom_entry_types cleanup
-    await db.runAsync('DELETE FROM symptoms WHERE id = ?', [id]);
   },
 };
 

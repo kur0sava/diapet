@@ -1,7 +1,7 @@
 # DiaPet — Master Development Plan
 
-> Последнее обновление: 2026-03-17
-> Версия: 2.0.0 (versionCode 6)
+> Последнее обновление: 2026-03-28
+> Версия: 2.3 (versionCode 11)
 
 ---
 
@@ -16,14 +16,16 @@
 [####################] v1.4 Корм-гид       ✅ DONE
 [####################] v1.5 Bug Review     ✅ DONE
 [####################] v1.6 UI Redesign    ✅ DONE
-[##########__________] v1.7 Pre-deploy     (иконка ✅, Android 15/16 ✅, hints ✅)
+[##########__________] v1.7 Pre-deploy     (иконка, Android 15/16, hints)
 [####################] v1.8 Bug Audit      ✅ DONE (14 багов, paranoid audit)
-[##################__] v1.8.1 Full Audit   ✅ ~36 багов (8 агентов, нужен re-run 6+7)
-[____________________] v1.9 Pre-release    ⬅ ТЕКУЩИЙ (оплата, реклама, билд)
-[####################] v2.0 PRO + AI Pred  ✅ DONE (7 фаз, 11 новых файлов)
-[____________________] v2.0.1 UX фичи     🔜
-[____________________] v2.1 DevOps         🔜
-[____________________] v2.2 Backend        🔜
+[####################] v1.8.1 Full Audit   ✅ DONE (~36 багов, 8 агентов)
+[####################] v2.0 PRO + AI Pred  ✅ DONE (7 фаз, 11 файлов)
+[####################] v2.1 Audit+Features ✅ DONE (9 stages, 48 багов)
+[####################] v2.2 Google Play    ✅ DONE (AAB билд)
+[####################] v2.3 Deep Audit x4  ✅ DONE (80+ багов за 4 раунда)
+[____________________] v2.4 Design Refresh ⬅ ТЕКУЩИЙ (Manrope + Lucide)
+[____________________] v2.5 Backend        🔜 (Prodamus + Supabase)
+[____________________] v2.6 Cloud Backup   🔜
 [____________________] v3.0 AI/Smart       🔜
 ```
 
@@ -420,7 +422,43 @@
 
 ---
 
-## ЭТАП 6.5: v2.0.1 UX улучшения
+## ЭТАП 6.5: v2.3 Deep Audit x4 ✅ DONE (2026-03-18 — 2026-03-28)
+
+> 4 сессии, 80+ багов, 5 коммитов. Код стабилизирован.
+
+### Сессия 2026-03-18 (v2.1.2)
+- [x] 33 бага (API ключ в клиенте, notification opt-in, stale closure, layout fixes)
+
+### Сессия 2026-03-21 (v2.3)
+- [x] 9-stage plan, 48 багов (NaN dose, nutrition auto-fill, article audit, UI/UX)
+
+### Сессия 2026-03-22
+- [x] 3 parallel logic reviewers, 18 багов (injection safety, prediction cache, petStore sync)
+
+### Сессия 2026-03-28
+- [x] 3 parallel auditors, 17 багов + HintCard animation fix
+- [x] Negative chart widths, Math.min stack overflow, symptom delete atomicity
+- [x] Typed navigators, orientation lock, SQLCipher cleanup, Linking.openURL safety
+- [x] Version sync, colorUtils shorthand hex, PDF rounding
+
+---
+
+## ЭТАП 7: v2.4 Design Refresh ⬅ ТЕКУЩИЙ
+
+> Обновление визуального стиля: шрифты и иконки
+
+### Шрифты
+- [ ] Manrope (UI text) — замена Inter
+- [ ] Cormorant Garamond (заголовки/акценты)
+- [ ] Обновить theme/typography
+
+### Иконки
+- [ ] Lucide Icons — замена Ionicons/emoji
+- [ ] Обновить все экраны
+
+---
+
+## ЭТАП 7.5: v2.5 UX улучшения (бывший v2.0.1)
 
 - [ ] F1 Закладки в Энциклопедии (MMKV)
 - [ ] F2 Оглавление для длинных статей (парсинг ##)
@@ -433,7 +471,7 @@
 
 ---
 
-## ЭТАП 7: v2.1 DevOps
+## ЭТАП 8: v2.6 DevOps
 
 - [ ] G3 GitHub Actions CI (tsc + lint + test + build)
 - [ ] G5 Sentry мониторинг крашей
@@ -446,7 +484,7 @@
 
 ---
 
-## ЭТАП 8: v2.2 Backend + Облако + Аккаунты
+## ЭТАП 9: v2.7 Backend + Облако + Аккаунты
 
 - [ ] REST API (Fastify + PostgreSQL)
 - [ ] Авторизация: Google Sign-In + Email/Password (Firebase Auth или Supabase)
@@ -458,7 +496,7 @@
 
 ---
 
-## ЭТАП 9: v3.0 Advanced AI/Smart
+## ЭТАП 10: v3.0 Advanced AI/Smart
 
 - [ ] Bluetooth-глюкометр (FreeStyle Libre, Dexcom)
 - [ ] Виджет на главный экран (Android/iOS)
@@ -498,7 +536,7 @@
 | babel-preset-expo | Должен быть в devDependencies для Jest |
 | @expo/vector-icons types | Предсуществующая проблема, не блокирует |
 | ThemeContext readonly types | Предсуществующая, косметическая |
-| SQLCipher | `"useSQLCipher": true` в app.json + dev build |
+| SQLCipher | Убран (OS-level encryption only, no PRAGMA key) |
 | MMKV ключ | expo-crypto → expo-secure-store |
 | Февраль | `date-fns/endOfMonth` |
 
