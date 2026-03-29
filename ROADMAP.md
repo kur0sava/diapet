@@ -24,8 +24,10 @@
 [####################] v2.2 Google Play    ✅ DONE (AAB билд)
 [####################] v2.3 Deep Audit x4  ✅ DONE (80+ багов за 4 раунда)
 [####################] v2.4 Design Refresh ✅ DONE (Manrope + Lucide)
-[____________________] v2.5 Backend        ⬅ СЛЕДУЮЩИЙ (Prodamus + Supabase)
-[____________________] v2.6 Cloud Backup   🔜
+[####################] v2.5 Arch Fixes     ✅ DONE (ЭТАП 8, 17 задач)
+[####################] v2.6 Local Analyzer ✅ DONE (ЭТАП 9, 34 задачи)
+[____________________] v2.7 Encyclopedia   ⬅ СЛЕДУЮЩИЙ
+[____________________] v2.8 Backend        🔜 (Prodamus + Supabase)
 [____________________] v3.0 AI/Smart       🔜
 ```
 
@@ -511,84 +513,36 @@
 
 ---
 
-## ЭТАП 9: v2.6 Local Analyzer — Многофакторная аналитика
+## ЭТАП 9: v2.6 Local Analyzer ✅ DONE (2026-03-29)
 
 > Локальная система анализа данных. Без API, офлайн, бесплатно. Ядро ценности приложения.
+> Коммиты: `30523c9` (engine 9A-9E), `5a3c02a` (UI+data 9F-9G)
 
-### Фаза 9A — Trend Engine
+### Фаза 9A — Trend Engine ✅
+- [x] C1-C6: trendEngine.ts — скользящие средние, направление, ускорение, CV%, TIR, morning trend
 
-**Модуль: `src/features/analyzer/engine/trendEngine.ts`**
-- [ ] C1: Скользящее среднее глюкозы за 3/7/14/30 дней
-- [ ] C2: Направление тренда — improving / stable / worsening (1-я производная)
-- [ ] C3: Ускорение тренда — accelerating / decelerating (2-я производная)
-- [ ] C4: Glycemic variability — CV% (стандартное отклонение / среднее × 100)
-- [ ] C5: Time-in-range — % замеров в 4-12 ммоль/л за период
-- [ ] C6: Morning glucose trend — отдельный тренд по утренним замерам (ремиссия-индикатор)
+### Фаза 9B — Pattern Detector ✅
+- [x] C7-C13: patternDetector.ts — 7 детекторов (Somogyi, dawn, post-meal, missed injection, food correlation, dose-response, remission)
 
-### Фаза 9B — Pattern Detector
+### Фаза 9C — Risk Score Calculator ✅
+- [x] C14-C16: riskScoreCalculator.ts — 6-факторная модель, 4 уровня риска, per-factor breakdown
 
-**Модуль: `src/features/analyzer/engine/patternDetector.ts`**
-- [ ] C7: Somogyi detection — низкий nadir → spike >18 ммоль/л
-- [ ] C8: Dawn phenomenon — утренние замеры стабильно выше дневных
-- [ ] C9: Post-meal spike correlation — feeding → glucose через 2-4ч
-- [ ] C10: Injection timing impact — пропуск/сдвиг инъекции → рост глюкозы
-- [ ] C11: Food type correlation — какой корм даёт лучший контроль
-- [ ] C12: Dose-response analysis — конкретная доза → glucose через 4ч
-- [ ] C13: Remission detector — утренний glucose <7 mmol/L 14 дней → алерт
+### Фаза 9D — Safety Guard ✅
+- [x] C17-C20: safetyGuard.ts — regex фильтр доз, emergency thresholds, disclaimer, pattern sanitization
 
-### Фаза 9C — Risk Score Calculator
+### Фаза 9E — Smart Alerts ✅
+- [x] C21-C22: smartAlerts.ts — 6 типов алертов, MMKV throttling (1/day, 7d cooldown)
 
-**Модуль: `src/features/analyzer/engine/riskScoreCalculator.ts`**
-- [ ] C14: Multi-factor risk score (0-100):
-  - glucose_stability × 0.30
-  - injection_adherence × 0.20
-  - feeding_regularity × 0.15
-  - symptom_severity × 0.15
-  - weight_trend × 0.10
-  - time_since_diagnosis × 0.10
-- [ ] C15: Risk level classification: excellent / good / attention / danger
-- [ ] C16: Per-factor breakdown для UI (какой фактор тянет вверх/вниз)
+### Фаза 9F — UI интеграция ✅
+- [x] C23: RiskScoreWidget — SVG ring + score + level badge
+- [x] C24: TrendIndicator — direction arrow + acceleration (compact/full)
+- [x] C25: SmartInsightCard — priority-colored alert card
+- [x] C26: AnalyzerDashboardScreen — trends, averages, CV/TIR, patterns, factor bars
+- [x] C27: Dashboard integration — SmartInsight + RiskScore + TrendIndicator + TIR badge
+- [x] C28: AI data pass-through — analyzer summary in prediction prompt
 
-### Фаза 9D — Safety Guard
-
-**Модуль: `src/features/analyzer/engine/safetyGuard.ts`**
-- [ ] C17: Валидация всех рекомендаций — НИКОГДА не рекомендовать дозу
-- [ ] C18: Фильтр формулировок — всё через "обсудите с ветеринаром"
-- [ ] C19: Emergency threshold detection — glucose <2.8 → немедленный алерт
-- [ ] C20: Disclaimer injection — автоматически на каждом экране анализа
-
-### Фаза 9E — Smart Alerts
-
-**Модуль: `src/features/analyzer/engine/smartAlerts.ts`**
-- [ ] C21: Контекстные push-уведомления:
-  - "Глюкоза 3 дня подряд <6 — возможно доза высока, обсудите с ветеринаром"
-  - "Вес снизился на 300г за 2 недели — покажите ветеринару"
-  - "После корма X глюкоза стабильнее чем после Y"
-  - "Нет замеров 5 дней — утренний чек поможет"
-  - "14 дней стабильного сахара — возможная ремиссия!"
-- [ ] C22: Алерт throttling — не более 1 smart alert в день, не повторять тот же тип 7 дней
-
-### Фаза 9F — UI интеграция
-
-**Компоненты: `src/features/analyzer/components/`**
-- [ ] C23: `RiskScoreWidget.tsx` — цветной индикатор на Dashboard (🟢🟡🟠🔴)
-- [ ] C24: `TrendIndicator.tsx` — стрелка ↑↗→↘↓ + текст
-- [ ] C25: `SmartInsightCard.tsx` — одно предложение: главный insight дня
-- [ ] C26: `AnalyzerDashboard.tsx` — полный экран аналитики (trends + patterns + risk)
-- [ ] C27: Dashboard интеграция — заменить простые карточки на analyzer widgets
-- [ ] C28: Передать analyzer data в prediction AI (вместо сырых данных)
-
-### Фаза 9G — Data Gaps Fix
-
-**Расширить predictionDataCollector:**
-- [ ] C29: Включить pet.weightKg в snapshot
-- [ ] C30: Включить carbsDM из feedingLog в snapshot
-- [ ] C31: Symptom↔glucose correlation (join по glucoseReadingId)
-- [ ] C32: Circadian patterns (hour-of-day extraction)
-- [ ] C33: Schedule times из scheduleRepository
-- [ ] C34: Last vet visit (из expenseRepository category='vetVisit')
-
-> **CHECKPOINT 9**: tsc ✅ | commit каждая фаза | полный тест на устройстве
+### Фаза 9G — Data Gaps Fix ✅
+- [x] C29-C34: weightKg, carbsDM, circadian, scheduledInjectionsPerDay, lastVetVisitDate
 
 ---
 
