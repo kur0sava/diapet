@@ -14,6 +14,7 @@ import { usePetStore } from '@shared/stores/petStore';
 import { MealRelation, GlucoseUnit, getGlucoseLevel, getGlucoseColor } from '../types';
 import { MGDL_PER_MMOLL, MAX_REASONABLE_GLUCOSE_MMOL, MAX_REASONABLE_GLUCOSE_MGDL, mgdlToMmol } from '@storage/domain/types';
 import { useQueryClient } from '@tanstack/react-query';
+import { queryKeys } from '@shared/utils/queryKeys';
 import { storage, StorageKeys } from '@storage/mmkv/storage';
 import * as Haptics from 'expo-haptics';
 import DateTimePicker from '@react-native-community/datetimepicker';
@@ -154,8 +155,8 @@ export default function LogGlucoseScreen() {
           recordedAt: recordedAt.toISOString(),
         });
       }
-      await queryClient.invalidateQueries({ queryKey: ['glucose'] });
-      await queryClient.invalidateQueries({ queryKey: ['diary'] });
+      await queryClient.invalidateQueries({ queryKey: queryKeys.glucose.all });
+      await queryClient.invalidateQueries({ queryKey: queryKeys.diary.all });
       if (activePet) clearPredictionCache(activePet.id);
       // Disable guard for the navigation we're about to trigger
       disableGuard();

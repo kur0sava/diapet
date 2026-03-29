@@ -11,6 +11,7 @@ import { getDatabase } from '@storage/database';
 import { usePetStore } from '@shared/stores/petStore';
 import * as Notifications from 'expo-notifications';
 import { useQueryClient } from '@tanstack/react-query';
+import { queryKeys } from '@shared/utils/queryKeys';
 import Constants from 'expo-constants';
 import { CommonActions } from '@react-navigation/native';
 
@@ -129,7 +130,7 @@ export default function SettingsScreen() {
         <Card style={styles.card}>
           <View style={styles.langRow}>
             {(['mmol/L', 'mg/dL'] as const).map(unit => (
-              <TouchableOpacity key={unit} style={[styles.langBtn, { backgroundColor: glucoseUnit === unit ? theme.colors.primary : theme.colors.surfaceSecondary, flex: 1 }]} onPress={() => { storage.set(StorageKeys.GLUCOSE_UNIT, unit); setGlucoseUnit(unit); queryClient.invalidateQueries({ queryKey: ['glucose'] }); }}>
+              <TouchableOpacity key={unit} style={[styles.langBtn, { backgroundColor: glucoseUnit === unit ? theme.colors.primary : theme.colors.surfaceSecondary, flex: 1 }]} onPress={() => { storage.set(StorageKeys.GLUCOSE_UNIT, unit); setGlucoseUnit(unit); queryClient.invalidateQueries({ queryKey: queryKeys.glucose.all }); }}>
                 <Text style={{ color: glucoseUnit === unit ? '#fff' : theme.colors.text, fontWeight: '600' }}>{unit}</Text>
               </TouchableOpacity>
             ))}

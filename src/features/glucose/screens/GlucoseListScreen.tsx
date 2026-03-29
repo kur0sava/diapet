@@ -9,6 +9,7 @@ import { useRootNavigation } from '@navigation/hooks';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '@shared/theme';
 import { useInfiniteQuery, useQuery, useQueryClient } from '@tanstack/react-query';
+import { queryKeys } from '@shared/utils/queryKeys';
 import { glucoseRepository, injectionRepository, symptomRepository } from '@storage/database';
 import { usePetStore } from '@shared/stores/petStore';
 import { GlucoseReading, getGlucoseColor, MealRelation } from '../types';
@@ -154,7 +155,7 @@ export default function GlucoseListScreen() {
     fetchNextPage,
     isFetchingNextPage,
   } = useInfiniteQuery({
-    queryKey: ['glucose', 'list', activePet?.id, computedFilters],
+    queryKey: queryKeys.glucose.list(activePet?.id ?? '', computedFilters),
     queryFn: ({ pageParam }) => {
       if (!activePet) return Promise.resolve({ data: [], nextCursor: null });
       if (hasActiveFilters) {
@@ -170,7 +171,7 @@ export default function GlucoseListScreen() {
   const readings = useMemo(() => data?.pages.flatMap(p => p.data) ?? [], [data]);
 
   const { data: stats } = useQuery({
-    queryKey: ['glucose', 'stats', activePet?.id],
+    queryKey: queryKeys.glucose.stats(activePet?.id ?? ''),
     queryFn: () => activePet ? glucoseRepository.getStats(activePet.id) : Promise.resolve({ avg: 0, min: 0, max: 0, count: 0 }),
     enabled: !!activePet?.id,
   });
@@ -195,8 +196,8 @@ export default function GlucoseListScreen() {
           onPress: async () => {
             try {
               await glucoseRepository.delete(id);
-              await queryClient.invalidateQueries({ queryKey: ['glucose'] });
-              await queryClient.invalidateQueries({ queryKey: ['diary'] });
+              await queryClient.invalidateQueries({ queryKey: queryKeys.glucose.all });
+              await queryClient.invalidateQueries({ queryKey: queryKeys.diary.all });
             } catch {
               Alert.alert(t('common.error'));
             }

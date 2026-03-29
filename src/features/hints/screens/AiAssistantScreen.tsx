@@ -66,6 +66,7 @@ export default function AiAssistantScreen() {
   const [systemPrompt, setSystemPrompt] = useState('');
   const flatListRef = useRef<FlatList<ChatMessage>>(null);
   const messagesRef = useRef<ChatMessage[]>([]);
+  const lastSentRef = useRef(0);
 
   const historyKey = activePet ? `aiChatHistory_${activePet.id}` : null;
 
@@ -169,6 +170,18 @@ export default function AiAssistantScreen() {
     const text = inputText.trim();
     if (!text || isLoading) return;
 
+    // Rate limit: 5 seconds between messages
+    const now = Date.now();
+    const cooldown = 5000 - (now - lastSentRef.current);
+    if (cooldown > 0) {
+      appendErrorMessage(
+        i18n.language?.startsWith('en')
+          ? `Please wait ${Math.ceil(cooldown / 1000)}s before sending again.`
+          : `Подождите ${Math.ceil(cooldown / 1000)} сек. перед следующим сообщением.`,
+      );
+      return;
+    }
+
     // Daily message limit
     if (getDailyChatCount() >= DAILY_MESSAGE_LIMIT) {
       appendErrorMessage(
@@ -179,6 +192,7 @@ export default function AiAssistantScreen() {
       return;
     }
 
+    lastSentRef.current = Date.now();
     const userMsg: ChatMessage = { role: 'user', content: text };
     setInputText('');
     updateMessages(prev => [...prev, userMsg]);

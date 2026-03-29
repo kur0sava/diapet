@@ -6,6 +6,7 @@ import { useHomeNavigation } from '@navigation/hooks';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '@shared/theme';
 import { useInfiniteQuery, useQueryClient } from '@tanstack/react-query';
+import { queryKeys } from '@shared/utils/queryKeys';
 import { feedingRepository } from '@storage/database';
 import { usePetStore } from '@shared/stores/petStore';
 import { FeedingLog } from '@storage/domain/types';
@@ -36,7 +37,7 @@ export default function FeedingListScreen() {
     fetchNextPage,
     isFetchingNextPage,
   } = useInfiniteQuery({
-    queryKey: ['feedings', activePet?.id],
+    queryKey: queryKeys.feedings.list(activePet?.id ?? ''),
     queryFn: ({ pageParam }) =>
       activePet
         ? feedingRepository.findByPetId(activePet.id, 50, pageParam)
@@ -79,8 +80,8 @@ export default function FeedingListScreen() {
       { text: t('common.delete'), style: 'destructive', onPress: async () => {
         try {
           await feedingRepository.delete(id);
-          queryClient.invalidateQueries({ queryKey: ['feedings'] });
-          queryClient.invalidateQueries({ queryKey: ['diary'] });
+          queryClient.invalidateQueries({ queryKey: queryKeys.feedings.all });
+          queryClient.invalidateQueries({ queryKey: queryKeys.diary.all });
         } catch {
           Alert.alert(t('common.error'));
         }

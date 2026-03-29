@@ -12,7 +12,7 @@ import {
   SubscriptionPlan,
 } from '@shared/api/subscriptionApi';
 
-const CACHE_TTL_MS = 24 * 60 * 60 * 1000; // 24 hours
+const CACHE_TTL_MS = 4 * 60 * 60 * 1000; // 4 hours
 const CACHE_TIMESTAMP_KEY = 'subscriptionCachedAt';
 
 interface SubscriptionStore {

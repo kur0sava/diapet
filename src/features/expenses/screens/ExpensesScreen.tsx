@@ -6,6 +6,7 @@ import { useMoreNavigation } from '@navigation/hooks';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '@shared/theme';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { queryKeys } from '@shared/utils/queryKeys';
 import { expenseRepository } from '@storage/database';
 import { usePetStore } from '@shared/stores/petStore';
 import { Expense, EXPENSE_ICON_NAMES, EXPENSE_COLORS, ExpenseCategory } from '../types';
@@ -23,13 +24,13 @@ export default function ExpensesScreen() {
   const [month, setMonth] = useState(now.getMonth() + 1);
 
   const { data: expenses = [] } = useQuery({
-    queryKey: ['expenses', activePet?.id, year, month],
+    queryKey: queryKeys.expenses.list(activePet?.id ?? '', year, month),
     queryFn: () => activePet ? expenseRepository.findByMonth(activePet.id, year, month) : Promise.resolve([]),
     enabled: !!activePet?.id,
   });
 
   const { data: total = 0 } = useQuery({
-    queryKey: ['expenses', 'total', activePet?.id, year, month],
+    queryKey: queryKeys.expenses.total(activePet?.id ?? '', year, month),
     queryFn: () => activePet ? expenseRepository.getMonthlyTotal(activePet.id, year, month) : Promise.resolve(0),
     enabled: !!activePet?.id,
   });
@@ -61,7 +62,7 @@ export default function ExpensesScreen() {
       { text: t('common.delete'), style: 'destructive', onPress: async () => {
         try {
           await expenseRepository.delete(id);
-          await queryClient.invalidateQueries({ queryKey: ['expenses'] });
+          await queryClient.invalidateQueries({ queryKey: queryKeys.expenses.all });
         } catch { /* swallow — row may already be deleted */ }
       }},
     ]);

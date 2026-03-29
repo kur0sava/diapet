@@ -10,6 +10,7 @@ import { parseDateOnly } from '@shared/utils/dateUtils';
 import { useTheme } from '@shared/theme';
 import { usePetStore } from '@shared/stores/petStore';
 import { useQuery } from '@tanstack/react-query';
+import { queryKeys } from '@shared/utils/queryKeys';
 import { scheduleRepository } from '@storage/database';
 import { Card } from '@shared/components/ui';
 
@@ -20,13 +21,13 @@ export default function PetProfileScreen() {
   const activePet = usePetStore(s => s.activePet);
 
   const { data: injectionTimes = [] } = useQuery({
-    queryKey: ['schedule', 'injections', activePet?.id],
+    queryKey: queryKeys.schedule.injections(activePet?.id ?? ''),
     queryFn: () => scheduleRepository.getInjectionTimes(activePet!.id),
     enabled: !!activePet?.id,
   });
 
   const { data: feedingTimes = [] } = useQuery({
-    queryKey: ['schedule', 'feedings', activePet?.id],
+    queryKey: queryKeys.schedule.feedings(activePet?.id ?? ''),
     queryFn: () => scheduleRepository.getFeedingTimes(activePet!.id),
     enabled: !!activePet?.id,
   });

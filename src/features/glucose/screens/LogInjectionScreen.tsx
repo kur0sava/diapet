@@ -19,6 +19,7 @@ import { differenceInMinutes } from 'date-fns';
 import { injectionRepository } from '@storage/database';
 import { usePetStore } from '@shared/stores/petStore';
 import { useQueryClient } from '@tanstack/react-query';
+import { queryKeys } from '@shared/utils/queryKeys';
 import * as Haptics from 'expo-haptics';
 import { useUnsavedChangesGuard } from '@shared/hooks/useUnsavedChangesGuard';
 import { useHintTrigger } from '@features/hints/hooks/useHintTrigger';
@@ -63,8 +64,8 @@ export default function LogInjectionScreen() {
         notes: notes || undefined,
         administeredAt: administeredAt.toISOString(),
       });
-      await queryClient.invalidateQueries({ queryKey: ['injections'] });
-      await queryClient.invalidateQueries({ queryKey: ['diary'] });
+      await queryClient.invalidateQueries({ queryKey: queryKeys.injections.all });
+      await queryClient.invalidateQueries({ queryKey: queryKeys.diary.all });
       disableGuard();
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       triggerAfterAction('injection');

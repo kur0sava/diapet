@@ -13,6 +13,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
 import { Icon } from '@shared/components/ui/Icon';
 import { useQuery } from '@tanstack/react-query';
+import { queryKeys } from '@shared/utils/queryKeys';
 import { format, parseISO, isToday, isYesterday, addDays, subDays, startOfDay, isValid } from 'date-fns';
 import { ru as dateFnsRu, enUS } from 'date-fns/locale';
 import i18next from 'i18next';
@@ -93,19 +94,19 @@ export default function DailyDiaryScreen() {
   }, [currentDate]);
 
   const { data: glucoseReadings = [], isLoading: loadingGlucose, isError: errGlucose, refetch: refetchGlucose } = useQuery({
-    queryKey: ['diary', 'glucose', petId, dateStr],
+    queryKey: queryKeys.diary.glucose(petId, dateStr),
     queryFn: () => glucoseRepository.findForDay(petId, dateStr),
     enabled: !!petId,
   });
 
   const { data: injections = [], isLoading: loadingInj, isError: errInj, refetch: refetchInj } = useQuery({
-    queryKey: ['diary', 'injection', petId, dateStr],
+    queryKey: queryKeys.diary.injection(petId, dateStr),
     queryFn: () => injectionRepository.findForDay(petId, dateStr),
     enabled: !!petId,
   });
 
   const { data: feedings = [], isLoading: loadingFeed, isError: errFeed, refetch: refetchFeed } = useQuery({
-    queryKey: ['diary', 'feeding', petId, dateStr],
+    queryKey: queryKeys.diary.feeding(petId, dateStr),
     queryFn: () => feedingRepository.findForDay(petId, dateStr),
     enabled: !!petId,
   });

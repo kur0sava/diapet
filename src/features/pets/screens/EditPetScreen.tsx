@@ -8,6 +8,7 @@ import { Button, Input } from '@shared/components/ui';
 import { petRepository, scheduleRepository, getDatabase } from '@storage/database';
 import { usePetStore } from '@shared/stores/petStore';
 import { useQueryClient } from '@tanstack/react-query';
+import { queryKeys } from '@shared/utils/queryKeys';
 import { Icon } from '@shared/components/ui/Icon';
 import { storage, StorageKeys } from '@storage/mmkv/storage';
 import { useUnsavedChangesGuard } from '@shared/hooks/useUnsavedChangesGuard';
@@ -111,8 +112,7 @@ export default function EditPetScreen() {
         }
       }
       await refreshActivePet();
-      await queryClient.invalidateQueries({ queryKey: ['pet'] });
-      await queryClient.invalidateQueries({ queryKey: ['schedule'] });
+      await queryClient.invalidateQueries({ queryKey: queryKeys.schedule.all });
       disableGuard();
       navigation.goBack();
     } catch { Alert.alert(t('pets.saveError')); }

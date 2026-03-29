@@ -17,6 +17,7 @@ import { Button, Input, Card } from '@shared/components/ui';
 import { feedingRepository } from '@storage/database';
 import { usePetStore } from '@shared/stores/petStore';
 import { useQueryClient } from '@tanstack/react-query';
+import { queryKeys } from '@shared/utils/queryKeys';
 import * as Haptics from 'expo-haptics';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useUnsavedChangesGuard } from '@shared/hooks/useUnsavedChangesGuard';
@@ -142,8 +143,8 @@ export default function LogFeedingScreen() {
         carbsDM: nutritionData.carbsDM,
         verdict: nutritionData.verdict,
       });
-      await queryClient.invalidateQueries({ queryKey: ['feedings'] });
-      await queryClient.invalidateQueries({ queryKey: ['diary'] });
+      await queryClient.invalidateQueries({ queryKey: queryKeys.feedings.all });
+      await queryClient.invalidateQueries({ queryKey: queryKeys.diary.all });
       disableGuard();
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       triggerAfterAction('feeding');

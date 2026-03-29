@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import {
   View,
   Text,
@@ -14,6 +14,7 @@ import { useTranslation } from 'react-i18next';
 import { useHomeNavigation, useRootNavigation } from '@navigation/hooks';
 import { useTheme } from '@shared/theme';
 import { useQuery } from '@tanstack/react-query';
+import { queryKeys } from '@shared/utils/queryKeys';
 import { glucoseRepository, injectionRepository, scheduleRepository } from '@storage/database';
 import { storage, StorageKeys } from '@storage/mmkv/storage';
 import { GlucoseUnit } from '@storage/domain/types';
@@ -74,31 +75,31 @@ export default function DashboardScreen() {
   const glucoseUnit = (storage.getString(StorageKeys.GLUCOSE_UNIT) ?? 'mmol/L') as GlucoseUnit;
 
   const { data: latestGlucose, refetch: refetchGlucose } = useQuery({
-    queryKey: ['glucose', 'latest', petId],
+    queryKey: queryKeys.glucose.latest(petId),
     queryFn: () => glucoseRepository.findLatest(petId),
     enabled: !!petId,
   });
 
   const { data: glucoseHistory, refetch: refetchHistory } = useQuery({
-    queryKey: ['glucose', '7days', petId],
+    queryKey: queryKeys.glucose.days7(petId),
     queryFn: () => glucoseRepository.findLast7Days(petId),
     enabled: !!petId,
   });
 
   const { data: lastInjection, refetch: refetchLastInjection } = useQuery({
-    queryKey: ['injections', 'latest', petId],
+    queryKey: queryKeys.injections.latest(petId),
     queryFn: () => injectionRepository.findLatest(petId),
     enabled: !!petId,
   });
 
   const { data: injectionTimes, refetch: refetchInjectionTimes } = useQuery({
-    queryKey: ['schedule', 'injections', petId],
+    queryKey: queryKeys.schedule.injections(petId),
     queryFn: () => scheduleRepository.getInjectionTimes(petId),
     enabled: !!petId,
   });
 
   const { data: feedingTimes, refetch: refetchFeedingTimes } = useQuery({
-    queryKey: ['schedule', 'feedings', petId],
+    queryKey: queryKeys.schedule.feedings(petId),
     queryFn: () => scheduleRepository.getFeedingTimes(petId),
     enabled: !!petId,
   });
@@ -124,12 +125,12 @@ export default function DashboardScreen() {
     setRefreshing(false);
   }, [refetchGlucose, refetchHistory, refetchLastInjection, refetchInjectionTimes, refetchFeedingTimes]);
 
-  const nextInjection = injectionTimes?.length
+  const nextInjection = useMemo(() => injectionTimes?.length
     ? [...injectionTimes].sort((a, b) => minutesUntil(a.timeOfDay) - minutesUntil(b.timeOfDay))[0]
-    : undefined;
-  const nextFeeding = feedingTimes?.length
+    : undefined, [injectionTimes]);
+  const nextFeeding = useMemo(() => feedingTimes?.length
     ? [...feedingTimes].sort((a, b) => minutesUntil(a.timeOfDay) - minutesUntil(b.timeOfDay))[0]
-    : undefined;
+    : undefined, [feedingTimes]);
   const nextInjectionMinutes = nextInjection ? minutesUntil(nextInjection.timeOfDay) : null;
   const nextFeedingMinutes = nextFeeding ? minutesUntil(nextFeeding.timeOfDay) : null;
 
@@ -139,7 +140,7 @@ export default function DashboardScreen() {
     glucoseHours < 6 ? theme.colors.success :
     glucoseHours <= 12 ? theme.colors.warning :
     theme.colors.danger;
-  const trend = calculateTrend((glucoseHistory as GlucoseReading[] | undefined) ?? []);
+  const trend = useMemo(() => calculateTrend((glucoseHistory as GlucoseReading[] | undefined) ?? []), [glucoseHistory]);
   const trendArrow = getTrendArrow(trend);
   const trendLabel = getTrendLabel(trend, t);
 

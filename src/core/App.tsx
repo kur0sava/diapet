@@ -1,7 +1,7 @@
 import 'react-native-gesture-handler';
 import React, { useEffect, useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { ActivityIndicator, View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { ActivityIndicator, View, Text, StyleSheet, TouchableOpacity, AppState } from 'react-native';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ThemeProvider, useTheme } from '@shared/theme';
 import { ErrorBoundary } from '@shared/components/ErrorBoundary';
@@ -57,6 +57,16 @@ function AppContent() {
     // Restore injection/feeding notifications that Android may have dropped
     restoreScheduleNotifications().catch(() => {});
     scheduleHintPushNotifications().catch(() => {});
+  }, []);
+
+  // Refresh subscription status when app returns to foreground
+  useEffect(() => {
+    const sub = AppState.addEventListener('change', (state) => {
+      if (state === 'active') {
+        useSubscriptionStore.getState().refreshStatus();
+      }
+    });
+    return () => sub.remove();
   }, []);
 
   return (

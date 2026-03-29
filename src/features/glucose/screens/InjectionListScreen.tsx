@@ -6,6 +6,7 @@ import { useHomeNavigation } from '@navigation/hooks';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '@shared/theme';
 import { useInfiniteQuery, useQueryClient } from '@tanstack/react-query';
+import { queryKeys } from '@shared/utils/queryKeys';
 import { injectionRepository } from '@storage/database';
 import { usePetStore } from '@shared/stores/petStore';
 import { InjectionLog } from '@storage/domain/types';
@@ -28,7 +29,7 @@ export default function InjectionListScreen() {
     fetchNextPage,
     isFetchingNextPage,
   } = useInfiniteQuery({
-    queryKey: ['injections', activePet?.id],
+    queryKey: queryKeys.injections.list(activePet?.id ?? ''),
     queryFn: ({ pageParam }) =>
       activePet
         ? injectionRepository.findByPetId(activePet.id, 50, pageParam)
@@ -65,8 +66,8 @@ export default function InjectionListScreen() {
       { text: t('common.delete'), style: 'destructive', onPress: async () => {
         try {
           await injectionRepository.delete(id);
-          queryClient.invalidateQueries({ queryKey: ['injections'] });
-          queryClient.invalidateQueries({ queryKey: ['diary'] });
+          queryClient.invalidateQueries({ queryKey: queryKeys.injections.all });
+          queryClient.invalidateQueries({ queryKey: queryKeys.diary.all });
         } catch {
           Alert.alert(t('common.error'));
         }

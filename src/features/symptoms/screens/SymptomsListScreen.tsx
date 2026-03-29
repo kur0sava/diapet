@@ -6,6 +6,7 @@ import { useSymptomsNavigation } from '@navigation/hooks';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '@shared/theme';
 import { useInfiniteQuery, useQueryClient } from '@tanstack/react-query';
+import { queryKeys } from '@shared/utils/queryKeys';
 import { symptomRepository } from '@storage/database';
 import { usePetStore } from '@shared/stores/petStore';
 import { SymptomEntry, SYMPTOM_ICONS } from '../types';
@@ -26,7 +27,7 @@ export default function SymptomsListScreen() {
     fetchNextPage,
     isFetchingNextPage,
   } = useInfiniteQuery({
-    queryKey: ['symptoms', activePet?.id],
+    queryKey: queryKeys.symptoms.list(activePet?.id ?? ''),
     queryFn: ({ pageParam }) =>
       activePet
         ? symptomRepository.findByPetId(activePet.id, 50, pageParam)
@@ -60,7 +61,7 @@ export default function SymptomsListScreen() {
       { text: t('common.delete'), style: 'destructive', onPress: async () => {
         try {
           await symptomRepository.delete(id);
-          queryClient.invalidateQueries({ queryKey: ['symptoms'] });
+          queryClient.invalidateQueries({ queryKey: queryKeys.symptoms.all });
         } catch {
           Alert.alert(t('common.error'));
         }

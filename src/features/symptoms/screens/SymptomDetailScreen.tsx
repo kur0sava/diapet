@@ -8,6 +8,7 @@ import type { SymptomsStackParamList } from '@navigation/types';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '@shared/theme';
 import { useQuery } from '@tanstack/react-query';
+import { queryKeys } from '@shared/utils/queryKeys';
 import { symptomRepository } from '@storage/database';
 import { SYMPTOM_ICONS, SYMPTOM_COLORS } from '../types';
 import { formatDateTime } from '@shared/utils/dateUtils';
@@ -20,7 +21,7 @@ export default function SymptomDetailScreen() {
   const { theme } = useTheme();
 
   const { data: symptom, isLoading } = useQuery({
-    queryKey: ['symptom', route.params.id],
+    queryKey: queryKeys.symptoms.detail(route.params.id),
     queryFn: () => symptomRepository.findById(route.params.id),
   });
 

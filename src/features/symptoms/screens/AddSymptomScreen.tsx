@@ -16,6 +16,7 @@ import { storage, StorageKeys } from '@storage/mmkv/storage';
 import { SymptomType, SymptomSeverity, SYMPTOM_ICONS } from '../types';
 import { calculateSeverity } from '../utils/severityCalculator';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { queryKeys } from '@shared/utils/queryKeys';
 import { GlucoseReading } from '@storage/domain/types';
 import { HomeStackParamList } from '@navigation/types';
 import { formatDistanceToNow } from 'date-fns';
@@ -79,7 +80,7 @@ export default function AddSymptomScreen() {
   }, [editId]);
 
   const { data: recentReadings } = useQuery({
-    queryKey: ['recentGlucose', activePet?.id],
+    queryKey: queryKeys.symptoms.recentGlucose(activePet?.id ?? ''),
     queryFn: async () => {
       if (!activePet) return [];
       const result = await glucoseRepository.findByPetId(activePet.id, 5);
@@ -162,7 +163,7 @@ export default function AddSymptomScreen() {
       for (const uri of removedPhotos) {
         FileSystem.deleteAsync(uri, { idempotent: true }).catch(() => {});
       }
-      await queryClient.invalidateQueries({ queryKey: ['symptoms'] });
+      await queryClient.invalidateQueries({ queryKey: queryKeys.symptoms.all });
       disableGuard();
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       navigation.goBack();

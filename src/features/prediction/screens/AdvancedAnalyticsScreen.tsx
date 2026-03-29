@@ -14,6 +14,7 @@ import { useTranslation } from 'react-i18next';
 import { useTheme } from '@shared/theme';
 import { useNavigation } from '@react-navigation/native';
 import { useQuery } from '@tanstack/react-query';
+import { queryKeys } from '@shared/utils/queryKeys';
 import { usePetStore } from '@shared/stores/petStore';
 import { glucoseRepository } from '@storage/database';
 import { Card } from '@shared/components/ui';
@@ -57,7 +58,7 @@ export default function AdvancedAnalyticsScreen() {
 
   // Load recent glucose readings for the chart
   const { data: recentReadings = [] } = useQuery({
-    queryKey: ['glucose', 'last7', activePet?.id],
+    queryKey: queryKeys.glucose.last7(activePet?.id ?? ''),
     queryFn: () => activePet ? glucoseRepository.findLast7Days(activePet.id) : Promise.resolve([]),
     enabled: !!activePet?.id,
   });

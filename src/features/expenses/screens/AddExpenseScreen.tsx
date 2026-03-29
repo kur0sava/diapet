@@ -13,6 +13,7 @@ import { expenseRepository } from '@storage/database';
 import { usePetStore } from '@shared/stores/petStore';
 import { ExpenseCategory, EXPENSE_ICON_NAMES, EXPENSE_COLORS } from '../types';
 import { useQueryClient } from '@tanstack/react-query';
+import { queryKeys } from '@shared/utils/queryKeys';
 import * as Haptics from 'expo-haptics';
 import { useUnsavedChangesGuard } from '@shared/hooks/useUnsavedChangesGuard';
 
@@ -77,7 +78,7 @@ export default function AddExpenseScreen() {
       } else {
         await expenseRepository.create({ petId: activePet.id, category, amount: numAmount, description: description || undefined, currency: i18n.language === 'ru' ? 'RUB' : 'USD' });
       }
-      await queryClient.invalidateQueries({ queryKey: ['expenses'] });
+      await queryClient.invalidateQueries({ queryKey: queryKeys.expenses.all });
       disableGuard();
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       navigation.goBack();
