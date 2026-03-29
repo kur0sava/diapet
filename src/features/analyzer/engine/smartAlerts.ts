@@ -1,0 +1,198 @@
+/**
+ * Smart Alerts — contextual notifications based on analyzer data.
+ * Throttled: max 1 alert/day, no repeat of same type for 7 days.
+ */
+import { storage } from '@storage/mmkv/storage';
+import { GlucoseReading } from '@storage/domain/types';
+import { TrendResult } from './trendEngine';
+import { RiskScoreResult } from './riskScoreCalculator';
+import { DetectedPattern } from './patternDetector';
+
+const ALERT_COOLDOWN_DAYS = 7;
+const MAX_ALERTS_PER_DAY = 1;
+const STORAGE_KEY = 'analyzer_alert_history';
+
+export type AlertType =
+  | 'glucose_low_streak'
+  | 'weight_loss'
+  | 'food_insight'
+  | 'no_readings'
+  | 'remission_possible'
+  | 'risk_increased'
+  | 'glucose_improving';
+
+export interface SmartAlert {
+  type: AlertType;
+  titleRu: string;
+  titleEn: string;
+  bodyRu: string;
+  bodyEn: string;
+  priority: 'low' | 'medium' | 'high';
+}
+
+interface AlertHistory {
+  [alertType: string]: string; // ISO date of last trigger
+}
+
+interface AlertsShownToday {
+  date: string;
+  count: number;
+}
+
+function getAlertHistory(): AlertHistory {
+  try {
+    const raw = storage.getString(STORAGE_KEY);
+    return raw ? JSON.parse(raw) : {};
+  } catch {
+    return {};
+  }
+}
+
+function saveAlertHistory(history: AlertHistory): void {
+  storage.set(STORAGE_KEY, JSON.stringify(history));
+}
+
+function getTodayCount(): AlertsShownToday {
+  try {
+    const raw = storage.getString('analyzer_alerts_today');
+    if (raw) {
+      const parsed = JSON.parse(raw) as AlertsShownToday;
+      if (parsed.date === new Date().toISOString().slice(0, 10)) return parsed;
+    }
+  } catch {}
+  return { date: new Date().toISOString().slice(0, 10), count: 0 };
+}
+
+function incrementTodayCount(): void {
+  const today = getTodayCount();
+  storage.set('analyzer_alerts_today', JSON.stringify({
+    date: new Date().toISOString().slice(0, 10),
+    count: today.count + 1,
+  }));
+}
+
+/**
+ * C22: Check if an alert type can fire (throttling).
+ */
+function canFireAlert(type: AlertType, now: Date): boolean {
+  // Max 1 per day
+  if (getTodayCount().count >= MAX_ALERTS_PER_DAY) return false;
+
+  // Same type cooldown
+  const history = getAlertHistory();
+  const lastFired = history[type];
+  if (lastFired) {
+    const daysSince = (now.getTime() - new Date(lastFired).getTime()) / (24 * 60 * 60 * 1000);
+    if (daysSince < ALERT_COOLDOWN_DAYS) return false;
+  }
+
+  return true;
+}
+
+function markFired(type: AlertType): void {
+  const history = getAlertHistory();
+  history[type] = new Date().toISOString();
+  saveAlertHistory(history);
+  incrementTodayCount();
+}
+
+/**
+ * C21: Generate contextual alerts based on analyzer results.
+ */
+export function generateSmartAlerts(
+  trends: TrendResult,
+  riskScore: RiskScoreResult,
+  patterns: DetectedPattern[],
+  readings: GlucoseReading[],
+  now = new Date(),
+): SmartAlert | null {
+  // Priority-ordered alert candidates
+  const candidates: SmartAlert[] = [];
+
+  // Glucose low streak — 3+ days under 6 mmol/L
+  if (trends.movingAverage3d !== null && trends.movingAverage3d < 6 && trends.totalReadings >= 5) {
+    candidates.push({
+      type: 'glucose_low_streak',
+      titleRu: 'Низкий уровень глюкозы',
+      titleEn: 'Low glucose level',
+      bodyRu: 'Глюкоза 3 дня подряд ниже 6 ммоль/л — возможно, доза высока. Обсудите с ветеринаром.',
+      bodyEn: 'Glucose below 6 mmol/L for 3 days — dose may be too high. Discuss with your vet.',
+      priority: 'high',
+    });
+  }
+
+  // Remission possible
+  if (patterns.some(p => p.type === 'remission_candidate')) {
+    candidates.push({
+      type: 'remission_possible',
+      titleRu: 'Возможная ремиссия!',
+      titleEn: 'Possible remission!',
+      bodyRu: '14 дней стабильного сахара — обсудите с ветеринаром возможность снижения дозы.',
+      bodyEn: '14 days of stable glucose — discuss possible dose reduction with your vet.',
+      priority: 'high',
+    });
+  }
+
+  // Risk increased
+  if (riskScore.level === 'danger') {
+    candidates.push({
+      type: 'risk_increased',
+      titleRu: 'Повышенный риск',
+      titleEn: 'Elevated risk',
+      bodyRu: 'Показатели ухудшились. Рекомендуем показать питомца ветеринару.',
+      bodyEn: 'Health indicators have worsened. We recommend visiting your vet.',
+      priority: 'high',
+    });
+  }
+
+  // Food insight
+  const foodPattern = patterns.find(p => p.type === 'food_correlation');
+  if (foodPattern) {
+    candidates.push({
+      type: 'food_insight',
+      titleRu: 'Подсказка по питанию',
+      titleEn: 'Feeding insight',
+      bodyRu: `Обнаружена разница в контроле глюкозы между кормами. Посмотрите раздел аналитики.`,
+      bodyEn: `Different foods show different glucose control. Check the analytics section.`,
+      priority: 'medium',
+    });
+  }
+
+  // No readings for 5+ days
+  if (readings.length > 0) {
+    const lastReading = new Date(readings[readings.length - 1].recordedAt);
+    const daysSince = (now.getTime() - lastReading.getTime()) / (24 * 60 * 60 * 1000);
+    if (daysSince >= 5) {
+      candidates.push({
+        type: 'no_readings',
+        titleRu: 'Нет замеров',
+        titleEn: 'No recent readings',
+        bodyRu: `Нет замеров ${Math.round(daysSince)} дней. Утренний замер поможет отследить тренд.`,
+        bodyEn: `No readings for ${Math.round(daysSince)} days. A morning reading helps track trends.`,
+        priority: 'medium',
+      });
+    }
+  }
+
+  // Glucose improving
+  if (trends.direction === 'improving' && trends.movingAverage7d !== null) {
+    candidates.push({
+      type: 'glucose_improving',
+      titleRu: 'Глюкоза улучшается',
+      titleEn: 'Glucose improving',
+      bodyRu: 'Средний уровень глюкозы снижается. Продолжайте в том же режиме!',
+      bodyEn: 'Average glucose is decreasing. Keep up the good work!',
+      priority: 'low',
+    });
+  }
+
+  // Find first candidate that passes throttling
+  for (const alert of candidates) {
+    if (canFireAlert(alert.type, now)) {
+      markFired(alert.type);
+      return alert;
+    }
+  }
+
+  return null;
+}
