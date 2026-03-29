@@ -464,51 +464,258 @@
 
 ---
 
-## ЭТАП 7.5: v2.5 UX улучшения (бывший v2.0.1)
+## ЭТАП 8: v2.5 Architecture Fixes ⬅ СЛЕДУЮЩИЙ
 
-- [ ] F1 Закладки в Энциклопедии (MMKV)
-- [ ] F2 Оглавление для длинных статей (парсинг ##)
-- [ ] F3 Новые статьи (4 шт: домашний замер, гипогликемия, стресс, несколько питомцев)
-- [ ] F4 Расходы: годовой вид, бюджетный лимит
-- [ ] F5 Accessibility: accessibilityLabel на все кнопки (15+), размер шрифта
-- [ ] E6 Быстрый доступ к настройкам глюкозы
+> Исправления из архитектурного аудита 2026-03-29. P0 — обязательно перед релизом.
 
-> **CHECKPOINT 6.5**: commit + tsc + test + lint
+### Фаза 8A — P0: Critical + High (1 сессия)
+
+**CRITICAL:**
+- [ ] A1: Schema.ts документировать как "финальная схема" (не v1). Добавить комментарий + проверку что migrations идемпотентны
+- [ ] A2: App.tsx:122 — hardcoded Russian storage error → i18n (`t('app.storageError')`)
+
+**HIGH — Data Consistency:**
+- [ ] A3: EditPetScreen — fix cache invalidation keys (используют `['pet']` но queries с petId)
+- [ ] A4: Query key factory — `src/shared/utils/queryKeys.ts` для type-safe ключей
+- [ ] A5: DashboardScreen — trend calculation обернуть в `useMemo`
+- [ ] A6: DashboardScreen — refetch array dependency loop fix
+
+**HIGH — Security/Cost:**
+- [ ] A7: AiAssistantScreen — rate limit на chat (debounce 5с между запросами)
+- [ ] A8: Subscription cache — снизить TTL 24ч→4ч + инвалидировать при AppState 'active'
+
+**HIGH — Missing Features:**
+- [ ] A9: Deep linking config в RootNavigator (`diapet://glucose/:id`, `diapet://emergency`)
+
+### Фаза 8B — P1: Medium priority (1 сессия)
+
+**Performance:**
+- [ ] B1: SQL indexes — добавить migration v7: `idx_glucose_pet`, `idx_symptoms_pet`, `idx_glucose_pet_date_desc`
+- [ ] B2: GlucoseListScreen/InjectionListScreen/FeedingListScreen — подключить cursor pagination из repositories
+
+**Navigation:**
+- [ ] B3: Убрать дубль FeedGuide routes из HomeStack (оставить в EncyclopediaStack)
+
+**API:**
+- [ ] B4: subscriptionApi — дифференциация ошибок (401 vs 500 vs network)
+- [ ] B5: subscriptionApi — exponential backoff в payment polling
+
+**Validation:**
+- [ ] B6: AddExpenseScreen — max amount cap (10M)
+
+**Code Quality:**
+- [ ] B7: useAchievements — удалить TODO-заглушку или реализовать
+- [ ] B8: Magic numbers → константы (MAX_WEIGHT, MAX_DOSE, MAX_TIMES, etc.)
+
+> **CHECKPOINT 8**: tsc ✅ | commit + push
 
 ---
 
-## ЭТАП 8: v2.6 DevOps
+## ЭТАП 9: v2.6 Local Analyzer — Многофакторная аналитика
 
-- [ ] G3 GitHub Actions CI (tsc + lint + test + build)
-- [ ] G5 Sentry мониторинг крашей
-- [ ] G6 Удалить AsyncStorage
-- [ ] G7 Pre-commit хуки (husky + lint-staged)
-- [ ] D4 Barrel exports для фич (index.ts)
-- [ ] Расширить Jest покрытие до 70% (repositories, stores)
+> Локальная система анализа данных. Без API, офлайн, бесплатно. Ядро ценности приложения.
 
-> **CHECKPOINT 7**: commit + push + CI green
+### Фаза 9A — Trend Engine
+
+**Модуль: `src/features/analyzer/engine/trendEngine.ts`**
+- [ ] C1: Скользящее среднее глюкозы за 3/7/14/30 дней
+- [ ] C2: Направление тренда — improving / stable / worsening (1-я производная)
+- [ ] C3: Ускорение тренда — accelerating / decelerating (2-я производная)
+- [ ] C4: Glycemic variability — CV% (стандартное отклонение / среднее × 100)
+- [ ] C5: Time-in-range — % замеров в 4-12 ммоль/л за период
+- [ ] C6: Morning glucose trend — отдельный тренд по утренним замерам (ремиссия-индикатор)
+
+### Фаза 9B — Pattern Detector
+
+**Модуль: `src/features/analyzer/engine/patternDetector.ts`**
+- [ ] C7: Somogyi detection — низкий nadir → spike >18 ммоль/л
+- [ ] C8: Dawn phenomenon — утренние замеры стабильно выше дневных
+- [ ] C9: Post-meal spike correlation — feeding → glucose через 2-4ч
+- [ ] C10: Injection timing impact — пропуск/сдвиг инъекции → рост глюкозы
+- [ ] C11: Food type correlation — какой корм даёт лучший контроль
+- [ ] C12: Dose-response analysis — конкретная доза → glucose через 4ч
+- [ ] C13: Remission detector — утренний glucose <7 mmol/L 14 дней → алерт
+
+### Фаза 9C — Risk Score Calculator
+
+**Модуль: `src/features/analyzer/engine/riskScoreCalculator.ts`**
+- [ ] C14: Multi-factor risk score (0-100):
+  - glucose_stability × 0.30
+  - injection_adherence × 0.20
+  - feeding_regularity × 0.15
+  - symptom_severity × 0.15
+  - weight_trend × 0.10
+  - time_since_diagnosis × 0.10
+- [ ] C15: Risk level classification: excellent / good / attention / danger
+- [ ] C16: Per-factor breakdown для UI (какой фактор тянет вверх/вниз)
+
+### Фаза 9D — Safety Guard
+
+**Модуль: `src/features/analyzer/engine/safetyGuard.ts`**
+- [ ] C17: Валидация всех рекомендаций — НИКОГДА не рекомендовать дозу
+- [ ] C18: Фильтр формулировок — всё через "обсудите с ветеринаром"
+- [ ] C19: Emergency threshold detection — glucose <2.8 → немедленный алерт
+- [ ] C20: Disclaimer injection — автоматически на каждом экране анализа
+
+### Фаза 9E — Smart Alerts
+
+**Модуль: `src/features/analyzer/engine/smartAlerts.ts`**
+- [ ] C21: Контекстные push-уведомления:
+  - "Глюкоза 3 дня подряд <6 — возможно доза высока, обсудите с ветеринаром"
+  - "Вес снизился на 300г за 2 недели — покажите ветеринару"
+  - "После корма X глюкоза стабильнее чем после Y"
+  - "Нет замеров 5 дней — утренний чек поможет"
+  - "14 дней стабильного сахара — возможная ремиссия!"
+- [ ] C22: Алерт throttling — не более 1 smart alert в день, не повторять тот же тип 7 дней
+
+### Фаза 9F — UI интеграция
+
+**Компоненты: `src/features/analyzer/components/`**
+- [ ] C23: `RiskScoreWidget.tsx` — цветной индикатор на Dashboard (🟢🟡🟠🔴)
+- [ ] C24: `TrendIndicator.tsx` — стрелка ↑↗→↘↓ + текст
+- [ ] C25: `SmartInsightCard.tsx` — одно предложение: главный insight дня
+- [ ] C26: `AnalyzerDashboard.tsx` — полный экран аналитики (trends + patterns + risk)
+- [ ] C27: Dashboard интеграция — заменить простые карточки на analyzer widgets
+- [ ] C28: Передать analyzer data в prediction AI (вместо сырых данных)
+
+### Фаза 9G — Data Gaps Fix
+
+**Расширить predictionDataCollector:**
+- [ ] C29: Включить pet.weightKg в snapshot
+- [ ] C30: Включить carbsDM из feedingLog в snapshot
+- [ ] C31: Symptom↔glucose correlation (join по glucoseReadingId)
+- [ ] C32: Circadian patterns (hour-of-day extraction)
+- [ ] C33: Schedule times из scheduleRepository
+- [ ] C34: Last vet visit (из expenseRepository category='vetVisit')
+
+> **CHECKPOINT 9**: tsc ✅ | commit каждая фаза | полный тест на устройстве
 
 ---
 
-## ЭТАП 9: v2.7 Backend + Облако + Аккаунты
+## ЭТАП 10: v2.7 Encyclopedia Content Expansion
 
-- [ ] REST API (Fastify + PostgreSQL)
-- [ ] Авторизация: Google Sign-In + Email/Password (Firebase Auth или Supabase)
-- [ ] Привязка всех данных к аккаунту
-- [ ] Облачная синхронизация (local-first → server sync)
-- [ ] Резервное копирование (шифрованное)
-- [ ] Политика конфиденциальности (обновлённая)
-- [ ] Кабинет ветеринара
+> Расширение 12 существующих статей + 10 новых. Билингвально (RU/EN).
+
+### Фаза 10A — Инфраструктура контента
+
+- [ ] D1: Разбить articles.ts на отдельные файлы: `src/features/encyclopedia/data/articles/*.ts`
+- [ ] D2: Article interface — добавить `references: BilingualText[]`, `relatedArticleIds: string[]`, `order: number`
+- [ ] D3: ArticleDetailScreen — рендеринг нумерованных списков, раздела "Источники"
+- [ ] D4: Категория `lifestyle` в ArticleCategory (для новых практических статей)
+
+### Фаза 10B — Новые статьи (приоритет: самые нужные)
+
+- [ ] D5: `first-days` — "Первая неделя после диагноза" (пошаговый план, что купить, чего ждать)
+- [ ] D6: `flexible-monitoring` — "Реалистичный подход" (утренний чек + наблюдение vs кривые каждый день)
+- [ ] D7: `real-life-management` — "Жизнь с диабетиком" (кормление по требованию, поездки, передержка, несколько кошек)
+
+### Фаза 10C — Новые статьи (медицинские)
+
+- [ ] D8: `stress-hyperglycemia` — стрессовая гипергликемия (ветклиника vs дом, как отличить)
+- [ ] D9: `comorbidities` — IBD + гипертиреоз + ХБП (частые коморбидности)
+- [ ] D10: `ketone-testing` — домашнее тестирование кетонов (полоски, интерпретация)
+- [ ] D11: `dental-disease` — зубы и диабет (связь, анестезия, когда удалять)
+- [ ] D12: `glucose-curves-practice` — кривые глюкозы на практике (5 примеров с числами)
+
+### Фаза 10D — Новые статьи (практические)
+
+- [ ] D13: `cost-planning` — бюджет лечения (инсулин, полоски, корм, ветеринар, по регионам)
+- [ ] D14: `choosing-vet` — как выбрать ветеринара (red flags, вопросы, специалист vs общая практика)
+
+### Фаза 10E — Расширение существующих статей
+
+Каждую статью расширить: добавить "реальная жизнь" секцию, источники, cross-links:
+- [ ] D15: `what-is-diabetes` — первая эмоциональная реакция, что делать на этой неделе
+- [ ] D16: `remission` — timeline expectations, частичная ремиссия, мониторинг в ремиссии
+- [ ] D17: `diet` — **кормление по требованию** vs строгий график, привередливые кошки
+- [ ] D18: `glucose_monitoring` — **гибкий мониторинг** (утренний чек + наблюдение), когда кривые реально нужны
+- [ ] D19: `common-mistakes` — "не чекать сахар каждый день — это НЕ ошибка если стабильно", овертритмент
+- [ ] D20: `insulin_types` — инсулиновые ручки, биосимиляры (Semglee, Basaglar), цены
+- [ ] D21: `neuropathy` — метилкобаламин дозировка, физиотерапия, timeline восстановления
+- [ ] D22: `injection-technique` — инсулиновые ручки, когда кот дерётся, управление страхом
+- [ ] D23: `hypoglycemia` — лёгкая гипо дома, когда НЕ паниковать
+- [ ] D24: `dka` — чеклист факторов риска, что сказать экстренному ветеринару
+- [ ] D25: `fructosamine` — практические сценарии интерпретации
+- [ ] D26: `pancreatitis-diabetes` — triaditis (IBD+панкреатит+холангит), долгосрочный прогноз
+
+### Фаза 10F — Источники и cross-links
+
+- [ ] D27: Добавить `## Источники` в каждую статью (ISFM 2023, Rand 2012, Cornell, AAHA 2018)
+- [ ] D28: `relatedArticleIds` для каждой статьи (навигация между связанными темами)
+- [ ] D29: Обновить `readingTimeMinutes` для расширенных статей
+- [ ] D30: i18n — новые категории и метки
+
+> **CHECKPOINT 10**: tsc ✅ | все статьи RU+EN | commit
 
 ---
 
-## ЭТАП 10: v3.0 Advanced AI/Smart
+## ЭТАП 11: v2.8 Backend + Облако + Аккаунты
+
+> Подключение реального бэкенда. Supabase + Prodamus + Google Sign-In.
+
+### Фаза 11A — Supabase Setup
+
+- [ ] E1: Supabase проект → subscriptions table + RLS policies
+- [ ] E2: Edge Function: `check-subscription` (GET по device_id)
+- [ ] E3: Edge Function: `prodamus-webhook` (POST, верификация подписи)
+- [ ] E4: Заполнить .env: SUPABASE_URL, SUPABASE_ANON_KEY
+
+### Фаза 11B — Prodamus Integration
+
+- [ ] E5: Зарегать Prodamus (самозанятость) → магазин → 2 товара (monthly/yearly)
+- [ ] E6: Тест полного флоу: оплата → webhook → проверка статуса
+- [ ] E7: Снять шторку "Coming Soon" с PaywallScreen
+
+### Фаза 11C — Google Sign-In + Cloud Backup
+
+- [ ] E8: @react-native-google-signin → Supabase Auth (Web Client ID)
+- [ ] E9: Привязка всех данных к аккаунту (user_id в Supabase)
+- [ ] E10: Cloud backup: SQLite export → Supabase Storage (шифрованный)
+- [ ] E11: Cloud restore: download + decrypt + import
+- [ ] E12: Auto-backup при значимых изменениях (>10 новых записей)
+
+### Фаза 11D — Anthropic API через Supabase
+
+- [ ] E13: Edge Function: `ai-proxy` — проксирует запросы к Anthropic (ключ на сервере)
+- [ ] E14: Убрать Anthropic key из клиента полностью
+- [ ] E15: Rate limiting на сервере (10 req/hour per device)
+
+> **CHECKPOINT 11**: полный тест оплаты + backup/restore | commit
+
+---
+
+## ЭТАП 12: v2.9 UX + DevOps
+
+### UX улучшения
+- [ ] F1: Закладки в Энциклопедии (MMKV)
+- [ ] F2: Accessibility: accessibilityLabel на все кнопки (15+)
+- [ ] F3: Расходы: годовой вид, бюджетный лимит
+- [ ] F4: Быстрый доступ к настройкам глюкозы
+
+### DevOps
+- [ ] F5: GitHub Actions CI (tsc + lint + test + build)
+- [ ] F6: Sentry мониторинг крашей
+- [ ] F7: Pre-commit хуки (husky + lint-staged)
+- [ ] F8: Расширить Jest покрытие до 70%
+
+### Google Play
+- [ ] F9: Описание (короткое + полное, RU/EN)
+- [ ] F10: Скриншоты (4+) + Feature graphic (1024x500)
+- [ ] F11: Политика конфиденциальности (обновлённая с cloud data)
+- [ ] F12: Рейтинг контента
+
+> **CHECKPOINT 12**: CI green | Play Store submission ready
+
+---
+
+## ЭТАП 13: v3.0 Advanced AI/Smart
 
 - [ ] Bluetooth-глюкометр (FreeStyle Libre, Dexcom)
 - [ ] Виджет на главный экран (Android/iOS)
 - [ ] Расширение на собак, кроликов, ферретов
 - [ ] Smart symptom analysis: авто-предложение severity + действий
 - [ ] AI-ассистент: голосовой ввод
+- [ ] Кабинет ветеринара (просмотр данных по ссылке)
 
 ---
 
