@@ -44,6 +44,7 @@ export type HomeStackParamList = {
   FeedGuideAlternatives: undefined;
   FeedGuideNatural: undefined;
   AdvancedAnalytics: undefined;
+  AnalyzerDashboard: undefined;
 };
 
 // Glucose Stack (history only — glucose input via Home tab)

@@ -27,7 +27,7 @@ export function buildPredictionSystemPrompt(snapshot: PredictionDataSnapshot): s
   const recentFeedingsStr = snapshot.recentFeedings.length > 0
     ? snapshot.recentFeedings
         .slice(0, 30)
-        .map(r => `  ${r.date}: ${r.foodType ?? 'unknown type'}${r.amountGrams ? ` ${r.amountGrams}g` : ''}`)
+        .map(r => `  ${r.date}: ${r.foodType ?? 'unknown type'}${r.amountGrams ? ` ${r.amountGrams}g` : ''}${r.carbsDM != null ? ` (${r.carbsDM}% carbs DM)` : ''}`)
         .join('\n')
     : '  No feedings logged';
 
@@ -74,6 +74,8 @@ Total injections: ${injections.totalInjections}
 Feedings (7-day avg/day): ${feedings.avgFeedingsPerDay7d ?? 'N/A'}
 Feeding regular: ${feedings.feedingRegular ? 'yes' : 'no'}
 Primary food type: ${feedings.primaryFoodType ?? 'N/A'}
+Scheduled injections/day: ${snapshot.scheduledInjectionsPerDay ?? 'N/A'}
+Last vet visit: ${snapshot.lastVetVisitDate ?? 'unknown'}
 
 ## DATA QUALITY
 
@@ -97,7 +99,21 @@ ${recentFeedingsStr}
 
 Symptoms (last 30 days):
 ${symptomsStr}
+${snapshot.analyzer ? `
+## LOCAL ANALYZER RESULTS
 
+The app's local analyzer has already computed these metrics from the raw data:
+
+Risk score: ${snapshot.analyzer.riskScore}/100 (${snapshot.analyzer.riskLevel})
+Trend direction: ${snapshot.analyzer.trendDirection ?? 'unknown'}
+Glycemic variability (CV): ${snapshot.analyzer.cv?.toFixed(1) ?? 'N/A'}%
+Time in range (4-12 mmol/L): ${snapshot.analyzer.timeInRange?.toFixed(1) ?? 'N/A'}%
+7-day moving average: ${snapshot.analyzer.movingAvg7d?.toFixed(1) ?? 'N/A'} mmol/L
+14-day moving average: ${snapshot.analyzer.movingAvg14d?.toFixed(1) ?? 'N/A'} mmol/L
+${snapshot.analyzer.patterns.length > 0 ? `Detected patterns:\n${snapshot.analyzer.patterns.map(p => `  - ${p}`).join('\n')}` : 'No clinical patterns detected.'}
+
+Use these pre-computed results to inform your analysis. Do not contradict them unless you identify a clear error.
+` : ''}
 ## OUTPUT FORMAT
 
 Respond with ONLY valid JSON matching this exact schema. No markdown, no explanation outside JSON.

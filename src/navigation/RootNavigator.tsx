@@ -27,6 +27,7 @@ const linking: LinkingOptions<RootStackParamList> = {
               LogInjection: 'injection/log',
               LogFeeding: 'feeding/log',
               DailyDiary: 'diary',
+              AnalyzerDashboard: 'analyzer',
             },
           },
           GlucoseTab: {

@@ -120,6 +120,23 @@ export interface PetSnapshot {
   insulinType?: string;
 }
 
+export interface AnalyzerSummary {
+  /** Overall risk score 0-100 */
+  riskScore: number;
+  riskLevel: string;
+  /** Trend direction */
+  trendDirection: string | null;
+  /** CV% */
+  cv: number | null;
+  /** Time in target range % */
+  timeInRange: number | null;
+  /** Moving averages */
+  movingAvg7d: number | null;
+  movingAvg14d: number | null;
+  /** Detected clinical patterns */
+  patterns: string[];
+}
+
 export interface PredictionDataSnapshot {
   pet: PetSnapshot;
   glucose: GlucoseStats;
@@ -130,9 +147,15 @@ export interface PredictionDataSnapshot {
   /** Raw recent injections (last 14 days) */
   recentInjections: { date: string; doseUnits: number; insulinType: string }[];
   /** Raw recent feedings (last 14 days) */
-  recentFeedings: { date: string; foodType?: string; amountGrams?: number }[];
+  recentFeedings: { date: string; foodType?: string; amountGrams?: number; carbsDM?: number }[];
   /** Symptom summaries (last 30 days) */
   recentSymptoms: { date: string; types: string[]; severity: string }[];
   dataQuality: DataQuality;
+  /** Local analyzer results (if available) */
+  analyzer?: AnalyzerSummary;
+  /** Scheduled injections per day from user settings */
+  scheduledInjectionsPerDay?: number;
+  /** ISO date of the last vet visit (from expenses with category 'vetVisit') */
+  lastVetVisitDate?: string;
   language: 'en' | 'ru';
 }

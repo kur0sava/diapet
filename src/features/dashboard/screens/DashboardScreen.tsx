@@ -28,6 +28,10 @@ import { Icon } from '@shared/components/ui/Icon';
 import { usePetStore } from '@shared/stores/petStore';
 import { useSubscription } from '@features/subscription/hooks/useSubscription';
 import { useFocusEffect } from '@react-navigation/native';
+import { useAnalyzer } from '@features/analyzer/hooks/useAnalyzer';
+import { RiskScoreWidget } from '@features/analyzer/components/RiskScoreWidget';
+import { TrendIndicator } from '@features/analyzer/components/TrendIndicator';
+import { SmartInsightCard } from '@features/analyzer/components/SmartInsightCard';
 
 interface GlucoseReading {
   valueMmol: number;
@@ -103,6 +107,8 @@ export default function DashboardScreen() {
     queryFn: () => scheduleRepository.getFeedingTimes(petId),
     enabled: !!petId,
   });
+
+  const { trends: analyzerTrends, riskScore, smartAlert, hasEnoughData: hasAnalyzerData } = useAnalyzer();
 
   const [refreshing, setRefreshing] = React.useState(false);
 
@@ -306,6 +312,41 @@ export default function DashboardScreen() {
             )}
           </Card>
         </View>
+
+        {/* Analyzer: Smart Insight + Risk Score + Trend */}
+        {hasAnalyzerData && (
+          <View style={styles.section}>
+            {smartAlert && (
+              <SmartInsightCard
+                alert={smartAlert}
+                onPress={() => navigation.navigate('AnalyzerDashboard')}
+              />
+            )}
+            <View style={styles.analyzerRow}>
+              {riskScore && (
+                <View style={{ flex: 1 }}>
+                  <RiskScoreWidget
+                    score={riskScore.totalScore}
+                    level={riskScore.level}
+                    onPress={() => navigation.navigate('AnalyzerDashboard')}
+                  />
+                </View>
+              )}
+            </View>
+            {analyzerTrends?.direction && (
+              <View style={styles.analyzerTrendRow}>
+                <TrendIndicator direction={analyzerTrends.direction} acceleration={analyzerTrends.acceleration} compact />
+                {analyzerTrends.timeInRange !== null && (
+                  <View style={[styles.tirBadge, { backgroundColor: theme.colors.primaryLight }]}>
+                    <Text style={[styles.tirText, { color: theme.colors.primary, fontFamily: theme.fonts.semibold }]}>
+                      TIR {analyzerTrends.timeInRange.toFixed(0)}%
+                    </Text>
+                  </View>
+                )}
+              </View>
+            )}
+          </View>
+        )}
 
         {/* AI Smart Analysis Card */}
         <TouchableOpacity
@@ -527,4 +568,8 @@ const styles = StyleSheet.create({
   upgradeCard: { flexDirection: 'row', alignItems: 'center', gap: 12, marginHorizontal: 20, marginTop: 20, padding: 14, borderRadius: 16 },
   upgradeIconCircle: { width: 32, height: 32, borderRadius: 16, alignItems: 'center', justifyContent: 'center' },
   upgradeText: { flex: 1, fontSize: 13 },
+  analyzerRow: { marginTop: 8 },
+  analyzerTrendRow: { flexDirection: 'row', gap: 8, marginTop: 8, flexWrap: 'wrap' },
+  tirBadge: { paddingHorizontal: 10, paddingVertical: 4, borderRadius: 12 },
+  tirText: { fontSize: 12 },
 });

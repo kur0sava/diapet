@@ -37,6 +37,7 @@ import SubscriptionScreen from '@features/subscription/screens/SubscriptionScree
 import DailyDiaryScreen from '@features/diary/screens/DailyDiaryScreen';
 import AiAssistantScreen from '@features/hints/screens/AiAssistantScreen';
 import AdvancedAnalyticsScreen from '@features/prediction/screens/AdvancedAnalyticsScreen';
+import AnalyzerDashboardScreen from '@features/analyzer/screens/AnalyzerDashboardScreen';
 
 const Tab = createBottomTabNavigator<MainTabParamList>();
 
@@ -71,6 +72,7 @@ function HomeStackNavigator() {
       <HomeStack.Screen name="FeedGuideAlternatives" component={FeedGuideAlternativesScreen} options={{ headerShown: false }} />
       <HomeStack.Screen name="FeedGuideNatural" component={FeedGuideNaturalScreen} options={{ headerShown: false }} />
       <HomeStack.Screen name="AdvancedAnalytics" component={AdvancedAnalyticsScreen} options={{ headerShown: false }} />
+      <HomeStack.Screen name="AnalyzerDashboard" component={AnalyzerDashboardScreen} options={{ headerShown: false }} />
     </HomeStack.Navigator>
   );
 }

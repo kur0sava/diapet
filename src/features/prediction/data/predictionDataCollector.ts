@@ -3,7 +3,7 @@
  * for the AI prediction prompt.
  */
 import { differenceInDays, subDays, parseISO, isValid } from 'date-fns';
-import { glucoseRepository, injectionRepository, feedingRepository, symptomRepository } from '@storage/database';
+import { glucoseRepository, injectionRepository, feedingRepository, symptomRepository, expenseRepository, scheduleRepository } from '@storage/database';
 import type { Pet, GlucoseReading, InjectionLog, FeedingLog, SymptomEntry } from '@storage/domain/types';
 import type {
   PredictionDataSnapshot,
@@ -12,7 +12,11 @@ import type {
   FeedingStats,
   DataQuality,
   PetSnapshot,
+  AnalyzerSummary,
 } from './predictionTypes';
+import { analyzeTrends } from '@features/analyzer/engine/trendEngine';
+import { detectPatterns } from '@features/analyzer/engine/patternDetector';
+import { calculateRiskScore } from '@features/analyzer/engine/riskScoreCalculator';
 
 // ─── Helpers ───
 
@@ -203,12 +207,23 @@ export async function collectPredictionData(
   pet: Pet,
   language: 'en' | 'ru',
 ): Promise<PredictionDataSnapshot> {
-  const [allGlucose, allInjections, allFeedings, allSymptoms] = await Promise.all([
+  const [allGlucose, allInjections, allFeedings, allSymptoms, allExpenses, injectionSchedule] = await Promise.all([
     glucoseRepository.findAllByPetId(petId),
     injectionRepository.findAllByPetId(petId),
     feedingRepository.findAllByPetId(petId),
     symptomRepository.findAllByPetId(petId),
+    expenseRepository.findByPetId(petId),
+    scheduleRepository.getInjectionTimes(petId),
   ]);
+
+  // C34: Find last vet visit from expenses
+  const vetVisits = allExpenses
+    .filter(e => e.category === 'vetVisit')
+    .sort((a, b) => b.date.localeCompare(a.date));
+  const lastVetVisitDate = vetVisits.length > 0 ? vetVisits[0].date : undefined;
+
+  // C33: Scheduled injections per day
+  const scheduledInjectionsPerDay = injectionSchedule.length || 2;
 
   const petSnapshot: PetSnapshot = {
     name: pet.name,
@@ -227,6 +242,35 @@ export async function collectPredictionData(
   const recent14Injections = filterByDays(allInjections, r => r.administeredAt, 14);
   const recent14Feedings = filterByDays(allFeedings, r => r.fedAt, 14);
   const recent30Symptoms = filterByDays(allSymptoms, r => r.recordedAt, 30);
+
+  // Run local analyzer for AI context enrichment
+  let analyzer: AnalyzerSummary | undefined;
+  if (allGlucose.length >= 3) {
+    const now = new Date();
+    const trends = analyzeTrends(allGlucose, now);
+    const patterns = detectPatterns({ readings: allGlucose, injections: allInjections, feedings: allFeedings, now });
+    const risk = calculateRiskScore({
+      readings: allGlucose,
+      injections: allInjections,
+      feedings: allFeedings,
+      symptoms: allSymptoms,
+      weightKg: pet.weightKg,
+      diagnosisDays: pet.diagnosisDate
+        ? Math.floor((now.getTime() - new Date(pet.diagnosisDate).getTime()) / (24 * 60 * 60 * 1000))
+        : undefined,
+      now,
+    });
+    analyzer = {
+      riskScore: risk.totalScore,
+      riskLevel: risk.level,
+      trendDirection: trends.direction,
+      cv: trends.cv,
+      timeInRange: trends.timeInRange,
+      movingAvg7d: trends.movingAverage7d,
+      movingAvg14d: trends.movingAverage14d,
+      patterns: patterns.map(p => `${p.type}: ${p.description} (${p.confidence})`),
+    };
+  }
 
   return {
     pet: petSnapshot,
@@ -247,6 +291,7 @@ export async function collectPredictionData(
       date: r.fedAt,
       foodType: r.foodType ?? undefined,
       amountGrams: r.amountGrams ?? undefined,
+      carbsDM: r.carbsDM ?? undefined,
     })),
     recentSymptoms: recent30Symptoms.map(r => ({
       date: r.recordedAt,
@@ -254,6 +299,9 @@ export async function collectPredictionData(
       severity: r.severity,
     })),
     dataQuality: computeDataQuality(allGlucose),
+    analyzer,
+    scheduledInjectionsPerDay,
+    lastVetVisitDate,
     language,
   };
 }
