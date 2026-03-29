@@ -92,6 +92,14 @@ export const MGDL_PER_MMOLL = 18.0156;
 export const MAX_REASONABLE_GLUCOSE_MMOL = 35;
 export const MAX_REASONABLE_GLUCOSE_MGDL = Math.round(MAX_REASONABLE_GLUCOSE_MMOL * MGDL_PER_MMOLL);
 
+/** Validation boundaries */
+export const MAX_CAT_WEIGHT_KG = 15;
+export const MAX_FEEDING_GRAMS = 2000;
+export const MAX_EXPENSE_AMOUNT = 10_000_000;
+export const MAX_SCHEDULE_TIMES = 8;
+export const MAX_CAT_AGE_YEARS = 30;
+export const HIGH_CARBS_DM_THRESHOLD = 15;
+
 export interface GlucoseReading {
   id: string;
   petId: string;

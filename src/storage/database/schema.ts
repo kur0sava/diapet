@@ -12,7 +12,7 @@ export const DB_NAME = 'diapet.db';
  *   - CREATE TABLE / CREATE INDEX use IF NOT EXISTS
  *   - ALTER TABLE ADD COLUMN is wrapped in try/catch (SQLite lacks IF NOT EXISTS for ALTER)
  */
-export const CURRENT_SCHEMA_VERSION = 6;
+export const CURRENT_SCHEMA_VERSION = 7;
 
 export const CREATE_TABLES_SQL = `
   PRAGMA journal_mode = WAL;
@@ -140,4 +140,10 @@ export const CREATE_TABLES_SQL = `
   CREATE INDEX IF NOT EXISTS idx_feeding_pet_date ON feedings(pet_id, fed_at);
   CREATE INDEX IF NOT EXISTS idx_symptom_entry_types_symptom ON symptom_entry_types(symptom_id);
   CREATE INDEX IF NOT EXISTS idx_symptom_entry_types_type ON symptom_entry_types(symptom_type);
+
+  CREATE INDEX IF NOT EXISTS idx_glucose_pet ON glucose_readings(pet_id);
+  CREATE INDEX IF NOT EXISTS idx_symptoms_pet ON symptoms(pet_id);
+  CREATE INDEX IF NOT EXISTS idx_glucose_pet_date_desc ON glucose_readings(pet_id, recorded_at DESC);
+  CREATE INDEX IF NOT EXISTS idx_injections_pet ON injections(pet_id);
+  CREATE INDEX IF NOT EXISTS idx_feedings_pet ON feedings(pet_id);
 `;

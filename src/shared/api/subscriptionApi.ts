@@ -41,7 +41,9 @@ export async function checkSubscription(): Promise<SubscriptionStatus> {
   );
 
   if (!response.ok) {
-    throw new Error(`Subscription check failed: ${response.status}`);
+    const err = new Error(`Subscription check failed: ${response.status}`) as Error & { status: number };
+    err.status = response.status;
+    throw err;
   }
 
   const data = await response.json();
@@ -56,14 +58,21 @@ export async function checkSubscription(): Promise<SubscriptionStatus> {
  * Poll subscription status after payment (with retries).
  */
 export async function pollSubscriptionAfterPayment(
-  maxRetries = 5,
-  delayMs = 3000,
+  maxRetries = 6,
+  initialDelayMs = 2000,
 ): Promise<SubscriptionStatus> {
   for (let i = 0; i < maxRetries; i++) {
-    const status = await checkSubscription();
-    if (status.isPro) return status;
+    try {
+      const status = await checkSubscription();
+      if (status.isPro) return status;
+    } catch (e) {
+      const status = (e as { status?: number }).status;
+      // Don't retry on auth errors
+      if (status === 401 || status === 403) throw e;
+    }
     if (i < maxRetries - 1) {
-      await new Promise(r => setTimeout(r, delayMs));
+      // Exponential backoff: 2s, 4s, 8s, 16s, 32s
+      await new Promise(r => setTimeout(r, initialDelayMs * Math.pow(2, i)));
     }
   }
   return { isPro: false, plan: null, expiresAt: null };

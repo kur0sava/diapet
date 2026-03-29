@@ -16,6 +16,7 @@ import { useTheme } from '@shared/theme';
 import { Button } from '@shared/components/ui';
 import { Icon } from '@shared/components/ui/Icon';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import { MAX_SCHEDULE_TIMES } from '@storage/domain/types';
 
 export default function ScheduleScreen() {
   const navigation = useOnboardingNavigation();
@@ -29,9 +30,8 @@ export default function ScheduleScreen() {
   const [showPicker, setShowPicker] = useState<{ type: 'injection' | 'feeding'; index: number } | null>(null);
 
   const addTime = (type: 'injection' | 'feeding') => {
-    const MAX_TIMES = 8;
     const times = type === 'injection' ? injectionTimes : feedingTimes;
-    if (times.length >= MAX_TIMES) return;
+    if (times.length >= MAX_SCHEDULE_TIMES) return;
     // Find a unique time that doesn't collide with existing entries
     const existingSet = new Set(times);
     let newTime = '12:00';

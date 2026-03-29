@@ -9,6 +9,7 @@ import { petRepository, scheduleRepository, getDatabase } from '@storage/databas
 import { usePetStore } from '@shared/stores/petStore';
 import { useQueryClient } from '@tanstack/react-query';
 import { queryKeys } from '@shared/utils/queryKeys';
+import { MAX_CAT_WEIGHT_KG, MAX_SCHEDULE_TIMES } from '@storage/domain/types';
 import { Icon } from '@shared/components/ui/Icon';
 import { storage, StorageKeys } from '@storage/mmkv/storage';
 import { useUnsavedChangesGuard } from '@shared/hooks/useUnsavedChangesGuard';
@@ -68,7 +69,7 @@ export default function EditPetScreen() {
     // Validate weight: if provided, must be positive
     if (weightKg) {
       const parsedWeight = parseFloat(weightKg.replace(',', '.'));
-      if (isNaN(parsedWeight) || parsedWeight <= 0 || parsedWeight > 15) {
+      if (isNaN(parsedWeight) || parsedWeight <= 0 || parsedWeight > MAX_CAT_WEIGHT_KG) {
         Alert.alert(t('common.error'), t('pets.invalidWeight'));
         return;
       }
@@ -143,7 +144,7 @@ export default function EditPetScreen() {
         </View>
       ))}
       <TouchableOpacity style={[styles.addBtn, { borderColor: theme.colors.primary, borderRadius: 12 }]} onPress={() => {
-        if (times.length >= 8) return;
+        if (times.length >= MAX_SCHEDULE_TIMES) return;
         const existingSet = new Set(times);
         let newTime = '12:00';
         for (let h = 6; h < 24; h++) {

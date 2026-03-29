@@ -18,6 +18,7 @@ import { feedingRepository } from '@storage/database';
 import { usePetStore } from '@shared/stores/petStore';
 import { useQueryClient } from '@tanstack/react-query';
 import { queryKeys } from '@shared/utils/queryKeys';
+import { MAX_FEEDING_GRAMS, HIGH_CARBS_DM_THRESHOLD } from '@storage/domain/types';
 import * as Haptics from 'expo-haptics';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useUnsavedChangesGuard } from '@shared/hooks/useUnsavedChangesGuard';
@@ -100,7 +101,7 @@ export default function LogFeedingScreen() {
 
     if (amount) {
       const parsedAmount = parseFloat(amount.replace(',', '.'));
-      if (isNaN(parsedAmount) || !isFinite(parsedAmount) || parsedAmount <= 0 || parsedAmount > 2000) {
+      if (isNaN(parsedAmount) || !isFinite(parsedAmount) || parsedAmount <= 0 || parsedAmount > MAX_FEEDING_GRAMS) {
         Alert.alert(t('common.error'), t('feeding.amountError'));
         return;
       }
@@ -249,7 +250,7 @@ export default function LogFeedingScreen() {
               <Text style={[styles.carbsValue, { color: verdictColor(selectedFood.verdict) }]}>
                 {selectedFood.carbsDM?.toFixed(1)}% {i18n.language === 'ru' ? 'углеводов (СВ)' : 'carbs (DM)'}
               </Text>
-              {selectedFood.carbsDM !== undefined && selectedFood.carbsDM > 15 && (
+              {selectedFood.carbsDM !== undefined && selectedFood.carbsDM > HIGH_CARBS_DM_THRESHOLD && (
                 <View style={[styles.warningRow, { backgroundColor: '#FF3B3015' }]}>
                   <Icon name="warning" size={14} color="#FF3B30" />
                   <Text style={[styles.warningText, { color: '#FF3B30' }]}>
@@ -304,7 +305,7 @@ export default function LogFeedingScreen() {
                   </Text>
                 </View>
               )}
-              {manualResult && manualResult.carbsDM > 15 && (
+              {manualResult && manualResult.carbsDM > HIGH_CARBS_DM_THRESHOLD && (
                 <View style={[styles.warningRow, { backgroundColor: '#FF3B3015' }]}>
                   <Icon name="warning" size={14} color="#FF3B30" />
                   <Text style={[styles.warningText, { color: '#FF3B30' }]}>

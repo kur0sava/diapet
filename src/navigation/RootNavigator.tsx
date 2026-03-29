@@ -1,6 +1,7 @@
 import React from 'react';
-import { NavigationContainer } from '@react-navigation/native';
+import { NavigationContainer, LinkingOptions } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { Linking } from 'react-native';
 import { useTheme } from '@shared/theme';
 import { storage, StorageKeys } from '@storage/mmkv/storage';
 import { RootStackParamList } from './types';
@@ -10,6 +11,40 @@ import EmergencyScreen from '@features/emergency/screens/EmergencyScreen';
 import PaywallScreen from '@features/subscription/screens/PaywallScreen';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
+
+const linking: LinkingOptions<RootStackParamList> = {
+  prefixes: ['diapet://'],
+  config: {
+    screens: {
+      Emergency: 'emergency',
+      Paywall: 'paywall',
+      Main: {
+        screens: {
+          Home: {
+            screens: {
+              Dashboard: '',
+              LogGlucose: 'glucose/log',
+              LogInjection: 'injection/log',
+              LogFeeding: 'feeding/log',
+              DailyDiary: 'diary',
+            },
+          },
+          GlucoseTab: {
+            screens: {
+              GlucoseList: 'glucose',
+            },
+          },
+          EncyclopediaTab: {
+            screens: {
+              ArticleList: 'articles',
+              ArticleDetail: 'articles/:articleId',
+            },
+          },
+        },
+      },
+    },
+  },
+};
 
 export function RootNavigator() {
   const { theme } = useTheme();
@@ -34,7 +69,7 @@ export function RootNavigator() {
   };
 
   return (
-    <NavigationContainer theme={navigationTheme}>
+    <NavigationContainer theme={navigationTheme} linking={linking}>
       <Stack.Navigator
         screenOptions={{ headerShown: false }}
         initialRouteName={isOnboardingComplete ? 'Main' : 'Onboarding'}

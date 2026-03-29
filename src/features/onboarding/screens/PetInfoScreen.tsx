@@ -13,6 +13,7 @@ import { useOnboardingNavigation } from '@navigation/hooks';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '@shared/theme';
 import { Button, Input } from '@shared/components/ui';
+import { MAX_CAT_WEIGHT_KG, MAX_CAT_AGE_YEARS } from '@storage/domain/types';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { storage, StorageKeys } from '@storage/mmkv/storage';
 import { parseDateOnly } from '@shared/utils/dateUtils';
@@ -46,11 +47,11 @@ export default function PetInfoScreen() {
     if (!name.trim()) newErrors.name = t('onboarding.nameRequired', { defaultValue: t('common.error') });
     if (weightKg) {
       const w = parseFloat(weightKg.replace(',', '.'));
-      if (isNaN(w) || w <= 0 || w > 15) newErrors.weightKg = t('pets.invalidWeight');
+      if (isNaN(w) || w <= 0 || w > MAX_CAT_WEIGHT_KG) newErrors.weightKg = t('pets.invalidWeight');
     }
     if (age) {
       const a = parseInt(age, 10);
-      if (isNaN(a) || a < 0 || a > 30) newErrors.age = t('onboarding.ageInvalid', { defaultValue: t('common.error') });
+      if (isNaN(a) || a < 0 || a > MAX_CAT_AGE_YEARS) newErrors.age = t('onboarding.ageInvalid', { defaultValue: t('common.error') });
     }
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;

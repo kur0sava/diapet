@@ -14,6 +14,7 @@ import { usePetStore } from '@shared/stores/petStore';
 import { ExpenseCategory, EXPENSE_ICON_NAMES, EXPENSE_COLORS } from '../types';
 import { useQueryClient } from '@tanstack/react-query';
 import { queryKeys } from '@shared/utils/queryKeys';
+import { MAX_EXPENSE_AMOUNT } from '@storage/domain/types';
 import * as Haptics from 'expo-haptics';
 import { useUnsavedChangesGuard } from '@shared/hooks/useUnsavedChangesGuard';
 
@@ -69,7 +70,7 @@ export default function AddExpenseScreen() {
   const handleSave = async () => {
     if (savingRef.current || !activePet) return;
     const numAmount = parseFloat(amount.replace(',', '.'));
-    if (!amount || isNaN(numAmount) || !isFinite(numAmount) || numAmount <= 0 || numAmount > 10_000_000) { Alert.alert(t('common.error'), t('expenses.amountError')); return; }
+    if (!amount || isNaN(numAmount) || !isFinite(numAmount) || numAmount <= 0 || numAmount > MAX_EXPENSE_AMOUNT) { Alert.alert(t('common.error'), t('expenses.amountError')); return; }
     savingRef.current = true;
     setLoading(true);
     try {

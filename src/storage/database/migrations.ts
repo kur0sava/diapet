@@ -133,6 +133,17 @@ const MIGRATIONS: Migration[] = [
       }
     },
   },
+  {
+    version: 7,
+    name: 'add_performance_indexes',
+    up: [
+      `CREATE INDEX IF NOT EXISTS idx_glucose_pet ON glucose_readings(pet_id)`,
+      `CREATE INDEX IF NOT EXISTS idx_symptoms_pet ON symptoms(pet_id)`,
+      `CREATE INDEX IF NOT EXISTS idx_glucose_pet_date_desc ON glucose_readings(pet_id, recorded_at DESC)`,
+      `CREATE INDEX IF NOT EXISTS idx_injections_pet ON injections(pet_id)`,
+      `CREATE INDEX IF NOT EXISTS idx_feedings_pet ON feedings(pet_id)`,
+    ],
+  },
 ];
 
 export async function runMigrations(db: SQLiteDatabase): Promise<void> {
