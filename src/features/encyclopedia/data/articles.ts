@@ -12,6 +12,9 @@ import { dka } from './articles/dka';
 import { injectionTechnique } from './articles/injection-technique';
 import { hypoglycemia } from './articles/hypoglycemia';
 import { pancreatitisDiabetes } from './articles/pancreatitis-diabetes';
+import { firstDays } from './articles/first-days';
+import { flexibleMonitoring } from './articles/flexible-monitoring';
+import { realLifeManagement } from './articles/real-life-management';
 
 export const articles: Article[] = [
   whatIsDiabetes,
@@ -26,4 +29,7 @@ export const articles: Article[] = [
   injectionTechnique,
   hypoglycemia,
   pancreatitisDiabetes,
+  firstDays,
+  flexibleMonitoring,
+  realLifeManagement,
 ];
