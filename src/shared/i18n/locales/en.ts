@@ -730,6 +730,8 @@ export const en = {
     showDetails: 'Show details',
     hideDetails: 'Hide details',
     restartApp: 'Restart',
+    storageError: 'Storage initialization failed',
+    storageRetry: 'Retry',
   },
 
   hints: {

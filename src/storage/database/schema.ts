@@ -1,5 +1,18 @@
 export const DB_NAME = 'diapet.db';
-export const DB_VERSION = 1;
+
+/**
+ * CURRENT_SCHEMA_VERSION must match the latest migration version in migrations.ts.
+ * This constant is informational only — the actual version is tracked via PRAGMA user_version.
+ *
+ * CREATE_TABLES_SQL below represents the COMPLETE current schema (not "v1").
+ * Fresh installs get the full schema + user_version = CURRENT_SCHEMA_VERSION,
+ * so migrations run only for upgrades from older versions.
+ *
+ * All migrations MUST be idempotent:
+ *   - CREATE TABLE / CREATE INDEX use IF NOT EXISTS
+ *   - ALTER TABLE ADD COLUMN is wrapped in try/catch (SQLite lacks IF NOT EXISTS for ALTER)
+ */
+export const CURRENT_SCHEMA_VERSION = 6;
 
 export const CREATE_TABLES_SQL = `
   PRAGMA journal_mode = WAL;

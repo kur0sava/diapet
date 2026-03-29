@@ -730,6 +730,8 @@ export const ru = {
     showDetails: 'Показать детали',
     hideDetails: 'Скрыть детали',
     restartApp: 'Перезапустить',
+    storageError: 'Ошибка инициализации хранилища',
+    storageRetry: 'Повторить',
   },
 
   hints: {

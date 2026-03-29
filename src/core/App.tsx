@@ -13,7 +13,7 @@ import { scheduleHintPushNotifications } from '@features/hints/utils/hintSchedul
 import { restoreScheduleNotifications } from '@shared/hooks/useNotifications';
 import { usePetStore } from '@shared/stores/petStore';
 import { initStorage, storage, StorageKeys } from '@storage/mmkv/storage';
-import { restoreLanguage } from '@shared/i18n';
+import i18n, { restoreLanguage } from '@shared/i18n';
 import '@shared/i18n';
 import {
   useFonts,
@@ -119,13 +119,13 @@ export default function App() {
     return (
       <View style={styles.loading}>
         <Text style={{ textAlign: 'center', padding: 24, fontSize: 16, color: '#333' }}>
-          {'Ошибка инициализации хранилища.\nStorage initialization failed.'}
+          {i18n.t('errors.storageError')}
         </Text>
         <TouchableOpacity
           style={{ marginTop: 16, backgroundColor: '#D42020', paddingHorizontal: 24, paddingVertical: 12, borderRadius: 8 }}
           onPress={() => { setStorageError(false); initStorage().then(() => setReady(true)).catch(() => setStorageError(true)); }}
         >
-          <Text style={{ color: '#fff', fontWeight: '600', fontSize: 15 }}>{'Повторить / Retry'}</Text>
+          <Text style={{ color: '#fff', fontWeight: '600', fontSize: 15 }}>{i18n.t('errors.storageRetry')}</Text>
         </TouchableOpacity>
       </View>
     );

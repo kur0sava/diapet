@@ -1,5 +1,5 @@
 import * as SQLite from 'expo-sqlite';
-import { CREATE_TABLES_SQL, DB_NAME } from './schema';
+import { CREATE_TABLES_SQL, CURRENT_SCHEMA_VERSION, DB_NAME } from './schema';
 import { runMigrations } from './migrations';
 
 // Note: expo-sqlite uses stock SQLite (not SQLCipher), so PRAGMA key is a no-op.
@@ -36,9 +36,10 @@ async function initializeDatabase(database: SQLite.SQLiteDatabase): Promise<void
   // Create initial schema tables
   await database.execAsync(CREATE_TABLES_SQL);
 
-  // Mark version 1 for fresh installs so migrations start from version 2
+  // Fresh install: schema already includes everything up to CURRENT_SCHEMA_VERSION,
+  // so skip all migrations by setting user_version to the latest version.
   if (isFreshInstall) {
-    await database.execAsync('PRAGMA user_version = 1');
+    await database.execAsync(`PRAGMA user_version = ${CURRENT_SCHEMA_VERSION}`);
   }
 
   // Run any outstanding migrations
