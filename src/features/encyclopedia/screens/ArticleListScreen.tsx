@@ -25,6 +25,7 @@ const CATEGORY_ICONS: Record<ArticleCategory, { name: IoniconName; color: string
   complications: { name: 'alert-circle-outline', color: '#FF9500' },
   remission: { name: 'sparkles-outline', color: '#5AC8FA' },
   tips: { name: 'bulb-outline', color: '#FFB340' },
+  lifestyle: { name: 'heart-outline', color: '#FF6B6B' },
 };
 
 export default function ArticleListScreen() {
@@ -43,6 +44,7 @@ export default function ArticleListScreen() {
     complications: t('encyclopedia.categories.complications'),
     remission: t('encyclopedia.categories.remission'),
     tips: t('encyclopedia.categories.tips'),
+    lifestyle: t('encyclopedia.categories.lifestyle'),
   };
 
   const filtered = articles.filter(a => {

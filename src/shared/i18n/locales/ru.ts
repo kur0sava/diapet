@@ -355,6 +355,8 @@ export const ru = {
     articleNotFound: 'Статья не найдена',
     tableOfContents: 'Оглавление',
     disclaimer: 'Информация носит образовательный характер и не заменяет консультацию ветеринара.',
+    references: 'Источники',
+    relatedArticles: 'Связанные статьи',
     categories: {
       basics: 'Основы',
       treatment: 'Лечение',
@@ -363,6 +365,7 @@ export const ru = {
       complications: 'Осложнения',
       remission: 'Ремиссия',
       tips: 'Советы',
+      lifestyle: 'Жизнь с диабетом',
     },
   },
 

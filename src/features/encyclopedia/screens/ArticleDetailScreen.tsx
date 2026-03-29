@@ -149,6 +149,16 @@ export default function ArticleDetailScreen() {
       if (line.trim() === '') {
         return <View key={`line-${i}`} style={{ height: 8 }} />;
       }
+      // Numbered list: 1. text, 2. text, etc.
+      const numMatch = line.match(/^(\d+)\.\s+(.+)/);
+      if (numMatch) {
+        return (
+          <View key={`line-${i}`} style={styles.bulletItem}>
+            <Text style={[styles.bulletDot, { color: theme.colors.textSecondary }]}>{numMatch[1]}.</Text>
+            {renderInline(numMatch[2], styles.body, `ni-${i}`)}
+          </View>
+        );
+      }
       if (line.startsWith('- ')) {
         return (
           <View key={`line-${i}`} style={styles.bulletItem}>
@@ -248,6 +258,52 @@ export default function ArticleDetailScreen() {
         <View style={styles.articleContent}>
           {renderContent(lang(article.contentKey))}
         </View>
+
+        {/* References */}
+        {article.references && article.references.length > 0 && (
+          <View style={[styles.referencesSection, { borderTopColor: theme.colors.divider }]}>
+            <Text style={[styles.referencesTitle, { color: theme.colors.text }]}>
+              {t('encyclopedia.references')}
+            </Text>
+            {article.references.map((ref, i) => (
+              <View key={`ref-${i}`} style={styles.referenceItem}>
+                <Text style={[styles.referenceNumber, { color: theme.colors.textTertiary }]}>{i + 1}.</Text>
+                <Text style={[styles.referenceText, { color: theme.colors.textSecondary }]}>{lang(ref)}</Text>
+              </View>
+            ))}
+          </View>
+        )}
+
+        {/* Related Articles */}
+        {article.relatedArticleIds && article.relatedArticleIds.length > 0 && (
+          <View style={styles.relatedSection}>
+            <Text style={[styles.relatedTitle, { color: theme.colors.text }]}>
+              {t('encyclopedia.relatedArticles')}
+            </Text>
+            {article.relatedArticleIds.map(relId => {
+              const related = articles.find(a => a.id === relId);
+              if (!related) return null;
+              return (
+                <TouchableOpacity
+                  key={relId}
+                  style={[styles.relatedCard, { backgroundColor: theme.colors.surface, borderColor: theme.colors.border }]}
+                  onPress={() => navigation.push('ArticleDetail', { articleId: relId })}
+                  activeOpacity={0.7}
+                >
+                  <View style={{ flex: 1 }}>
+                    <Text style={[styles.relatedCardTitle, { color: theme.colors.text }]} numberOfLines={1}>
+                      {lang(related.titleKey)}
+                    </Text>
+                    <Text style={[styles.relatedCardSummary, { color: theme.colors.textSecondary }]} numberOfLines={2}>
+                      {lang(related.summaryKey)}
+                    </Text>
+                  </View>
+                  <Icon name="chevron-forward" size={16} color={theme.colors.textTertiary} />
+                </TouchableOpacity>
+              );
+            })}
+          </View>
+        )}
       </ScrollView>
     </SafeAreaView>
   );
@@ -285,4 +341,16 @@ const styles = StyleSheet.create({
   tocItemIndented: { paddingLeft: 20 },
   tocItemText: { fontSize: 14, fontWeight: '500' },
   tocItemTextSub: { fontSize: 13, fontWeight: '400' },
+  // References
+  referencesSection: { borderTopWidth: 1, marginTop: 24, paddingTop: 16 },
+  referencesTitle: { fontSize: 17, fontWeight: '700', marginBottom: 10 },
+  referenceItem: { flexDirection: 'row', gap: 6, marginBottom: 6 },
+  referenceNumber: { fontSize: 13, lineHeight: 20, width: 20 },
+  referenceText: { fontSize: 13, lineHeight: 20, flex: 1 },
+  // Related Articles
+  relatedSection: { marginTop: 24 },
+  relatedTitle: { fontSize: 17, fontWeight: '700', marginBottom: 10 },
+  relatedCard: { flexDirection: 'row', alignItems: 'center', gap: 12, padding: 14, borderRadius: 12, borderWidth: 1, marginBottom: 8 },
+  relatedCardTitle: { fontSize: 14, fontWeight: '600' },
+  relatedCardSummary: { fontSize: 12, lineHeight: 17, marginTop: 2 },
 });

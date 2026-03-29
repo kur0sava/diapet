@@ -14,6 +14,12 @@ export interface Article {
   readingTimeMinutes: number;
   tags: BilingualText[];
   imageSource?: string;
+  /** Display order within category (lower = first) */
+  order?: number;
+  /** Bibliographic references (ISFM, Rand, Cornell, AAHA) */
+  references?: BilingualText[];
+  /** IDs of related articles for cross-navigation */
+  relatedArticleIds?: string[];
 }
 
 export type ArticleCategory =
@@ -23,7 +29,8 @@ export type ArticleCategory =
   | 'nutrition'
   | 'complications'
   | 'remission'
-  | 'tips';
+  | 'tips'
+  | 'lifestyle';
 
 // ── Feed Guide types ──
 

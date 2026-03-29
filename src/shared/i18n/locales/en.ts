@@ -355,6 +355,8 @@ export const en = {
     articleNotFound: 'Article not found',
     tableOfContents: 'Table of Contents',
     disclaimer: 'This information is for educational purposes and does not replace veterinary advice.',
+    references: 'References',
+    relatedArticles: 'Related Articles',
     categories: {
       basics: 'Basics',
       treatment: 'Treatment',
@@ -363,6 +365,7 @@ export const en = {
       complications: 'Complications',
       remission: 'Remission',
       tips: 'Tips',
+      lifestyle: 'Living with Diabetes',
     },
   },
 
