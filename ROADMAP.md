@@ -464,50 +464,50 @@
 
 ---
 
-## ЭТАП 8: v2.5 Architecture Fixes ⬅ СЛЕДУЮЩИЙ
+## ЭТАП 8: v2.5 Architecture Fixes ✅ DONE (2026-03-29)
 
-> Исправления из архитектурного аудита 2026-03-29. P0 — обязательно перед релизом.
+> Исправления из архитектурного аудита 2026-03-29. 3 коммита, 33 файла.
 
-### Фаза 8A — P0: Critical + High (1 сессия)
+### Фаза 8A — P0: Critical + High ✅
 
 **CRITICAL:**
-- [ ] A1: Schema.ts документировать как "финальная схема" (не v1). Добавить комментарий + проверку что migrations идемпотентны
-- [ ] A2: App.tsx:122 — hardcoded Russian storage error → i18n (`t('app.storageError')`)
+- [x] A1: Schema.ts — DB_VERSION→CURRENT_SCHEMA_VERSION=7, fresh installs skip migrations
+- [x] A2: App.tsx — hardcoded Russian → i18n (errors.storageError, errors.storageRetry)
 
 **HIGH — Data Consistency:**
-- [ ] A3: EditPetScreen — fix cache invalidation keys (используют `['pet']` но queries с petId)
-- [ ] A4: Query key factory — `src/shared/utils/queryKeys.ts` для type-safe ключей
-- [ ] A5: DashboardScreen — trend calculation обернуть в `useMemo`
-- [ ] A6: DashboardScreen — refetch array dependency loop fix
+- [x] A3: EditPetScreen — removed dead ['pet'] invalidation (pets in Zustand)
+- [x] A4: Query key factory — queryKeys.ts, migrated all 16 screens
+- [x] A5: DashboardScreen — trend/schedule wrapped in useMemo
+- [x] A6: False positive — RQ5 stable refetch refs, no loop
 
 **HIGH — Security/Cost:**
-- [ ] A7: AiAssistantScreen — rate limit на chat (debounce 5с между запросами)
-- [ ] A8: Subscription cache — снизить TTL 24ч→4ч + инвалидировать при AppState 'active'
+- [x] A7: AiAssistantScreen — 5s rate limit between messages
+- [x] A8: Subscription cache TTL 24h→4h + AppState 'active' refresh
 
 **HIGH — Missing Features:**
-- [ ] A9: Deep linking config в RootNavigator (`diapet://glucose/:id`, `diapet://emergency`)
+- [x] A9: Deep linking — diapet:// scheme + linking config in RootNavigator
 
-### Фаза 8B — P1: Medium priority (1 сессия)
+### Фаза 8B — P1: Medium priority ✅
 
 **Performance:**
-- [ ] B1: SQL indexes — добавить migration v7: `idx_glucose_pet`, `idx_symptoms_pet`, `idx_glucose_pet_date_desc`
-- [ ] B2: GlucoseListScreen/InjectionListScreen/FeedingListScreen — подключить cursor pagination из repositories
+- [x] B1: Migration v7 — 5 performance indexes on pet_id columns
+- [x] B2: Already done — useInfiniteQuery cursor pagination on all 4 lists
 
 **Navigation:**
-- [ ] B3: Убрать дубль FeedGuide routes из HomeStack (оставить в EncyclopediaStack)
+- [x] B3: Not a bug — FeedGuide in HomeStack needed for Dashboard nav
 
 **API:**
-- [ ] B4: subscriptionApi — дифференциация ошибок (401 vs 500 vs network)
-- [ ] B5: subscriptionApi — exponential backoff в payment polling
+- [x] B4: subscriptionApi — error.status for classification
+- [x] B5: subscriptionApi — exponential backoff (2s→32s), skip 401/403
 
 **Validation:**
-- [ ] B6: AddExpenseScreen — max amount cap (10M)
+- [x] B6: Already done — 10M cap exists
 
 **Code Quality:**
-- [ ] B7: useAchievements — удалить TODO-заглушку или реализовать
-- [ ] B8: Magic numbers → константы (MAX_WEIGHT, MAX_DOSE, MAX_TIMES, etc.)
+- [x] B7: Removed dead useAchievements.ts
+- [x] B8: 6 validation constants in types.ts, replaced in 6 files
 
-> **CHECKPOINT 8**: tsc ✅ | commit + push
+> **CHECKPOINT 8**: tsc ✅ | 3 коммита | pushed
 
 ---
 
