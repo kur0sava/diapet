@@ -28,6 +28,11 @@
       "ios": {
         "distribution": "store"
       }
+    },
+    "rustore": {
+      "android": {
+        "buildType": "apk"
+      }
     }
   },
   "submit": {
