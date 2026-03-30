@@ -15,6 +15,13 @@ import { pancreatitisDiabetes } from './articles/pancreatitis-diabetes';
 import { firstDays } from './articles/first-days';
 import { flexibleMonitoring } from './articles/flexible-monitoring';
 import { realLifeManagement } from './articles/real-life-management';
+import { stressHyperglycemia } from './articles/stress-hyperglycemia';
+import { comorbidities } from './articles/comorbidities';
+import { ketoneTesting } from './articles/ketone-testing';
+import { dentalDisease } from './articles/dental-disease';
+import { glucoseCurvesPractice } from './articles/glucose-curves-practice';
+import { costPlanning } from './articles/cost-planning';
+import { choosingVet } from './articles/choosing-vet';
 
 export const articles: Article[] = [
   whatIsDiabetes,
@@ -32,4 +39,11 @@ export const articles: Article[] = [
   firstDays,
   flexibleMonitoring,
   realLifeManagement,
+  stressHyperglycemia,
+  comorbidities,
+  ketoneTesting,
+  dentalDisease,
+  glucoseCurvesPractice,
+  costPlanning,
+  choosingVet,
 ];

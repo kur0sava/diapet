@@ -366,6 +366,7 @@ export const ru = {
       remission: 'Ремиссия',
       tips: 'Советы',
       lifestyle: 'Жизнь с диабетом',
+      medical: 'Медицина',
     },
   },
 

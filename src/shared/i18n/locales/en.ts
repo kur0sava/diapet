@@ -366,6 +366,7 @@ export const en = {
       remission: 'Remission',
       tips: 'Tips',
       lifestyle: 'Living with Diabetes',
+      medical: 'Medical',
     },
   },
 

@@ -30,7 +30,8 @@ export type ArticleCategory =
   | 'complications'
   | 'remission'
   | 'tips'
-  | 'lifestyle';
+  | 'lifestyle'
+  | 'medical';
 
 // ── Feed Guide types ──
 
