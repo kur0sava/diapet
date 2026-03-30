@@ -355,6 +355,7 @@ export const en = {
     articleNotFound: 'Article not found',
     tableOfContents: 'Table of Contents',
     disclaimer: 'This information is for educational purposes and does not replace veterinary advice.',
+    bookmarks: 'Bookmarks',
     references: 'References',
     relatedArticles: 'Related Articles',
     categories: {

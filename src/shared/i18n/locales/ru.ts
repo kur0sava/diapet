@@ -355,6 +355,7 @@ export const ru = {
     articleNotFound: 'Статья не найдена',
     tableOfContents: 'Оглавление',
     disclaimer: 'Информация носит образовательный характер и не заменяет консультацию ветеринара.',
+    bookmarks: 'Закладки',
     references: 'Источники',
     relatedArticles: 'Связанные статьи',
     categories: {

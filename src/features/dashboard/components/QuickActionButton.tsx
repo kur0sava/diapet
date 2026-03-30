@@ -43,6 +43,8 @@ export function QuickActionButton({ iconName, label, color, onPress }: Props) {
       // eslint-disable-next-line react-hooks/immutability
       onPressOut={() => { scale.value = withSpring(1, { damping: 15 }); }}
       onPress={() => { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); onPress(); }}
+      accessibilityLabel={label}
+      accessibilityRole="button"
     >
       <LinearGradient
         colors={gradientColors}

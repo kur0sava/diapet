@@ -114,7 +114,7 @@ export default function MoreMenuScreen() {
             <Icon name="chevron-forward" size={18} color={theme.colors.textTertiary} />
           </TouchableOpacity>
         ))}
-        <TouchableOpacity style={[styles.emergencyBtn, { marginTop: 16 }]} onPress={() => rootNavigation.navigate('Emergency')} activeOpacity={0.8}>
+        <TouchableOpacity style={[styles.emergencyBtn, { marginTop: 16 }]} onPress={() => rootNavigation.navigate('Emergency')} activeOpacity={0.8} accessibilityLabel={t('emergency.emergencyMode')} accessibilityRole="button">
           <Icon name="warning" size={20} color="#fff" style={{ marginRight: 8 }} />
           <Text style={[styles.emergencyText, { fontFamily: theme.fonts.bold }]}>{t('emergency.emergencyMode')}</Text>
         </TouchableOpacity>

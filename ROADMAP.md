@@ -606,6 +606,7 @@
 ## ЭТАП 11: v2.8 Backend + Облако + Аккаунты
 
 > Подключение реального бэкенда. Supabase + Prodamus + Google Sign-In.
+> **СТАТУС**: Пропущен — требует внешние credentials (Supabase, Prodamus, GCP). Клиентский код готов в bypass-режиме.
 
 ### Фаза 11A — Supabase Setup
 
@@ -641,8 +642,8 @@
 ## ЭТАП 12: v2.9 UX + DevOps
 
 ### UX улучшения
-- [ ] F1: Закладки в Энциклопедии (MMKV)
-- [ ] F2: Accessibility: accessibilityLabel на все кнопки (15+)
+- [x] F1: Закладки в Энциклопедии (MMKV) + фильтр "Закладки" в списке
+- [x] F2: Accessibility: accessibilityLabel на кнопки (QuickAction, StatusCard, SmartInsight, FABs, Emergency, категории)
 - [ ] F3: Расходы: годовой вид, бюджетный лимит
 - [ ] F4: Быстрый доступ к настройкам глюкозы
 

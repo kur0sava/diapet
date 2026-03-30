@@ -23,6 +23,8 @@ export function StatusCard({ iconName, iconColor, label, value, unit, color, sub
   return (
     <Animated.View
       entering={FadeInUp.delay(index * 100).duration(400)}
+      accessibilityLabel={`${label}: ${value} ${unit ?? ''}`}
+      accessibilityRole="text"
       style={[
         styles.card,
         {

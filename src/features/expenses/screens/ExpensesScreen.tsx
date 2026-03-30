@@ -135,7 +135,7 @@ export default function ExpensesScreen() {
             actionLabel={t('expenses.addExpense')} onAction={() => navigation.navigate('AddExpense', {})} />
         }
       />
-      <TouchableOpacity style={[styles.fab, { backgroundColor: theme.colors.primary }]} onPress={() => navigation.navigate('AddExpense', {})}>
+      <TouchableOpacity style={[styles.fab, { backgroundColor: theme.colors.primary }]} onPress={() => navigation.navigate('AddExpense', {})} accessibilityLabel={t('expenses.addExpense')} accessibilityRole="button">
         <Icon name="add" size={28} color="#fff" />
       </TouchableOpacity>
     </SafeAreaView>

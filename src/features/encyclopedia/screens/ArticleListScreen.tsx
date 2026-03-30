@@ -11,6 +11,7 @@ import { articles } from '../data/articles';
 import { Article, ArticleCategory, BilingualText } from '../types';
 import { Icon } from '@shared/components/ui/Icon';
 import type { IoniconName } from '@shared/components/ui';
+import { storageUtils, StorageKeys } from '@storage/mmkv/storage';
 
 const useLang = () => {
   const { i18n } = useTranslation();
@@ -36,6 +37,10 @@ export default function ArticleListScreen() {
   const lang = useLang();
   const [search, setSearch] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<ArticleCategory | null>(null);
+  const [showBookmarks, setShowBookmarks] = useState(false);
+  const bookmarkedIds = showBookmarks
+    ? (storageUtils.getObject<string[]>(StorageKeys.BOOKMARKED_ARTICLES) ?? [])
+    : [];
 
   const categoryLabels: Record<ArticleCategory, string> = {
     basics: t('encyclopedia.categories.basics'),
@@ -54,7 +59,8 @@ export default function ArticleListScreen() {
       lang(a.titleKey).toLowerCase().includes(search.toLowerCase()) ||
       lang(a.summaryKey).toLowerCase().includes(search.toLowerCase());
     const matchCategory = !selectedCategory || a.category === selectedCategory;
-    return matchSearch && matchCategory;
+    const matchBookmark = !showBookmarks || bookmarkedIds.includes(a.id);
+    return matchSearch && matchCategory && matchBookmark;
   });
 
   const categories = [...new Set(articles.map(a => a.category))] as ArticleCategory[];
@@ -120,6 +126,26 @@ export default function ArticleListScreen() {
         showsHorizontalScrollIndicator={false}
         style={{ flexShrink: 0, minHeight: 44 }}
         contentContainerStyle={styles.categories}
+        ListHeaderComponent={
+          <TouchableOpacity
+            style={[
+              styles.categoryChip,
+              {
+                backgroundColor: showBookmarks ? '#F5A623' : theme.colors.surface,
+                borderColor: showBookmarks ? '#F5A623' : theme.colors.border,
+                borderWidth: 1,
+              },
+            ]}
+            onPress={() => setShowBookmarks(!showBookmarks)}
+            accessibilityLabel={t('encyclopedia.bookmarks')}
+            accessibilityRole="button"
+          >
+            <Icon name={showBookmarks ? 'star' : 'star-outline'} size={16} color={showBookmarks ? '#fff' : '#F5A623'} />
+            <Text style={{ color: showBookmarks ? '#fff' : theme.colors.text, fontSize: 13, fontWeight: '500' }}>
+              {t('encyclopedia.bookmarks')}
+            </Text>
+          </TouchableOpacity>
+        }
         renderItem={({ item }) => (
           <TouchableOpacity
             style={[
@@ -131,6 +157,8 @@ export default function ArticleListScreen() {
               },
             ]}
             onPress={() => setSelectedCategory(selectedCategory === item ? null : item)}
+            accessibilityLabel={categoryLabels[item]}
+            accessibilityRole="button"
           >
             <Icon name={CATEGORY_ICONS[item].name} size={16} color={selectedCategory === item ? '#fff' : CATEGORY_ICONS[item].color} />
             <Text style={{ color: selectedCategory === item ? '#fff' : theme.colors.text, fontSize: 13, fontWeight: '500' }}>

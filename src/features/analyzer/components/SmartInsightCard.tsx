@@ -45,6 +45,8 @@ export function SmartInsightCard({ alert, onPress }: Props) {
         onPress={onPress}
         activeOpacity={onPress ? 0.7 : 1}
         disabled={!onPress}
+        accessibilityLabel={`${title}: ${body}`}
+        accessibilityRole="alert"
         style={[
           styles.card,
           {
