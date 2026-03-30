@@ -126,6 +126,12 @@ But you can prevent this from happening! Consistent treatment and your loving ca
   },
   category: 'basics',
   readingTimeMinutes: 5,
+  order: 1,
+  relatedArticleIds: ['first-days', 'remission', 'diet', 'dka'],
+  references: [
+    { ru: 'Rand J. — Feline Diabetes Mellitus, Veterinary Clinics, 2012', en: 'Rand J. — Feline Diabetes Mellitus, Veterinary Clinics, 2012' },
+    { ru: 'ISFM Guidelines on Diabetes Mellitus in Cats, 2023', en: 'ISFM Guidelines on Diabetes Mellitus in Cats, 2023' },
+  ],
   tags: [
     { ru: 'диабет', en: 'diabetes' },
     { ru: 'симптомы', en: 'symptoms' },

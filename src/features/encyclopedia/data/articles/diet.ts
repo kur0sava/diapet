@@ -156,6 +156,12 @@ Don't rush! A sudden switch can upset the stomach and destabilize blood sugar.`,
   },
   category: 'nutrition',
   readingTimeMinutes: 7,
+  order: 1,
+  relatedArticleIds: ['what-is-diabetes', 'remission', 'common-mistakes', 'cost-planning'],
+  references: [
+    { ru: 'Bennett N et al — Comparison of a low-carbohydrate vs high-fiber diet in cats with diabetes, JFMS 2006', en: 'Bennett N et al — Comparison of a low-carbohydrate vs high-fiber diet in cats with diabetes, JFMS 2006' },
+    { ru: 'ISFM Guidelines on Diabetes Mellitus in Cats, 2023', en: 'ISFM Guidelines on Diabetes Mellitus in Cats, 2023' },
+  ],
   tags: [
     { ru: 'диета', en: 'diet' },
     { ru: 'питание', en: 'nutrition' },

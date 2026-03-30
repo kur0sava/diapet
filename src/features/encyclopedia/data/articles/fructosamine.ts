@@ -104,6 +104,12 @@ When a cat goes into remission, fructosamine returns to the healthy range (170-3
   },
   category: 'monitoring',
   readingTimeMinutes: 5,
+  order: 2,
+  relatedArticleIds: ['glucose_monitoring', 'flexible-monitoring', 'stress-hyperglycemia'],
+  references: [
+    { ru: 'Reusch CE et al — Fructosamine in cats with diabetes mellitus, JVIM 1993', en: 'Reusch CE et al — Fructosamine in cats with diabetes mellitus, JVIM 1993' },
+    { ru: 'ISFM Guidelines on Diabetes Mellitus in Cats, 2023', en: 'ISFM Guidelines on Diabetes Mellitus in Cats, 2023' },
+  ],
   tags: [
     { ru: 'фруктозамин', en: 'fructosamine' },
     { ru: 'мониторинг', en: 'monitoring' },

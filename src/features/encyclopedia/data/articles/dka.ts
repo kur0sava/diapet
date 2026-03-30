@@ -152,6 +152,12 @@ DKA most commonly develops when:
   },
   category: 'complications',
   readingTimeMinutes: 4,
+  order: 2,
+  relatedArticleIds: ['what-is-diabetes', 'ketone-testing', 'hypoglycemia'],
+  references: [
+    { ru: "O'Brien MA — Diabetic Ketoacidosis in Cats, Veterinary Clinics 2010", en: "O'Brien MA — Diabetic Ketoacidosis in Cats, Veterinary Clinics 2010" },
+    { ru: 'ISFM Guidelines on Diabetes Mellitus in Cats, 2023', en: 'ISFM Guidelines on Diabetes Mellitus in Cats, 2023' },
+  ],
   tags: [
     { ru: 'кетоацидоз', en: 'ketoacidosis' },
     { ru: 'осложнения', en: 'complications' },

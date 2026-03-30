@@ -112,6 +112,12 @@ Remember: your attention and care are already half the treatment.`,
   },
   category: 'complications',
   readingTimeMinutes: 4,
+  order: 1,
+  relatedArticleIds: ['what-is-diabetes', 'glucose_monitoring', 'injection-technique'],
+  references: [
+    { ru: 'Mizisin AP et al — Feline Diabetic Neuropathy, Veterinary Pathology, 2007', en: 'Mizisin AP et al — Feline Diabetic Neuropathy, Veterinary Pathology, 2007' },
+    { ru: 'ISFM Guidelines on Diabetes Mellitus in Cats, 2023', en: 'ISFM Guidelines on Diabetes Mellitus in Cats, 2023' },
+  ],
   tags: [
     { ru: 'нейропатия', en: 'neuropathy' },
     { ru: 'осложнения', en: 'complications' },

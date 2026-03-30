@@ -164,6 +164,12 @@ With quick action, hypoglycemia responds very well to treatment. Honey on the gu
   },
   category: 'tips',
   readingTimeMinutes: 3,
+  order: 3,
+  relatedArticleIds: ['injection-technique', 'glucose_monitoring', 'dka', 'first-days'],
+  references: [
+    { ru: 'ISFM Guidelines on Diabetes Mellitus in Cats, 2023', en: 'ISFM Guidelines on Diabetes Mellitus in Cats, 2023' },
+    { ru: 'Cornell Feline Health Center — Feline Diabetes, 2021', en: 'Cornell Feline Health Center — Feline Diabetes, 2021' },
+  ],
   tags: [
     { ru: 'гипогликемия', en: 'hypoglycemia' },
     { ru: 'низкий сахар', en: 'low blood sugar' },

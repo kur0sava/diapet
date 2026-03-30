@@ -130,6 +130,12 @@ So even during remission, check blood sugar every 1-2 months. It's a small effor
   },
   category: 'remission',
   readingTimeMinutes: 6,
+  order: 1,
+  relatedArticleIds: ['what-is-diabetes', 'diet', 'glucose_monitoring', 'flexible-monitoring'],
+  references: [
+    { ru: 'Roomp K, Rand J — Intensive blood glucose control is safe and effective in diabetic cats using home monitoring and treatment with glargine, JFMS 2009', en: 'Roomp K, Rand J — Intensive blood glucose control is safe and effective in diabetic cats using home monitoring and treatment with glargine, JFMS 2009' },
+    { ru: 'ISFM Guidelines on Diabetes Mellitus in Cats, 2023', en: 'ISFM Guidelines on Diabetes Mellitus in Cats, 2023' },
+  ],
   tags: [
     { ru: 'ремиссия', en: 'remission' },
     { ru: 'лечение', en: 'treatment' },

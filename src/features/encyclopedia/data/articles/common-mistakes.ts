@@ -184,6 +184,12 @@ You're doing great. Really.`,
   },
   category: 'tips',
   readingTimeMinutes: 6,
+  order: 1,
+  relatedArticleIds: ['first-days', 'injection-technique', 'hypoglycemia', 'choosing-vet'],
+  references: [
+    { ru: 'ISFM Guidelines on Diabetes Mellitus in Cats, 2023', en: 'ISFM Guidelines on Diabetes Mellitus in Cats, 2023' },
+    { ru: 'AAHA Diabetes Management Guidelines for Dogs and Cats, 2018', en: 'AAHA Diabetes Management Guidelines for Dogs and Cats, 2018' },
+  ],
   tags: [
     { ru: 'ошибки', en: 'mistakes' },
     { ru: 'советы', en: 'tips' },

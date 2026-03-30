@@ -158,6 +158,12 @@ This is exactly why changing the dose on your own is risky — without a full gl
   },
   category: 'monitoring',
   readingTimeMinutes: 7,
+  order: 1,
+  relatedArticleIds: ['flexible-monitoring', 'fructosamine', 'glucose-curves-practice', 'stress-hyperglycemia'],
+  references: [
+    { ru: 'ISFM Guidelines on Diabetes Mellitus in Cats, 2023', en: 'ISFM Guidelines on Diabetes Mellitus in Cats, 2023' },
+    { ru: 'Cornell Feline Health Center — Feline Diabetes, 2021', en: 'Cornell Feline Health Center — Feline Diabetes, 2021' },
+  ],
   tags: [
     { ru: 'мониторинг', en: 'monitoring' },
     { ru: 'глюкоза', en: 'glucose' },

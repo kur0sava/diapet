@@ -138,6 +138,12 @@ This is critically important, so please remember:
   },
   category: 'treatment',
   readingTimeMinutes: 6,
+  order: 1,
+  relatedArticleIds: ['injection-technique', 'glucose_monitoring', 'glucose-curves-practice', 'cost-planning'],
+  references: [
+    { ru: 'ISFM Guidelines on Diabetes Mellitus in Cats, 2023', en: 'ISFM Guidelines on Diabetes Mellitus in Cats, 2023' },
+    { ru: 'Rand J. — Feline Diabetes Mellitus, Veterinary Clinics, 2012', en: 'Rand J. — Feline Diabetes Mellitus, Veterinary Clinics, 2012' },
+  ],
   tags: [
     { ru: 'инсулин', en: 'insulin' },
     { ru: 'лечение', en: 'treatment' },

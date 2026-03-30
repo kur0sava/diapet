@@ -134,6 +134,12 @@ Every injection you give is an act of love. Before long, you'll be doing it on a
   },
   category: 'treatment',
   readingTimeMinutes: 4,
+  order: 2,
+  relatedArticleIds: ['first-days', 'insulin_types', 'common-mistakes', 'real-life-management'],
+  references: [
+    { ru: 'ISFM Guidelines on Diabetes Mellitus in Cats, 2023', en: 'ISFM Guidelines on Diabetes Mellitus in Cats, 2023' },
+    { ru: 'AAHA Diabetes Management Guidelines for Dogs and Cats, 2018', en: 'AAHA Diabetes Management Guidelines for Dogs and Cats, 2018' },
+  ],
   tags: [
     { ru: 'инъекции', en: 'injections' },
     { ru: 'инсулин', en: 'insulin' },
