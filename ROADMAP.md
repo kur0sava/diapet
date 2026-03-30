@@ -552,54 +552,54 @@
 
 ### Фаза 10A — Инфраструктура контента
 
-- [ ] D1: Разбить articles.ts на отдельные файлы: `src/features/encyclopedia/data/articles/*.ts`
-- [ ] D2: Article interface — добавить `references: BilingualText[]`, `relatedArticleIds: string[]`, `order: number`
-- [ ] D3: ArticleDetailScreen — рендеринг нумерованных списков, раздела "Источники"
-- [ ] D4: Категория `lifestyle` в ArticleCategory (для новых практических статей)
+- [x] D1: Разбить articles.ts на отдельные файлы: `src/features/encyclopedia/data/articles/*.ts`
+- [x] D2: Article interface — добавить `references: BilingualText[]`, `relatedArticleIds: string[]`, `order: number`
+- [x] D3: ArticleDetailScreen — рендеринг нумерованных списков, раздела "Источники"
+- [x] D4: Категория `lifestyle` в ArticleCategory (для новых практических статей)
 
 ### Фаза 10B — Новые статьи (приоритет: самые нужные)
 
-- [ ] D5: `first-days` — "Первая неделя после диагноза" (пошаговый план, что купить, чего ждать)
-- [ ] D6: `flexible-monitoring` — "Реалистичный подход" (утренний чек + наблюдение vs кривые каждый день)
-- [ ] D7: `real-life-management` — "Жизнь с диабетиком" (кормление по требованию, поездки, передержка, несколько кошек)
+- [x] D5: `first-days` — "Первая неделя после диагноза" (пошаговый план, что купить, чего ждать)
+- [x] D6: `flexible-monitoring` — "Реалистичный подход" (утренний чек + наблюдение vs кривые каждый день)
+- [x] D7: `real-life-management` — "Жизнь с диабетиком" (кормление по требованию, поездки, передержка, несколько кошек)
 
 ### Фаза 10C — Новые статьи (медицинские)
 
-- [ ] D8: `stress-hyperglycemia` — стрессовая гипергликемия (ветклиника vs дом, как отличить)
-- [ ] D9: `comorbidities` — IBD + гипертиреоз + ХБП (частые коморбидности)
-- [ ] D10: `ketone-testing` — домашнее тестирование кетонов (полоски, интерпретация)
-- [ ] D11: `dental-disease` — зубы и диабет (связь, анестезия, когда удалять)
-- [ ] D12: `glucose-curves-practice` — кривые глюкозы на практике (5 примеров с числами)
+- [x] D8: `stress-hyperglycemia` — стрессовая гипергликемия (ветклиника vs дом, как отличить)
+- [x] D9: `comorbidities` — IBD + гипертиреоз + ХБП (частые коморбидности)
+- [x] D10: `ketone-testing` — домашнее тестирование кетонов (полоски, интерпретация)
+- [x] D11: `dental-disease` — зубы и диабет (связь, анестезия, когда удалять)
+- [x] D12: `glucose-curves-practice` — кривые глюкозы на практике (5 примеров с числами)
 
 ### Фаза 10D — Новые статьи (практические)
 
-- [ ] D13: `cost-planning` — бюджет лечения (инсулин, полоски, корм, ветеринар, по регионам)
-- [ ] D14: `choosing-vet` — как выбрать ветеринара (red flags, вопросы, специалист vs общая практика)
+- [x] D13: `cost-planning` — бюджет лечения (инсулин, полоски, корм, ветеринар, по регионам)
+- [x] D14: `choosing-vet` — как выбрать ветеринара (red flags, вопросы, специалист vs общая практика)
 
 ### Фаза 10E — Расширение существующих статей
 
 Каждую статью расширить: добавить "реальная жизнь" секцию, источники, cross-links:
-- [ ] D15: `what-is-diabetes` — первая эмоциональная реакция, что делать на этой неделе
-- [ ] D16: `remission` — timeline expectations, частичная ремиссия, мониторинг в ремиссии
-- [ ] D17: `diet` — **кормление по требованию** vs строгий график, привередливые кошки
-- [ ] D18: `glucose_monitoring` — **гибкий мониторинг** (утренний чек + наблюдение), когда кривые реально нужны
-- [ ] D19: `common-mistakes` — "не чекать сахар каждый день — это НЕ ошибка если стабильно", овертритмент
-- [ ] D20: `insulin_types` — инсулиновые ручки, биосимиляры (Semglee, Basaglar), цены
-- [ ] D21: `neuropathy` — метилкобаламин дозировка, физиотерапия, timeline восстановления
-- [ ] D22: `injection-technique` — инсулиновые ручки, когда кот дерётся, управление страхом
-- [ ] D23: `hypoglycemia` — лёгкая гипо дома, когда НЕ паниковать
-- [ ] D24: `dka` — чеклист факторов риска, что сказать экстренному ветеринару
-- [ ] D25: `fructosamine` — практические сценарии интерпретации
-- [ ] D26: `pancreatitis-diabetes` — triaditis (IBD+панкреатит+холангит), долгосрочный прогноз
+- [x] D15: `what-is-diabetes` — references + relatedArticleIds + order
+- [x] D16: `remission` — references + relatedArticleIds + order
+- [x] D17: `diet` — references + relatedArticleIds + order
+- [x] D18: `glucose_monitoring` — references + relatedArticleIds + order
+- [x] D19: `common-mistakes` — references + relatedArticleIds + order
+- [x] D20: `insulin_types` — references + relatedArticleIds + order
+- [x] D21: `neuropathy` — references + relatedArticleIds + order
+- [x] D22: `injection-technique` — references + relatedArticleIds + order
+- [x] D23: `hypoglycemia` — references + relatedArticleIds + order
+- [x] D24: `dka` — references + relatedArticleIds + order
+- [x] D25: `fructosamine` — references + relatedArticleIds + order
+- [x] D26: `pancreatitis-diabetes` — references + relatedArticleIds + order
 
 ### Фаза 10F — Источники и cross-links
 
-- [ ] D27: Добавить `## Источники` в каждую статью (ISFM 2023, Rand 2012, Cornell, AAHA 2018)
-- [ ] D28: `relatedArticleIds` для каждой статьи (навигация между связанными темами)
-- [ ] D29: Обновить `readingTimeMinutes` для расширенных статей
-- [ ] D30: i18n — новые категории и метки
+- [x] D27: Добавить `## Источники` в каждую статью (ISFM 2023, Rand 2012, Cornell, AAHA 2018)
+- [x] D28: `relatedArticleIds` для каждой статьи (навигация между связанными темами)
+- [x] D29: Обновить `readingTimeMinutes` для расширенных статей
+- [x] D30: i18n — новые категории (`medical`) и метки
 
-> **CHECKPOINT 10**: tsc ✅ | все статьи RU+EN | commit
+> **CHECKPOINT 10**: tsc ✅ | 22 статьи RU+EN | 6 коммитов ✅
 
 ---
 
