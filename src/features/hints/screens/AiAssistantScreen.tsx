@@ -19,6 +19,7 @@ import { useTheme } from '@shared/theme';
 import { useMoreNavigation, useRootNavigation } from '@navigation/hooks';
 import { useSubscription } from '@features/subscription/hooks/useSubscription';
 import { usePetStore } from '@shared/stores/petStore';
+import { isBackendConfigured } from '@shared/stores/subscriptionStore';
 import { storage, StorageKeys, storageUtils } from '@storage/mmkv/storage';
 import { glucoseRepository, injectionRepository, scheduleRepository } from '@storage/database';
 import { buildAiSystemPrompt, AiPetContext } from '../data/aiSystemPrompt';
@@ -292,7 +293,9 @@ export default function AiAssistantScreen() {
       </LinearGradient>
 
       {/* Body */}
-      {!isPro ? (
+      {!isBackendConfigured() ? (
+        <ComingSoonGate theme={theme} t={t} />
+      ) : !isPro ? (
         <ProGate
           theme={theme}
           t={t}
@@ -383,6 +386,53 @@ export default function AiAssistantScreen() {
         </KeyboardAvoidingView>
       )}
     </SafeAreaView>
+  );
+}
+
+// ---- ComingSoonGate sub-component ----
+
+interface ComingSoonGateProps {
+  theme: ReturnType<typeof import('@shared/theme').useTheme>['theme'];
+  t: ReturnType<typeof import('react-i18next').useTranslation>['t'];
+}
+
+function ComingSoonGate({ theme, t }: ComingSoonGateProps) {
+  return (
+    <View style={[styles.proGate, { backgroundColor: theme.colors.background }]}>
+      <View style={[styles.proCard, { backgroundColor: theme.colors.surface, ...theme.shadows.md }]}>
+        <View style={[styles.proIconContainer, { backgroundColor: `${theme.colors.primary}15` }]}>
+          <Icon name="chatbubble-ellipses" size={40} color={theme.colors.primary} />
+        </View>
+        <Text style={[styles.proTitle, { color: theme.colors.text, fontFamily: theme.fonts.bold }]}>
+          {t('hints.aiComingSoonTitle')}
+        </Text>
+        <Text style={[styles.proDesc, { color: theme.colors.textSecondary, fontFamily: theme.fonts.regular }]}>
+          {t('hints.aiComingSoonDesc')}
+        </Text>
+
+        <View style={styles.comingSoonFeatures}>
+          {[
+            { icon: 'sparkles' as const, label: t('subscription.features.aiPrediction') },
+            { icon: 'chatbubble-ellipses' as const, label: t('subscription.features.aiAssistant') },
+            { icon: 'analytics' as const, label: t('subscription.features.advancedAnalytics') },
+            { icon: 'document-text' as const, label: t('subscription.features.pdfExport') },
+            { icon: 'paw' as const, label: t('subscription.features.unlimitedPets') },
+          ].map((item, i) => (
+            <View key={i} style={styles.comingSoonFeatureRow}>
+              <Icon name={item.icon} size={16} color={theme.colors.primary} />
+              <Text style={[styles.comingSoonFeatureText, { color: theme.colors.textSecondary }]}>{item.label}</Text>
+            </View>
+          ))}
+        </View>
+
+        <View style={[styles.comingSoonBadge, { backgroundColor: `${theme.colors.success}15` }]}>
+          <Icon name="gift-outline" size={18} color={theme.colors.success} />
+          <Text style={[styles.comingSoonBadgeText, { color: theme.colors.success, fontFamily: theme.fonts.semibold }]}>
+            {t('subscription.allFeaturesUnlocked')}
+          </Text>
+        </View>
+      </View>
+    </View>
   );
 }
 
@@ -613,4 +663,11 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 17,
   },
+
+  // Coming Soon gate
+  comingSoonFeatures: { width: '100%', gap: 8, marginTop: 4 },
+  comingSoonFeatureRow: { flexDirection: 'row', alignItems: 'center', gap: 10 },
+  comingSoonFeatureText: { fontSize: 14 },
+  comingSoonBadge: { flexDirection: 'row', alignItems: 'center', gap: 8, paddingHorizontal: 16, paddingVertical: 10, borderRadius: 12, marginTop: 4 },
+  comingSoonBadgeText: { fontSize: 14 },
 });

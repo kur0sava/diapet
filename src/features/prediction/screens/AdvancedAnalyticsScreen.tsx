@@ -20,6 +20,7 @@ import { glucoseRepository } from '@storage/database';
 import { Card } from '@shared/components/ui';
 import { useSubscription } from '@features/subscription/hooks/useSubscription';
 import { useRootNavigation } from '@navigation/hooks';
+import { isBackendConfigured } from '@shared/stores/subscriptionStore';
 
 import { usePrediction } from '../hooks/usePrediction';
 import { timeUntilNextPrediction } from '../data/predictionStorage';
@@ -87,6 +88,7 @@ export default function AdvancedAnalyticsScreen() {
     return () => { clearInterval(interval); sub.remove(); };
   }, [nextAvailableIn, petId]);
 
+  const backendReady = isBackendConfigured();
   const hasPrediction = prediction && prediction.status !== 'error';
   const isInsufficientData = prediction?.status === 'insufficient_data';
 
@@ -124,141 +126,184 @@ export default function AdvancedAnalyticsScreen() {
           />
         }
       >
-        {/* Disclaimer — always visible */}
-        <DisclaimerBanner
-          text={prediction?.disclaimer ?? t('prediction.defaultDisclaimer')}
-        />
-
-        {/* Error state */}
-        {error && (
-          <Card style={[styles.errorCard, { borderColor: theme.colors.danger }]}>
-            <Icon name="alert-circle" size={20} color={theme.colors.danger} />
-            <Text style={[styles.errorText, { color: theme.colors.danger }]}>{error}</Text>
-          </Card>
-        )}
-
-        {/* No prediction yet */}
-        {!hasPrediction && !isLoading && !error && (
-          <Card style={styles.emptyCard}>
-            <Icon name="sparkles" size={40} color={theme.colors.primary} />
-            <Text style={[styles.emptyTitle, { color: theme.colors.text, fontFamily: theme.fonts.bold }]}>
-              {t('prediction.emptyTitle')}
+        {/* Coming Soon — backend not configured */}
+        {!backendReady ? (
+          <Card style={styles.comingSoonCard}>
+            <View style={[styles.comingSoonIcon, { backgroundColor: `${theme.colors.primary}15` }]}>
+              <Icon name="sparkles" size={40} color={theme.colors.primary} />
+            </View>
+            <Text style={[styles.comingSoonTitle, { color: theme.colors.text, fontFamily: theme.fonts.bold }]}>
+              {t('prediction.comingSoonTitle')}
             </Text>
-            <Text style={[styles.emptyText, { color: theme.colors.textSecondary }]}>
-              {t('prediction.emptySubtitle')}
+            <Text style={[styles.comingSoonDesc, { color: theme.colors.textSecondary }]}>
+              {t('prediction.comingSoonDesc')}
             </Text>
-          </Card>
-        )}
 
-        {/* Insufficient data */}
-        {isInsufficientData && prediction && (
-          <Card style={styles.insufficientCard}>
-            <Icon name="information-circle" size={24} color={theme.colors.warning} />
-            <Text style={[styles.insufficientTitle, { color: theme.colors.text, fontFamily: theme.fonts.semibold }]}>
-              {t('prediction.insufficientData')}
-            </Text>
-            <Text style={[styles.insufficientText, { color: theme.colors.textSecondary }]}>
-              {prediction.summary}
-            </Text>
-          </Card>
-        )}
+            <View style={styles.proFeaturesList}>
+              <Text style={[styles.proFeaturesLabel, { color: theme.colors.text, fontFamily: theme.fonts.semibold }]}>
+                {t('prediction.comingSoonIncluded')}
+              </Text>
+              {[
+                { icon: 'sparkles' as const, label: t('subscription.features.aiPrediction') },
+                { icon: 'chatbubble-ellipses' as const, label: t('subscription.features.aiAssistant') },
+                { icon: 'analytics' as const, label: t('subscription.features.advancedAnalytics') },
+                { icon: 'document-text' as const, label: t('subscription.features.pdfExport') },
+                { icon: 'paw' as const, label: t('subscription.features.unlimitedPets') },
+                { icon: 'calculator' as const, label: t('subscription.features.feedCalculator') },
+              ].map((item, i) => (
+                <View key={i} style={styles.proFeatureRow}>
+                  <Icon name={item.icon} size={16} color={theme.colors.primary} />
+                  <Text style={[styles.proFeatureText, { color: theme.colors.textSecondary }]}>{item.label}</Text>
+                </View>
+              ))}
+            </View>
 
-        {/* Prediction chart */}
-        {prediction?.status === 'success' && prediction.predictions.length > 0 && (
-          <View style={styles.section}>
-            <Text style={[styles.sectionTitle, { color: theme.colors.text, fontFamily: theme.fonts.bold }]}>
-              {t('prediction.chartTitle')}
-            </Text>
-            <Card>
-              <PredictionChart
-                actualData={recentReadings}
-                predictions={prediction.predictions}
-              />
-            </Card>
-          </View>
-        )}
-
-        {/* Summary */}
-        {prediction?.status === 'success' && prediction.summary && (
-          <Card style={styles.summaryCard}>
-            <Icon name="analytics" size={20} color={theme.colors.primary} style={{ marginRight: 8 }} />
-            <Text style={[styles.summaryText, { color: theme.colors.text }]}>
-              {prediction.summary}
-            </Text>
-          </Card>
-        )}
-
-        {/* Checklist */}
-        {prediction?.status === 'success' && prediction.checklist.length > 0 && (
-          <View style={styles.section}>
-            <Text style={[styles.sectionTitle, { color: theme.colors.text, fontFamily: theme.fonts.bold }]}>
-              {t('prediction.checklistTitle')}
-            </Text>
-            <ChecklistCard items={prediction.checklist} />
-          </View>
-        )}
-
-        {/* Remission report */}
-        {prediction?.remission && (
-          <View style={styles.section}>
-            <RemissionCard report={prediction.remission} />
-          </View>
-        )}
-
-        {/* Data quality */}
-        {recentReadings.length > 0 && (
-          <Card style={styles.dataQualityCard}>
-            <View style={styles.dataQualityRow}>
-              <Icon name="stats-chart" size={16} color={theme.colors.textSecondary} />
-              <Text style={[styles.dataQualityText, { color: theme.colors.textSecondary }]}>
-                {t('prediction.readingsCount', { count: recentReadings.length })}
+            <View style={[styles.comingSoonBadge, { backgroundColor: `${theme.colors.success}15` }]}>
+              <Icon name="gift-outline" size={18} color={theme.colors.success} />
+              <Text style={[styles.comingSoonBadgeText, { color: theme.colors.success, fontFamily: theme.fonts.semibold }]}>
+                {t('subscription.allFeaturesUnlocked')}
               </Text>
             </View>
           </Card>
-        )}
+        ) : (
+          <>
+            {/* Disclaimer — always visible */}
+            <DisclaimerBanner
+              text={prediction?.disclaimer ?? t('prediction.defaultDisclaimer')}
+            />
 
-        {/* Request button */}
-        <TouchableOpacity
-          onPress={requestNewPrediction}
-          disabled={isLoading || !canRequestNew}
-          activeOpacity={0.8}
-          style={{ marginTop: 16 }}
-        >
-          <LinearGradient
-            colors={isLoading || !canRequestNew
-              ? [theme.colors.textTertiary, theme.colors.textTertiary]
-              : [...theme.gradients.primary] as [string, string]}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 0 }}
-            style={styles.requestBtn}
-          >
-            {isLoading ? (
-              <ActivityIndicator color="#fff" />
-            ) : (
-              <>
-                <Icon name="sparkles" size={20} color="#fff" style={{ marginRight: 8 }} />
-                <Text style={[styles.requestBtnText, { fontFamily: theme.fonts.bold }]}>
-                  {canRequestNew
-                    ? t('prediction.requestAnalysis')
-                    : t('prediction.rateLimited')}
-                </Text>
-              </>
+            {/* Error state */}
+            {error && (
+              <Card style={[styles.errorCard, { borderColor: theme.colors.danger }]}>
+                <Icon name="alert-circle" size={20} color={theme.colors.danger} />
+                <Text style={[styles.errorText, { color: theme.colors.danger }]}>{error}</Text>
+              </Card>
             )}
-          </LinearGradient>
-        </TouchableOpacity>
 
-        {/* Rate limit countdown */}
-        {!canRequestNew && countdown > 0 && (
-          <Text style={[styles.countdownText, { color: theme.colors.textTertiary }]}>
-            {t('prediction.nextAvailableIn', { time: formatCountdown(countdown) })}
-          </Text>
-        )}
+            {/* No prediction yet */}
+            {!hasPrediction && !isLoading && !error && (
+              <Card style={styles.emptyCard}>
+                <Icon name="sparkles" size={40} color={theme.colors.primary} />
+                <Text style={[styles.emptyTitle, { color: theme.colors.text, fontFamily: theme.fonts.bold }]}>
+                  {t('prediction.emptyTitle')}
+                </Text>
+                <Text style={[styles.emptyText, { color: theme.colors.textSecondary }]}>
+                  {t('prediction.emptySubtitle')}
+                </Text>
+              </Card>
+            )}
 
-        {/* Last updated */}
-        {prediction?.generatedAt && (
-          <Text style={[styles.lastUpdated, { color: theme.colors.textTertiary }]}>
-            {t('prediction.lastUpdated')}: {new Date(prediction.generatedAt).toLocaleString()}
-          </Text>
+            {/* Insufficient data */}
+            {isInsufficientData && prediction && (
+              <Card style={styles.insufficientCard}>
+                <Icon name="information-circle" size={24} color={theme.colors.warning} />
+                <Text style={[styles.insufficientTitle, { color: theme.colors.text, fontFamily: theme.fonts.semibold }]}>
+                  {t('prediction.insufficientData')}
+                </Text>
+                <Text style={[styles.insufficientText, { color: theme.colors.textSecondary }]}>
+                  {prediction.summary}
+                </Text>
+              </Card>
+            )}
+
+            {/* Prediction chart */}
+            {prediction?.status === 'success' && prediction.predictions.length > 0 && (
+              <View style={styles.section}>
+                <Text style={[styles.sectionTitle, { color: theme.colors.text, fontFamily: theme.fonts.bold }]}>
+                  {t('prediction.chartTitle')}
+                </Text>
+                <Card>
+                  <PredictionChart
+                    actualData={recentReadings}
+                    predictions={prediction.predictions}
+                  />
+                </Card>
+              </View>
+            )}
+
+            {/* Summary */}
+            {prediction?.status === 'success' && prediction.summary && (
+              <Card style={styles.summaryCard}>
+                <Icon name="analytics" size={20} color={theme.colors.primary} style={{ marginRight: 8 }} />
+                <Text style={[styles.summaryText, { color: theme.colors.text }]}>
+                  {prediction.summary}
+                </Text>
+              </Card>
+            )}
+
+            {/* Checklist */}
+            {prediction?.status === 'success' && prediction.checklist.length > 0 && (
+              <View style={styles.section}>
+                <Text style={[styles.sectionTitle, { color: theme.colors.text, fontFamily: theme.fonts.bold }]}>
+                  {t('prediction.checklistTitle')}
+                </Text>
+                <ChecklistCard items={prediction.checklist} />
+              </View>
+            )}
+
+            {/* Remission report */}
+            {prediction?.remission && (
+              <View style={styles.section}>
+                <RemissionCard report={prediction.remission} />
+              </View>
+            )}
+
+            {/* Data quality */}
+            {recentReadings.length > 0 && (
+              <Card style={styles.dataQualityCard}>
+                <View style={styles.dataQualityRow}>
+                  <Icon name="stats-chart" size={16} color={theme.colors.textSecondary} />
+                  <Text style={[styles.dataQualityText, { color: theme.colors.textSecondary }]}>
+                    {t('prediction.readingsCount', { count: recentReadings.length })}
+                  </Text>
+                </View>
+              </Card>
+            )}
+
+            {/* Request button */}
+            <TouchableOpacity
+              onPress={requestNewPrediction}
+              disabled={isLoading || !canRequestNew}
+              activeOpacity={0.8}
+              style={{ marginTop: 16 }}
+            >
+              <LinearGradient
+                colors={isLoading || !canRequestNew
+                  ? [theme.colors.textTertiary, theme.colors.textTertiary]
+                  : [...theme.gradients.primary] as [string, string]}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 0 }}
+                style={styles.requestBtn}
+              >
+                {isLoading ? (
+                  <ActivityIndicator color="#fff" />
+                ) : (
+                  <>
+                    <Icon name="sparkles" size={20} color="#fff" style={{ marginRight: 8 }} />
+                    <Text style={[styles.requestBtnText, { fontFamily: theme.fonts.bold }]}>
+                      {canRequestNew
+                        ? t('prediction.requestAnalysis')
+                        : t('prediction.rateLimited')}
+                    </Text>
+                  </>
+                )}
+              </LinearGradient>
+            </TouchableOpacity>
+
+            {/* Rate limit countdown */}
+            {!canRequestNew && countdown > 0 && (
+              <Text style={[styles.countdownText, { color: theme.colors.textTertiary }]}>
+                {t('prediction.nextAvailableIn', { time: formatCountdown(countdown) })}
+              </Text>
+            )}
+
+            {/* Last updated */}
+            {prediction?.generatedAt && (
+              <Text style={[styles.lastUpdated, { color: theme.colors.textTertiary }]}>
+                {t('prediction.lastUpdated')}: {new Date(prediction.generatedAt).toLocaleString()}
+              </Text>
+            )}
+          </>
         )}
       </ScrollView>
     </SafeAreaView>
@@ -293,4 +338,14 @@ const styles = StyleSheet.create({
   requestBtnText: { color: '#fff', fontSize: 16 },
   countdownText: { fontSize: 12, textAlign: 'center', marginTop: 8 },
   lastUpdated: { fontSize: 11, textAlign: 'center', marginTop: 8 },
+  comingSoonCard: { alignItems: 'center', paddingVertical: 28, gap: 12 },
+  comingSoonIcon: { width: 80, height: 80, borderRadius: 40, alignItems: 'center', justifyContent: 'center', marginBottom: 4 },
+  comingSoonTitle: { fontSize: 20, textAlign: 'center' },
+  comingSoonDesc: { fontSize: 14, textAlign: 'center', lineHeight: 20, paddingHorizontal: 12 },
+  proFeaturesList: { width: '100%', gap: 8, marginTop: 8 },
+  proFeaturesLabel: { fontSize: 14, marginBottom: 4 },
+  proFeatureRow: { flexDirection: 'row', alignItems: 'center', gap: 10 },
+  proFeatureText: { fontSize: 14 },
+  comingSoonBadge: { flexDirection: 'row', alignItems: 'center', gap: 8, paddingHorizontal: 16, paddingVertical: 10, borderRadius: 12, marginTop: 8 },
+  comingSoonBadgeText: { fontSize: 14 },
 });
