@@ -44,8 +44,8 @@ export default function PetProfileScreen() {
 
   const renderInfoRow = (label: string, value: string) => (
     <View style={[styles.infoRow, { borderBottomColor: theme.colors.divider }]}>
-      <Text style={[styles.infoLabel, { color: theme.colors.textSecondary, fontFamily: theme.fonts.regular }]}>{label}</Text>
-      <Text style={[styles.infoValue, { color: theme.colors.text, fontFamily: theme.fonts.semibold }]}>{value}</Text>
+      <Text style={[styles.infoLabel, { color: theme.colors.textSecondary, fontFamily: theme.fonts.regular }]} numberOfLines={1}>{label}</Text>
+      <Text style={[styles.infoValue, { color: theme.colors.text, fontFamily: theme.fonts.semibold }]} numberOfLines={1}>{value}</Text>
     </View>
   );
 
@@ -69,7 +69,7 @@ export default function PetProfileScreen() {
           >
             <Icon name="paw" size={48} color="#fff" />
           </LinearGradient>
-          <Text style={[styles.petName, { color: theme.colors.text, fontFamily: theme.fonts.bold }]}>{activePet.name}</Text>
+          <Text style={[styles.petName, { color: theme.colors.text, fontFamily: theme.fonts.bold }]} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.6}>{activePet.name}</Text>
           {activePet.insulinType && (
             <View style={[styles.insulinBadge, { backgroundColor: theme.colors.secondaryLight }]}>
               <Icon name="fitness-outline" size={16} color={theme.colors.secondary} />
@@ -117,8 +117,8 @@ const styles = StyleSheet.create({
   card: { gap: 4 },
   cardTitle: { fontSize: 11, letterSpacing: 0.5, textTransform: 'uppercase', marginBottom: 8 },
   infoRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingVertical: 10, borderBottomWidth: 0.5 },
-  infoLabel: { fontSize: 14 },
-  infoValue: { fontSize: 14 },
+  infoLabel: { fontSize: 14, flex: 1, flexShrink: 1 },
+  infoValue: { fontSize: 14, maxWidth: '50%', textAlign: 'right' as const },
   scheduleLabelRow: { flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 8 },
   scheduleLabel: { fontSize: 15 },
   timeChips: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },

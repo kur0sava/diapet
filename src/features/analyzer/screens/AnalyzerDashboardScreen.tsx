@@ -105,7 +105,7 @@ export default function AnalyzerDashboardScreen() {
         {trends && (
           <View style={styles.section}>
             <Text style={[styles.sectionTitle, { color: theme.colors.text, fontFamily: theme.fonts.bold }]}>
-              {t('analyzer.trendImproving').split(' ')[0] === t('analyzer.trendImproving') ? 'Trend' : ''}
+              {t('analyzer.trendSection')}
             </Text>
             <Card>
               <View style={styles.trendHeader}>
@@ -247,7 +247,7 @@ export default function AnalyzerDashboardScreen() {
                     <Text style={[styles.factorName, { color: theme.colors.text, fontFamily: theme.fonts.medium }]}>
                       {t(FACTOR_LABEL_KEYS[f.name] ?? f.name)}
                     </Text>
-                    <Text style={[styles.factorDetail, { color: theme.colors.textTertiary }]}>
+                    <Text style={[styles.factorDetail, { color: theme.colors.textTertiary }]} numberOfLines={2}>
                       {f.detail}
                     </Text>
                   </View>

@@ -83,8 +83,8 @@ export default function ExpensesScreen() {
           {item.description && <Text style={[styles.expenseDesc, { color: theme.colors.textSecondary }]} numberOfLines={1}>{item.description}</Text>}
           <Text style={[styles.expenseDate, { color: theme.colors.textTertiary }]}>{item.date}</Text>
         </View>
-        <View style={{ alignItems: 'flex-end', gap: 8 }}>
-          <Text style={[styles.expenseAmount, { color: theme.colors.text, fontFamily: theme.fonts.bold }]}>{item.amount.toLocaleString()} {t('expenses.currency')}</Text>
+        <View style={{ alignItems: 'flex-end', gap: 8, maxWidth: '40%', flexShrink: 0 }}>
+          <Text style={[styles.expenseAmount, { color: theme.colors.text, fontFamily: theme.fonts.bold }]} numberOfLines={1}>{item.amount.toLocaleString()} {t('expenses.currency')}</Text>
           <TouchableOpacity onPress={() => handleDelete(item.id)} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
             <Icon name="trash-outline" size={18} color={theme.colors.danger} />
           </TouchableOpacity>
@@ -122,7 +122,7 @@ export default function ExpensesScreen() {
                   <View key={cat} style={[styles.categoryStat, { backgroundColor: theme.colors.surface, ...theme.shadows.sm }]}>
                     <Icon name={EXPENSE_ICON_NAMES[cat as ExpenseCategory]} size={20} color={EXPENSE_COLORS[cat as ExpenseCategory]} />
                     <Text style={[styles.catLabel, { color: theme.colors.textSecondary }]} numberOfLines={1}>{categoryLabels[cat as ExpenseCategory]}</Text>
-                    <Text style={[styles.catAmount, { color: theme.colors.text, fontFamily: theme.fonts.bold }]}>{amount.toLocaleString()} {t('expenses.currency')}</Text>
+                    <Text style={[styles.catAmount, { color: theme.colors.text, fontFamily: theme.fonts.bold }]} numberOfLines={1}>{amount.toLocaleString()} {t('expenses.currency')}</Text>
                   </View>
                 ))}
               </View>
@@ -154,7 +154,7 @@ const styles = StyleSheet.create({
   categoryStats: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginBottom: 16 },
   categoryStat: { width: '47%', flexDirection: 'row', alignItems: 'center', padding: 12, borderRadius: 12, gap: 8 },
   catLabel: { fontSize: 12, flex: 1 },
-  catAmount: { fontSize: 13 },
+  catAmount: { fontSize: 13, flexShrink: 1 },
   sectionTitle: { fontSize: 16, marginBottom: 4 },
   expenseCard: { flexDirection: 'row', alignItems: 'center', gap: 12 },
   expenseIcon: { width: 44, height: 44, borderRadius: 22, alignItems: 'center', justifyContent: 'center' },

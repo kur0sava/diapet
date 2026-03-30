@@ -254,18 +254,18 @@ export default function GlucoseListScreen() {
           <Card style={styles.readingCard} shadow>
             <View style={[styles.colorBar, { backgroundColor: color }]} />
             <View style={styles.readingContent}>
-              <View>
+              <View style={{ flex: 1, flexShrink: 1 }}>
                 <Text style={[styles.readingValue, { color: theme.colors.text, fontFamily: theme.fonts.bold }]}>
                   {displayValue} <Text style={{ fontSize: 14, color: theme.colors.textSecondary, fontFamily: theme.fonts.regular }}>{unit}</Text>
                 </Text>
-                <Text style={[styles.readingTime, { color: theme.colors.textSecondary, fontFamily: theme.fonts.regular }]}>
+                <Text style={[styles.readingTime, { color: theme.colors.textSecondary, fontFamily: theme.fonts.regular }]} numberOfLines={1}>
                   {formatDateTime(item.recordedAt)}
                   {item.mealRelation !== 'unspecified' ? ` · ${mealLabels[item.mealRelation]}` : ''}
                 </Text>
                 {item.insulinDose && (
                   <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 4, gap: 4 }}>
                     <Icon name="medkit-outline" size={12} color={theme.colors.textTertiary} />
-                    <Text style={[styles.readingInsulin, { color: theme.colors.textTertiary, fontFamily: theme.fonts.regular }]}>
+                    <Text style={[styles.readingInsulin, { color: theme.colors.textTertiary, fontFamily: theme.fonts.regular }]} numberOfLines={1}>
                       {item.insulinDose} {t('common.units')} {item.insulinType ?? ''}
                     </Text>
                   </View>

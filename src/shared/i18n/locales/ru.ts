@@ -788,6 +788,7 @@ export const ru = {
     riskGood: 'Хорошо',
     riskAttention: 'Внимание',
     riskDanger: 'Опасность',
+    trendSection: 'Тренд',
     trendImproving: 'Улучшается',
     trendStable: 'Стабильно',
     trendWorsening: 'Ухудшается',

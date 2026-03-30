@@ -94,7 +94,7 @@ export default function SymptomsListScreen() {
               </Text>
             </View>
           </View>
-          <Text style={[styles.symptomsText, { color: theme.colors.text, fontFamily: theme.fonts.bold }]}>
+          <Text style={[styles.symptomsText, { color: theme.colors.text, fontFamily: theme.fonts.bold }]} numberOfLines={2}>
             {item.symptomTypes.map(s => t(`symptoms.types.${s}`)).join(', ')}
           </Text>
           <Text style={[styles.date, { color: theme.colors.textSecondary }]}>{formatDateTime(item.recordedAt)}</Text>

@@ -77,7 +77,7 @@ export default function MoreMenuScreen() {
             </View>
             <View style={styles.petInfo}>
               <Text style={[styles.petName, { fontFamily: theme.fonts.bold }]}>{activePet.name}</Text>
-              <Text style={styles.petDetails}>
+              <Text style={styles.petDetails} numberOfLines={2}>
                 {activePet.species === 'cat' ? t('pets.cat') : t('pets.pet')}
                 {activePet.weightKg ? ` · ${activePet.weightKg} ${t('common.kg')}` : ''}
                 {activePet.diabetesType !== 'unknown' ? ` · ${t('pets.diabetesType')} ${activePet.diabetesType === 'type1' ? '1' : '2'}` : ''}
@@ -101,7 +101,7 @@ export default function MoreMenuScreen() {
             </View>
             <View style={styles.menuText}>
               <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
-                <Text style={[styles.menuLabel, { color: theme.colors.text, fontFamily: theme.fonts.semibold }]}>{item.label}</Text>
+                <Text style={[styles.menuLabel, { color: theme.colors.text, fontFamily: theme.fonts.semibold }]} numberOfLines={1}>{item.label}</Text>
                 {item.proGated && !isPro && <ProBadge />}
                 {item.badge === 'upgrade' && !isPro && (
                   <View style={[styles.upgradePill, { backgroundColor: `${theme.colors.primary}15` }]}>
@@ -136,7 +136,7 @@ const styles = StyleSheet.create({
   menuItem: { flexDirection: 'row', alignItems: 'center', padding: 16, borderRadius: 16, marginBottom: 10, gap: 14 },
   menuIcon: { width: 44, height: 44, borderRadius: 22, alignItems: 'center', justifyContent: 'center' },
   menuText: { flex: 1 },
-  menuLabel: { fontSize: 16 },
+  menuLabel: { fontSize: 16, flexShrink: 1 },
   menuSub: { fontSize: 13, marginTop: 2 },
   emergencyBtn: { backgroundColor: '#FF3B30', padding: 18, borderRadius: 16, alignItems: 'center', flexDirection: 'row', justifyContent: 'center' },
   emergencyText: { color: '#fff', fontSize: 16 },

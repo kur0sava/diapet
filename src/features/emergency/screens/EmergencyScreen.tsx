@@ -106,7 +106,7 @@ export default function EmergencyScreen() {
           onPress={() => setActiveTab('hypoglycemia')}
         >
           <Icon name="trending-down" size={16} color="#fff" style={{ marginRight: 4 }} />
-          <Text style={[styles.tabText, { fontWeight: activeTab === 'hypoglycemia' ? '700' : '400' }]}>
+          <Text style={[styles.tabText, { fontWeight: activeTab === 'hypoglycemia' ? '700' : '400' }]} numberOfLines={1} adjustsFontSizeToFit>
             {t('emergency.hypoglycemia')}
           </Text>
         </TouchableOpacity>
@@ -118,7 +118,7 @@ export default function EmergencyScreen() {
           onPress={() => setActiveTab('hyperglycemia')}
         >
           <Icon name="trending-up" size={16} color="#fff" style={{ marginRight: 4 }} />
-          <Text style={[styles.tabText, { fontWeight: activeTab === 'hyperglycemia' ? '700' : '400' }]}>
+          <Text style={[styles.tabText, { fontWeight: activeTab === 'hyperglycemia' ? '700' : '400' }]} numberOfLines={1} adjustsFontSizeToFit>
             {t('emergency.hyperglycemia')}
           </Text>
         </TouchableOpacity>

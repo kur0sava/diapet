@@ -788,6 +788,7 @@ export const en = {
     riskGood: 'Good',
     riskAttention: 'Attention',
     riskDanger: 'Danger',
+    trendSection: 'Trend',
     trendImproving: 'Improving',
     trendStable: 'Stable',
     trendWorsening: 'Worsening',

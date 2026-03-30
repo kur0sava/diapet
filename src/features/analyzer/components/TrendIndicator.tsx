@@ -61,7 +61,7 @@ export function TrendIndicator({ direction, acceleration, compact }: Props) {
     return (
       <View style={[styles.compactBadge, { backgroundColor: color + '20' }]}>
         <Icon name={getDirectionIcon(direction)} size={14} color={color} />
-        <Text style={[styles.compactText, { color, fontFamily: theme.fonts.semibold }]}>{label}</Text>
+        <Text style={[styles.compactText, { color, fontFamily: theme.fonts.semibold }]} numberOfLines={1}>{label}</Text>
       </View>
     );
   }
@@ -72,9 +72,9 @@ export function TrendIndicator({ direction, acceleration, compact }: Props) {
         <Icon name={getDirectionIcon(direction)} size={20} color={color} />
       </View>
       <View style={styles.textCol}>
-        <Text style={[styles.label, { color, fontFamily: theme.fonts.semibold }]}>{label}</Text>
+        <Text style={[styles.label, { color, fontFamily: theme.fonts.semibold }]} numberOfLines={1}>{label}</Text>
         {accLabel && (
-          <Text style={[styles.accText, { color: theme.colors.textSecondary }]}>{accLabel}</Text>
+          <Text style={[styles.accText, { color: theme.colors.textSecondary }]} numberOfLines={1}>{accLabel}</Text>
         )}
       </View>
     </View>
@@ -84,9 +84,9 @@ export function TrendIndicator({ direction, acceleration, compact }: Props) {
 const styles = StyleSheet.create({
   row: { flexDirection: 'row', alignItems: 'center', gap: 10 },
   iconCircle: { width: 36, height: 36, borderRadius: 18, alignItems: 'center', justifyContent: 'center' },
-  textCol: { gap: 2 },
+  textCol: { gap: 2, flex: 1 },
   label: { fontSize: 14 },
   accText: { fontSize: 12 },
-  compactBadge: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 10, paddingVertical: 4, borderRadius: 12, gap: 4 },
+  compactBadge: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 10, paddingVertical: 4, borderRadius: 12, gap: 4, flexShrink: 1 },
   compactText: { fontSize: 12 },
 });

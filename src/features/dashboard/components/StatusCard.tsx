@@ -38,8 +38,8 @@ export function StatusCard({ iconName, iconColor, label, value, unit, color, sub
       <View style={[styles.iconCircle, { backgroundColor: `${accentColor}15` }]}>
         <Icon name={iconName} size={22} color={iconColor} />
       </View>
-      <Text style={[styles.value, { color: accentColor, fontFamily: theme.fonts.bold }]}>{value}</Text>
-      {unit && <Text style={[styles.unit, { color: theme.colors.textSecondary }]}>{unit}</Text>}
+      <Text style={[styles.value, { color: accentColor, fontFamily: theme.fonts.bold }]} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.7}>{value}</Text>
+      {unit && <Text style={[styles.unit, { color: theme.colors.textSecondary }]} numberOfLines={1}>{unit}</Text>}
       <Text style={[styles.label, { color: theme.colors.textSecondary }]} numberOfLines={2}>{label}</Text>
       {subtitle && <Text style={[styles.subtitle, { color: theme.colors.textTertiary }]} numberOfLines={1}>{subtitle}</Text>}
     </Animated.View>

@@ -110,7 +110,7 @@ export default function SettingsScreen() {
               const labels = { light: t('settings.lightMode'), dark: t('settings.darkMode'), system: t('settings.systemMode') };
               return (
                 <TouchableOpacity key={s} style={[styles.themeBtn, { backgroundColor: colorScheme === s ? theme.colors.primary : theme.colors.surfaceSecondary }]} onPress={() => setColorScheme(s)}>
-                  <Text style={{ color: colorScheme === s ? '#fff' : theme.colors.text, fontSize: 12, fontWeight: '600' }}>{labels[s]}</Text>
+                  <Text style={{ color: colorScheme === s ? '#fff' : theme.colors.text, fontSize: 12, fontWeight: '600' }} numberOfLines={1} adjustsFontSizeToFit>{labels[s]}</Text>
                 </TouchableOpacity>
               );
             })}

@@ -87,7 +87,7 @@ export function RiskScoreWidget({ score, level, onPress }: Props) {
             </Text>
             <View style={[styles.levelBadge, { backgroundColor: color + '20' }]}>
               <View style={[styles.levelDot, { backgroundColor: color }]} />
-              <Text style={[styles.levelText, { color, fontFamily: theme.fonts.semibold }]}>
+              <Text style={[styles.levelText, { color, fontFamily: theme.fonts.semibold }]} numberOfLines={1}>
                 {getRiskLabel(level, t)}
               </Text>
             </View>
@@ -96,6 +96,7 @@ export function RiskScoreWidget({ score, level, onPress }: Props) {
                 <Text style={[styles.detailsText, { color: theme.colors.primary, fontFamily: theme.fonts.medium }]}>
                   {t('analyzer.viewDetails')}
                 </Text>
+
                 <Icon name="chevron-forward" size={14} color={theme.colors.primary} />
               </View>
             )}
@@ -114,7 +115,7 @@ const styles = StyleSheet.create({
   scoreText: { fontSize: 24 },
   info: { flex: 1, gap: 6 },
   title: { fontSize: 16 },
-  levelBadge: { flexDirection: 'row', alignItems: 'center', alignSelf: 'flex-start', paddingHorizontal: 10, paddingVertical: 4, borderRadius: 12, gap: 6 },
+  levelBadge: { flexDirection: 'row', alignItems: 'center', alignSelf: 'flex-start', paddingHorizontal: 10, paddingVertical: 4, borderRadius: 12, gap: 6, maxWidth: '100%', flexShrink: 1 },
   levelDot: { width: 8, height: 8, borderRadius: 4 },
   levelText: { fontSize: 13 },
   detailsRow: { flexDirection: 'row', alignItems: 'center', gap: 4, marginTop: 2 },
