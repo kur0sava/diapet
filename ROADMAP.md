@@ -1,7 +1,7 @@
 # DiaPet — Master Development Plan
 
-> Последнее обновление: 2026-03-29
-> Версия: 2.3 (versionCode 11)
+> Последнее обновление: 2026-04-03
+> Версия: 2.4 (versionCode 12)
 
 ---
 
@@ -26,8 +26,9 @@
 [####################] v2.4 Design Refresh ✅ DONE (Manrope + Lucide)
 [####################] v2.5 Arch Fixes     ✅ DONE (ЭТАП 8, 17 задач)
 [####################] v2.6 Local Analyzer ✅ DONE (ЭТАП 9, 34 задачи)
-[____________________] v2.7 Encyclopedia   ⬅ СЛЕДУЮЩИЙ
-[____________________] v2.8 Backend        🔜 (Prodamus + Supabase)
+[####################] v2.7 Encyclopedia   ✅ DONE (ЭТАП 10, 22 статьи)
+[####################] v2.8 Audit Fixes    ✅ DONE (10 багов, 19 файлов)
+[____________________] v2.9 Backend        🔜 (Prodamus + Supabase)
 [____________________] v3.0 AI/Smart       🔜
 ```
 
