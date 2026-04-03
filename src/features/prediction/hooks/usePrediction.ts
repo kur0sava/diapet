@@ -35,6 +35,7 @@ export function usePrediction(): UsePredictionReturn {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const mountedRef = useRef(true);
+  const activePetIdRef = useRef(petId);
   useEffect(() => () => { mountedRef.current = false; }, []);
 
   const [prediction, setPrediction] = useState<PredictionResult | null>(() => {
@@ -42,8 +43,9 @@ export function usePrediction(): UsePredictionReturn {
     return getCachedPrediction(petId);
   });
 
-  // Reset state when active pet changes
+  // Reset state when active pet changes; track current petId for race condition guard
   useEffect(() => {
+    activePetIdRef.current = petId;
     setPrediction(petId ? getCachedPrediction(petId) : null);
     setError(null);
     setIsLoading(false);
@@ -80,13 +82,13 @@ export function usePrediction(): UsePredictionReturn {
       const snapshot = await collectPredictionData(petId, activePet, language);
       const result = await requestPrediction(snapshot);
 
-      if (!mountedRef.current) return;
+      if (!mountedRef.current || activePetIdRef.current !== petId) return;
       if (result.status !== 'error') {
         cachePrediction(petId, result);
       }
       setPrediction(result);
     } catch (e) {
-      if (!mountedRef.current) return;
+      if (!mountedRef.current || activePetIdRef.current !== petId) return;
       const raw = e instanceof Error ? e.message : '';
       const msg = raw.includes('API key not configured')
         ? t('prediction.errorApiNotConfigured')

@@ -82,11 +82,14 @@ export default function ArticleDetailScreen() {
   }, []);
 
   const scrollToHeading = useCallback((lineIndex: number) => {
-    const y = headingYPositions.current[lineIndex];
-    if (y !== undefined && scrollRef.current) {
-      scrollRef.current.scrollTo({ y: y + articleContentY.current, animated: true });
-    }
+    // Collapse TOC first, then scroll after layout settles so articleContentY is accurate
     setTocExpanded(false);
+    requestAnimationFrame(() => {
+      const y = headingYPositions.current[lineIndex];
+      if (y !== undefined && scrollRef.current) {
+        scrollRef.current.scrollTo({ y: y + articleContentY.current, animated: true });
+      }
+    });
   }, []);
 
   if (!article) {
