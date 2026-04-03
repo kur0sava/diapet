@@ -12,7 +12,7 @@ export const DB_NAME = 'diapet.db';
  *   - CREATE TABLE / CREATE INDEX use IF NOT EXISTS
  *   - ALTER TABLE ADD COLUMN is wrapped in try/catch (SQLite lacks IF NOT EXISTS for ALTER)
  */
-export const CURRENT_SCHEMA_VERSION = 7;
+export const CURRENT_SCHEMA_VERSION = 8;
 
 export const CREATE_TABLES_SQL = `
   PRAGMA journal_mode = WAL;
@@ -107,6 +107,7 @@ export const CREATE_TABLES_SQL = `
     severity TEXT NOT NULL DEFAULT 'mild',
     photo_uris TEXT,
     notes TEXT,
+    glucose_reading_id TEXT REFERENCES glucose_readings(id) ON DELETE SET NULL,
     recorded_at TEXT NOT NULL,
     created_at TEXT NOT NULL DEFAULT (datetime('now')),
     updated_at TEXT NOT NULL DEFAULT (datetime('now')),

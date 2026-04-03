@@ -37,8 +37,8 @@ const MIGRATIONS: Migration[] = [
     name: 'add_symptom_glucose_link',
     up: [],
     afterSql: async (db: SQLiteDatabase) => {
-      // FIX-02: photo_uri already exists in schema.ts CREATE TABLE, skip it
-      // Only add glucose_reading_id to symptoms (not in initial schema)
+      // Keep this migration for legacy installs created before
+      // glucose_reading_id was included in base CREATE_TABLES_SQL.
       // Idempotent: catch error if column already exists (SQLite lacks IF NOT EXISTS for ALTER TABLE)
       try {
         await db.execAsync('ALTER TABLE symptoms ADD COLUMN glucose_reading_id TEXT REFERENCES glucose_readings(id)');
@@ -143,6 +143,20 @@ const MIGRATIONS: Migration[] = [
       `CREATE INDEX IF NOT EXISTS idx_injections_pet ON injections(pet_id)`,
       `CREATE INDEX IF NOT EXISTS idx_feedings_pet ON feedings(pet_id)`,
     ],
+  },
+  {
+    version: 8,
+    name: 'ensure_symptoms_glucose_column',
+    up: [],
+    afterSql: async (db: SQLiteDatabase) => {
+      try {
+        await db.execAsync(
+          'ALTER TABLE symptoms ADD COLUMN glucose_reading_id TEXT REFERENCES glucose_readings(id) ON DELETE SET NULL'
+        );
+      } catch {
+        // Column already exists — safe to ignore
+      }
+    },
   },
 ];
 
