@@ -3,9 +3,9 @@ import { useSubscriptionStore, isBackendConfigured } from '@shared/stores/subscr
 export function useSubscription() {
   const isPro = useSubscriptionStore(s => s.isPro);
 
-  // If backend is not configured (no Supabase URL), grant all features
-  // so users are not blocked by a broken paywall during development.
-  const effectivePro = isPro || !isBackendConfigured();
+  // Bypass paywall only in dev when backend is not configured.
+  // In production builds, missing credentials must NOT grant Pro.
+  const effectivePro = isPro || (__DEV__ && !isBackendConfigured());
 
   return {
     isPro: effectivePro,

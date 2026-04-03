@@ -2,9 +2,9 @@
  * Collects data from all repositories and computes statistics
  * for the AI prediction prompt.
  */
-import { differenceInDays, subDays, parseISO, isValid } from 'date-fns';
+import { subDays, parseISO, isValid } from 'date-fns';
 import { glucoseRepository, injectionRepository, feedingRepository, symptomRepository, expenseRepository, scheduleRepository } from '@storage/database';
-import type { Pet, GlucoseReading, InjectionLog, FeedingLog, SymptomEntry } from '@storage/domain/types';
+import type { Pet, GlucoseReading, InjectionLog, FeedingLog } from '@storage/domain/types';
 import type {
   PredictionDataSnapshot,
   GlucoseStats,

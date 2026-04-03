@@ -2,7 +2,7 @@
  * useAnalyzer — hook that runs the full local analyzer pipeline.
  * Fetches data from repositories and produces trends, patterns, risk score, and alerts.
  */
-import { useMemo } from 'react';
+import { useMemo, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { queryKeys } from '@shared/utils/queryKeys';
 import { usePetStore } from '@shared/stores/petStore';
@@ -16,7 +16,7 @@ import {
 import { analyzeTrends } from '../engine/trendEngine';
 import { detectPatterns } from '../engine/patternDetector';
 import { calculateRiskScore } from '../engine/riskScoreCalculator';
-import { generateSmartAlerts } from '../engine/smartAlerts';
+import { generateSmartAlerts, markAlertFired } from '../engine/smartAlerts';
 import { sanitizePatterns, checkEmergencyThresholds } from '../engine/safetyGuard';
 
 export function useAnalyzer() {
@@ -76,10 +76,11 @@ export function useAnalyzer() {
 
   const patterns = useMemo(() => sanitizePatterns(rawPatterns), [rawPatterns]);
 
+  const diagnosisDate = activePet?.diagnosisDate;
   const diagnosisDays = useMemo(() => {
-    if (!activePet?.diagnosisDate) return undefined;
-    return Math.floor((now.getTime() - new Date(activePet.diagnosisDate).getTime()) / (24 * 60 * 60 * 1000));
-  }, [activePet?.diagnosisDate, now]);
+    if (!diagnosisDate) return undefined;
+    return Math.floor((now.getTime() - new Date(diagnosisDate).getTime()) / (24 * 60 * 60 * 1000));
+  }, [diagnosisDate, now]);
 
   const riskScore = useMemo(
     () => readings.length > 0
@@ -101,6 +102,13 @@ export function useAnalyzer() {
     if (!trends || !riskScore) return null;
     return generateSmartAlerts(trends, riskScore, patterns, readings, now);
   }, [trends, riskScore, patterns, readings, now]);
+
+  // Side-effect: mark alert as fired OUTSIDE of useMemo
+  useEffect(() => {
+    if (smartAlert) {
+      markAlertFired(smartAlert.type);
+    }
+  }, [smartAlert]);
 
   const emergencyAlerts = useMemo(
     () => checkEmergencyThresholds(readings),

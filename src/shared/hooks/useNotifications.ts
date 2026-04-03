@@ -134,6 +134,22 @@ export async function restoreScheduleNotifications(): Promise<void> {
   const pet = await petRepository.findById(activePetId);
   if (!pet) return;
 
+  // Ensure Android channels exist (may be missing after app update or data clear)
+  if (Platform.OS === 'android') {
+    await Notifications.setNotificationChannelAsync('injections', {
+      name: 'Инъекции / Injections',
+      importance: Notifications.AndroidImportance.MAX,
+      vibrationPattern: [0, 250, 250, 250],
+      lightColor: '#4F8EF7',
+    });
+    await Notifications.setNotificationChannelAsync('feedings', {
+      name: 'Кормление / Feedings',
+      importance: Notifications.AndroidImportance.HIGH,
+      vibrationPattern: [0, 250, 250, 250],
+      lightColor: '#34C759',
+    });
+  }
+
   // Cancel existing schedule notifications (keep hint pushes)
   const scheduled = await Notifications.getAllScheduledNotificationsAsync();
   for (const n of scheduled) {

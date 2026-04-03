@@ -20,7 +20,6 @@ import { Icon } from '@shared/components/ui/Icon';
 import { storage, StorageKeys } from '@storage/mmkv/storage';
 import { generateVetReportPdf } from '@shared/utils/pdfExport';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import { format } from 'date-fns';
 import { useSubscription } from '@features/subscription/hooks/useSubscription';
 import { subDays } from 'date-fns';
 

@@ -14,7 +14,7 @@ import { formatDateTime, formatShortDate, formatFullDateTime } from '@shared/uti
 import { EmptyState, Card, AnimatedListItem } from '@shared/components/ui';
 import { SimpleBarChart, BarData } from '@shared/components/charts/SimpleBarChart';
 import { LinearGradient } from 'expo-linear-gradient';
-import { format, parseISO, subDays, isAfter } from 'date-fns';
+import { parseISO, subDays, isAfter } from 'date-fns';
 
 export default function InjectionListScreen() {
   const navigation = useHomeNavigation();

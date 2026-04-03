@@ -173,7 +173,7 @@ export default function AddSymptomScreen() {
       savingRef.current = false;
       setLoading(false);
     }
-  }, [activePet, selectedTypes, severity, notes, photos, removedPhotos, selectedGlucoseId, queryClient, navigation, t, editId]);
+  }, [activePet, selectedTypes, severity, notes, photos, removedPhotos, selectedGlucoseId, queryClient, navigation, t, editId, disableGuard]);
 
   return (
     <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={{ flex: 1 }}>

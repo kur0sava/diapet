@@ -172,7 +172,7 @@ export default function LogGlucoseScreen() {
       savingRef.current = false;
       setLoading(false);
     }
-  }, [activePet, numValue, unit, mealRelation, insulinDose, insulinType, notes, recordedAt, editId, queryClient, navigation, t, syncInitialValues, triggerAfterAction]);
+  }, [activePet, numValue, unit, mealRelation, insulinDose, insulinType, notes, recordedAt, editId, queryClient, navigation, t, syncInitialValues, triggerAfterAction, disableGuard]);
 
   const handleSave = useCallback(async () => {
     if (savingRef.current) return;

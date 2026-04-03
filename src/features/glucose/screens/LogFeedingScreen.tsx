@@ -156,7 +156,7 @@ export default function LogFeedingScreen() {
       savingRef.current = false;
       setLoading(false);
     }
-  }, [activePet, foodType, amount, notes, fedAt, queryClient, navigation, t, triggerAfterAction, selectedFood, showManualNutrition, manualResult, protein, fat, fiber, ash, moisture]);
+  }, [activePet, foodType, amount, notes, fedAt, queryClient, navigation, t, triggerAfterAction, selectedFood, showManualNutrition, manualResult, protein, fat, fiber, ash, moisture, disableGuard]);
 
   const verdictColor = (v?: string) => {
     if (v === 'good') return '#34C759';

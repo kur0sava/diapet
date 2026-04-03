@@ -2,7 +2,7 @@
  * Advanced Analytics screen — AI glucose prediction, checklist, remission report.
  * Pro-gated: free users see paywall prompt.
  */
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
   View, Text, StyleSheet, ScrollView,
   TouchableOpacity, ActivityIndicator, RefreshControl, AppState,

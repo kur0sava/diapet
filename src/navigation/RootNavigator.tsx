@@ -1,7 +1,6 @@
 import React from 'react';
 import { NavigationContainer, LinkingOptions } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { Linking } from 'react-native';
 import { useTheme } from '@shared/theme';
 import { storage, StorageKeys } from '@storage/mmkv/storage';
 import { RootStackParamList } from './types';

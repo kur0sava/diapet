@@ -54,11 +54,12 @@ export default function ArticleDetailScreen() {
     }
     storageUtils.setObject(StorageKeys.BOOKMARKED_ARTICLES, updated);
     setIsBookmarked(prev => !prev);
-  }, [article, isBookmarked]);
+  }, [article]);
 
   // TOC state
   const [tocExpanded, setTocExpanded] = useState(false);
   const headingYPositions = useRef<Record<number, number>>({});
+  const articleContentY = useRef(0);
 
   // Parse headings from content
   const headings: HeadingEntry[] = useMemo(() => {
@@ -83,7 +84,7 @@ export default function ArticleDetailScreen() {
   const scrollToHeading = useCallback((lineIndex: number) => {
     const y = headingYPositions.current[lineIndex];
     if (y !== undefined && scrollRef.current) {
-      scrollRef.current.scrollTo({ y: y + 140, animated: true });
+      scrollRef.current.scrollTo({ y: y + articleContentY.current, animated: true });
     }
     setTocExpanded(false);
   }, []);
@@ -255,7 +256,10 @@ export default function ArticleDetailScreen() {
           </View>
         )}
 
-        <View style={styles.articleContent}>
+        <View
+          style={styles.articleContent}
+          onLayout={(e) => { articleContentY.current = e.nativeEvent.layout.y; }}
+        >
           {renderContent(lang(article.contentKey))}
         </View>
 

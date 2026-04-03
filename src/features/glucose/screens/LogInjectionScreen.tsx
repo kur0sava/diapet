@@ -76,7 +76,7 @@ export default function LogInjectionScreen() {
       savingRef.current = false;
       setLoading(false);
     }
-  }, [activePet, dose, insulinType, notes, administeredAt, queryClient, navigation, t, triggerAfterAction]);
+  }, [activePet, dose, insulinType, notes, administeredAt, queryClient, navigation, t, triggerAfterAction, disableGuard]);
 
   const proceedWithDoseChecks = useCallback((doseNum: number) => {
     // MH-C1: Hard limit 10 IU (ISFM 2021, Rand 2012 — clinical max for cats)

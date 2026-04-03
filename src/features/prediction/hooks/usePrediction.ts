@@ -42,15 +42,24 @@ export function usePrediction(): UsePredictionReturn {
     return getCachedPrediction(petId);
   });
 
+  // Reset state when active pet changes
+  useEffect(() => {
+    setPrediction(petId ? getCachedPrediction(petId) : null);
+    setError(null);
+    setIsLoading(false);
+  }, [petId]);
+
   const canRequest = useMemo(() => {
     if (!petId) return false;
     return canRequestPrediction(petId);
-  }, [petId, prediction]); // re-evaluate after new prediction
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [petId, prediction]); // prediction triggers re-evaluation
 
   const nextAvailableIn = useMemo(() => {
     if (!petId) return 0;
     return timeUntilNextPrediction(petId);
-  }, [petId, prediction]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [petId, prediction]); // prediction triggers re-evaluation
 
   const requestNewPrediction = useCallback(async () => {
     if (!activePet || !petId) {

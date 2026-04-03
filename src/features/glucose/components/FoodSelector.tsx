@@ -124,7 +124,9 @@ export default function FoodSelector({ visible, onClose, onSelect, filterCategor
   const { theme } = useTheme();
   const [search, setSearch] = useState('');
 
-  const allFoods = useMemo(() => buildUnifiedList(), []);
+  const currentLang = i18n.language;
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- rebuild list when language changes
+  const allFoods = useMemo(() => buildUnifiedList(), [currentLang]);
 
   const filtered = useMemo(() => {
     let items = allFoods;
@@ -141,6 +143,18 @@ export default function FoodSelector({ visible, onClose, onSelect, filterCategor
     }
     return items.sort((a, b) => CATEGORY_ORDER.indexOf(a.category) - CATEGORY_ORDER.indexOf(b.category));
   }, [allFoods, search, filterCategory]);
+
+  const sectionHeaderIndices = useMemo(() => {
+    const set = new Set<number>();
+    let prev: string | null = null;
+    for (let i = 0; i < filtered.length; i++) {
+      if (filtered[i].category !== prev) {
+        set.add(i);
+        prev = filtered[i].category;
+      }
+    }
+    return set;
+  }, [filtered]);
 
   const categoryLabel = (cat: UnifiedFood['category']): string => {
     const labels: Record<string, string> = {
@@ -165,8 +179,6 @@ export default function FoodSelector({ visible, onClose, onSelect, filterCategor
     }
     onClose();
   };
-
-  let lastCategory: string | null = null;
 
   return (
     <Modal visible={visible} animationType="slide" onRequestClose={onClose}>
@@ -201,12 +213,10 @@ export default function FoodSelector({ visible, onClose, onSelect, filterCategor
           data={filtered}
           keyExtractor={item => item.id}
           contentContainerStyle={{ paddingBottom: 40 }}
-          renderItem={({ item }) => {
-            const showHeader = item.category !== lastCategory;
-            lastCategory = item.category;
+          renderItem={({ item, index }) => {
             return (
               <>
-                {showHeader && (
+                {sectionHeaderIndices.has(index) && (
                   <Text style={[styles.sectionHeader, { color: theme.colors.textSecondary }]}>
                     {categoryLabel(item.category)}
                   </Text>

@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import { Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { useTranslation } from 'react-i18next';
@@ -15,7 +15,10 @@ export function useUnsavedChangesGuard(hasUnsavedChanges: boolean) {
   const navigation = useNavigation();
   const { t } = useTranslation();
   const enabledRef = useRef(hasUnsavedChanges);
-  enabledRef.current = hasUnsavedChanges;
+
+  useEffect(() => {
+    enabledRef.current = hasUnsavedChanges;
+  }, [hasUnsavedChanges]);
 
   useEffect(() => {
     const unsubscribe = navigation.addListener('beforeRemove', (e) => {
@@ -36,7 +39,7 @@ export function useUnsavedChangesGuard(hasUnsavedChanges: boolean) {
   }, [navigation, t]);
 
   /** Call before navigation.goBack() to prevent the guard from firing */
-  const disableGuard = () => { enabledRef.current = false; };
+  const disableGuard = useCallback(() => { enabledRef.current = false; }, []);
 
   return disableGuard;
 }

@@ -59,7 +59,7 @@ function getTodayCount(): AlertsShownToday {
       const parsed = JSON.parse(raw) as AlertsShownToday;
       if (parsed.date === new Date().toISOString().slice(0, 10)) return parsed;
     }
-  } catch {}
+  } catch { /* corrupt storage — reset */ }
   return { date: new Date().toISOString().slice(0, 10), count: 0 };
 }
 
@@ -186,13 +186,19 @@ export function generateSmartAlerts(
     });
   }
 
-  // Find first candidate that passes throttling
+  // Find first candidate that passes throttling (pure — no side-effects)
   for (const alert of candidates) {
     if (canFireAlert(alert.type, now)) {
-      markFired(alert.type);
       return alert;
     }
   }
 
   return null;
+}
+
+/**
+ * Mark an alert as fired. Call this from useEffect, NOT from render/useMemo.
+ */
+export function markAlertFired(type: AlertType): void {
+  markFired(type);
 }
