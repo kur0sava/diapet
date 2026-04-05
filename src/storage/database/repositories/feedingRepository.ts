@@ -30,12 +30,24 @@ export const feedingRepository = {
       `INSERT INTO feedings (id, pet_id, food_type, amount_grams, notes, fed_at, created_at,
         food_brand, food_product, protein, fat, fiber, ash, moisture, carbs_dm, verdict)
        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-      [id, dto.petId, dto.foodType ?? null, dto.amountGrams ?? null,
-       dto.notes ?? null, dto.fedAt ?? now, now,
-       dto.foodBrand ?? null, dto.foodProduct ?? null,
-       dto.protein ?? null, dto.fat ?? null, dto.fiber ?? null,
-       dto.ash ?? null, dto.moisture ?? null, dto.carbsDM ?? null,
-       dto.verdict ?? null]
+      [
+        id,
+        dto.petId,
+        dto.foodType ?? null,
+        dto.amountGrams ?? null,
+        dto.notes ?? null,
+        dto.fedAt ?? now,
+        now,
+        dto.foodBrand ?? null,
+        dto.foodProduct ?? null,
+        dto.protein ?? null,
+        dto.fat ?? null,
+        dto.fiber ?? null,
+        dto.ash ?? null,
+        dto.moisture ?? null,
+        dto.carbsDM ?? null,
+        dto.verdict ?? null,
+      ]
     );
     const result = await this.findById(id);
     if (!result) throw new Error(`Failed to read back feeding ${id} after insert`);
@@ -48,7 +60,11 @@ export const feedingRepository = {
     return row ? mapRow(row) : null;
   },
 
-  async findByPetId(petId: string, limit = 50, cursor?: string): Promise<PaginatedResult<FeedingLog>> {
+  async findByPetId(
+    petId: string,
+    limit = 50,
+    cursor?: string
+  ): Promise<PaginatedResult<FeedingLog>> {
     const db = await getDatabase();
     const rows = await db.getAllAsync<FeedingRow>(
       'SELECT * FROM feedings WHERE pet_id = ? AND (? IS NULL OR fed_at < ?) ORDER BY fed_at DESC LIMIT ?',
@@ -82,10 +98,12 @@ export const feedingRepository = {
   },
 
   async findForDay(petId: string, dateStr: string): Promise<FeedingLog[]> {
+    const dayStart = new Date(`${dateStr}T00:00:00`).toISOString();
+    const dayEnd = new Date(`${dateStr}T23:59:59.999`).toISOString();
     const db = await getDatabase();
     const rows = await db.getAllAsync<FeedingRow>(
-      'SELECT * FROM feedings WHERE pet_id = ? AND DATE(fed_at) = DATE(?) ORDER BY fed_at ASC',
-      [petId, dateStr]
+      'SELECT * FROM feedings WHERE pet_id = ? AND fed_at >= ? AND fed_at <= ? ORDER BY fed_at ASC',
+      [petId, dayStart, dayEnd]
     );
     return rows.map(mapRow);
   },

@@ -1,6 +1,7 @@
 import { getDatabase } from '../database';
 import { Pet, CreatePetDTO, UpdatePetDTO } from '@storage/domain/types';
 import uuid from 'react-native-uuid';
+import { getStorage } from '@storage/mmkv/storage';
 
 interface PetRow {
   id: string;
@@ -27,9 +28,21 @@ export const petRepository = {
     await db.runAsync(
       `INSERT INTO pets (id, name, species, breed, gender, birth_year, weight_kg, diagnosis_date, diabetes_type, insulin_type, photo_uri, is_active, created_at, updated_at)
        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1, ?, ?)`,
-      [id, dto.name, dto.species ?? 'cat', dto.breed ?? null, dto.gender, dto.birthYear ?? null,
-       dto.weightKg ?? null, dto.diagnosisDate ?? null, dto.diabetesType ?? 'unknown',
-       dto.insulinType ?? null, dto.photoUri ?? null, now, now]
+      [
+        id,
+        dto.name,
+        dto.species ?? 'cat',
+        dto.breed ?? null,
+        dto.gender,
+        dto.birthYear ?? null,
+        dto.weightKg ?? null,
+        dto.diagnosisDate ?? null,
+        dto.diabetesType ?? 'unknown',
+        dto.insulinType ?? null,
+        dto.photoUri ?? null,
+        now,
+        now,
+      ]
     );
     const result = await this.findById(id);
     if (!result) throw new Error(`Failed to read back pet ${id} after insert`);
@@ -50,7 +63,9 @@ export const petRepository = {
 
   async findActive(): Promise<Pet[]> {
     const db = await getDatabase();
-    const rows = await db.getAllAsync<PetRow>('SELECT * FROM pets WHERE is_active = 1 ORDER BY created_at ASC');
+    const rows = await db.getAllAsync<PetRow>(
+      'SELECT * FROM pets WHERE is_active = 1 ORDER BY created_at ASC'
+    );
     return rows.map(mapRowToPet);
   },
 
@@ -60,10 +75,16 @@ export const petRepository = {
     const sets: string[] = [];
     const params: (string | number | null)[] = [];
     const fields: Array<[string, keyof UpdatePetDTO]> = [
-      ['name', 'name'], ['species', 'species'], ['breed', 'breed'], ['gender', 'gender'],
-      ['birth_year', 'birthYear'], ['weight_kg', 'weightKg'],
-      ['diagnosis_date', 'diagnosisDate'], ['diabetes_type', 'diabetesType'],
-      ['insulin_type', 'insulinType'], ['photo_uri', 'photoUri'],
+      ['name', 'name'],
+      ['species', 'species'],
+      ['breed', 'breed'],
+      ['gender', 'gender'],
+      ['birth_year', 'birthYear'],
+      ['weight_kg', 'weightKg'],
+      ['diagnosis_date', 'diagnosisDate'],
+      ['diabetes_type', 'diabetesType'],
+      ['insulin_type', 'insulinType'],
+      ['photo_uri', 'photoUri'],
     ];
     for (const [col, key] of fields) {
       if (key in dto) {
@@ -82,6 +103,22 @@ export const petRepository = {
   async delete(id: string): Promise<void> {
     const db = await getDatabase();
     await db.runAsync('DELETE FROM pets WHERE id = ?', [id]);
+    // BL-01: Clean up MMKV data tied to this pet
+    try {
+      const mmkv = getStorage();
+      const petPrefixes = [
+        `predictionCache_${id}`,
+        `predictionLastRequest_${id}`,
+        `remissionCache_${id}`,
+        `remissionLastRequest_${id}`,
+        `aiChatHistory_${id}`,
+      ];
+      for (const key of petPrefixes) {
+        mmkv.delete(key);
+      }
+    } catch {
+      /* MMKV cleanup is best-effort */
+    }
   },
 };
 

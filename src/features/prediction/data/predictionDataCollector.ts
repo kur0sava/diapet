@@ -3,7 +3,14 @@
  * for the AI prediction prompt.
  */
 import { subDays, parseISO, isValid } from 'date-fns';
-import { glucoseRepository, injectionRepository, feedingRepository, symptomRepository, expenseRepository, scheduleRepository } from '@storage/database';
+import {
+  glucoseRepository,
+  injectionRepository,
+  feedingRepository,
+  symptomRepository,
+  expenseRepository,
+  scheduleRepository,
+} from '@storage/database';
 import type { Pet, GlucoseReading, InjectionLog, FeedingLog } from '@storage/domain/types';
 import type {
   PredictionDataSnapshot,
@@ -54,7 +61,8 @@ function computeGlucoseStats(all: GlucoseReading[]): GlucoseStats {
   const vals7 = last7.map(r => r.valueMmol);
   const vals30 = last30.map(r => r.valueMmol);
 
-  const inRange = (v: number) => v >= 4.0 && v <= 9.0;
+  // BL-08: Use ISFM feline target range (4-12 mmol/L), consistent with trendEngine
+  const inRange = (v: number) => v >= 4.0 && v <= 12.0;
   const inRangePct = (vals: number[]) =>
     vals.length > 0 ? Math.round((vals.filter(inRange).length / vals.length) * 100) : null;
 
@@ -147,7 +155,10 @@ function computeFeedingStats(all: FeedingLog[]): FeedingStats {
     let slotConsistent = true;
     for (let slot = 0; slot < mealsPerDay; slot++) {
       const slotHours = sortedDays.filter(d => d.length > slot).map(d => d[slot]);
-      if (slotHours.length >= 2 && stdDev(slotHours) > 2) { slotConsistent = false; break; }
+      if (slotHours.length >= 2 && stdDev(slotHours) > 2) {
+        slotConsistent = false;
+        break;
+      }
     }
     feedingRegular = countConsistent && slotConsistent;
   }
@@ -174,9 +185,7 @@ function computeFeedingStats(all: FeedingLog[]): FeedingStats {
   };
 }
 
-function computeDataQuality(
-  glucoseReadings: GlucoseReading[],
-): DataQuality {
+function computeDataQuality(glucoseReadings: GlucoseReading[]): DataQuality {
   const dates = glucoseReadings.map(r => r.recordedAt.slice(0, 10));
   const uniqueDays = new Set(dates);
 
@@ -205,16 +214,17 @@ function computeDataQuality(
 export async function collectPredictionData(
   petId: string,
   pet: Pet,
-  language: 'en' | 'ru',
+  language: 'en' | 'ru'
 ): Promise<PredictionDataSnapshot> {
-  const [allGlucose, allInjections, allFeedings, allSymptoms, allExpenses, injectionSchedule] = await Promise.all([
-    glucoseRepository.findAllByPetId(petId),
-    injectionRepository.findAllByPetId(petId),
-    feedingRepository.findAllByPetId(petId),
-    symptomRepository.findAllByPetId(petId),
-    expenseRepository.findByPetId(petId),
-    scheduleRepository.getInjectionTimes(petId),
-  ]);
+  const [allGlucose, allInjections, allFeedings, allSymptoms, allExpenses, injectionSchedule] =
+    await Promise.all([
+      glucoseRepository.findAllByPetId(petId),
+      injectionRepository.findAllByPetId(petId),
+      feedingRepository.findAllByPetId(petId),
+      symptomRepository.findAllByPetId(petId),
+      expenseRepository.findByPetId(petId),
+      scheduleRepository.getInjectionTimes(petId),
+    ]);
 
   // C34: Find last vet visit from expenses
   const vetVisits = allExpenses
@@ -248,7 +258,12 @@ export async function collectPredictionData(
   if (allGlucose.length >= 3) {
     const now = new Date();
     const trends = analyzeTrends(allGlucose, now);
-    const patterns = detectPatterns({ readings: allGlucose, injections: allInjections, feedings: allFeedings, now });
+    const patterns = detectPatterns({
+      readings: allGlucose,
+      injections: allInjections,
+      feedings: allFeedings,
+      now,
+    });
     const risk = calculateRiskScore({
       readings: allGlucose,
       injections: allInjections,
@@ -256,7 +271,9 @@ export async function collectPredictionData(
       symptoms: allSymptoms,
       weightKg: pet.weightKg,
       diagnosisDays: pet.diagnosisDate
-        ? Math.floor((now.getTime() - new Date(pet.diagnosisDate).getTime()) / (24 * 60 * 60 * 1000))
+        ? Math.floor(
+            (now.getTime() - new Date(pet.diagnosisDate).getTime()) / (24 * 60 * 60 * 1000)
+          )
         : undefined,
       now,
     });

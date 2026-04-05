@@ -10,6 +10,7 @@
 import { db } from './firebaseConfig';
 import { doc, setDoc, getDoc } from 'firebase/firestore';
 import { getDatabase } from '@storage/database';
+import { storage, StorageKeys } from '@storage/mmkv/storage';
 
 const TABLES = [
   'pets',
@@ -26,10 +27,24 @@ const TABLES = [
 /** Firestore document size limit (1 MB minus safety margin). */
 const FIRESTORE_MAX_BYTES = 950_000;
 
+/** MMKV keys to include in cloud backup (user preferences that should survive device change). */
+const BACKUP_MMKV_KEYS = [
+  StorageKeys.GLUCOSE_UNIT,
+  StorageKeys.LANGUAGE,
+  StorageKeys.COLOR_SCHEME,
+  StorageKeys.VET_NAME,
+  StorageKeys.VET_PHONE,
+  StorageKeys.EXPENSE_BUDGET_MONTHLY,
+  StorageKeys.NOTIFICATIONS_ENABLED,
+  StorageKeys.HINTS_DISABLED,
+] as const;
+
 interface BackupData {
   version: number;
   createdAt: string;
   tables: Record<string, unknown[]>;
+  /** User preferences from MMKV (added in version 3). */
+  settings?: Record<string, string | number | boolean>;
 }
 
 /** Validate column name: only alphanumeric + underscore allowed. */
@@ -59,10 +74,30 @@ export async function backupToCloud(uid: string): Promise<void> {
     tables[table] = rows;
   }
 
+  // BL-10: Include user preferences from MMKV
+  const settings: Record<string, string | number | boolean> = {};
+  for (const key of BACKUP_MMKV_KEYS) {
+    const str = storage.getString(key);
+    if (str !== undefined) {
+      settings[key] = str;
+      continue;
+    }
+    const num = storage.getNumber(key);
+    if (num !== undefined) {
+      settings[key] = num;
+      continue;
+    }
+    const bool = storage.getBoolean(key);
+    if (bool !== undefined) {
+      settings[key] = bool;
+    }
+  }
+
   const backup: BackupData = {
-    version: 2,
+    version: 3,
     createdAt: new Date().toISOString(),
     tables,
+    settings,
   };
 
   const payload = JSON.stringify(backup);
@@ -134,6 +169,17 @@ export async function restoreFromCloud(uid: string): Promise<boolean> {
       }
     }
   });
+
+  // BL-10: Restore user preferences to MMKV
+  const allowedKeys = new Set<string>(BACKUP_MMKV_KEYS);
+  if (backup.settings) {
+    for (const [key, value] of Object.entries(backup.settings)) {
+      if (!allowedKeys.has(key)) continue;
+      if (typeof value === 'string') storage.set(key, value);
+      else if (typeof value === 'number') storage.set(key, value);
+      else if (typeof value === 'boolean') storage.set(key, value);
+    }
+  }
 
   return true;
 }

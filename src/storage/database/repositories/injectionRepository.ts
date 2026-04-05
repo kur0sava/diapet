@@ -20,8 +20,15 @@ export const injectionRepository = {
     await db.runAsync(
       `INSERT INTO injections (id, pet_id, insulin_type, dose_units, notes, administered_at, created_at)
        VALUES (?, ?, ?, ?, ?, ?, ?)`,
-      [id, dto.petId, dto.insulinType, dto.doseUnits, dto.notes ?? null,
-       dto.administeredAt ?? now, now]
+      [
+        id,
+        dto.petId,
+        dto.insulinType,
+        dto.doseUnits,
+        dto.notes ?? null,
+        dto.administeredAt ?? now,
+        now,
+      ]
     );
     const result = await this.findById(id);
     if (!result) throw new Error(`Failed to read back injection ${id} after insert`);
@@ -54,7 +61,11 @@ export const injectionRepository = {
     return row ? mapRow(row) : null;
   },
 
-  async findByPetId(petId: string, limit = 50, cursor?: string): Promise<PaginatedResult<InjectionLog>> {
+  async findByPetId(
+    petId: string,
+    limit = 50,
+    cursor?: string
+  ): Promise<PaginatedResult<InjectionLog>> {
     const db = await getDatabase();
     const rows = await db.getAllAsync<InjectionRow>(
       'SELECT * FROM injections WHERE pet_id = ? AND (? IS NULL OR administered_at < ?) ORDER BY administered_at DESC LIMIT ?',
@@ -79,10 +90,12 @@ export const injectionRepository = {
   },
 
   async findForDay(petId: string, dateStr: string): Promise<InjectionLog[]> {
+    const dayStart = new Date(`${dateStr}T00:00:00`).toISOString();
+    const dayEnd = new Date(`${dateStr}T23:59:59.999`).toISOString();
     const db = await getDatabase();
     const rows = await db.getAllAsync<InjectionRow>(
-      'SELECT * FROM injections WHERE pet_id = ? AND DATE(administered_at) = DATE(?) ORDER BY administered_at ASC',
-      [petId, dateStr]
+      'SELECT * FROM injections WHERE pet_id = ? AND administered_at >= ? AND administered_at <= ? ORDER BY administered_at ASC',
+      [petId, dayStart, dayEnd]
     );
     return rows.map(mapRow);
   },
@@ -90,7 +103,8 @@ export const injectionRepository = {
   async countByPetId(petId: string): Promise<number> {
     const db = await getDatabase();
     const row = await db.getFirstAsync<{ cnt: number }>(
-      'SELECT COUNT(*) as cnt FROM injections WHERE pet_id = ?', [petId],
+      'SELECT COUNT(*) as cnt FROM injections WHERE pet_id = ?',
+      [petId]
     );
     return row?.cnt ?? 0;
   },

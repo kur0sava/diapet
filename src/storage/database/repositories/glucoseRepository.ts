@@ -40,9 +40,19 @@ export const glucoseRepository = {
     await db.runAsync(
       `INSERT INTO glucose_readings (id, pet_id, value_mmol, value_mgdl, meal_relation, insulin_dose, insulin_type, notes, recorded_at, created_at, updated_at)
        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-      [id, dto.petId, valueMmol, valueMgdl, dto.mealRelation ?? 'unspecified',
-       dto.insulinDose ?? null, dto.insulinType ?? null, dto.notes ?? null,
-       dto.recordedAt ?? now, now, now]
+      [
+        id,
+        dto.petId,
+        valueMmol,
+        valueMgdl,
+        dto.mealRelation ?? 'unspecified',
+        dto.insulinDose ?? null,
+        dto.insulinType ?? null,
+        dto.notes ?? null,
+        dto.recordedAt ?? now,
+        now,
+        now,
+      ]
     );
     const result = await this.findById(id);
     if (!result) throw new Error(`Failed to read back glucose reading ${id} after insert`);
@@ -51,11 +61,17 @@ export const glucoseRepository = {
 
   async findById(id: string): Promise<GlucoseReading | null> {
     const db = await getDatabase();
-    const row = await db.getFirstAsync<GlucoseRow>('SELECT * FROM glucose_readings WHERE id = ?', [id]);
+    const row = await db.getFirstAsync<GlucoseRow>('SELECT * FROM glucose_readings WHERE id = ?', [
+      id,
+    ]);
     return row ? mapRowToReading(row) : null;
   },
 
-  async findByPetId(petId: string, limit = 50, cursor?: string): Promise<PaginatedResult<GlucoseReading>> {
+  async findByPetId(
+    petId: string,
+    limit = 50,
+    cursor?: string
+  ): Promise<PaginatedResult<GlucoseReading>> {
     const db = await getDatabase();
     const rows = await db.getAllAsync<GlucoseRow>(
       'SELECT * FROM glucose_readings WHERE pet_id = ? AND (? IS NULL OR recorded_at < ?) ORDER BY recorded_at DESC LIMIT ?',
@@ -74,7 +90,7 @@ export const glucoseRepository = {
     petId: string,
     filters: GlucoseFilter,
     limit = 50,
-    cursor?: string,
+    cursor?: string
   ): Promise<PaginatedResult<GlucoseReading>> {
     const db = await getDatabase();
     const conditions: string[] = ['pet_id = ?'];
@@ -97,8 +113,14 @@ export const glucoseRepository = {
       const rangeConds: string[] = [];
       for (const range of filters.levelRanges) {
         const parts: string[] = [];
-        if (range.min !== undefined) { parts.push('value_mmol >= ?'); params.push(range.min); }
-        if (range.max !== undefined) { parts.push('value_mmol <= ?'); params.push(range.max); }
+        if (range.min !== undefined) {
+          parts.push('value_mmol >= ?');
+          params.push(range.min);
+        }
+        if (range.max !== undefined) {
+          parts.push('value_mmol <= ?');
+          params.push(range.max);
+        }
         rangeConds.push(parts.length > 0 ? `(${parts.join(' AND ')})` : '1');
       }
       conditions.push(`(${rangeConds.join(' OR ')})`);
@@ -123,7 +145,7 @@ export const glucoseRepository = {
 
     const rows = await db.getAllAsync<GlucoseRow>(
       `SELECT * FROM glucose_readings WHERE ${where} ORDER BY recorded_at DESC LIMIT ?`,
-      params,
+      params
     );
     const hasNextPage = rows.length > limit;
     const items = hasNextPage ? rows.slice(0, limit) : rows;
@@ -135,10 +157,13 @@ export const glucoseRepository = {
   },
 
   async findForDay(petId: string, dateStr: string): Promise<GlucoseReading[]> {
+    // BL-05: Convert local day boundaries to UTC ISO for comparison with stored UTC timestamps
+    const dayStart = new Date(`${dateStr}T00:00:00`).toISOString();
+    const dayEnd = new Date(`${dateStr}T23:59:59.999`).toISOString();
     const db = await getDatabase();
     const rows = await db.getAllAsync<GlucoseRow>(
-      "SELECT * FROM glucose_readings WHERE pet_id = ? AND DATE(recorded_at) = DATE(?) ORDER BY recorded_at ASC",
-      [petId, dateStr]
+      'SELECT * FROM glucose_readings WHERE pet_id = ? AND recorded_at >= ? AND recorded_at <= ? ORDER BY recorded_at ASC',
+      [petId, dayStart, dayEnd]
     );
     return rows.map(mapRowToReading);
   },
@@ -184,11 +209,26 @@ export const glucoseRepository = {
       sets.push('value_mmol=?', 'value_mgdl=?');
       params.push(valueMmol, valueMgdl);
     }
-    if (dto.mealRelation !== undefined) { sets.push('meal_relation=?'); params.push(dto.mealRelation); }
-    if ('insulinDose' in dto) { sets.push('insulin_dose=?'); params.push(dto.insulinDose ?? null); }
-    if ('insulinType' in dto) { sets.push('insulin_type=?'); params.push(dto.insulinType ?? null); }
-    if ('notes' in dto) { sets.push('notes=?'); params.push(dto.notes ?? null); }
-    if (dto.recordedAt !== undefined) { sets.push('recorded_at=?'); params.push(dto.recordedAt); }
+    if (dto.mealRelation !== undefined) {
+      sets.push('meal_relation=?');
+      params.push(dto.mealRelation);
+    }
+    if ('insulinDose' in dto) {
+      sets.push('insulin_dose=?');
+      params.push(dto.insulinDose ?? null);
+    }
+    if ('insulinType' in dto) {
+      sets.push('insulin_type=?');
+      params.push(dto.insulinType ?? null);
+    }
+    if ('notes' in dto) {
+      sets.push('notes=?');
+      params.push(dto.notes ?? null);
+    }
+    if (dto.recordedAt !== undefined) {
+      sets.push('recorded_at=?');
+      params.push(dto.recordedAt);
+    }
 
     if (sets.length > 0) {
       sets.push('updated_at=?');
@@ -202,12 +242,18 @@ export const glucoseRepository = {
     const db = await getDatabase();
     // Wrap in transaction: nullify symptom FK then delete reading atomically
     await db.withTransactionAsync(async () => {
-      await db.runAsync('UPDATE symptoms SET glucose_reading_id = NULL WHERE glucose_reading_id = ?', [id]);
+      await db.runAsync(
+        'UPDATE symptoms SET glucose_reading_id = NULL WHERE glucose_reading_id = ?',
+        [id]
+      );
       await db.runAsync('DELETE FROM glucose_readings WHERE id = ?', [id]);
     });
   },
 
-  async getStats(petId: string, days = 30): Promise<{ avg: number; min: number; max: number; count: number }> {
+  async getStats(
+    petId: string,
+    days = 30
+  ): Promise<{ avg: number; min: number; max: number; count: number }> {
     const db = await getDatabase();
     const since = new Date(Date.now() - days * 24 * 60 * 60 * 1000).toISOString();
     const row = await db.getFirstAsync<GlucoseStatsRow>(
