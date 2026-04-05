@@ -253,22 +253,28 @@ export async function collectPredictionData(
   const recent14Feedings = filterByDays(allFeedings, r => r.fedAt, 14);
   const recent30Symptoms = filterByDays(allSymptoms, r => r.recordedAt, 30);
 
+  // MED-08: Window data to 60 days for analyzer (pattern/risk/trend) to limit memory
+  const recent60Glucose = filterByDays(allGlucose, r => r.recordedAt, 60);
+  const recent60Injections = filterByDays(allInjections, r => r.administeredAt, 60);
+  const recent60Feedings = filterByDays(allFeedings, r => r.fedAt, 60);
+  const recent60Symptoms = filterByDays(allSymptoms, r => r.recordedAt, 60);
+
   // Run local analyzer for AI context enrichment
   let analyzer: AnalyzerSummary | undefined;
-  if (allGlucose.length >= 3) {
+  if (recent60Glucose.length >= 3) {
     const now = new Date();
-    const trends = analyzeTrends(allGlucose, now);
+    const trends = analyzeTrends(recent60Glucose, now);
     const patterns = detectPatterns({
-      readings: allGlucose,
-      injections: allInjections,
-      feedings: allFeedings,
+      readings: recent60Glucose,
+      injections: recent60Injections,
+      feedings: recent60Feedings,
       now,
     });
     const risk = calculateRiskScore({
-      readings: allGlucose,
-      injections: allInjections,
-      feedings: allFeedings,
-      symptoms: allSymptoms,
+      readings: recent60Glucose,
+      injections: recent60Injections,
+      feedings: recent60Feedings,
+      symptoms: recent60Symptoms,
       weightKg: pet.weightKg,
       diagnosisDays: pet.diagnosisDate
         ? Math.floor(

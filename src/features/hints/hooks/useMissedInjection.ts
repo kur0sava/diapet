@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { useHintStore } from '../store/hintStore';
-import { selectHint, getStage } from './useHintEngine';
+import { selectHint, getStage, addShownId } from './useHintEngine';
 import { storage, StorageKeys } from '@storage/mmkv/storage';
 import { injectionRepository } from '@storage/database';
 import { usePetStore } from '@shared/stores/petStore';
@@ -39,10 +39,11 @@ export function useMissedInjection() {
         if (hoursSince > 14) {
           storage.set(MISSED_CHECK_DATE_KEY, today);
 
-          if (useHintStore.getState().currentHint) return;
-
           const hint = selectHint('missed_injection', stage, 'any');
-          if (hint) useHintStore.getState().showHint(hint);
+          if (hint) {
+            addShownId(hint.id);
+            useHintStore.getState().showHint(hint);
+          }
         }
       } catch {
         // Silently fail — hints are non-critical

@@ -81,7 +81,7 @@ function detectDawnPhenomenon(readings: GlucoseReading[]): DetectedPattern | nul
   const avgMorning = morning.reduce((s, r) => s + r.valueMmol, 0) / morning.length;
   const avgDaytime = daytime.reduce((s, r) => s + r.valueMmol, 0) / daytime.length;
 
-  if (avgMorning > avgDaytime * 1.20) {
+  if (avgMorning > avgDaytime * 1.2) {
     return {
       type: 'dawn_phenomenon',
       confidence: avgMorning > avgDaytime * 1.35 ? 'high' : 'medium',
@@ -96,7 +96,10 @@ function detectDawnPhenomenon(readings: GlucoseReading[]): DetectedPattern | nul
 /**
  * C9: Post-meal spike — feeding followed by glucose >15 mmol/L within 2-4 hours.
  */
-function detectPostMealSpike(readings: GlucoseReading[], feedings: FeedingLog[]): DetectedPattern | null {
+function detectPostMealSpike(
+  readings: GlucoseReading[],
+  feedings: FeedingLog[]
+): DetectedPattern | null {
   const spikes: { feedingId: string; readingId: string; value: number; gap: number }[] = [];
 
   for (const feeding of feedings) {
@@ -104,7 +107,12 @@ function detectPostMealSpike(readings: GlucoseReading[], feedings: FeedingLog[])
       const gap = hoursApart(feeding.fedAt, reading.recordedAt);
       if (gap >= 2 && gap <= 4 && new Date(reading.recordedAt) > new Date(feeding.fedAt)) {
         if (reading.valueMmol > 15) {
-          spikes.push({ feedingId: feeding.id, readingId: reading.id, value: reading.valueMmol, gap });
+          spikes.push({
+            feedingId: feeding.id,
+            readingId: reading.id,
+            value: reading.valueMmol,
+            gap,
+          });
         }
       }
     }
@@ -125,8 +133,13 @@ function detectPostMealSpike(readings: GlucoseReading[], feedings: FeedingLog[])
 /**
  * C10: Missed/delayed injection impact — gap >14h between injections followed by high glucose.
  */
-function detectMissedInjectionImpact(readings: GlucoseReading[], injections: InjectionLog[]): DetectedPattern | null {
-  const sortedInj = [...injections].sort((a, b) => a.administeredAt.localeCompare(b.administeredAt));
+function detectMissedInjectionImpact(
+  readings: GlucoseReading[],
+  injections: InjectionLog[]
+): DetectedPattern | null {
+  const sortedInj = [...injections].sort((a, b) =>
+    a.administeredAt.localeCompare(b.administeredAt)
+  );
   const impacts: string[] = [];
 
   for (let i = 1; i < sortedInj.length; i++) {
@@ -134,9 +147,10 @@ function detectMissedInjectionImpact(readings: GlucoseReading[], injections: Inj
     if (gap < 14) continue; // Normal gap is ~12h
 
     // Find glucose readings in the gap period
-    const gapReadings = readings.filter(r =>
-      r.recordedAt > sortedInj[i - 1].administeredAt &&
-      r.recordedAt <= sortedInj[i].administeredAt
+    const gapReadings = readings.filter(
+      r =>
+        r.recordedAt > sortedInj[i - 1].administeredAt &&
+        r.recordedAt <= sortedInj[i].administeredAt
     );
     const highReadings = gapReadings.filter(r => r.valueMmol > 15);
     if (highReadings.length > 0) {
@@ -159,7 +173,10 @@ function detectMissedInjectionImpact(readings: GlucoseReading[], injections: Inj
 /**
  * C11: Food type correlation — which food type gives better glucose control.
  */
-function detectFoodCorrelation(readings: GlucoseReading[], feedings: FeedingLog[]): DetectedPattern | null {
+function detectFoodCorrelation(
+  readings: GlucoseReading[],
+  feedings: FeedingLog[]
+): DetectedPattern | null {
   const foodTypeAvg = new Map<string, { total: number; count: number }>();
 
   for (const feeding of feedings) {
@@ -200,7 +217,10 @@ function detectFoodCorrelation(readings: GlucoseReading[], feedings: FeedingLog[
 /**
  * C12: Dose-response analysis — specific dose → glucose 4h later.
  */
-function detectDoseResponse(readings: GlucoseReading[], injections: InjectionLog[]): DetectedPattern | null {
+function detectDoseResponse(
+  readings: GlucoseReading[],
+  injections: InjectionLog[]
+): DetectedPattern | null {
   const doseGroups = new Map<number, number[]>();
 
   for (const inj of injections) {
@@ -230,7 +250,9 @@ function detectDoseResponse(readings: GlucoseReading[], injections: InjectionLog
     return {
       type: 'dose_response',
       confidence: entries.every(e => e.count >= 5) ? 'high' : 'low',
-      description: entries.map(e => `${e.dose}U → avg ${e.avg.toFixed(1)} mmol/L (n=${e.count})`).join('; '),
+      description: entries
+        .map(e => `${e.dose}U → avg ${e.avg.toFixed(1)} mmol/L (n=${e.count})`)
+        .join('; '),
       evidence: [],
       detectedAt: new Date().toISOString(),
     };
@@ -273,9 +295,14 @@ function detectRemissionCandidate(readings: GlucoseReading[], now: Date): Detect
 
 /**
  * Main entry point — detect all patterns.
+ * MED-07: Window inputs to last 60 days to avoid O(n²) on large datasets.
  */
 export function detectPatterns(input: PatternInput): DetectedPattern[] {
-  const { readings, injections, feedings, now = new Date() } = input;
+  const { now = new Date() } = input;
+  const cutoff = now.getTime() - 60 * 24 * 60 * 60 * 1000;
+  const readings = input.readings.filter(r => new Date(r.recordedAt).getTime() >= cutoff);
+  const injections = input.injections.filter(r => new Date(r.administeredAt).getTime() >= cutoff);
+  const feedings = input.feedings.filter(r => new Date(r.fedAt).getTime() >= cutoff);
   const patterns: DetectedPattern[] = [];
 
   const detectors = [

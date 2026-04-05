@@ -1,6 +1,13 @@
 import { differenceInDays, parseISO } from 'date-fns';
 import i18n from '@shared/i18n';
-import { HINTS, HintTrigger, HintStage, HintTimeOfDay, HintCategory, HintContent } from '../data/hintsContent';
+import {
+  HINTS,
+  HintTrigger,
+  HintStage,
+  HintTimeOfDay,
+  HintCategory,
+  HintContent,
+} from '../data/hintsContent';
 import { storage, StorageKeys } from '@storage/mmkv/storage';
 
 // ---------------------------------------------------------------------------
@@ -41,7 +48,7 @@ function getShownIds(): string[] {
   }
 }
 
-function addShownId(id: string): void {
+export function addShownId(id: string): void {
   const shown = getShownIds();
   shown.push(id);
   storage.set(StorageKeys.HINTS_SHOWN_IDS, JSON.stringify(shown));
@@ -53,7 +60,7 @@ function addShownId(id: string): void {
 
 function countByCategory(
   shownIds: string[],
-  allHints: HintContent[],
+  allHints: HintContent[]
 ): Record<HintCategory, number> {
   const counts: Record<HintCategory, number> = {
     practical: 0,
@@ -100,7 +107,7 @@ function pickCategory(counts: Record<HintCategory, number>): HintCategory {
 export function selectHint(
   trigger: HintTrigger,
   stage: HintStage,
-  timeOfDay: HintTimeOfDay,
+  timeOfDay: HintTimeOfDay
 ): { text: string; category: HintCategory; id: string } | null {
   const shownIds = getShownIds();
   const lang = i18n.language?.startsWith('en') ? 'en' : 'ru';
@@ -110,7 +117,7 @@ export function selectHint(
       h.trigger === trigger &&
       h.stage === stage &&
       (h.timeOfDay === timeOfDay || h.timeOfDay === 'any') &&
-      !shownIds.includes(h.id),
+      !shownIds.includes(h.id)
   );
 
   if (candidates.length === 0) return null;
@@ -118,8 +125,6 @@ export function selectHint(
   const targetCategory = pickCategory(countByCategory(shownIds, HINTS));
   const preferred = candidates.filter(c => c.category === targetCategory);
   const pick = preferred.length > 0 ? preferred[0] : candidates[0];
-
-  addShownId(pick.id);
 
   return { text: pick[lang], category: pick.category, id: pick.id };
 }

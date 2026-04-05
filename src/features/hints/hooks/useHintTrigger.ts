@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 import { useHintStore } from '../store/hintStore';
-import { selectHint, getStage, getTimeOfDay } from './useHintEngine';
+import { selectHint, getStage, getTimeOfDay, addShownId } from './useHintEngine';
 import { storage, StorageKeys } from '@storage/mmkv/storage';
 import type { HintTrigger } from '../data/hintsContent';
 
@@ -9,9 +9,6 @@ export function useHintTrigger() {
 
   const triggerAfterAction = useCallback(
     (trigger: HintTrigger) => {
-      // Read fresh state from store to avoid stale closure
-      if (useHintStore.getState().currentHint) return;
-
       // Respect user's preference to disable hints
       if (storage.getBoolean(StorageKeys.HINTS_DISABLED)) return;
 
@@ -24,6 +21,7 @@ export function useHintTrigger() {
       const timeOfDay = getTimeOfDay();
       const hint = selectHint(trigger, stage, timeOfDay);
       if (hint) {
+        addShownId(hint.id);
         showHint(hint);
       }
 

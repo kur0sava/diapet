@@ -28,6 +28,7 @@ import { differenceInDays } from 'date-fns';
 import { parseDateOnly } from '@shared/utils/dateUtils';
 
 const MAX_HISTORY = 50;
+const MAX_API_CONTEXT = 15;
 const DAILY_MESSAGE_LIMIT = 20;
 
 function getDailyChatCount(): number {
@@ -84,19 +85,20 @@ export default function AiAssistantScreen() {
 
     // Build system prompt asynchronously using pet context
     buildSystemPromptAsync();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activePet?.id]);
 
   const buildSystemPromptAsync = useCallback(async () => {
     if (!activePet) return;
 
     try {
-      const [glucoseResult, latestInjection, injectionSchedules, injectionCount] = await Promise.all([
-        glucoseRepository.findByPetId(activePet.id, 5),
-        injectionRepository.findLatest(activePet.id),
-        scheduleRepository.getInjectionTimes(activePet.id),
-        injectionRepository.countByPetId(activePet.id),
-      ]);
+      const [glucoseResult, latestInjection, injectionSchedules, injectionCount] =
+        await Promise.all([
+          glucoseRepository.findByPetId(activePet.id, 5),
+          injectionRepository.findLatest(activePet.id),
+          scheduleRepository.getInjectionTimes(activePet.id),
+          injectionRepository.countByPetId(activePet.id),
+        ]);
 
       const lastGlucoseReadings = glucoseResult.data.map(r => ({
         value: r.valueMmol,
@@ -104,15 +106,12 @@ export default function AiAssistantScreen() {
         date: r.recordedAt.slice(0, 10),
       }));
 
-      const daysSinceDiagnosis =
-        activePet.diagnosisDate
-          ? differenceInDays(new Date(), parseDateOnly(activePet.diagnosisDate))
-          : null;
+      const daysSinceDiagnosis = activePet.diagnosisDate
+        ? differenceInDays(new Date(), parseDateOnly(activePet.diagnosisDate))
+        : null;
 
       const injectionScheduleStr =
-        injectionSchedules.length > 0
-          ? injectionSchedules.map(s => s.timeOfDay).join(', ')
-          : null;
+        injectionSchedules.length > 0 ? injectionSchedules.map(s => s.timeOfDay).join(', ') : null;
 
       const context: AiPetContext = {
         petName: activePet.name,
@@ -145,31 +144,40 @@ export default function AiAssistantScreen() {
     }
   }, [activePet, i18n.language]);
 
-  const persistMessages = useCallback((msgs: ChatMessage[]) => {
-    if (!historyKey) return;
-    const limited = msgs.slice(-MAX_HISTORY);
-    storageUtils.setObject(historyKey, limited);
-  }, [historyKey]);
+  const persistMessages = useCallback(
+    (msgs: ChatMessage[]) => {
+      if (!historyKey) return;
+      const limited = msgs.slice(-MAX_HISTORY);
+      storageUtils.setObject(historyKey, limited);
+    },
+    [historyKey]
+  );
 
-  const updateMessages = useCallback((updater: (prev: ChatMessage[]) => ChatMessage[]) => {
-    setMessages(prev => {
-      const next = updater(prev);
-      messagesRef.current = next;
-      persistMessages(next);
-      return next;
-    });
-  }, [persistMessages]);
+  const updateMessages = useCallback(
+    (updater: (prev: ChatMessage[]) => ChatMessage[]) => {
+      setMessages(prev => {
+        const next = updater(prev);
+        messagesRef.current = next;
+        persistMessages(next);
+        return next;
+      });
+    },
+    [persistMessages]
+  );
 
-  const appendErrorMessage = useCallback((text: string) => {
-    const errorMsg: ChatMessage = { role: 'assistant', content: `\u26a0\ufe0f ${text}` };
-    updateMessages(prev => [...prev, errorMsg]);
-  }, [updateMessages]);
+  const appendErrorMessage = useCallback(
+    (text: string) => {
+      const errorMsg: ChatMessage = { role: 'assistant', content: `\u26a0\ufe0f ${text}` };
+      updateMessages(prev => [...prev, errorMsg]);
+    },
+    [updateMessages]
+  );
 
   const [remaining, setRemaining] = useState(getRemainingMessages());
 
   const handleSend = useCallback(async () => {
     const text = inputText.trim();
-    if (!text || isLoading) return;
+    if (!text || isLoading || !systemPrompt) return;
 
     // Rate limit: 5 seconds between messages
     const now = Date.now();
@@ -178,7 +186,7 @@ export default function AiAssistantScreen() {
       appendErrorMessage(
         i18n.language?.startsWith('en')
           ? `Please wait ${Math.ceil(cooldown / 1000)}s before sending again.`
-          : `Подождите ${Math.ceil(cooldown / 1000)} сек. перед следующим сообщением.`,
+          : `Подождите ${Math.ceil(cooldown / 1000)} сек. перед следующим сообщением.`
       );
       return;
     }
@@ -188,7 +196,7 @@ export default function AiAssistantScreen() {
       appendErrorMessage(
         i18n.language?.startsWith('en')
           ? `Daily limit reached (${DAILY_MESSAGE_LIMIT} messages). Try again tomorrow.`
-          : `Дневной лимит исчерпан (${DAILY_MESSAGE_LIMIT} сообщений). Попробуйте завтра.`,
+          : `Дневной лимит исчерпан (${DAILY_MESSAGE_LIMIT} сообщений). Попробуйте завтра.`
       );
       return;
     }
@@ -200,8 +208,8 @@ export default function AiAssistantScreen() {
     setIsLoading(true);
 
     try {
-      // messagesRef holds current messages synchronously after the update
-      const history = [...messagesRef.current];
+      // MED-11: Send only last N messages to API to save tokens
+      const history = messagesRef.current.slice(-MAX_API_CONTEXT);
       const response = await sendChatMessage(systemPrompt, history);
       incrementDailyChatCount();
       setRemaining(getRemainingMessages());
@@ -214,13 +222,13 @@ export default function AiAssistantScreen() {
         appendErrorMessage(
           i18n.language?.startsWith('en')
             ? 'API key not configured. Please contact support.'
-            : 'API ключ не настроен. Обратитесь в поддержку.',
+            : 'API ключ не настроен. Обратитесь в поддержку.'
         );
       } else {
         appendErrorMessage(
           i18n.language?.startsWith('en')
             ? 'Failed to connect. Check your internet connection.'
-            : 'Не удалось подключиться. Проверь интернет.',
+            : 'Не удалось подключиться. Проверь интернет.'
         );
       }
     } finally {
@@ -236,34 +244,39 @@ export default function AiAssistantScreen() {
     }
   }, [messages.length]);
 
-  const renderMessage = useCallback(({ item }: { item: ChatMessage }) => {
-    const isUser = item.role === 'user';
-    return (
-      <View style={[styles.messagRow, isUser ? styles.messageRowUser : styles.messageRowAssistant]}>
+  const renderMessage = useCallback(
+    ({ item }: { item: ChatMessage }) => {
+      const isUser = item.role === 'user';
+      return (
         <View
-          style={[
-            styles.bubble,
-            isUser
-              ? [styles.bubbleUser, { backgroundColor: theme.colors.primary }]
-              : [styles.bubbleAssistant, { backgroundColor: theme.colors.surfaceSecondary }],
-          ]}
+          style={[styles.messagRow, isUser ? styles.messageRowUser : styles.messageRowAssistant]}
         >
-          <Text
+          <View
             style={[
-              styles.bubbleText,
-              { color: isUser ? '#fff' : theme.colors.text, fontFamily: theme.fonts.regular },
+              styles.bubble,
+              isUser
+                ? [styles.bubbleUser, { backgroundColor: theme.colors.primary }]
+                : [styles.bubbleAssistant, { backgroundColor: theme.colors.surfaceSecondary }],
             ]}
           >
-            {item.content}
-          </Text>
+            <Text
+              style={[
+                styles.bubbleText,
+                { color: isUser ? '#fff' : theme.colors.text, fontFamily: theme.fonts.regular },
+              ]}
+            >
+              {item.content}
+            </Text>
+          </View>
         </View>
-      </View>
-    );
-  }, [theme]);
+      );
+    },
+    [theme]
+  );
 
   const headerGradientColors = theme.isDark
-    ? [...theme.gradients.headerDark] as [string, string]
-    : [...theme.gradients.header] as [string, string];
+    ? ([...theme.gradients.headerDark] as [string, string])
+    : ([...theme.gradients.header] as [string, string]);
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.background }]}>
@@ -296,11 +309,7 @@ export default function AiAssistantScreen() {
       {!isBackendConfigured() ? (
         <ComingSoonGate theme={theme} t={t} />
       ) : !isPro ? (
-        <ProGate
-          theme={theme}
-          t={t}
-          onUpgrade={() => rootNavigation.navigate('Paywall')}
-        />
+        <ProGate theme={theme} t={t} onUpgrade={() => rootNavigation.navigate('Paywall')} />
       ) : (
         <KeyboardAvoidingView
           style={{ flex: 1 }}
@@ -316,8 +325,17 @@ export default function AiAssistantScreen() {
             contentContainerStyle={styles.messageList}
             ListEmptyComponent={
               <View style={styles.emptyContainer}>
-                <Icon name="chatbubble-ellipses-outline" size={48} color={theme.colors.textTertiary} />
-                <Text style={[styles.emptyText, { color: theme.colors.textSecondary, fontFamily: theme.fonts.regular }]}>
+                <Icon
+                  name="chatbubble-ellipses-outline"
+                  size={48}
+                  color={theme.colors.textTertiary}
+                />
+                <Text
+                  style={[
+                    styles.emptyText,
+                    { color: theme.colors.textSecondary, fontFamily: theme.fonts.regular },
+                  ]}
+                >
                   {t('hints.aiPlaceholder')}
                 </Text>
               </View>
@@ -339,13 +357,23 @@ export default function AiAssistantScreen() {
             <Text style={[styles.disclaimer, { color: theme.colors.textTertiary, flex: 1 }]}>
               {t('hints.aiDisclaimer')}
             </Text>
-            <Text style={[styles.counterText, { color: remaining <= 3 ? theme.colors.danger : theme.colors.textTertiary }]}>
+            <Text
+              style={[
+                styles.counterText,
+                { color: remaining <= 3 ? theme.colors.danger : theme.colors.textTertiary },
+              ]}
+            >
               {remaining}/{DAILY_MESSAGE_LIMIT}
             </Text>
           </View>
 
           {/* Input row */}
-          <View style={[styles.inputRow, { backgroundColor: theme.colors.surface, borderTopColor: theme.colors.border }]}>
+          <View
+            style={[
+              styles.inputRow,
+              { backgroundColor: theme.colors.surface, borderTopColor: theme.colors.border },
+            ]}
+          >
             <TextInput
               style={[
                 styles.input,
@@ -367,19 +395,24 @@ export default function AiAssistantScreen() {
               style={[
                 styles.sendButton,
                 {
-                  backgroundColor: inputText.trim() && !isLoading
-                    ? theme.colors.primary
-                    : theme.colors.surfaceSecondary,
+                  backgroundColor:
+                    inputText.trim() && !isLoading && systemPrompt
+                      ? theme.colors.primary
+                      : theme.colors.surfaceSecondary,
                 },
               ]}
               onPress={handleSend}
-              disabled={!inputText.trim() || isLoading}
+              disabled={!inputText.trim() || isLoading || !systemPrompt}
               activeOpacity={0.8}
             >
               <Icon
                 name="send"
                 size={20}
-                color={inputText.trim() && !isLoading ? '#fff' : theme.colors.textTertiary}
+                color={
+                  inputText.trim() && !isLoading && systemPrompt
+                    ? '#fff'
+                    : theme.colors.textTertiary
+                }
               />
             </TouchableOpacity>
           </View>
@@ -399,14 +432,21 @@ interface ComingSoonGateProps {
 function ComingSoonGate({ theme, t }: ComingSoonGateProps) {
   return (
     <View style={[styles.proGate, { backgroundColor: theme.colors.background }]}>
-      <View style={[styles.proCard, { backgroundColor: theme.colors.surface, ...theme.shadows.md }]}>
+      <View
+        style={[styles.proCard, { backgroundColor: theme.colors.surface, ...theme.shadows.md }]}
+      >
         <View style={[styles.proIconContainer, { backgroundColor: `${theme.colors.primary}15` }]}>
           <Icon name="chatbubble-ellipses" size={40} color={theme.colors.primary} />
         </View>
         <Text style={[styles.proTitle, { color: theme.colors.text, fontFamily: theme.fonts.bold }]}>
           {t('hints.aiComingSoonTitle')}
         </Text>
-        <Text style={[styles.proDesc, { color: theme.colors.textSecondary, fontFamily: theme.fonts.regular }]}>
+        <Text
+          style={[
+            styles.proDesc,
+            { color: theme.colors.textSecondary, fontFamily: theme.fonts.regular },
+          ]}
+        >
           {t('hints.aiComingSoonDesc')}
         </Text>
 
@@ -420,14 +460,21 @@ function ComingSoonGate({ theme, t }: ComingSoonGateProps) {
           ].map((item, i) => (
             <View key={i} style={styles.comingSoonFeatureRow}>
               <Icon name={item.icon} size={16} color={theme.colors.primary} />
-              <Text style={[styles.comingSoonFeatureText, { color: theme.colors.textSecondary }]}>{item.label}</Text>
+              <Text style={[styles.comingSoonFeatureText, { color: theme.colors.textSecondary }]}>
+                {item.label}
+              </Text>
             </View>
           ))}
         </View>
 
         <View style={[styles.comingSoonBadge, { backgroundColor: `${theme.colors.success}15` }]}>
           <Icon name="gift-outline" size={18} color={theme.colors.success} />
-          <Text style={[styles.comingSoonBadgeText, { color: theme.colors.success, fontFamily: theme.fonts.semibold }]}>
+          <Text
+            style={[
+              styles.comingSoonBadgeText,
+              { color: theme.colors.success, fontFamily: theme.fonts.semibold },
+            ]}
+          >
             {t('subscription.allFeaturesUnlocked')}
           </Text>
         </View>
@@ -447,17 +494,29 @@ interface ProGateProps {
 function ProGate({ theme, t, onUpgrade }: ProGateProps) {
   return (
     <View style={[styles.proGate, { backgroundColor: theme.colors.background }]}>
-      <View style={[styles.proCard, { backgroundColor: theme.colors.surface, ...theme.shadows.md }]}>
+      <View
+        style={[styles.proCard, { backgroundColor: theme.colors.surface, ...theme.shadows.md }]}
+      >
         <View style={[styles.proIconContainer, { backgroundColor: `${theme.colors.primary}15` }]}>
           <Icon name="chatbubble-ellipses" size={40} color={theme.colors.primary} />
         </View>
         <Text style={[styles.proTitle, { color: theme.colors.text, fontFamily: theme.fonts.bold }]}>
           {t('hints.aiAssistant')}
         </Text>
-        <Text style={[styles.proDesc, { color: theme.colors.textSecondary, fontFamily: theme.fonts.regular }]}>
+        <Text
+          style={[
+            styles.proDesc,
+            { color: theme.colors.textSecondary, fontFamily: theme.fonts.regular },
+          ]}
+        >
           {t('hints.aiAssistantDesc')}
         </Text>
-        <Text style={[styles.proPremiumLabel, { color: theme.colors.textTertiary, fontFamily: theme.fonts.semibold }]}>
+        <Text
+          style={[
+            styles.proPremiumLabel,
+            { color: theme.colors.textTertiary, fontFamily: theme.fonts.semibold },
+          ]}
+        >
           {t('hints.aiAssistantPremium')}
         </Text>
         <TouchableOpacity style={styles.upgradeButton} onPress={onUpgrade} activeOpacity={0.85}>
@@ -668,6 +727,14 @@ const styles = StyleSheet.create({
   comingSoonFeatures: { width: '100%', gap: 8, marginTop: 4 },
   comingSoonFeatureRow: { flexDirection: 'row', alignItems: 'center', gap: 10 },
   comingSoonFeatureText: { fontSize: 14 },
-  comingSoonBadge: { flexDirection: 'row', alignItems: 'center', gap: 8, paddingHorizontal: 16, paddingVertical: 10, borderRadius: 12, marginTop: 4 },
+  comingSoonBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+    borderRadius: 12,
+    marginTop: 4,
+  },
   comingSoonBadgeText: { fontSize: 14 },
 });

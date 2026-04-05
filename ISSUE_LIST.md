@@ -24,11 +24,7 @@ Issues
 5. ~~Unsaved-changes guard misses date/time or category edits.~~ ✅ FIXED
    - `useUnsavedChangesGuard` now tracks date changes on LogInjection, LogFeeding, AddExpense.
 
-6. Validation error messaging is too generic on PetInfo. ❌ OPEN
-   Area: Onboarding PetInfo.
-   Why: `t('onboarding.nameRequired', { defaultValue: t('common.error') })` still falls back to generic error for name/age/weight fields.
-   Impact: Users get a confusing error without knowing what to fix.
-   Fix: Add specific i18n keys like `onboarding.nameRequired`, `onboarding.ageInvalid`, `onboarding.weightInvalid`.
-   Files: src/features/onboarding/screens/PetInfoScreen.tsx.
+6. ~~Validation error messaging is too generic on PetInfo.~~ ✅ FIXED (ЭТАП 12, F13)
+   - Specific i18n keys added: `onboarding.nameRequired`, `onboarding.ageInvalid`, `onboarding.weightInvalid`.
 
-Summary: 5/6 fixed, 1 open (low priority UX).
+Summary: 6/6 fixed.

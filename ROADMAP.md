@@ -622,17 +622,17 @@
 
 ---
 
-## Backlog: Known Medium Issues (из аудита 2026-04-05)
+## Backlog: Known Medium Issues (из аудита 2026-04-05) ✅ ALL FIXED
 
-> Не блокируют релиз, но стоит исправить в следующих итерациях.
+> Все 7 исправлены 2026-04-05.
 
-- [ ] MED-02: AI Chat — блокировать отправку пока system prompt не построен (race при смене питомца)
-- [ ] MED-05: Missed injection hint подавляется morning greeting — показывать после dismissal
-- [ ] MED-07: Pattern detector O(n²) — ограничить window до последних 60 дней
-- [ ] MED-08: predictionDataCollector грузит все данные в память — добавить windowing
-- [ ] MED-09: selectHint пишет в MMKV как side-effect — вынести в вызывающий код
-- [ ] MED-10: MMKV fallback encryption key статический — генерировать уникальный при установке
-- [ ] MED-11: AI Chat 50 сообщений в контексте — обрезать до последних 10-15 для API
+- [x] MED-02: AI Chat — блокировать отправку пока system prompt не построен (race при смене питомца)
+- [x] MED-05: Missed injection hint подавляется morning greeting — hintStore queue (pending→current on dismiss)
+- [x] MED-07: Pattern detector O(n²) — ограничить window до последних 60 дней
+- [x] MED-08: predictionDataCollector грузит все данные в память — windowing 60 дней для analyzer
+- [x] MED-09: selectHint пишет в MMKV как side-effect — вынесено в вызывающий код (addShownId)
+- [x] MED-10: MMKV fallback encryption key — per-device random UUID (с backwards compat)
+- [x] MED-11: AI Chat 50 сообщений в контексте — обрезать до последних 15 для API
 
 ---
 

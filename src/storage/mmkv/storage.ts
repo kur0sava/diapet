@@ -3,9 +3,10 @@ import * as SecureStore from 'expo-secure-store';
 import * as Crypto from 'expo-crypto';
 
 const SECURE_STORE_KEY = 'diapet-mmkv-encryption-key';
-// C004: deterministic fallback if SecureStore is unavailable (e.g. rooted device).
-// Data persists across restarts consistently; less secure than random key but better than plaintext.
-const FALLBACK_ENCRYPTION_KEY = 'diapet-fallback-enc-key-v1';
+// MED-10: Per-device fallback key stored in a separate unencrypted MMKV instance.
+// Used only when SecureStore is unavailable (e.g. rooted device).
+const FALLBACK_KEY_STORE_ID = 'diapet-key-store';
+const FALLBACK_KEY_NAME = 'encKey';
 
 let _storage: MMKV | null = null;
 let initialized = false;
@@ -45,10 +46,24 @@ export async function initStorage(): Promise<void> {
     }
     encryptionKey = storedKey;
   } catch (e) {
-    // C004: SecureStore unavailable (rooted device, etc.) — use deterministic fallback
-    // so data persists consistently across restarts instead of silently going unencrypted
-    console.error('[MMKV] SecureStore unavailable, using fallback encryption key:', e);
-    encryptionKey = FALLBACK_ENCRYPTION_KEY;
+    // MED-10: Per-device fallback key. New installs get a random key;
+    // existing installs keep the old static key for data continuity.
+    console.error('[MMKV] SecureStore unavailable, using per-device fallback key:', e);
+    const keyStore = new MMKV({ id: FALLBACK_KEY_STORE_ID });
+    let fallbackKey = keyStore.getString(FALLBACK_KEY_NAME);
+    if (!fallbackKey) {
+      // Check if main MMKV was already initialized with old static key
+      const OLD_STATIC_KEY = 'diapet-fallback-enc-key-v1';
+      try {
+        const probe = new MMKV({ id: 'diapet-storage', encryptionKey: OLD_STATIC_KEY });
+        const hasData = probe.contains('onboardingComplete') || probe.getAllKeys().length > 0;
+        fallbackKey = hasData ? OLD_STATIC_KEY : Crypto.randomUUID();
+      } catch {
+        fallbackKey = Crypto.randomUUID();
+      }
+      keyStore.set(FALLBACK_KEY_NAME, fallbackKey);
+    }
+    encryptionKey = fallbackKey;
   }
 
   _storage = new MMKV({

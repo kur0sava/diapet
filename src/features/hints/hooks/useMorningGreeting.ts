@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { useHintStore } from '../store/hintStore';
-import { selectHint, getStage, getDayNumber } from './useHintEngine';
+import { selectHint, getStage, getDayNumber, addShownId } from './useHintEngine';
 import { storage, StorageKeys } from '@storage/mmkv/storage';
 import { format } from 'date-fns';
 
@@ -35,7 +35,10 @@ export function useMorningGreeting() {
     const timer = setTimeout(() => {
       if (useHintStore.getState().currentHint) return; // Something else shown
       const hint = selectHint('morning', stage, 'any');
-      if (hint) useHintStore.getState().showHint(hint);
+      if (hint) {
+        addShownId(hint.id);
+        useHintStore.getState().showHint(hint);
+      }
     }, 2000);
 
     return () => clearTimeout(timer);
