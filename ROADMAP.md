@@ -1,7 +1,7 @@
 # DiaPet — Master Development Plan
 
 > Последнее обновление: 2026-04-05
-> Версия: 2.4.1 (versionCode 13)
+> Версия: 2.4.2 (versionCode 14)
 
 ---
 
