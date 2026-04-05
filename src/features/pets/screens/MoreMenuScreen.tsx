@@ -10,8 +10,10 @@ import { Icon } from '@shared/components/ui/Icon';
 import type { IoniconName } from '@shared/components/ui';
 import { useSubscription } from '@features/subscription/hooks/useSubscription';
 import { isBackendConfigured } from '@shared/stores/subscriptionStore';
+import { isAiConfigured } from '@features/hints/utils/aiClient';
 import { ProBadge } from '@features/subscription/components/ProBadge';
 import Constants from 'expo-constants';
+import { useAuthStore } from '@features/auth/stores/authStore';
 
 export default function MoreMenuScreen() {
   const navigation = useMoreNavigation();
@@ -21,7 +23,16 @@ export default function MoreMenuScreen() {
   const activePet = usePetStore(s => s.activePet);
   const { isPro, canAccessAdvanced } = useSubscription();
 
-  type MenuScreen = 'Subscription' | 'PetProfile' | 'Expenses' | 'FeedCalculator' | 'Settings' | 'AiAssistant' | 'AdvancedAnalytics';
+  const authUser = useAuthStore(s => s.user);
+  type MenuScreen =
+    | 'Subscription'
+    | 'PetProfile'
+    | 'Expenses'
+    | 'FeedCalculator'
+    | 'Settings'
+    | 'AiAssistant'
+    | 'AdvancedAnalytics'
+    | 'Account';
   type MoreScreen = Exclude<MenuScreen, 'AdvancedAnalytics'>;
   interface MenuItem {
     iconName: IoniconName;
@@ -36,7 +47,10 @@ export default function MoreMenuScreen() {
   const handleProScreen = (screen: MenuScreen) => {
     if (canAccessAdvanced()) {
       if (screen === 'AdvancedAnalytics') {
-        rootNavigation.navigate('Main', { screen: 'Home', params: { screen: 'AdvancedAnalytics' } });
+        rootNavigation.navigate('Main', {
+          screen: 'Home',
+          params: { screen: 'AdvancedAnalytics' },
+        });
       } else {
         navigation.navigate(screen as MoreScreen);
       }
@@ -46,19 +60,72 @@ export default function MoreMenuScreen() {
   };
 
   const backendReady = isBackendConfigured();
+  const aiReady = isAiConfigured();
 
   const menuItems: MenuItem[] = [
-    // Show subscription only when backend is configured
-    ...(backendReady ? [{ iconName: 'star-outline' as IoniconName, label: t('subscription.title'), screen: 'Subscription' as MenuScreen, iconColor: '#FFB340', badge: !isPro ? 'upgrade' : 'active' }] : []),
-    { iconName: 'paw-outline', label: t('pets.title'), screen: 'PetProfile', iconColor: theme.colors.primary, subtitle: activePet?.name },
-    { iconName: 'wallet-outline', label: t('expenses.title'), screen: 'Expenses', iconColor: theme.colors.warning },
-    { iconName: 'calculator-outline', label: t('feedCalculator.title'), screen: 'FeedCalculator', iconColor: theme.colors.secondary },
-    // Show AI features only when backend is configured (API key needed)
-    ...(backendReady ? [
-      { iconName: 'chatbubble-ellipses-outline' as IoniconName, label: t('hints.aiAssistant'), screen: 'AiAssistant' as MenuScreen, iconColor: '#5E5CE6', proGated: true },
-      { iconName: 'sparkles-outline' as IoniconName, label: t('prediction.title'), screen: 'AdvancedAnalytics' as MenuScreen, iconColor: '#8B5CF6', proGated: true },
-    ] : []),
-    { iconName: 'settings-outline', label: t('settings.title'), screen: 'Settings', iconColor: theme.colors.textSecondary },
+    // Show subscription only when backend is configured (Supabase + Prodamus)
+    ...(backendReady
+      ? [
+          {
+            iconName: 'star-outline' as IoniconName,
+            label: t('subscription.title'),
+            screen: 'Subscription' as MenuScreen,
+            iconColor: '#FFB340',
+            badge: !isPro ? 'upgrade' : 'active',
+          },
+        ]
+      : []),
+    {
+      iconName: 'paw-outline',
+      label: t('pets.title'),
+      screen: 'PetProfile',
+      iconColor: theme.colors.primary,
+      subtitle: activePet?.name,
+    },
+    {
+      iconName: 'wallet-outline',
+      label: t('expenses.title'),
+      screen: 'Expenses',
+      iconColor: theme.colors.warning,
+    },
+    {
+      iconName: 'calculator-outline',
+      label: t('feedCalculator.title'),
+      screen: 'FeedCalculator',
+      iconColor: theme.colors.secondary,
+    },
+    // Show AI features when Anthropic API key is configured
+    ...(aiReady
+      ? [
+          {
+            iconName: 'chatbubble-ellipses-outline' as IoniconName,
+            label: t('hints.aiAssistant'),
+            screen: 'AiAssistant' as MenuScreen,
+            iconColor: '#5E5CE6',
+            proGated: true,
+          },
+          {
+            iconName: 'sparkles-outline' as IoniconName,
+            label: t('prediction.title'),
+            screen: 'AdvancedAnalytics' as MenuScreen,
+            iconColor: '#8B5CF6',
+            proGated: true,
+          },
+        ]
+      : []),
+    {
+      iconName: 'person-outline',
+      label: t('auth.account'),
+      screen: 'Account',
+      iconColor: '#4285F4',
+      subtitle: authUser?.email,
+    },
+    {
+      iconName: 'settings-outline',
+      label: t('settings.title'),
+      screen: 'Settings',
+      iconColor: theme.colors.textSecondary,
+    },
   ];
 
   return (
@@ -76,11 +143,15 @@ export default function MoreMenuScreen() {
               <Icon name="paw" size={28} color="#fff" />
             </View>
             <View style={styles.petInfo}>
-              <Text style={[styles.petName, { fontFamily: theme.fonts.bold }]}>{activePet.name}</Text>
+              <Text style={[styles.petName, { fontFamily: theme.fonts.bold }]}>
+                {activePet.name}
+              </Text>
               <Text style={styles.petDetails} numberOfLines={2}>
                 {activePet.species === 'cat' ? t('pets.cat') : t('pets.pet')}
                 {activePet.weightKg ? ` · ${activePet.weightKg} ${t('common.kg')}` : ''}
-                {activePet.diabetesType !== 'unknown' ? ` · ${t('pets.diabetesType')} ${activePet.diabetesType === 'type1' ? '1' : '2'}` : ''}
+                {activePet.diabetesType !== 'unknown'
+                  ? ` · ${t('pets.diabetesType')} ${activePet.diabetesType === 'type1' ? '1' : '2'}`
+                  : ''}
               </Text>
             </View>
             <Icon name="chevron-forward" size={20} color="rgba(255,255,255,0.7)" />
@@ -88,12 +159,26 @@ export default function MoreMenuScreen() {
         </TouchableOpacity>
       )}
       <ScrollView contentContainerStyle={styles.scroll}>
-        <Text style={[styles.sectionTitle, { color: theme.colors.textSecondary, fontFamily: theme.fonts.semibold }]}>{t('navigation.menu')}</Text>
-        {menuItems.map((item) => (
+        <Text
+          style={[
+            styles.sectionTitle,
+            { color: theme.colors.textSecondary, fontFamily: theme.fonts.semibold },
+          ]}
+        >
+          {t('navigation.menu')}
+        </Text>
+        {menuItems.map(item => (
           <TouchableOpacity
             key={item.screen}
-            style={[styles.menuItem, { backgroundColor: theme.colors.surface, ...theme.shadows.sm }]}
-            onPress={() => item.proGated ? handleProScreen(item.screen) : navigation.navigate(item.screen as MoreScreen)}
+            style={[
+              styles.menuItem,
+              { backgroundColor: theme.colors.surface, ...theme.shadows.sm },
+            ]}
+            onPress={() =>
+              item.proGated
+                ? handleProScreen(item.screen)
+                : navigation.navigate(item.screen as MoreScreen)
+            }
             activeOpacity={0.8}
           >
             <View style={[styles.menuIcon, { backgroundColor: `${item.iconColor}20` }]}>
@@ -101,24 +186,50 @@ export default function MoreMenuScreen() {
             </View>
             <View style={styles.menuText}>
               <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
-                <Text style={[styles.menuLabel, { color: theme.colors.text, fontFamily: theme.fonts.semibold }]} numberOfLines={1}>{item.label}</Text>
+                <Text
+                  style={[
+                    styles.menuLabel,
+                    { color: theme.colors.text, fontFamily: theme.fonts.semibold },
+                  ]}
+                  numberOfLines={1}
+                >
+                  {item.label}
+                </Text>
                 {item.proGated && !isPro && <ProBadge />}
                 {item.badge === 'upgrade' && !isPro && (
-                  <View style={[styles.upgradePill, { backgroundColor: `${theme.colors.primary}15` }]}>
-                    <Text style={{ color: theme.colors.primary, fontSize: 11, fontWeight: '600' }}>{t('subscription.upgrade')}</Text>
+                  <View
+                    style={[styles.upgradePill, { backgroundColor: `${theme.colors.primary}15` }]}
+                  >
+                    <Text style={{ color: theme.colors.primary, fontSize: 11, fontWeight: '600' }}>
+                      {t('subscription.upgrade')}
+                    </Text>
                   </View>
                 )}
               </View>
-              {item.subtitle && <Text style={[styles.menuSub, { color: theme.colors.textSecondary }]}>{item.subtitle}</Text>}
+              {item.subtitle && (
+                <Text style={[styles.menuSub, { color: theme.colors.textSecondary }]}>
+                  {item.subtitle}
+                </Text>
+              )}
             </View>
             <Icon name="chevron-forward" size={18} color={theme.colors.textTertiary} />
           </TouchableOpacity>
         ))}
-        <TouchableOpacity style={[styles.emergencyBtn, { marginTop: 16 }]} onPress={() => rootNavigation.navigate('Emergency')} activeOpacity={0.8} accessibilityLabel={t('emergency.emergencyMode')} accessibilityRole="button">
+        <TouchableOpacity
+          style={[styles.emergencyBtn, { marginTop: 16 }]}
+          onPress={() => rootNavigation.navigate('Emergency')}
+          activeOpacity={0.8}
+          accessibilityLabel={t('emergency.emergencyMode')}
+          accessibilityRole="button"
+        >
           <Icon name="warning" size={20} color="#fff" style={{ marginRight: 8 }} />
-          <Text style={[styles.emergencyText, { fontFamily: theme.fonts.bold }]}>{t('emergency.emergencyMode')}</Text>
+          <Text style={[styles.emergencyText, { fontFamily: theme.fonts.bold }]}>
+            {t('emergency.emergencyMode')}
+          </Text>
         </TouchableOpacity>
-        <Text style={[styles.version, { color: theme.colors.textTertiary }]}>DiaPet v{Constants.expoConfig?.version ?? '1.0.0'}</Text>
+        <Text style={[styles.version, { color: theme.colors.textTertiary }]}>
+          DiaPet v{Constants.expoConfig?.version ?? '1.0.0'}
+        </Text>
       </ScrollView>
     </SafeAreaView>
   );
@@ -126,19 +237,53 @@ export default function MoreMenuScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
-  petCard: { flexDirection: 'row', alignItems: 'center', margin: 16, padding: 20, borderRadius: 20, gap: 16 },
-  petAvatar: { width: 56, height: 56, borderRadius: 28, backgroundColor: 'rgba(255,255,255,0.2)', alignItems: 'center', justifyContent: 'center' },
+  petCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    margin: 16,
+    padding: 20,
+    borderRadius: 20,
+    gap: 16,
+  },
+  petAvatar: {
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    backgroundColor: 'rgba(255,255,255,0.2)',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   petInfo: { flex: 1 },
   petName: { color: '#fff', fontSize: 20 },
   petDetails: { color: 'rgba(255,255,255,0.8)', fontSize: 13, marginTop: 4 },
   scroll: { paddingHorizontal: 16, paddingBottom: 100 },
   sectionTitle: { fontSize: 12, letterSpacing: 0.5, marginBottom: 10, marginTop: 4 },
-  menuItem: { flexDirection: 'row', alignItems: 'center', padding: 16, borderRadius: 16, marginBottom: 10, gap: 14 },
-  menuIcon: { width: 44, height: 44, borderRadius: 22, alignItems: 'center', justifyContent: 'center' },
+  menuItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 16,
+    borderRadius: 16,
+    marginBottom: 10,
+    gap: 14,
+  },
+  menuIcon: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   menuText: { flex: 1 },
   menuLabel: { fontSize: 16, flexShrink: 1 },
   menuSub: { fontSize: 13, marginTop: 2 },
-  emergencyBtn: { backgroundColor: '#FF3B30', padding: 18, borderRadius: 16, alignItems: 'center', flexDirection: 'row', justifyContent: 'center' },
+  emergencyBtn: {
+    backgroundColor: '#FF3B30',
+    padding: 18,
+    borderRadius: 16,
+    alignItems: 'center',
+    flexDirection: 'row',
+    justifyContent: 'center',
+  },
   emergencyText: { color: '#fff', fontSize: 16 },
   version: { textAlign: 'center', fontSize: 12, marginTop: 32, marginBottom: 20 },
   upgradePill: { paddingHorizontal: 8, paddingVertical: 2, borderRadius: 8 },

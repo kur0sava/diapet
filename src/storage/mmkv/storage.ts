@@ -12,7 +12,9 @@ let initialized = false;
 
 export function getStorage(): MMKV {
   if (!_storage) {
-    throw new Error('MMKV accessed before initStorage() completed — this is a bug. Ensure no component reads storage before the ready gate in App.tsx.');
+    throw new Error(
+      'MMKV accessed before initStorage() completed — this is a bug. Ensure no component reads storage before the ready gate in App.tsx.'
+    );
   }
   return _storage;
 }
@@ -116,4 +118,7 @@ export const StorageKeys = {
   DEVICE_ID: 'deviceId',
   SUBSCRIPTION_EXPIRES_AT: 'subscriptionExpiresAt',
   SUBSCRIPTION_PLAN: 'subscriptionPlan',
+  EXPENSE_BUDGET_MONTHLY: 'expenseBudgetMonthly',
+  AUTH_USER: 'authUser',
+  HINTS_DISABLED: 'hintsDisabled',
 } as const;

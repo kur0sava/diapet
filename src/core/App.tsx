@@ -1,7 +1,14 @@
 import 'react-native-gesture-handler';
 import React, { useEffect, useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { ActivityIndicator, View, Text, StyleSheet, TouchableOpacity, AppState } from 'react-native';
+import {
+  ActivityIndicator,
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  AppState,
+} from 'react-native';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ThemeProvider, useTheme } from '@shared/theme';
 import { ErrorBoundary } from '@shared/components/ErrorBoundary';
@@ -29,6 +36,8 @@ import {
 import * as SplashScreen from 'expo-splash-screen';
 import { useSubscriptionStore } from '@shared/stores/subscriptionStore';
 import { getDeviceId } from '@shared/utils/deviceId';
+import { configureGoogleSignIn } from '@features/auth/utils/googleAuth';
+import { useAuthStore } from '@features/auth/stores/authStore';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -61,7 +70,7 @@ function AppContent() {
 
   // Refresh subscription status when app returns to foreground
   useEffect(() => {
-    const sub = AppState.addEventListener('change', (state) => {
+    const sub = AppState.addEventListener('change', state => {
       if (state === 'active') {
         useSubscriptionStore.getState().refreshStatus();
       }
@@ -95,15 +104,21 @@ export default function App() {
         restoreLanguage();
         // Fallback: set hints registration date for existing users who completed onboarding
         // before the hints system was introduced
-        if (storage.getBoolean(StorageKeys.ONBOARDING_COMPLETE) && !storage.getString(StorageKeys.HINTS_REGISTRATION_DATE)) {
+        if (
+          storage.getBoolean(StorageKeys.ONBOARDING_COMPLETE) &&
+          !storage.getString(StorageKeys.HINTS_REGISTRATION_DATE)
+        ) {
           storage.set(StorageKeys.HINTS_REGISTRATION_DATE, new Date().toISOString());
         }
         // Init device ID + check subscription status via Supabase
         getDeviceId();
         useSubscriptionStore.getState().loadStatus();
+        // Configure Google Sign-In and restore session
+        configureGoogleSignIn();
+        useAuthStore.getState().restoreSession();
         setReady(true);
       })
-      .catch((err) => {
+      .catch(err => {
         console.error('Failed to initialize storage:', err);
         // C004: do not silently fall back to unencrypted MMKV — show error screen
         setStorageError(true);
@@ -132,10 +147,23 @@ export default function App() {
           {i18n.t('errors.storageError')}
         </Text>
         <TouchableOpacity
-          style={{ marginTop: 16, backgroundColor: '#D42020', paddingHorizontal: 24, paddingVertical: 12, borderRadius: 8 }}
-          onPress={() => { setStorageError(false); initStorage().then(() => setReady(true)).catch(() => setStorageError(true)); }}
+          style={{
+            marginTop: 16,
+            backgroundColor: '#D42020',
+            paddingHorizontal: 24,
+            paddingVertical: 12,
+            borderRadius: 8,
+          }}
+          onPress={() => {
+            setStorageError(false);
+            initStorage()
+              .then(() => setReady(true))
+              .catch(() => setStorageError(true));
+          }}
         >
-          <Text style={{ color: '#fff', fontWeight: '600', fontSize: 15 }}>{i18n.t('errors.storageRetry')}</Text>
+          <Text style={{ color: '#fff', fontWeight: '600', fontSize: 15 }}>
+            {i18n.t('errors.storageRetry')}
+          </Text>
         </TouchableOpacity>
       </View>
     );

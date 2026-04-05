@@ -1,5 +1,12 @@
 import React from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, ActivityIndicator } from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  TouchableOpacity,
+  ActivityIndicator,
+} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Icon } from '@shared/components/ui/Icon';
@@ -22,30 +29,48 @@ export default function PetProfileScreen() {
 
   const { data: injectionTimes = [] } = useQuery({
     queryKey: queryKeys.schedule.injections(activePet?.id ?? ''),
-    queryFn: () => scheduleRepository.getInjectionTimes(activePet!.id),
+    queryFn: () => scheduleRepository.getInjectionTimes(activePet?.id ?? ''),
     enabled: !!activePet?.id,
   });
 
   const { data: feedingTimes = [] } = useQuery({
     queryKey: queryKeys.schedule.feedings(activePet?.id ?? ''),
-    queryFn: () => scheduleRepository.getFeedingTimes(activePet!.id),
+    queryFn: () => scheduleRepository.getFeedingTimes(activePet?.id ?? ''),
     enabled: !!activePet?.id,
   });
 
-  if (!activePet) return (
-    <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.background }]}>
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-        <ActivityIndicator size="large" color={theme.colors.primary} />
-      </View>
-    </SafeAreaView>
-  );
+  if (!activePet)
+    return (
+      <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.background }]}>
+        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+          <ActivityIndicator size="large" color={theme.colors.primary} />
+        </View>
+      </SafeAreaView>
+    );
 
-  const diabetesLabels: Record<string, string> = { type1: t('pets.diabetesType1Short'), type2: t('pets.diabetesType2Short'), unknown: t('pets.diabetesUnknown') };
+  const diabetesLabels: Record<string, string> = {
+    type1: t('pets.diabetesType1Short'),
+    type2: t('pets.diabetesType2Short'),
+    unknown: t('pets.diabetesUnknown'),
+  };
 
   const renderInfoRow = (label: string, value: string) => (
     <View style={[styles.infoRow, { borderBottomColor: theme.colors.divider }]}>
-      <Text style={[styles.infoLabel, { color: theme.colors.textSecondary, fontFamily: theme.fonts.regular }]} numberOfLines={1}>{label}</Text>
-      <Text style={[styles.infoValue, { color: theme.colors.text, fontFamily: theme.fonts.semibold }]} numberOfLines={1}>{value}</Text>
+      <Text
+        style={[
+          styles.infoLabel,
+          { color: theme.colors.textSecondary, fontFamily: theme.fonts.regular },
+        ]}
+        numberOfLines={1}
+      >
+        {label}
+      </Text>
+      <Text
+        style={[styles.infoValue, { color: theme.colors.text, fontFamily: theme.fonts.semibold }]}
+        numberOfLines={1}
+      >
+        {value}
+      </Text>
     </View>
   );
 
@@ -54,11 +79,26 @@ export default function PetProfileScreen() {
       <View style={[styles.navHeader, { borderBottomColor: theme.colors.border }]}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.navBtn}>
           <Icon name="chevron-back" size={22} color={theme.colors.primary} />
-          <Text style={{ color: theme.colors.primary, fontFamily: theme.fonts.medium }}>{t('common.back')}</Text>
+          <Text style={{ color: theme.colors.primary, fontFamily: theme.fonts.medium }}>
+            {t('common.back')}
+          </Text>
         </TouchableOpacity>
-        <Text style={[styles.headerTitle, { color: theme.colors.text, fontFamily: theme.fonts.semibold }]} numberOfLines={1}>{t('pets.title')}</Text>
+        <Text
+          style={[
+            styles.headerTitle,
+            { color: theme.colors.text, fontFamily: theme.fonts.semibold },
+          ]}
+          numberOfLines={1}
+        >
+          {t('pets.title')}
+        </Text>
         <TouchableOpacity onPress={() => navigation.navigate('EditPet')} style={styles.navBtn}>
-          <Text style={{ color: theme.colors.primary, fontFamily: theme.fonts.medium }} numberOfLines={1}>{t('common.edit')}</Text>
+          <Text
+            style={{ color: theme.colors.primary, fontFamily: theme.fonts.medium }}
+            numberOfLines={1}
+          >
+            {t('common.edit')}
+          </Text>
         </TouchableOpacity>
       </View>
       <ScrollView contentContainerStyle={styles.content}>
@@ -69,34 +109,126 @@ export default function PetProfileScreen() {
           >
             <Icon name="paw" size={48} color="#fff" />
           </LinearGradient>
-          <Text style={[styles.petName, { color: theme.colors.text, fontFamily: theme.fonts.bold }]} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.6}>{activePet.name}</Text>
+          <Text
+            style={[styles.petName, { color: theme.colors.text, fontFamily: theme.fonts.bold }]}
+            numberOfLines={1}
+            adjustsFontSizeToFit
+            minimumFontScale={0.6}
+          >
+            {activePet.name}
+          </Text>
           {activePet.insulinType && (
             <View style={[styles.insulinBadge, { backgroundColor: theme.colors.secondaryLight }]}>
               <Icon name="fitness-outline" size={16} color={theme.colors.secondary} />
-              <Text style={[styles.insulinText, { color: theme.colors.secondary, fontFamily: theme.fonts.semibold }]}>{activePet.insulinType}</Text>
+              <Text
+                style={[
+                  styles.insulinText,
+                  { color: theme.colors.secondary, fontFamily: theme.fonts.semibold },
+                ]}
+              >
+                {activePet.insulinType}
+              </Text>
             </View>
           )}
         </View>
         <Card style={styles.card}>
-          <Text style={[styles.cardTitle, { color: theme.colors.textSecondary, fontFamily: theme.fonts.bold }]}>{t('pets.basicInfo')}</Text>
-          {activePet.weightKg && renderInfoRow(t('pets.weight'), `${activePet.weightKg} ${t('common.kg')}`)}
-          {activePet.birthYear && renderInfoRow(t('pets.age'), `${new Date().getFullYear() - activePet.birthYear} ${t('pets.years')}`)}
-          {renderInfoRow(t('pets.gender'), activePet.gender === 'male' ? t('common.male') : activePet.gender === 'female' ? t('common.female') : t('common.unknown'))}
+          <Text
+            style={[
+              styles.cardTitle,
+              { color: theme.colors.textSecondary, fontFamily: theme.fonts.bold },
+            ]}
+          >
+            {t('pets.basicInfo')}
+          </Text>
+          {activePet.weightKg &&
+            renderInfoRow(t('pets.weight'), `${activePet.weightKg} ${t('common.kg')}`)}
+          {activePet.birthYear &&
+            renderInfoRow(
+              t('pets.age'),
+              `${new Date().getFullYear() - activePet.birthYear} ${t('pets.years')}`
+            )}
+          {renderInfoRow(
+            t('pets.gender'),
+            activePet.gender === 'male'
+              ? t('common.male')
+              : activePet.gender === 'female'
+                ? t('common.female')
+                : t('common.unknown')
+          )}
           {renderInfoRow(t('pets.diabetesType'), diabetesLabels[activePet.diabetesType])}
-          {activePet.diagnosisDate && renderInfoRow(t('pets.diagnosisDate'), parseDateOnly(activePet.diagnosisDate).toLocaleDateString(i18n.language === 'ru' ? 'ru-RU' : 'en-US'))}
+          {activePet.diagnosisDate &&
+            renderInfoRow(
+              t('pets.diagnosisDate'),
+              parseDateOnly(activePet.diagnosisDate).toLocaleDateString(
+                i18n.language === 'ru' ? 'ru-RU' : 'en-US'
+              )
+            )}
         </Card>
         <Card style={styles.card}>
-          <Text style={[styles.cardTitle, { color: theme.colors.textSecondary, fontFamily: theme.fonts.bold }]}>{t('pets.schedule')}</Text>
+          <Text
+            style={[
+              styles.cardTitle,
+              { color: theme.colors.textSecondary, fontFamily: theme.fonts.bold },
+            ]}
+          >
+            {t('pets.schedule')}
+          </Text>
           <View style={styles.scheduleLabelRow}>
             <Icon name="fitness-outline" size={18} color={theme.colors.primary} />
-            <Text style={[styles.scheduleLabel, { color: theme.colors.text, fontFamily: theme.fonts.semibold }]}>{t('pets.injections')}</Text>
+            <Text
+              style={[
+                styles.scheduleLabel,
+                { color: theme.colors.text, fontFamily: theme.fonts.semibold },
+              ]}
+            >
+              {t('pets.injections')}
+            </Text>
           </View>
-          <View style={styles.timeChips}>{injectionTimes.map(s => (<View key={s.id} style={[styles.timeChip, { backgroundColor: theme.colors.primaryLight }]}><Text style={[styles.timeText, { color: theme.colors.primary, fontFamily: theme.fonts.bold }]}>{s.timeOfDay}</Text></View>))}</View>
+          <View style={styles.timeChips}>
+            {injectionTimes.map(s => (
+              <View
+                key={s.id}
+                style={[styles.timeChip, { backgroundColor: theme.colors.primaryLight }]}
+              >
+                <Text
+                  style={[
+                    styles.timeText,
+                    { color: theme.colors.primary, fontFamily: theme.fonts.bold },
+                  ]}
+                >
+                  {s.timeOfDay}
+                </Text>
+              </View>
+            ))}
+          </View>
           <View style={[styles.scheduleLabelRow, { marginTop: 12 }]}>
             <Icon name="restaurant-outline" size={18} color={theme.colors.success} />
-            <Text style={[styles.scheduleLabel, { color: theme.colors.text, fontFamily: theme.fonts.semibold }]}>{t('pets.feedings')}</Text>
+            <Text
+              style={[
+                styles.scheduleLabel,
+                { color: theme.colors.text, fontFamily: theme.fonts.semibold },
+              ]}
+            >
+              {t('pets.feedings')}
+            </Text>
           </View>
-          <View style={styles.timeChips}>{feedingTimes.map(s => (<View key={s.id} style={[styles.timeChip, { backgroundColor: theme.colors.successLight }]}><Text style={[styles.timeText, { color: theme.colors.success, fontFamily: theme.fonts.bold }]}>{s.timeOfDay}</Text></View>))}</View>
+          <View style={styles.timeChips}>
+            {feedingTimes.map(s => (
+              <View
+                key={s.id}
+                style={[styles.timeChip, { backgroundColor: theme.colors.successLight }]}
+              >
+                <Text
+                  style={[
+                    styles.timeText,
+                    { color: theme.colors.success, fontFamily: theme.fonts.bold },
+                  ]}
+                >
+                  {s.timeOfDay}
+                </Text>
+              </View>
+            ))}
+          </View>
         </Card>
       </ScrollView>
     </SafeAreaView>
@@ -105,18 +237,46 @@ export default function PetProfileScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
-  navHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', padding: 16, borderBottomWidth: 0.5, gap: 8 },
+  navHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    padding: 16,
+    borderBottomWidth: 0.5,
+    gap: 8,
+  },
   navBtn: { flexDirection: 'row', alignItems: 'center', gap: 2, minHeight: 44, minWidth: 44 },
   headerTitle: { fontSize: 17, flex: 1, textAlign: 'center' },
   content: { padding: 20, gap: 16, paddingBottom: 40 },
   avatarSection: { alignItems: 'center', paddingVertical: 16 },
-  avatar: { width: 96, height: 96, borderRadius: 48, alignItems: 'center', justifyContent: 'center', marginBottom: 12 },
+  avatar: {
+    width: 96,
+    height: 96,
+    borderRadius: 48,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 12,
+  },
   petName: { fontSize: 28 },
-  insulinBadge: { flexDirection: 'row', alignItems: 'center', gap: 6, paddingHorizontal: 14, paddingVertical: 6, borderRadius: 20, marginTop: 8 },
+  insulinBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    paddingHorizontal: 14,
+    paddingVertical: 6,
+    borderRadius: 20,
+    marginTop: 8,
+  },
   insulinText: { fontSize: 14 },
   card: { gap: 4 },
   cardTitle: { fontSize: 11, letterSpacing: 0.5, textTransform: 'uppercase', marginBottom: 8 },
-  infoRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingVertical: 10, borderBottomWidth: 0.5 },
+  infoRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingVertical: 10,
+    borderBottomWidth: 0.5,
+  },
   infoLabel: { fontSize: 14, flex: 1, flexShrink: 1 },
   infoValue: { fontSize: 14, maxWidth: '50%', textAlign: 'right' as const },
   scheduleLabelRow: { flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 8 },

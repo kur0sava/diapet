@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "670088531880",
+    "project_id": "diapet-49162",
+    "storage_bucket": "diapet-49162.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:670088531880:android:2e0c8485104079e33a179d",
+        "android_client_info": {
+          "package_name": "com.diapet.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDarguVirBK5I3W35McnSQ4o1sRIe0KA2o"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

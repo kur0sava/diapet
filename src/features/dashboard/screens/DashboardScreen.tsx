@@ -1,19 +1,11 @@
-import React, { useCallback, useMemo } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  ScrollView,
-  TouchableOpacity,
-  RefreshControl,
-
-} from 'react-native';
+import React, { useCallback, useMemo, useState } from 'react';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, RefreshControl } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useTranslation } from 'react-i18next';
 import { useHomeNavigation, useRootNavigation } from '@navigation/hooks';
 import { useTheme } from '@shared/theme';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { queryKeys } from '@shared/utils/queryKeys';
 import { glucoseRepository, injectionRepository, scheduleRepository } from '@storage/database';
 import { storage, StorageKeys } from '@storage/mmkv/storage';
@@ -51,19 +43,27 @@ function calculateTrend(readings: GlucoseReading[]): 'up' | 'down' | 'stable' | 
 
 function getTrendArrow(trend: 'up' | 'down' | 'stable' | null): string {
   switch (trend) {
-    case 'up': return ' \u2191';
-    case 'down': return ' \u2193';
-    case 'stable': return ' \u2192';
-    default: return '';
+    case 'up':
+      return ' \u2191';
+    case 'down':
+      return ' \u2193';
+    case 'stable':
+      return ' \u2192';
+    default:
+      return '';
   }
 }
 
 function getTrendLabel(trend: 'up' | 'down' | 'stable' | null, t: (key: string) => string): string {
   switch (trend) {
-    case 'up': return t('dashboard.trendUp');
-    case 'down': return t('dashboard.trendDown');
-    case 'stable': return t('dashboard.trendStable');
-    default: return '';
+    case 'up':
+      return t('dashboard.trendUp');
+    case 'down':
+      return t('dashboard.trendDown');
+    case 'stable':
+      return t('dashboard.trendStable');
+    default:
+      return '';
   }
 }
 
@@ -76,7 +76,16 @@ export default function DashboardScreen() {
   const { isPro, canAccessAdvanced } = useSubscription();
   const petId = activePet?.id ?? '';
   // H004: respect the user's glucose unit preference
-  const glucoseUnit = (storage.getString(StorageKeys.GLUCOSE_UNIT) ?? 'mmol/L') as GlucoseUnit;
+  const [glucoseUnit, setGlucoseUnit] = useState(
+    () => (storage.getString(StorageKeys.GLUCOSE_UNIT) ?? 'mmol/L') as GlucoseUnit
+  );
+  const queryClient = useQueryClient();
+  const toggleGlucoseUnit = useCallback(() => {
+    const next: GlucoseUnit = glucoseUnit === 'mmol/L' ? 'mg/dL' : 'mmol/L';
+    storage.set(StorageKeys.GLUCOSE_UNIT, next);
+    setGlucoseUnit(next);
+    queryClient.invalidateQueries({ queryKey: queryKeys.glucose.all });
+  }, [glucoseUnit, queryClient]);
 
   const { data: latestGlucose, refetch: refetchGlucose } = useQuery({
     queryKey: queryKeys.glucose.latest(petId),
@@ -108,16 +117,23 @@ export default function DashboardScreen() {
     enabled: !!petId,
   });
 
-  const { trends: analyzerTrends, riskScore, smartAlert, hasEnoughData: hasAnalyzerData } = useAnalyzer();
+  const {
+    trends: analyzerTrends,
+    riskScore,
+    smartAlert,
+    hasEnoughData: hasAnalyzerData,
+  } = useAnalyzer();
 
   const [refreshing, setRefreshing] = React.useState(false);
 
   // Refetch data when tab gains focus
-  useFocusEffect(useCallback(() => {
-    refetchGlucose();
-    refetchHistory();
-    refetchLastInjection();
-  }, [refetchGlucose, refetchHistory, refetchLastInjection]));
+  useFocusEffect(
+    useCallback(() => {
+      refetchGlucose();
+      refetchHistory();
+      refetchLastInjection();
+    }, [refetchGlucose, refetchHistory, refetchLastInjection])
+  );
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
@@ -129,24 +145,46 @@ export default function DashboardScreen() {
       refetchFeedingTimes(),
     ]);
     setRefreshing(false);
-  }, [refetchGlucose, refetchHistory, refetchLastInjection, refetchInjectionTimes, refetchFeedingTimes]);
+  }, [
+    refetchGlucose,
+    refetchHistory,
+    refetchLastInjection,
+    refetchInjectionTimes,
+    refetchFeedingTimes,
+  ]);
 
-  const nextInjection = useMemo(() => injectionTimes?.length
-    ? [...injectionTimes].sort((a, b) => minutesUntil(a.timeOfDay) - minutesUntil(b.timeOfDay))[0]
-    : undefined, [injectionTimes]);
-  const nextFeeding = useMemo(() => feedingTimes?.length
-    ? [...feedingTimes].sort((a, b) => minutesUntil(a.timeOfDay) - minutesUntil(b.timeOfDay))[0]
-    : undefined, [feedingTimes]);
+  const nextInjection = useMemo(
+    () =>
+      injectionTimes?.length
+        ? [...injectionTimes].sort(
+            (a, b) => minutesUntil(a.timeOfDay) - minutesUntil(b.timeOfDay)
+          )[0]
+        : undefined,
+    [injectionTimes]
+  );
+  const nextFeeding = useMemo(
+    () =>
+      feedingTimes?.length
+        ? [...feedingTimes].sort((a, b) => minutesUntil(a.timeOfDay) - minutesUntil(b.timeOfDay))[0]
+        : undefined,
+    [feedingTimes]
+  );
   const nextInjectionMinutes = nextInjection ? minutesUntil(nextInjection.timeOfDay) : null;
   const nextFeedingMinutes = nextFeeding ? minutesUntil(nextFeeding.timeOfDay) : null;
 
   const glucoseHours = latestGlucose ? hoursSince(latestGlucose.recordedAt) : null;
   const glucoseTimeSinceColor =
-    glucoseHours === null ? theme.colors.textTertiary :
-    glucoseHours < 6 ? theme.colors.success :
-    glucoseHours <= 12 ? theme.colors.warning :
-    theme.colors.danger;
-  const trend = useMemo(() => calculateTrend((glucoseHistory as GlucoseReading[] | undefined) ?? []), [glucoseHistory]);
+    glucoseHours === null
+      ? theme.colors.textTertiary
+      : glucoseHours < 6
+        ? theme.colors.success
+        : glucoseHours <= 12
+          ? theme.colors.warning
+          : theme.colors.danger;
+  const trend = useMemo(
+    () => calculateTrend((glucoseHistory as GlucoseReading[] | undefined) ?? []),
+    [glucoseHistory]
+  );
   const trendArrow = getTrendArrow(trend);
   const trendLabel = getTrendLabel(trend, t);
 
@@ -191,11 +229,20 @@ export default function DashboardScreen() {
   const gradientColors = theme.isDark ? theme.gradients.headerRichDark : theme.gradients.headerRich;
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.background }]} edges={['left', 'right']}>
+    <SafeAreaView
+      style={[styles.container, { backgroundColor: theme.colors.background }]}
+      edges={['left', 'right']}
+    >
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.scrollContent}
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={theme.colors.primary} />}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            tintColor={theme.colors.primary}
+          />
+        }
       >
         {/* Hero Gradient Header */}
         <LinearGradient
@@ -214,7 +261,12 @@ export default function DashboardScreen() {
                   <Text style={[styles.greeting, { fontFamily: theme.fonts.medium }]}>
                     {t('dashboard.title')}
                   </Text>
-                  <Text style={[styles.petName, { fontFamily: theme.fonts.bold }]} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.6}>
+                  <Text
+                    style={[styles.petName, { fontFamily: theme.fonts.bold }]}
+                    numberOfLines={1}
+                    adjustsFontSizeToFit
+                    minimumFontScale={0.6}
+                  >
                     {activePet?.name ?? 'DiaPet'}
                   </Text>
                 </View>
@@ -232,63 +284,141 @@ export default function DashboardScreen() {
             <View style={styles.statusRow}>
               <StatusCard
                 iconName="water-outline"
-                iconColor={latestGlucose ? getGlucoseColor(latestGlucose.valueMmol) : theme.colors.textTertiary}
+                iconColor={
+                  latestGlucose
+                    ? getGlucoseColor(latestGlucose.valueMmol)
+                    : theme.colors.textTertiary
+                }
                 label={t('dashboard.lastGlucose')}
-                value={latestGlucose
-                  ? glucoseUnit === 'mg/dL'
-                    ? `${latestGlucose.valueMgdl}${trendArrow}`
-                    : `${latestGlucose.valueMmol.toFixed(1)}${trendArrow}`
-                  : '\u2014'}
+                value={
+                  latestGlucose
+                    ? glucoseUnit === 'mg/dL'
+                      ? `${latestGlucose.valueMgdl}${trendArrow}`
+                      : `${latestGlucose.valueMmol.toFixed(1)}${trendArrow}`
+                    : '\u2014'
+                }
                 unit={glucoseUnit === 'mg/dL' ? t('common.mg_dl') : t('common.mmol_l')}
-                color={latestGlucose ? getGlucoseColor(latestGlucose.valueMmol) : theme.colors.textTertiary}
+                color={
+                  latestGlucose
+                    ? getGlucoseColor(latestGlucose.valueMmol)
+                    : theme.colors.textTertiary
+                }
                 subtitle={latestGlucose ? formatRelative(latestGlucose.recordedAt) : undefined}
                 index={0}
               />
               <StatusCard
                 iconName="medkit-outline"
-                iconColor={nextInjectionMinutes !== null && nextInjectionMinutes < 30 ? theme.colors.warning : theme.colors.primary}
+                iconColor={
+                  nextInjectionMinutes !== null && nextInjectionMinutes < 30
+                    ? theme.colors.warning
+                    : theme.colors.primary
+                }
                 label={t('dashboard.nextInjection')}
                 value={nextInjection ? nextInjection.timeOfDay : '\u2014'}
-                color={nextInjectionMinutes !== null && nextInjectionMinutes < 30 ? theme.colors.warning : theme.colors.primary}
-                subtitle={nextInjectionMinutes !== null ? t('dashboard.inTime', { time: formatCountdown(nextInjectionMinutes) }) : undefined}
+                color={
+                  nextInjectionMinutes !== null && nextInjectionMinutes < 30
+                    ? theme.colors.warning
+                    : theme.colors.primary
+                }
+                subtitle={
+                  nextInjectionMinutes !== null
+                    ? t('dashboard.inTime', { time: formatCountdown(nextInjectionMinutes) })
+                    : undefined
+                }
                 index={1}
               />
               <StatusCard
                 iconName="restaurant-outline"
-                iconColor={nextFeedingMinutes !== null && nextFeedingMinutes < 30 ? theme.colors.warning : theme.colors.success}
+                iconColor={
+                  nextFeedingMinutes !== null && nextFeedingMinutes < 30
+                    ? theme.colors.warning
+                    : theme.colors.success
+                }
                 label={t('dashboard.nextFeeding')}
                 value={nextFeeding ? nextFeeding.timeOfDay : '\u2014'}
-                color={nextFeedingMinutes !== null && nextFeedingMinutes < 30 ? theme.colors.warning : theme.colors.success}
-                subtitle={nextFeedingMinutes !== null ? t('dashboard.inTime', { time: formatCountdown(nextFeedingMinutes) }) : undefined}
+                color={
+                  nextFeedingMinutes !== null && nextFeedingMinutes < 30
+                    ? theme.colors.warning
+                    : theme.colors.success
+                }
+                subtitle={
+                  nextFeedingMinutes !== null
+                    ? t('dashboard.inTime', { time: formatCountdown(nextFeedingMinutes) })
+                    : undefined
+                }
                 index={2}
               />
             </View>
           </SafeAreaView>
         </LinearGradient>
 
-        {/* Time Since Last Glucose & Trend */}
+        {/* Time Since Last Glucose & Trend & Unit Toggle */}
         <View style={styles.timeSinceRow}>
           <View style={[styles.timeSinceBadge, { backgroundColor: glucoseTimeSinceColor + '20' }]}>
-            <Text style={[styles.timeSinceText, { color: glucoseTimeSinceColor, fontFamily: theme.fonts.semibold }]}>
+            <Text
+              style={[
+                styles.timeSinceText,
+                { color: glucoseTimeSinceColor, fontFamily: theme.fonts.semibold },
+              ]}
+            >
               {glucoseHours !== null
                 ? t('dashboard.timeSinceGlucose', { hours: glucoseHours })
                 : t('dashboard.notMeasured')}
             </Text>
           </View>
           {trend && (
-            <View style={[styles.trendBadge, { backgroundColor: theme.colors.primaryLight ?? theme.colors.primary + '20' }]}>
-              <Text style={[styles.trendText, { color: theme.colors.primary, fontFamily: theme.fonts.semibold }]}>
+            <View
+              style={[
+                styles.trendBadge,
+                { backgroundColor: theme.colors.primaryLight ?? theme.colors.primary + '20' },
+              ]}
+            >
+              <Text
+                style={[
+                  styles.trendText,
+                  { color: theme.colors.primary, fontFamily: theme.fonts.semibold },
+                ]}
+              >
                 {getTrendArrow(trend)} {trendLabel}
               </Text>
             </View>
           )}
+          <TouchableOpacity
+            onPress={toggleGlucoseUnit}
+            style={[
+              styles.unitToggle,
+              {
+                backgroundColor: theme.colors.primary + '18',
+                borderColor: theme.colors.primary + '40',
+              },
+            ]}
+            accessibilityLabel={t('dashboard.toggleUnit')}
+            accessibilityRole="button"
+          >
+            <Icon name="swap-horizontal" size={14} color={theme.colors.primary} />
+            <Text
+              style={[
+                styles.unitToggleText,
+                { color: theme.colors.primary, fontFamily: theme.fonts.semibold },
+              ]}
+            >
+              {glucoseUnit}
+            </Text>
+          </TouchableOpacity>
         </View>
 
         {/* Quick Actions */}
         <View style={styles.section}>
-          <Text style={[styles.sectionTitle, { color: theme.colors.text, fontFamily: theme.fonts.bold }]}>{t('dashboard.quickActions')}</Text>
+          <Text
+            style={[
+              styles.sectionTitle,
+              { color: theme.colors.text, fontFamily: theme.fonts.bold },
+            ]}
+          >
+            {t('dashboard.quickActions')}
+          </Text>
           <View style={styles.actionsGrid}>
-            {quickActions.map((action) => (
+            {quickActions.map(action => (
               <QuickActionButton key={action.label} {...action} />
             ))}
           </View>
@@ -296,7 +426,12 @@ export default function DashboardScreen() {
 
         {/* Glucose Chart */}
         <View style={styles.section}>
-          <Text style={[styles.sectionTitle, { color: theme.colors.text, fontFamily: theme.fonts.bold }]}>
+          <Text
+            style={[
+              styles.sectionTitle,
+              { color: theme.colors.text, fontFamily: theme.fonts.bold },
+            ]}
+          >
             {t('dashboard.glucoseChart')}
           </Text>
           <Card>
@@ -304,7 +439,12 @@ export default function DashboardScreen() {
               <GlucoseChart data={glucoseHistory} />
             ) : (
               <View style={styles.noData}>
-                <Icon name="analytics-outline" size={32} color={theme.colors.textTertiary} style={{ marginBottom: 8 }} />
+                <Icon
+                  name="analytics-outline"
+                  size={32}
+                  color={theme.colors.textTertiary}
+                  style={{ marginBottom: 8 }}
+                />
                 <Text style={[styles.noDataText, { color: theme.colors.textSecondary }]}>
                   {t('dashboard.noGlucoseData')}
                 </Text>
@@ -335,10 +475,19 @@ export default function DashboardScreen() {
             </View>
             {analyzerTrends?.direction && (
               <View style={styles.analyzerTrendRow}>
-                <TrendIndicator direction={analyzerTrends.direction} acceleration={analyzerTrends.acceleration} compact />
+                <TrendIndicator
+                  direction={analyzerTrends.direction}
+                  acceleration={analyzerTrends.acceleration}
+                  compact
+                />
                 {analyzerTrends.timeInRange !== null && (
                   <View style={[styles.tirBadge, { backgroundColor: theme.colors.primaryLight }]}>
-                    <Text style={[styles.tirText, { color: theme.colors.primary, fontFamily: theme.fonts.semibold }]}>
+                    <Text
+                      style={[
+                        styles.tirText,
+                        { color: theme.colors.primary, fontFamily: theme.fonts.semibold },
+                      ]}
+                    >
                       TIR {analyzerTrends.timeInRange.toFixed(0)}%
                     </Text>
                   </View>
@@ -350,7 +499,10 @@ export default function DashboardScreen() {
 
         {/* AI Smart Analysis Card */}
         <TouchableOpacity
-          style={[styles.aiAnalysisCard, { backgroundColor: theme.colors.surface, ...theme.shadows.sm }]}
+          style={[
+            styles.aiAnalysisCard,
+            { backgroundColor: theme.colors.surface, ...theme.shadows.sm },
+          ]}
           onPress={() => {
             if (canAccessAdvanced()) {
               navigation.navigate('AdvancedAnalytics');
@@ -369,7 +521,12 @@ export default function DashboardScreen() {
             <Icon name="sparkles" size={22} color="#fff" />
           </LinearGradient>
           <View style={styles.aiAnalysisText}>
-            <Text style={[styles.aiAnalysisTitle, { color: theme.colors.text, fontFamily: theme.fonts.semibold }]}>
+            <Text
+              style={[
+                styles.aiAnalysisTitle,
+                { color: theme.colors.text, fontFamily: theme.fonts.semibold },
+              ]}
+            >
               {t('prediction.title')}
             </Text>
             <Text style={[styles.aiAnalysisSubtitle, { color: theme.colors.textSecondary }]}>
@@ -386,7 +543,10 @@ export default function DashboardScreen() {
 
         {/* Feed Guide Banner */}
         <TouchableOpacity
-          style={[styles.feedGuideBanner, { backgroundColor: theme.colors.surface, ...theme.shadows.sm }]}
+          style={[
+            styles.feedGuideBanner,
+            { backgroundColor: theme.colors.surface, ...theme.shadows.sm },
+          ]}
           onPress={() => navigation.navigate('FeedGuide')}
           activeOpacity={0.8}
         >
@@ -394,7 +554,12 @@ export default function DashboardScreen() {
             <Icon name="nutrition-outline" size={22} color={theme.colors.success} />
           </View>
           <View style={{ flex: 1 }}>
-            <Text style={[styles.feedGuideTitle, { color: theme.colors.text, fontFamily: theme.fonts.semibold }]}>
+            <Text
+              style={[
+                styles.feedGuideTitle,
+                { color: theme.colors.text, fontFamily: theme.fonts.semibold },
+              ]}
+            >
               {t('dashboard.feedGuide')}
             </Text>
             <Text style={[styles.feedGuideSub, { color: theme.colors.textSecondary }]}>
@@ -408,18 +573,39 @@ export default function DashboardScreen() {
         {lastInjection && (
           <View style={styles.section}>
             <View style={styles.sectionHeader}>
-              <Text style={[styles.sectionTitle, { color: theme.colors.text, marginBottom: 0, fontFamily: theme.fonts.bold }]}>{t('dashboard.lastInjection')}</Text>
+              <Text
+                style={[
+                  styles.sectionTitle,
+                  { color: theme.colors.text, marginBottom: 0, fontFamily: theme.fonts.bold },
+                ]}
+              >
+                {t('dashboard.lastInjection')}
+              </Text>
               <TouchableOpacity onPress={() => navigation.navigate('InjectionList')}>
-                <Text style={[styles.sectionLink, { color: theme.colors.primary, fontFamily: theme.fonts.semibold }]}>{t('injection.history')}</Text>
+                <Text
+                  style={[
+                    styles.sectionLink,
+                    { color: theme.colors.primary, fontFamily: theme.fonts.semibold },
+                  ]}
+                >
+                  {t('injection.history')}
+                </Text>
               </TouchableOpacity>
             </View>
             <Card>
               <View style={styles.injectionRow}>
-                <View style={[styles.injectionIcon, { backgroundColor: theme.colors.secondaryLight }]}>
+                <View
+                  style={[styles.injectionIcon, { backgroundColor: theme.colors.secondaryLight }]}
+                >
                   <Icon name="medkit" size={24} color={theme.colors.secondary} />
                 </View>
                 <View style={{ flex: 1 }}>
-                  <Text style={[styles.injectionDose, { color: theme.colors.text, fontFamily: theme.fonts.semibold }]}>
+                  <Text
+                    style={[
+                      styles.injectionDose,
+                      { color: theme.colors.text, fontFamily: theme.fonts.semibold },
+                    ]}
+                  >
                     {lastInjection.doseUnits} {t('common.units')} · {lastInjection.insulinType}
                   </Text>
                   <Text style={[styles.injectionTime, { color: theme.colors.textSecondary }]}>
@@ -434,7 +620,10 @@ export default function DashboardScreen() {
         {/* Upgrade prompt for free users */}
         {!isPro && (
           <TouchableOpacity
-            style={[styles.upgradeCard, { backgroundColor: theme.colors.surface, ...theme.shadows.sm }]}
+            style={[
+              styles.upgradeCard,
+              { backgroundColor: theme.colors.surface, ...theme.shadows.sm },
+            ]}
             onPress={() => rootNavigation.navigate('Paywall')}
             activeOpacity={0.8}
           >
@@ -446,7 +635,12 @@ export default function DashboardScreen() {
             >
               <Icon name="star" size={16} color="#fff" />
             </LinearGradient>
-            <Text style={[styles.upgradeText, { color: theme.colors.text, fontFamily: theme.fonts.semibold }]}>
+            <Text
+              style={[
+                styles.upgradeText,
+                { color: theme.colors.text, fontFamily: theme.fonts.semibold },
+              ]}
+            >
               {t('subscription.upgradePrompt')}
             </Text>
             <Icon name="chevron-forward" size={16} color={theme.colors.textTertiary} />
@@ -457,30 +651,49 @@ export default function DashboardScreen() {
         <View style={styles.section}>
           <View style={styles.historyLinksRow}>
             <TouchableOpacity
-              style={[styles.historyLink, { backgroundColor: theme.colors.surface, ...theme.shadows.sm }]}
+              style={[
+                styles.historyLink,
+                { backgroundColor: theme.colors.surface, ...theme.shadows.sm },
+              ]}
               onPress={() => navigation.navigate('InjectionList')}
               activeOpacity={0.8}
             >
               <View style={[styles.historyIcon, { backgroundColor: theme.colors.secondaryLight }]}>
                 <Icon name="medkit-outline" size={18} color={theme.colors.secondary} />
               </View>
-              <Text style={[styles.historyLinkText, { color: theme.colors.text, fontFamily: theme.fonts.semibold }]}>{t('injection.history')}</Text>
+              <Text
+                style={[
+                  styles.historyLinkText,
+                  { color: theme.colors.text, fontFamily: theme.fonts.semibold },
+                ]}
+              >
+                {t('injection.history')}
+              </Text>
               <Icon name="chevron-forward" size={16} color={theme.colors.textTertiary} />
             </TouchableOpacity>
             <TouchableOpacity
-              style={[styles.historyLink, { backgroundColor: theme.colors.surface, ...theme.shadows.sm }]}
+              style={[
+                styles.historyLink,
+                { backgroundColor: theme.colors.surface, ...theme.shadows.sm },
+              ]}
               onPress={() => navigation.navigate('FeedingList')}
               activeOpacity={0.8}
             >
               <View style={[styles.historyIcon, { backgroundColor: theme.colors.successLight }]}>
                 <Icon name="restaurant-outline" size={18} color={theme.colors.success} />
               </View>
-              <Text style={[styles.historyLinkText, { color: theme.colors.text, fontFamily: theme.fonts.semibold }]}>{t('feeding.history')}</Text>
+              <Text
+                style={[
+                  styles.historyLinkText,
+                  { color: theme.colors.text, fontFamily: theme.fonts.semibold },
+                ]}
+              >
+                {t('feeding.history')}
+              </Text>
               <Icon name="chevron-forward" size={16} color={theme.colors.textTertiary} />
             </TouchableOpacity>
           </View>
         </View>
-
       </ScrollView>
     </SafeAreaView>
   );
@@ -535,38 +748,121 @@ const styles = StyleSheet.create({
   sosText: { fontSize: 16, color: '#FFFFFF' },
   statusRow: { flexDirection: 'row', gap: 10, marginTop: 4 },
   // Content
-  timeSinceRow: { flexDirection: 'row', paddingHorizontal: 16, gap: 8, marginTop: 16, marginBottom: 4, flexWrap: 'wrap' },
+  timeSinceRow: {
+    flexDirection: 'row',
+    paddingHorizontal: 16,
+    gap: 8,
+    marginTop: 16,
+    marginBottom: 4,
+    flexWrap: 'wrap',
+  },
   timeSinceBadge: { paddingHorizontal: 12, paddingVertical: 6, borderRadius: 12 },
   timeSinceText: { fontSize: 12 },
   trendBadge: { paddingHorizontal: 12, paddingVertical: 6, borderRadius: 12 },
   trendText: { fontSize: 12 },
+  unitToggle: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: 12,
+    borderWidth: 1,
+  },
+  unitToggleText: { fontSize: 12 },
   section: { paddingHorizontal: 20, marginTop: 20 },
   sectionTitle: { fontSize: 17, marginBottom: 12 },
   actionsGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 12, justifyContent: 'center' },
   noData: { padding: 32, alignItems: 'center' },
   noDataText: { fontSize: 14 },
-  sectionHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 },
+  sectionHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 12,
+  },
   sectionLink: { fontSize: 13 },
   injectionRow: { flexDirection: 'row', alignItems: 'center', gap: 12 },
-  injectionIcon: { width: 44, height: 44, borderRadius: 22, alignItems: 'center', justifyContent: 'center' },
+  injectionIcon: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   injectionDose: { fontSize: 16 },
   injectionTime: { fontSize: 13, marginTop: 2 },
   historyLinksRow: { flexDirection: 'row', gap: 12 },
-  historyLink: { flex: 1, flexDirection: 'row', alignItems: 'center', gap: 10, padding: 14, borderRadius: 16 },
-  historyIcon: { width: 34, height: 34, borderRadius: 17, alignItems: 'center', justifyContent: 'center' },
+  historyLink: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+    padding: 14,
+    borderRadius: 16,
+  },
+  historyIcon: {
+    width: 34,
+    height: 34,
+    borderRadius: 17,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   historyLinkText: { flex: 1, fontSize: 13 },
-  aiAnalysisCard: { flexDirection: 'row', alignItems: 'center', gap: 12, marginHorizontal: 20, marginTop: 20, padding: 14, borderRadius: 16 },
-  aiAnalysisIcon: { width: 40, height: 40, borderRadius: 20, alignItems: 'center', justifyContent: 'center' },
+  aiAnalysisCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    marginHorizontal: 20,
+    marginTop: 20,
+    padding: 14,
+    borderRadius: 16,
+  },
+  aiAnalysisIcon: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   aiAnalysisText: { flex: 1 },
   aiAnalysisTitle: { fontSize: 14 },
   aiAnalysisSubtitle: { fontSize: 12, marginTop: 2 },
   proBadgeSmall: { paddingHorizontal: 6, paddingVertical: 2, borderRadius: 6, marginRight: 4 },
-  feedGuideBanner: { flexDirection: 'row', alignItems: 'center', gap: 12, marginHorizontal: 20, marginTop: 20, padding: 14, borderRadius: 16 },
-  feedGuideIcon: { width: 40, height: 40, borderRadius: 20, alignItems: 'center', justifyContent: 'center' },
+  feedGuideBanner: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    marginHorizontal: 20,
+    marginTop: 20,
+    padding: 14,
+    borderRadius: 16,
+  },
+  feedGuideIcon: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   feedGuideTitle: { fontSize: 14 },
   feedGuideSub: { fontSize: 12, marginTop: 2 },
-  upgradeCard: { flexDirection: 'row', alignItems: 'center', gap: 12, marginHorizontal: 20, marginTop: 20, padding: 14, borderRadius: 16 },
-  upgradeIconCircle: { width: 32, height: 32, borderRadius: 16, alignItems: 'center', justifyContent: 'center' },
+  upgradeCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    marginHorizontal: 20,
+    marginTop: 20,
+    padding: 14,
+    borderRadius: 16,
+  },
+  upgradeIconCircle: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   upgradeText: { flex: 1, fontSize: 13 },
   analyzerRow: { marginTop: 8 },
   analyzerTrendRow: { flexDirection: 'row', gap: 8, marginTop: 8, flexWrap: 'wrap' },

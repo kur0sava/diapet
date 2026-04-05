@@ -1,7 +1,7 @@
 # DiaPet — Master Development Plan
 
-> Последнее обновление: 2026-04-03
-> Версия: 2.4 (versionCode 12)
+> Последнее обновление: 2026-04-05
+> Версия: 2.4.1 (versionCode 13)
 
 ---
 
@@ -16,20 +16,21 @@
 [####################] v1.4 Корм-гид       ✅ DONE
 [####################] v1.5 Bug Review     ✅ DONE
 [####################] v1.6 UI Redesign    ✅ DONE
-[##########__________] v1.7 Pre-deploy     (иконка, Android 15/16, hints)
+[####################] v1.7 Pre-deploy     ✅ DONE (иконка, Android 15/16, hints)
 [####################] v1.8 Bug Audit      ✅ DONE (14 багов, paranoid audit)
 [####################] v1.8.1 Full Audit   ✅ DONE (~36 багов, 8 агентов)
 [####################] v2.0 PRO + AI Pred  ✅ DONE (7 фаз, 11 файлов)
 [####################] v2.1 Audit+Features ✅ DONE (9 stages, 48 багов)
-[####################] v2.2 Google Play    ✅ DONE (AAB билд)
+[####################] v2.2 Google Play    ✅ DONE (v2.2 опубликован)
 [####################] v2.3 Deep Audit x4  ✅ DONE (80+ багов за 4 раунда)
 [####################] v2.4 Design Refresh ✅ DONE (Manrope + Lucide)
 [####################] v2.5 Arch Fixes     ✅ DONE (ЭТАП 8, 17 задач)
 [####################] v2.6 Local Analyzer ✅ DONE (ЭТАП 9, 34 задачи)
 [####################] v2.7 Encyclopedia   ✅ DONE (ЭТАП 10, 22 статьи)
 [####################] v2.8 Audit Fixes    ✅ DONE (10 багов, 19 файлов)
-[____________________] v2.9 Backend        🔜 (Prodamus + Supabase)
-[____________________] v3.0 AI/Smart       🔜
+[####################] v2.9 UX + DevOps    ✅ DONE (F3-F13 + CI + husky + Firebase)
+[____________________] v3.0 Backend        🔜 (Prodamus + Supabase + Firebase)
+[____________________] v4.0 AI/Smart       🔜
 ```
 
 ---
@@ -220,9 +221,9 @@
 
 ---
 
-## ЭТАП 4.8: v1.7 Pre-deploy — подготовка к Google Play
+## ЭТАП 4.8: v1.7 Pre-deploy — подготовка к Google Play ✅ DONE
 
-> Частично завершён. Иконка, Android 15/16, hints, AdMob placeholder — готовы.
+> Завершён. v2.2 опубликован в Google Play, v2.4.1 AAB/APK собраны.
 
 - [x] app.json: version, versionCode, package name
 - [x] Иконка приложения (1024x1024 adaptive icon, RGB + RGBA)
@@ -231,11 +232,10 @@
 - [x] Hints система (30-дневные подсказки, push, AI-ассистент)
 - [x] AdMob баннер на дашборде (placeholder, скрыт для Pro)
 - [x] Тестирование на реальном устройстве (TECNO_KJ5n)
-- [ ] Описание для Google Play (короткое + полное, RU/EN)
-- [ ] Политика конфиденциальности (offline-only, no data collection)
-- [ ] Скриншоты (минимум 4: Dashboard, Glucose, Symptoms, Encyclopedia)
-- [ ] Feature graphic (1024x500)
-- [ ] Рейтинг контента (анкета Google Play Console)
+- [x] Описание для Google Play (сделано при публикации v2.2)
+- [x] Скриншоты (сделано при публикации v2.2)
+- [x] Рейтинг контента (сделано при публикации v2.2)
+- [x] Feature graphic (сделано при публикации v2.2)
 
 ---
 
@@ -299,71 +299,20 @@
 
 ---
 
-## ЭТАП 5.0: v1.9 Pre-release — финальная подготовка ⬅ ТЕКУЩИЙ
+## ЭТАП 5.0: v2.2 Google Play Release ✅ DONE
 
-> Всё что нужно для публикации в Google Play
+> v2.2 опубликован в Google Play. v2.4.1 AAB + RuStore APK собраны на EAS.
 
-### #0 — Re-run аудит агентов (незавершённые)
-- [ ] Code Auditor round 2 (phase 6) — полный re-run, фокус на изменённых файлах
-- [x] UX Scenario Tester (phase 7) — 18 багов найдено, 7 HIGH+MEDIUM исправлены
-- [ ] Исправить найденные CRITICAL/HIGH баги
+- [x] EAS Build production AAB + RuStore APK
+- [x] Google Play Console: листинг, скриншоты, рейтинг, описание
+- [x] Валюта расходов по локали (RU→RUB, EN→USD)
+- [x] Формат даты по локали (dd.MM / MM/dd)
+- [x] UI Dark Mode Audit (ErrorBoundary, Emergency, Dashboard, Paywall, HintCard)
+- [x] UX Scenario Tester — 18 багов найдено, 7 HIGH+MEDIUM исправлены
 
-### #1 — EAS Build
-- [ ] Запустить: `eas build --platform android --profile production --non-interactive`
-- [ ] Скачать AAB → загрузить в Google Play Console (закрытое тестирование)
-
-### #2 — Prodamus + Supabase (подписки)
-
-**Архитектура**: Prodamus (платёжный провайдер, РФ) → webhook → Supabase Edge Function → PostgreSQL
-**Причина**: Google Play не выводит деньги в РФ; Prodamus принимает Visa/MC/Мир/СБП, выплачивает на ИП/самозанятость
-
-**Код уже готов (заглушки):**
-- [x] `src/shared/utils/deviceId.ts` — UUID привязка устройства
-- [x] `src/shared/api/subscriptionApi.ts` — API клиент (Supabase + Prodamus)
-- [x] `src/shared/stores/subscriptionStore.ts` — rewrite без RevenueCat
-- [x] `src/features/subscription/hooks/useSubscription.ts` — bypass при !isBackendConfigured()
-- [x] `src/features/subscription/screens/PaywallScreen.tsx` — web paywall flow
-- [x] `src/core/App.tsx` — убран RevenueCat, deviceId + loadStatus
-- [x] `app.config.ts` — supabaseUrl, supabaseAnonKey, prodamusShopUrl
-- [x] `.env` / `.env.example` — обновлены переменные
-- [x] `react-native-purchases` — удалён из package.json
-
-**Осталось (внешние сервисы):**
-- [ ] Зарегать Prodamus (ИП/самозанятость) → создать магазин → 2 товара (monthly/yearly)
-- [ ] Зарегать Supabase → создать проект → таблица `subscriptions`
-- [ ] Supabase Edge Function: `check-subscription` (GET, по device_id)
-- [ ] Supabase Edge Function: `prodamus-webhook` (POST, верифицирует подпись, записывает)
-- [ ] Заполнить `.env`: SUPABASE_URL, SUPABASE_ANON_KEY, PRODAMUS_SHOP_URL
-- [ ] Протестировать полный флоу: оплата → webhook → проверка статуса
-
-### #3 — AdMob (реклама)
-- [ ] Google AdMob → создать приложение, получить App ID → `app.json` androidAppId
-- [ ] Создать Banner Ad Unit → `DashboardScreen.tsx` ADMOB_BANNER_ID
-- [ ] Новый EAS билд (нативная зависимость)
-
-### #4 — Google Play листинг
-- [ ] Описание (короткое + полное, RU/EN)
-- [ ] Политика конфиденциальности
-- [ ] Скриншоты (4+)
-- [ ] Feature graphic (1024x500)
-- [ ] Рейтинг контента
-
-### #5 — Валюта расходов (M5) ✅
-- [x] Валюта по локали в AddExpenseScreen и ExpensesScreen
-- [x] Currency code: RU→RUB, EN→USD
-
-### #6 — Формат даты по локали (M6) ✅
-- [x] dateUtils: formatShortDate/formatFullDate/formatFullDateTime (RU: dd.MM, EN: MM/dd)
-- [x] Заменены хардкоды в FeedingList, InjectionList, GlucoseList
-
-### #7 — UI Dark Mode Audit ✅
-- [x] ErrorBoundary → Colors constants вместо хардкода
-- [x] EmergencyScreen → 9x theme.colors.danger
-- [x] DashboardScreen → SOS + upgrade gradient → theme tokens
-- [x] PaywallScreen → theme.colors.success
-- [x] HintCard → normalized shadow
-
-> **DEPLOY**: загрузка в Google Play Console → Internal Testing → Production
+> **Осталось для обновления листинга (при v2.5+):**
+> - [ ] Обновить описание/скриншоты под Analyzer + Encyclopedia
+> - [ ] Политика конфиденциальности (обновить при добавлении cloud data)
 
 ---
 
@@ -604,67 +553,76 @@
 
 ---
 
-## ЭТАП 11: v2.8 Backend + Облако + Аккаунты
+## ЭТАП 13: v3.0 Backend + Монетизация + Облако
 
-> Подключение реального бэкенда. Supabase + Prodamus + Google Sign-In.
-> **СТАТУС**: Пропущен — требует внешние credentials (Supabase, Prodamus, GCP). Клиентский код готов в bypass-режиме.
+> Подключение реального бэкенда. Supabase + Prodamus + AdMob.
+> **СТАТУС**: Ждёт внешние credentials. Клиентский код готов в bypass-режиме.
 
-### Фаза 11A — Supabase Setup
+### Фаза 13A — Supabase + Prodamus (подписки)
 
-- [ ] E1: Supabase проект → subscriptions table + RLS policies
-- [ ] E2: Edge Function: `check-subscription` (GET по device_id)
-- [ ] E3: Edge Function: `prodamus-webhook` (POST, верификация подписи)
-- [ ] E4: Заполнить .env: SUPABASE_URL, SUPABASE_ANON_KEY
+**Архитектура**: Prodamus → webhook → Supabase Edge Function → PostgreSQL
+**Клиентский код готов**: deviceId, subscriptionApi, subscriptionStore, PaywallScreen, bypass mode
 
-### Фаза 11B — Prodamus Integration
-
-- [ ] E5: Зарегать Prodamus (самозанятость) → магазин → 2 товара (monthly/yearly)
+- [ ] E1: Зарегать Prodamus (самозанятость) → магазин → 2 товара (monthly/yearly)
+- [ ] E2: Supabase проект → subscriptions table + RLS policies
+- [ ] E3: Edge Function: `check-subscription` (GET по device_id)
+- [ ] E4: Edge Function: `prodamus-webhook` (POST, верификация подписи)
+- [ ] E5: Заполнить .env: SUPABASE_URL, SUPABASE_ANON_KEY, PRODAMUS_SHOP_URL
 - [ ] E6: Тест полного флоу: оплата → webhook → проверка статуса
-- [ ] E7: Снять шторку "Coming Soon" с PaywallScreen
+- [ ] E7: Снять "Coming Soon" с PaywallScreen
 
-### Фаза 11C — Google Sign-In + Cloud Backup
+### Фаза 13B — AdMob (реклама)
 
-- [ ] E8: @react-native-google-signin → Supabase Auth (Web Client ID)
-- [ ] E9: Привязка всех данных к аккаунту (user_id в Supabase)
-- [ ] E10: Cloud backup: SQLite export → Supabase Storage (шифрованный)
-- [ ] E11: Cloud restore: download + decrypt + import
-- [ ] E12: Auto-backup при значимых изменениях (>10 новых записей)
+- [ ] E8: Google AdMob → создать приложение, App ID → `app.json`
+- [ ] E9: Создать Banner Ad Unit → DashboardScreen ADMOB_BANNER_ID
+- [ ] E10: EAS ребилд (нативная зависимость)
 
-### Фаза 11D — Anthropic API через Supabase
+### Фаза 13C — Anthropic API через Supabase
 
-- [ ] E13: Edge Function: `ai-proxy` — проксирует запросы к Anthropic (ключ на сервере)
-- [ ] E14: Убрать Anthropic key из клиента полностью
-- [ ] E15: Rate limiting на сервере (10 req/hour per device)
+- [ ] E11: Edge Function: `ai-proxy` — проксирует запросы к Anthropic (ключ на сервере)
+- [ ] E12: Убрать Anthropic key из клиента полностью
+- [ ] E13: Rate limiting на сервере (10 req/hour per device)
 
-> **CHECKPOINT 11**: полный тест оплаты + backup/restore | commit
+### Фаза 13D — Google Sign-In + Cloud Backup (v3.1)
+
+- [ ] E14: @react-native-google-signin → Supabase Auth
+- [ ] E15: Cloud backup: SQLite export → Supabase Storage (шифрованный)
+- [ ] E16: Cloud restore: download + decrypt + import
+
+> **CHECKPOINT 13**: полный тест оплаты + AI proxy | commit
 
 ---
 
-## ЭТАП 12: v2.9 UX + DevOps
+## ЭТАП 12: v2.9 UX + DevOps ✅ DONE (2026-04-05)
+
+> 6 задач за сессию. tsc ✅ | jest 7/48 ✅ | CI + husky настроены.
 
 ### UX улучшения
 - [x] F1: Закладки в Энциклопедии (MMKV) + фильтр "Закладки" в списке
 - [x] F2: Accessibility: accessibilityLabel на кнопки (QuickAction, StatusCard, SmartInsight, FABs, Emergency, категории)
-- [ ] F3: Расходы: годовой вид, бюджетный лимит
-- [ ] F4: Быстрый доступ к настройкам глюкозы
+- [x] F3: Расходы: годовой вид (toggle month/year, bar chart по месяцам) + бюджетный лимит (MMKV, progress bar)
+- [x] F4: Переключатель единиц глюкозы (mmol/L ↔ mg/dL) прямо с Dashboard
+
+### Мелкие баги
+- [x] F13: PetInfoScreen — убран generic `t('common.error')` fallback, используются конкретные i18n ключи
 
 ### DevOps
-- [ ] F5: GitHub Actions CI (tsc + lint + test + build)
-- [ ] F6: Sentry мониторинг крашей
-- [ ] F7: Pre-commit хуки (husky + lint-staged)
-- [ ] F8: Расширить Jest покрытие до 70%
+- [x] F5: GitHub Actions CI (.github/workflows/ci.yml — tsc + lint + test)
+- [x] F7: Pre-commit хуки (husky + lint-staged: eslint --fix + prettier)
+- [x] F8: Jest покрытие: 4 → 7 файлов, 22 → 48 тестов (safetyGuard, trendEngine, conversion)
 
-### Google Play
-- [ ] F9: Описание (короткое + полное, RU/EN)
-- [ ] F10: Скриншоты (4+) + Feature graphic (1024x500)
-- [ ] F11: Политика конфиденциальности (обновлённая с cloud data)
-- [ ] F12: Рейтинг контента
+### Firebase
+- [x] google-services.json подключен (app.json googleServicesFile)
 
-> **CHECKPOINT 12**: CI green | Play Store submission ready
+### Google Play обновление (при апдейте)
+- [ ] F9: Обновить описание/скриншоты под Analyzer + Encyclopedia
+- [ ] F10: Политика конфиденциальности (обновить при добавлении cloud data)
+
+> **CHECKPOINT 12**: tsc ✅ | jest 48/48 ✅ | CI configured
 
 ---
 
-## ЭТАП 13: v3.0 Advanced AI/Smart
+## ЭТАП 14: v4.0 Advanced AI/Smart
 
 - [ ] Bluetooth-глюкометр (FreeStyle Libre, Dexcom)
 - [ ] Виджет на главный экран (Android/iOS)

@@ -30,28 +30,34 @@ export default function PetInfoScreen() {
     if (!raw) return null;
     try {
       return JSON.parse(raw);
-    } catch { /* corrupted draft — ignore */ return null; }
+    } catch {
+      /* corrupted draft — ignore */ return null;
+    }
   })();
 
   const [name, setName] = useState(draft?.name ?? '');
   const [gender, setGender] = useState<'male' | 'female'>(draft?.gender ?? 'male');
   const [weightKg, setWeightKg] = useState(draft?.weightKg ?? '');
   const [age, setAge] = useState(draft?.age ?? '');
-  const [diabetesType, setDiabetesType] = useState<'type1' | 'type2' | 'unknown'>(draft?.diabetesType ?? 'unknown');
-  const [diagnosisDate, setDiagnosisDate] = useState<Date | null>(draft?.diagnosisDate ? parseDateOnly(draft.diagnosisDate) : null);
+  const [diabetesType, setDiabetesType] = useState<'type1' | 'type2' | 'unknown'>(
+    draft?.diabetesType ?? 'unknown'
+  );
+  const [diagnosisDate, setDiagnosisDate] = useState<Date | null>(
+    draft?.diagnosisDate ? parseDateOnly(draft.diagnosisDate) : null
+  );
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   const validate = () => {
     const newErrors: Record<string, string> = {};
-    if (!name.trim()) newErrors.name = t('onboarding.nameRequired', { defaultValue: t('common.error') });
+    if (!name.trim()) newErrors.name = t('onboarding.nameRequired');
     if (weightKg) {
       const w = parseFloat(weightKg.replace(',', '.'));
       if (isNaN(w) || w <= 0 || w > MAX_CAT_WEIGHT_KG) newErrors.weightKg = t('pets.invalidWeight');
     }
     if (age) {
       const a = parseInt(age, 10);
-      if (isNaN(a) || a < 0 || a > MAX_CAT_AGE_YEARS) newErrors.age = t('onboarding.ageInvalid', { defaultValue: t('common.error') });
+      if (isNaN(a) || a < 0 || a > MAX_CAT_AGE_YEARS) newErrors.age = t('onboarding.ageInvalid');
     }
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -60,10 +66,17 @@ export default function PetInfoScreen() {
   const handleContinue = () => {
     if (!validate()) return;
     // ONB-001: Save draft to MMKV
-    storage.set(StorageKeys.ONBOARDING_DRAFT, JSON.stringify({
-      name: name.trim(), gender, weightKg, age, diabetesType,
-      diagnosisDate: diagnosisDate?.toISOString(),
-    }));
+    storage.set(
+      StorageKeys.ONBOARDING_DRAFT,
+      JSON.stringify({
+        name: name.trim(),
+        gender,
+        weightKg,
+        age,
+        diabetesType,
+        diagnosisDate: diagnosisDate?.toISOString(),
+      })
+    );
     navigation.navigate('Schedule', {
       petData: {
         name: name.trim(),
@@ -88,134 +101,169 @@ export default function PetInfoScreen() {
   ];
 
   return (
-    <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={{ flex: 1 }}>
-    <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.background }]}>
-      <ScrollView style={styles.scroll} showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 40 }}>
-        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backBtn}>
-          <Text style={{ color: theme.colors.primary, fontSize: 16 }}>← {t('common.back')}</Text>
-        </TouchableOpacity>
-        <View style={styles.header}>
-          <Text style={[styles.title, { color: theme.colors.text }]}>{t('onboarding.addPet')}</Text>
-          <Text style={[styles.subtitle, { color: theme.colors.textSecondary }]}>
-            {t('onboarding.addPetSubtitle')}
-          </Text>
-        </View>
-
-        <View style={styles.form}>
-          <Input
-            label={t('onboarding.petName') + ' *'}
-            value={name}
-            onChangeText={setName}
-            placeholder={t('onboarding.petNamePlaceholder')}
-            error={errors.name}
-            maxLength={50}
-          />
-
-          <View style={styles.field}>
-            <Text style={[styles.label, { color: theme.colors.textSecondary }]}>
-              {t('onboarding.petGender')}
+    <KeyboardAvoidingView
+      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+      style={{ flex: 1 }}
+    >
+      <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.background }]}>
+        <ScrollView
+          style={styles.scroll}
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={{ paddingBottom: 40 }}
+        >
+          <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backBtn}>
+            <Text style={{ color: theme.colors.primary, fontSize: 16 }}>← {t('common.back')}</Text>
+          </TouchableOpacity>
+          <View style={styles.header}>
+            <Text style={[styles.title, { color: theme.colors.text }]}>
+              {t('onboarding.addPet')}
             </Text>
-            <View style={styles.row}>
-              {genderOptions.map((opt) => (
+            <Text style={[styles.subtitle, { color: theme.colors.textSecondary }]}>
+              {t('onboarding.addPetSubtitle')}
+            </Text>
+          </View>
+
+          <View style={styles.form}>
+            <Input
+              label={t('onboarding.petName') + ' *'}
+              value={name}
+              onChangeText={setName}
+              placeholder={t('onboarding.petNamePlaceholder')}
+              error={errors.name}
+              maxLength={50}
+            />
+
+            <View style={styles.field}>
+              <Text style={[styles.label, { color: theme.colors.textSecondary }]}>
+                {t('onboarding.petGender')}
+              </Text>
+              <View style={styles.row}>
+                {genderOptions.map(opt => (
+                  <TouchableOpacity
+                    key={opt.value}
+                    style={[
+                      styles.optionBtn,
+                      {
+                        backgroundColor:
+                          gender === opt.value
+                            ? theme.colors.primary
+                            : theme.colors.surfaceSecondary,
+                        flex: 1,
+                      },
+                    ]}
+                    onPress={() => setGender(opt.value as 'male' | 'female')}
+                  >
+                    <Text
+                      style={{
+                        color: gender === opt.value ? '#fff' : theme.colors.text,
+                        fontWeight: '600',
+                      }}
+                    >
+                      {opt.icon} {opt.label}
+                    </Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+            </View>
+
+            <View style={styles.rowInputs}>
+              <Input
+                label={t('onboarding.petWeight')}
+                value={weightKg}
+                onChangeText={setWeightKg}
+                placeholder="4.5"
+                keyboardType="decimal-pad"
+                containerStyle={{ flex: 1 }}
+                error={errors.weightKg}
+              />
+              <Input
+                label={t('onboarding.petAge')}
+                value={age}
+                onChangeText={setAge}
+                placeholder="5"
+                keyboardType="number-pad"
+                containerStyle={{ flex: 1 }}
+                hint={t('onboarding.petAgeHint')}
+                error={errors.age}
+              />
+            </View>
+
+            <View style={styles.field}>
+              <Text style={[styles.label, { color: theme.colors.textSecondary }]}>
+                {t('onboarding.diagnosisDate')}
+              </Text>
+              <TouchableOpacity
+                style={[
+                  styles.dateBtn,
+                  { backgroundColor: theme.colors.surfaceSecondary, borderRadius: 12 },
+                ]}
+                onPress={() => setShowDatePicker(true)}
+              >
+                <Text
+                  style={{
+                    color: diagnosisDate ? theme.colors.text : theme.colors.placeholder,
+                    padding: 14,
+                  }}
+                >
+                  {diagnosisDate
+                    ? diagnosisDate.toLocaleDateString()
+                    : t('onboarding.diagnosisDate')}
+                </Text>
+              </TouchableOpacity>
+            </View>
+
+            {showDatePicker && (
+              <DateTimePicker
+                value={diagnosisDate ?? new Date()}
+                mode="date"
+                onChange={(_, date) => {
+                  setShowDatePicker(false);
+                  if (date) setDiagnosisDate(date);
+                }}
+                maximumDate={new Date()}
+              />
+            )}
+
+            <View style={styles.field}>
+              <Text style={[styles.label, { color: theme.colors.textSecondary }]}>
+                {t('onboarding.diabetesType')}
+              </Text>
+              {diabetesOptions.map(opt => (
                 <TouchableOpacity
                   key={opt.value}
                   style={[
-                    styles.optionBtn,
+                    styles.radioRow,
                     {
-                      backgroundColor: gender === opt.value ? theme.colors.primary : theme.colors.surfaceSecondary,
-                      flex: 1,
+                      borderColor:
+                        diabetesType === opt.value ? theme.colors.primary : theme.colors.border,
                     },
                   ]}
-                  onPress={() => setGender(opt.value as 'male' | 'female')}
+                  onPress={() => setDiabetesType(opt.value as 'type1' | 'type2' | 'unknown')}
                 >
-                  <Text style={{ color: gender === opt.value ? '#fff' : theme.colors.text, fontWeight: '600' }}>
-                    {opt.icon} {opt.label}
-                  </Text>
+                  <View
+                    style={[
+                      styles.radio,
+                      {
+                        borderColor:
+                          diabetesType === opt.value ? theme.colors.primary : theme.colors.border,
+                      },
+                    ]}
+                  >
+                    {diabetesType === opt.value && (
+                      <View style={[styles.radioDot, { backgroundColor: theme.colors.primary }]} />
+                    )}
+                  </View>
+                  <Text style={[styles.radioLabel, { color: theme.colors.text }]}>{opt.label}</Text>
                 </TouchableOpacity>
               ))}
             </View>
           </View>
 
-          <View style={styles.rowInputs}>
-            <Input
-              label={t('onboarding.petWeight')}
-              value={weightKg}
-              onChangeText={setWeightKg}
-              placeholder="4.5"
-              keyboardType="decimal-pad"
-              containerStyle={{ flex: 1 }}
-              error={errors.weightKg}
-            />
-            <Input
-              label={t('onboarding.petAge')}
-              value={age}
-              onChangeText={setAge}
-              placeholder="5"
-              keyboardType="number-pad"
-              containerStyle={{ flex: 1 }}
-              hint={t('onboarding.petAgeHint')}
-              error={errors.age}
-            />
+          <View style={{ paddingHorizontal: 24, paddingVertical: 24 }}>
+            <Button title={t('onboarding.next')} onPress={handleContinue} fullWidth size="lg" />
           </View>
-
-          <View style={styles.field}>
-            <Text style={[styles.label, { color: theme.colors.textSecondary }]}>
-              {t('onboarding.diagnosisDate')}
-            </Text>
-            <TouchableOpacity
-              style={[styles.dateBtn, { backgroundColor: theme.colors.surfaceSecondary, borderRadius: 12 }]}
-              onPress={() => setShowDatePicker(true)}
-            >
-              <Text style={{ color: diagnosisDate ? theme.colors.text : theme.colors.placeholder, padding: 14 }}>
-                {diagnosisDate ? diagnosisDate.toLocaleDateString() : t('onboarding.diagnosisDate')}
-              </Text>
-            </TouchableOpacity>
-          </View>
-
-          {showDatePicker && (
-            <DateTimePicker
-              value={diagnosisDate ?? new Date()}
-              mode="date"
-              onChange={(_, date) => {
-                setShowDatePicker(false);
-                if (date) setDiagnosisDate(date);
-              }}
-              maximumDate={new Date()}
-            />
-          )}
-
-          <View style={styles.field}>
-            <Text style={[styles.label, { color: theme.colors.textSecondary }]}>
-              {t('onboarding.diabetesType')}
-            </Text>
-            {diabetesOptions.map((opt) => (
-              <TouchableOpacity
-                key={opt.value}
-                style={[
-                  styles.radioRow,
-                  { borderColor: diabetesType === opt.value ? theme.colors.primary : theme.colors.border },
-                ]}
-                onPress={() => setDiabetesType(opt.value as 'type1' | 'type2' | 'unknown')}
-              >
-                <View style={[
-                  styles.radio,
-                  { borderColor: diabetesType === opt.value ? theme.colors.primary : theme.colors.border },
-                ]}>
-                  {diabetesType === opt.value && (
-                    <View style={[styles.radioDot, { backgroundColor: theme.colors.primary }]} />
-                  )}
-                </View>
-                <Text style={[styles.radioLabel, { color: theme.colors.text }]}>{opt.label}</Text>
-              </TouchableOpacity>
-            ))}
-          </View>
-        </View>
-
-        <View style={{ paddingHorizontal: 24, paddingVertical: 24 }}>
-          <Button title={t('onboarding.next')} onPress={handleContinue} fullWidth size="lg" />
-        </View>
-      </ScrollView>
-    </SafeAreaView>
+        </ScrollView>
+      </SafeAreaView>
     </KeyboardAvoidingView>
   );
 }
@@ -223,7 +271,13 @@ export default function PetInfoScreen() {
 const styles = StyleSheet.create({
   container: { flex: 1 },
   scroll: { flex: 1 },
-  backBtn: { paddingHorizontal: 24, paddingTop: 16, minHeight: 44, minWidth: 44, justifyContent: 'center' },
+  backBtn: {
+    paddingHorizontal: 24,
+    paddingTop: 16,
+    minHeight: 44,
+    minWidth: 44,
+    justifyContent: 'center',
+  },
   header: { padding: 24, paddingBottom: 0 },
   title: { fontSize: 28, fontWeight: '800', marginBottom: 8 },
   subtitle: { fontSize: 15, lineHeight: 22 },
@@ -243,7 +297,14 @@ const styles = StyleSheet.create({
     gap: 12,
     marginTop: 6,
   },
-  radio: { width: 20, height: 20, borderRadius: 10, borderWidth: 2, alignItems: 'center', justifyContent: 'center' },
+  radio: {
+    width: 20,
+    height: 20,
+    borderRadius: 10,
+    borderWidth: 2,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   radioDot: { width: 10, height: 10, borderRadius: 5 },
   radioLabel: { fontSize: 15 },
 });

@@ -27,8 +27,17 @@ export const expenseRepository = {
     await db.runAsync(
       `INSERT INTO expenses (id, pet_id, category, amount, currency, description, date, created_at, updated_at)
        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-      [id, dto.petId, dto.category, dto.amount, dto.currency ?? 'RUB',
-       dto.description ?? null, dto.date ?? now.split('T')[0], now, now]
+      [
+        id,
+        dto.petId,
+        dto.category,
+        dto.amount,
+        dto.currency ?? 'RUB',
+        dto.description ?? null,
+        dto.date ?? now.split('T')[0],
+        now,
+        now,
+      ]
     );
     const result = await this.findById(id);
     if (!result) throw new Error(`Failed to read back expense ${id} after insert`);
@@ -72,16 +81,53 @@ export const expenseRepository = {
     return row?.total ?? 0;
   },
 
+  async findByYear(petId: string, year: number): Promise<Expense[]> {
+    const db = await getDatabase();
+    const start = `${year}-01-01`;
+    const end = `${year}-12-31`;
+    const rows = await db.getAllAsync<ExpenseRow>(
+      'SELECT * FROM expenses WHERE pet_id = ? AND date >= ? AND date <= ? ORDER BY date DESC',
+      [petId, start, end]
+    );
+    return rows.map(mapRowToExpense);
+  },
+
+  async getYearlyTotal(petId: string, year: number): Promise<number> {
+    const db = await getDatabase();
+    const start = `${year}-01-01`;
+    const end = `${year}-12-31`;
+    const row = await db.getFirstAsync<ExpenseTotalRow>(
+      'SELECT SUM(amount) as total FROM expenses WHERE pet_id = ? AND date >= ? AND date <= ?',
+      [petId, start, end]
+    );
+    return row?.total ?? 0;
+  },
+
   async update(id: string, dto: Partial<CreateExpenseDTO>): Promise<Expense | null> {
     const db = await getDatabase();
     const now = new Date().toISOString();
     const sets: string[] = [];
     const params: (string | number | null)[] = [];
-    if (dto.category !== undefined) { sets.push('category=?'); params.push(dto.category); }
-    if (dto.amount !== undefined) { sets.push('amount=?'); params.push(dto.amount); }
-    if (dto.currency !== undefined) { sets.push('currency=?'); params.push(dto.currency); }
-    if ('description' in dto) { sets.push('description=?'); params.push(dto.description ?? null); }
-    if (dto.date !== undefined) { sets.push('date=?'); params.push(dto.date); }
+    if (dto.category !== undefined) {
+      sets.push('category=?');
+      params.push(dto.category);
+    }
+    if (dto.amount !== undefined) {
+      sets.push('amount=?');
+      params.push(dto.amount);
+    }
+    if (dto.currency !== undefined) {
+      sets.push('currency=?');
+      params.push(dto.currency);
+    }
+    if ('description' in dto) {
+      sets.push('description=?');
+      params.push(dto.description ?? null);
+    }
+    if (dto.date !== undefined) {
+      sets.push('date=?');
+      params.push(dto.date);
+    }
     if (sets.length > 0) {
       sets.push('updated_at=?');
       params.push(now, id);

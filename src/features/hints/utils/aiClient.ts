@@ -17,10 +17,16 @@ export interface AiClientOptions {
   model?: string;
 }
 
+/** Check if Anthropic API key is configured (non-empty and not placeholder). */
+export function isAiConfigured(): boolean {
+  const apiKey = Constants.expoConfig?.extra?.anthropicApiKey as string | undefined;
+  return !!apiKey && apiKey !== 'YOUR_ANTHROPIC_API_KEY';
+}
+
 export async function sendChatMessage(
   systemPrompt: string,
   messages: ChatMessage[],
-  options?: AiClientOptions,
+  options?: AiClientOptions
 ): Promise<string> {
   const apiKey = Constants.expoConfig?.extra?.anthropicApiKey as string | undefined;
   if (!apiKey || apiKey === 'YOUR_ANTHROPIC_API_KEY') {

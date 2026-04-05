@@ -13,6 +13,7 @@ export function useMissedInjection() {
 
   useEffect(() => {
     if (!activePet) return;
+    if (storage.getBoolean(StorageKeys.HINTS_DISABLED)) return;
 
     const regDate = storage.getString(StorageKeys.HINTS_REGISTRATION_DATE);
     if (!regDate) return;

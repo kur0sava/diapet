@@ -4,7 +4,14 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { useTheme } from '@shared/theme';
 import { useTranslation } from 'react-i18next';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { MainTabParamList, HomeStackParamList, GlucoseStackParamList, SymptomsStackParamList, EncyclopediaStackParamList, MoreStackParamList } from './types';
+import {
+  MainTabParamList,
+  HomeStackParamList,
+  GlucoseStackParamList,
+  SymptomsStackParamList,
+  EncyclopediaStackParamList,
+  MoreStackParamList,
+} from './types';
 import { Icon } from '@shared/components/ui';
 
 // Screens
@@ -37,6 +44,7 @@ import DailyDiaryScreen from '@features/diary/screens/DailyDiaryScreen';
 import AiAssistantScreen from '@features/hints/screens/AiAssistantScreen';
 import AdvancedAnalyticsScreen from '@features/prediction/screens/AdvancedAnalyticsScreen';
 import AnalyzerDashboardScreen from '@features/analyzer/screens/AnalyzerDashboardScreen';
+import AccountScreen from '@features/auth/screens/AccountScreen';
 
 const Tab = createBottomTabNavigator<MainTabParamList>();
 
@@ -58,20 +66,76 @@ function HomeStackNavigator() {
         animation: 'slide_from_right',
       }}
     >
-      <HomeStack.Screen name="Dashboard" component={DashboardScreen} options={{ headerShown: false }} />
-      <HomeStack.Screen name="DailyDiary" component={DailyDiaryScreen} options={{ headerShown: false }} />
-      <HomeStack.Screen name="LogGlucose" component={LogGlucoseScreen} options={{ headerShown: false }} />
-      <HomeStack.Screen name="LogInjection" component={LogInjectionScreen} options={{ headerShown: false }} />
-      <HomeStack.Screen name="LogFeeding" component={LogFeedingScreen} options={{ headerShown: false }} />
-      <HomeStack.Screen name="AddSymptom" component={AddSymptomScreen} options={{ headerShown: false }} />
-      <HomeStack.Screen name="InjectionList" component={InjectionListScreen} options={{ headerShown: false }} />
-      <HomeStack.Screen name="FeedingList" component={FeedingListScreen} options={{ headerShown: false }} />
-      <HomeStack.Screen name="FeedGuide" component={FeedGuideScreen} options={{ headerShown: false }} />
-      <HomeStack.Screen name="FeedGuideRegion" component={FeedGuideRegionScreen} options={{ headerShown: false }} />
-      <HomeStack.Screen name="FeedGuideAlternatives" component={FeedGuideAlternativesScreen} options={{ headerShown: false }} />
-      <HomeStack.Screen name="FeedGuideNatural" component={FeedGuideNaturalScreen} options={{ headerShown: false }} />
-      <HomeStack.Screen name="AdvancedAnalytics" component={AdvancedAnalyticsScreen} options={{ headerShown: false }} />
-      <HomeStack.Screen name="AnalyzerDashboard" component={AnalyzerDashboardScreen} options={{ headerShown: false }} />
+      <HomeStack.Screen
+        name="Dashboard"
+        component={DashboardScreen}
+        options={{ headerShown: false }}
+      />
+      <HomeStack.Screen
+        name="DailyDiary"
+        component={DailyDiaryScreen}
+        options={{ headerShown: false }}
+      />
+      <HomeStack.Screen
+        name="LogGlucose"
+        component={LogGlucoseScreen}
+        options={{ headerShown: false }}
+      />
+      <HomeStack.Screen
+        name="LogInjection"
+        component={LogInjectionScreen}
+        options={{ headerShown: false }}
+      />
+      <HomeStack.Screen
+        name="LogFeeding"
+        component={LogFeedingScreen}
+        options={{ headerShown: false }}
+      />
+      <HomeStack.Screen
+        name="AddSymptom"
+        component={AddSymptomScreen}
+        options={{ headerShown: false }}
+      />
+      <HomeStack.Screen
+        name="InjectionList"
+        component={InjectionListScreen}
+        options={{ headerShown: false }}
+      />
+      <HomeStack.Screen
+        name="FeedingList"
+        component={FeedingListScreen}
+        options={{ headerShown: false }}
+      />
+      <HomeStack.Screen
+        name="FeedGuide"
+        component={FeedGuideScreen}
+        options={{ headerShown: false }}
+      />
+      <HomeStack.Screen
+        name="FeedGuideRegion"
+        component={FeedGuideRegionScreen}
+        options={{ headerShown: false }}
+      />
+      <HomeStack.Screen
+        name="FeedGuideAlternatives"
+        component={FeedGuideAlternativesScreen}
+        options={{ headerShown: false }}
+      />
+      <HomeStack.Screen
+        name="FeedGuideNatural"
+        component={FeedGuideNaturalScreen}
+        options={{ headerShown: false }}
+      />
+      <HomeStack.Screen
+        name="AdvancedAnalytics"
+        component={AdvancedAnalyticsScreen}
+        options={{ headerShown: false }}
+      />
+      <HomeStack.Screen
+        name="AnalyzerDashboard"
+        component={AnalyzerDashboardScreen}
+        options={{ headerShown: false }}
+      />
     </HomeStack.Navigator>
   );
 }
@@ -87,7 +151,11 @@ function GlucoseStackNavigator() {
         animation: 'slide_from_right',
       }}
     >
-      <GlucoseStack.Screen name="GlucoseList" component={GlucoseListScreen} options={{ headerShown: false }} />
+      <GlucoseStack.Screen
+        name="GlucoseList"
+        component={GlucoseListScreen}
+        options={{ headerShown: false }}
+      />
     </GlucoseStack.Navigator>
   );
 }
@@ -103,10 +171,26 @@ function SymptomsStackNavigator() {
         animation: 'slide_from_right',
       }}
     >
-      <SymptomsStack.Screen name="SymptomsList" component={SymptomsListScreen} options={{ headerShown: false }} />
-      <SymptomsStack.Screen name="AddSymptom" component={AddSymptomScreen} options={{ headerShown: false }} />
-      <SymptomsStack.Screen name="SymptomDetail" component={SymptomDetailScreen} options={{ headerShown: false }} />
-      <SymptomsStack.Screen name="Assessment" component={AssessmentScreen} options={{ headerShown: false }} />
+      <SymptomsStack.Screen
+        name="SymptomsList"
+        component={SymptomsListScreen}
+        options={{ headerShown: false }}
+      />
+      <SymptomsStack.Screen
+        name="AddSymptom"
+        component={AddSymptomScreen}
+        options={{ headerShown: false }}
+      />
+      <SymptomsStack.Screen
+        name="SymptomDetail"
+        component={SymptomDetailScreen}
+        options={{ headerShown: false }}
+      />
+      <SymptomsStack.Screen
+        name="Assessment"
+        component={AssessmentScreen}
+        options={{ headerShown: false }}
+      />
     </SymptomsStack.Navigator>
   );
 }
@@ -122,12 +206,36 @@ function EncyclopediaStackNavigator() {
         animation: 'slide_from_right',
       }}
     >
-      <EncyclopediaStack.Screen name="ArticleList" component={ArticleListScreen} options={{ headerShown: false }} />
-      <EncyclopediaStack.Screen name="ArticleDetail" component={ArticleDetailScreen} options={{ headerShown: false }} />
-      <EncyclopediaStack.Screen name="FeedGuide" component={FeedGuideScreen} options={{ headerShown: false }} />
-      <EncyclopediaStack.Screen name="FeedGuideRegion" component={FeedGuideRegionScreen} options={{ headerShown: false }} />
-      <EncyclopediaStack.Screen name="FeedGuideAlternatives" component={FeedGuideAlternativesScreen} options={{ headerShown: false }} />
-      <EncyclopediaStack.Screen name="FeedGuideNatural" component={FeedGuideNaturalScreen} options={{ headerShown: false }} />
+      <EncyclopediaStack.Screen
+        name="ArticleList"
+        component={ArticleListScreen}
+        options={{ headerShown: false }}
+      />
+      <EncyclopediaStack.Screen
+        name="ArticleDetail"
+        component={ArticleDetailScreen}
+        options={{ headerShown: false }}
+      />
+      <EncyclopediaStack.Screen
+        name="FeedGuide"
+        component={FeedGuideScreen}
+        options={{ headerShown: false }}
+      />
+      <EncyclopediaStack.Screen
+        name="FeedGuideRegion"
+        component={FeedGuideRegionScreen}
+        options={{ headerShown: false }}
+      />
+      <EncyclopediaStack.Screen
+        name="FeedGuideAlternatives"
+        component={FeedGuideAlternativesScreen}
+        options={{ headerShown: false }}
+      />
+      <EncyclopediaStack.Screen
+        name="FeedGuideNatural"
+        component={FeedGuideNaturalScreen}
+        options={{ headerShown: false }}
+      />
     </EncyclopediaStack.Navigator>
   );
 }
@@ -143,15 +251,48 @@ function MoreStackNavigator() {
         animation: 'slide_from_right',
       }}
     >
-      <MoreStack.Screen name="MoreMenu" component={MoreMenuScreen} options={{ headerShown: false }} />
-      <MoreStack.Screen name="PetProfile" component={PetProfileScreen} options={{ headerShown: false }} />
+      <MoreStack.Screen
+        name="MoreMenu"
+        component={MoreMenuScreen}
+        options={{ headerShown: false }}
+      />
+      <MoreStack.Screen
+        name="PetProfile"
+        component={PetProfileScreen}
+        options={{ headerShown: false }}
+      />
       <MoreStack.Screen name="EditPet" component={EditPetScreen} options={{ headerShown: false }} />
-      <MoreStack.Screen name="Expenses" component={ExpensesScreen} options={{ headerShown: false }} />
-      <MoreStack.Screen name="AddExpense" component={AddExpenseScreen} options={{ headerShown: false }} />
-      <MoreStack.Screen name="Settings" component={SettingsScreen} options={{ headerShown: false }} />
-      <MoreStack.Screen name="FeedCalculator" component={FeedCalculatorScreen} options={{ headerShown: false }} />
-      <MoreStack.Screen name="Subscription" component={SubscriptionScreen} options={{ headerShown: false }} />
-      <MoreStack.Screen name="AiAssistant" component={AiAssistantScreen} options={{ headerShown: false }} />
+      <MoreStack.Screen
+        name="Expenses"
+        component={ExpensesScreen}
+        options={{ headerShown: false }}
+      />
+      <MoreStack.Screen
+        name="AddExpense"
+        component={AddExpenseScreen}
+        options={{ headerShown: false }}
+      />
+      <MoreStack.Screen
+        name="Settings"
+        component={SettingsScreen}
+        options={{ headerShown: false }}
+      />
+      <MoreStack.Screen
+        name="FeedCalculator"
+        component={FeedCalculatorScreen}
+        options={{ headerShown: false }}
+      />
+      <MoreStack.Screen
+        name="Subscription"
+        component={SubscriptionScreen}
+        options={{ headerShown: false }}
+      />
+      <MoreStack.Screen
+        name="AiAssistant"
+        component={AiAssistantScreen}
+        options={{ headerShown: false }}
+      />
+      <MoreStack.Screen name="Account" component={AccountScreen} options={{ headerShown: false }} />
     </MoreStack.Navigator>
   );
 }
@@ -162,44 +303,71 @@ export default function MainNavigator() {
   const insets = useSafeAreaInsets();
 
   return (
-      <Tab.Navigator
-        screenOptions={({ route }) => ({
-          headerShown: false,
-          tabBarStyle: {
-            backgroundColor: theme.colors.tabBar,
-            borderTopWidth: 0,
-            shadowColor: '#000',
-            shadowOffset: { width: 0, height: -2 },
-            shadowOpacity: 0.06,
-            shadowRadius: 8,
-            elevation: 8,
-            paddingBottom: Math.max(insets.bottom, 8),
-            height: 64 + Math.max(insets.bottom, 8),
-          },
-          tabBarActiveTintColor: theme.colors.primary,
-          tabBarInactiveTintColor: theme.colors.tabBarInactive,
-          tabBarLabelStyle: {
-            fontSize: 10,
-            fontWeight: '500',
-            fontFamily: theme.fonts.medium,
-          },
-          tabBarIcon: ({ color, size }) => {
-            const icons: Record<string, string> = {
-              Home: 'home-outline',
-              GlucoseTab: 'water-outline',
-              SymptomsTab: 'paw-outline',
-              EncyclopediaTab: 'book-outline',
-              MoreTab: 'ellipsis-horizontal-circle-outline',
-            };
-            return <Icon name={icons[route.name] ?? 'home-outline'} size={size} color={color} strokeWidth={2} />;
-          },
-        })}
-      >
-        <Tab.Screen name="Home" component={HomeStackNavigator} options={{ title: t('navigation.home') }} />
-        <Tab.Screen name="GlucoseTab" component={GlucoseStackNavigator} options={{ title: t('navigation.glucose') }} />
-        <Tab.Screen name="SymptomsTab" component={SymptomsStackNavigator} options={{ title: t('navigation.symptoms') }} />
-        <Tab.Screen name="EncyclopediaTab" component={EncyclopediaStackNavigator} options={{ title: t('navigation.encyclopedia') }} />
-        <Tab.Screen name="MoreTab" component={MoreStackNavigator} options={{ title: t('navigation.more') }} />
-      </Tab.Navigator>
+    <Tab.Navigator
+      screenOptions={({ route }) => ({
+        headerShown: false,
+        tabBarStyle: {
+          backgroundColor: theme.colors.tabBar,
+          borderTopWidth: 0,
+          shadowColor: '#000',
+          shadowOffset: { width: 0, height: -2 },
+          shadowOpacity: 0.06,
+          shadowRadius: 8,
+          elevation: 8,
+          paddingBottom: Math.max(insets.bottom, 8),
+          height: 64 + Math.max(insets.bottom, 8),
+        },
+        tabBarActiveTintColor: theme.colors.primary,
+        tabBarInactiveTintColor: theme.colors.tabBarInactive,
+        tabBarLabelStyle: {
+          fontSize: 10,
+          fontWeight: '500',
+          fontFamily: theme.fonts.medium,
+        },
+        tabBarIcon: ({ color, size }) => {
+          const icons: Record<string, string> = {
+            Home: 'home-outline',
+            GlucoseTab: 'water-outline',
+            SymptomsTab: 'paw-outline',
+            EncyclopediaTab: 'book-outline',
+            MoreTab: 'ellipsis-horizontal-circle-outline',
+          };
+          return (
+            <Icon
+              name={icons[route.name] ?? 'home-outline'}
+              size={size}
+              color={color}
+              strokeWidth={2}
+            />
+          );
+        },
+      })}
+    >
+      <Tab.Screen
+        name="Home"
+        component={HomeStackNavigator}
+        options={{ title: t('navigation.home') }}
+      />
+      <Tab.Screen
+        name="GlucoseTab"
+        component={GlucoseStackNavigator}
+        options={{ title: t('navigation.glucose') }}
+      />
+      <Tab.Screen
+        name="SymptomsTab"
+        component={SymptomsStackNavigator}
+        options={{ title: t('navigation.symptoms') }}
+      />
+      <Tab.Screen
+        name="EncyclopediaTab"
+        component={EncyclopediaStackNavigator}
+        options={{ title: t('navigation.encyclopedia') }}
+      />
+      <Tab.Screen
+        name="MoreTab"
+        component={MoreStackNavigator}
+        options={{ title: t('navigation.more') }}
+      />
+    </Tab.Navigator>
   );
 }

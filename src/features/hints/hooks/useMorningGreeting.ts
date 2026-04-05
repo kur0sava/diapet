@@ -5,8 +5,9 @@ import { storage, StorageKeys } from '@storage/mmkv/storage';
 import { format } from 'date-fns';
 
 export function useMorningGreeting() {
-
   useEffect(() => {
+    if (storage.getBoolean(StorageKeys.HINTS_DISABLED)) return;
+
     const regDate = storage.getString(StorageKeys.HINTS_REGISTRATION_DATE);
     if (!regDate) return;
 

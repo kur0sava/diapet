@@ -18,7 +18,6 @@ android/
 
 # Secrets
 secrets/
-google-services.json
 GoogleService-Info.plist
 
 # IDE

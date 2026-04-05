@@ -81,6 +81,7 @@ export type MoreStackParamList = {
   FeedCalculator: undefined;
   Subscription: undefined;
   AiAssistant: undefined;
+  Account: undefined;
 };
 
 // Onboarding Stack
@@ -89,21 +90,30 @@ export type OnboardingStackParamList = {
   PetInfo: undefined;
   Schedule: { petData: OnboardingPetData };
   VetContact: { petData: OnboardingPetData; injectionTimes: string[]; feedingTimes: string[] };
-  Notifications: { petData: OnboardingPetData; injectionTimes: string[]; feedingTimes: string[]; vetName?: string; vetPhone?: string };
+  Notifications: {
+    petData: OnboardingPetData;
+    injectionTimes: string[];
+    feedingTimes: string[];
+    vetName?: string;
+    vetPhone?: string;
+  };
 };
 
 // Screen props helpers
-export type RootStackScreenProps<T extends keyof RootStackParamList> =
-  NativeStackScreenProps<RootStackParamList, T>;
+export type RootStackScreenProps<T extends keyof RootStackParamList> = NativeStackScreenProps<
+  RootStackParamList,
+  T
+>;
 
-export type HomeStackScreenProps<T extends keyof HomeStackParamList> =
-  CompositeScreenProps<
-    NativeStackScreenProps<HomeStackParamList, T>,
-    BottomTabScreenProps<MainTabParamList>
-  >;
+export type HomeStackScreenProps<T extends keyof HomeStackParamList> = CompositeScreenProps<
+  NativeStackScreenProps<HomeStackParamList, T>,
+  BottomTabScreenProps<MainTabParamList>
+>;
 
-export type GlucoseStackScreenProps<T extends keyof GlucoseStackParamList> =
-  NativeStackScreenProps<GlucoseStackParamList, T>;
+export type GlucoseStackScreenProps<T extends keyof GlucoseStackParamList> = NativeStackScreenProps<
+  GlucoseStackParamList,
+  T
+>;
 
 export type SymptomsStackScreenProps<T extends keyof SymptomsStackParamList> =
   NativeStackScreenProps<SymptomsStackParamList, T>;
@@ -111,8 +121,10 @@ export type SymptomsStackScreenProps<T extends keyof SymptomsStackParamList> =
 export type EncyclopediaStackScreenProps<T extends keyof EncyclopediaStackParamList> =
   NativeStackScreenProps<EncyclopediaStackParamList, T>;
 
-export type MoreStackScreenProps<T extends keyof MoreStackParamList> =
-  NativeStackScreenProps<MoreStackParamList, T>;
+export type MoreStackScreenProps<T extends keyof MoreStackParamList> = NativeStackScreenProps<
+  MoreStackParamList,
+  T
+>;
 
 declare global {
   // eslint-disable-next-line @typescript-eslint/no-namespace
