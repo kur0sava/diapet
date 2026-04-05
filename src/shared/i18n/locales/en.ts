@@ -899,6 +899,7 @@ export const en = {
     lastBackup: 'Last backup',
     backupSuccess: 'Data backed up successfully',
     backupError: 'Backup error',
+    backupTooLarge: 'Too much data for cloud backup. Please contact support.',
     restoreConfirm: 'Restore data?',
     restoreWarning: 'Current local data will be replaced with the cloud backup',
     restoreSuccess: 'Data restored successfully',

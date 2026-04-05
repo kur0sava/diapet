@@ -622,6 +622,20 @@
 
 ---
 
+## Backlog: Known Medium Issues (из аудита 2026-04-05)
+
+> Не блокируют релиз, но стоит исправить в следующих итерациях.
+
+- [ ] MED-02: AI Chat — блокировать отправку пока system prompt не построен (race при смене питомца)
+- [ ] MED-05: Missed injection hint подавляется morning greeting — показывать после dismissal
+- [ ] MED-07: Pattern detector O(n²) — ограничить window до последних 60 дней
+- [ ] MED-08: predictionDataCollector грузит все данные в память — добавить windowing
+- [ ] MED-09: selectHint пишет в MMKV как side-effect — вынести в вызывающий код
+- [ ] MED-10: MMKV fallback encryption key статический — генерировать уникальный при установке
+- [ ] MED-11: AI Chat 50 сообщений в контексте — обрезать до последних 10-15 для API
+
+---
+
 ## ЭТАП 14: v4.0 Advanced AI/Smart
 
 - [ ] Bluetooth-глюкометр (FreeStyle Libre, Dexcom)

@@ -1,6 +1,11 @@
 /**
  * Cloud Backup — export/import all pet data to/from Firebase Firestore.
- * Data is stored per-user (Google UID) in a single document per pet.
+ * Data is stored per-user (Firebase UID) in a single document.
+ *
+ * Security:
+ * - Column names are validated against actual DB schema (PRAGMA table_info)
+ * - Only known TABLES are restored; tables absent in backup are left untouched
+ * - Backup payload is checked against Firestore 1MB limit before upload
  */
 import { db } from './firebaseConfig';
 import { doc, setDoc, getDoc } from 'firebase/firestore';
@@ -18,14 +23,32 @@ const TABLES = [
   'feeding_schedule',
 ] as const;
 
+/** Firestore document size limit (1 MB minus safety margin). */
+const FIRESTORE_MAX_BYTES = 950_000;
+
 interface BackupData {
   version: number;
   createdAt: string;
   tables: Record<string, unknown[]>;
 }
 
+/** Validate column name: only alphanumeric + underscore allowed. */
+const SAFE_COLUMN_RE = /^[a-zA-Z_][a-zA-Z0-9_]*$/;
+
 /**
- * Export all SQLite data to a Firestore document under users/{uid}/backup.
+ * Get valid column names for a table from the actual DB schema.
+ */
+async function getTableColumns(
+  sqlDb: Awaited<ReturnType<typeof getDatabase>>,
+  table: string
+): Promise<Set<string>> {
+  const info = await sqlDb.getAllAsync<{ name: string }>(`PRAGMA table_info(${table})`);
+  return new Set(info.map(c => c.name));
+}
+
+/**
+ * Export all SQLite data to a Firestore document under users/{uid}.
+ * Throws if payload exceeds Firestore 1MB limit.
  */
 export async function backupToCloud(uid: string): Promise<void> {
   const sqlDb = await getDatabase();
@@ -37,20 +60,26 @@ export async function backupToCloud(uid: string): Promise<void> {
   }
 
   const backup: BackupData = {
-    version: 1,
+    version: 2,
     createdAt: new Date().toISOString(),
     tables,
   };
 
-  // Firestore has 1MB doc limit. Split large data into chunks if needed.
-  // For most users (<1000 readings) a single doc is fine.
+  const payload = JSON.stringify(backup);
+
+  if (new TextEncoder().encode(payload).length > FIRESTORE_MAX_BYTES) {
+    throw new Error('BACKUP_TOO_LARGE');
+  }
+
   const ref = doc(db, 'users', uid);
-  await setDoc(ref, { backup: JSON.stringify(backup) });
+  await setDoc(ref, { backup: payload });
 }
 
 /**
  * Restore data from Firestore into local SQLite.
- * IMPORTANT: This clears existing local data before restoring.
+ * Only tables present in the backup are cleared and restored.
+ * Tables absent in the backup are left untouched (safe for version upgrades).
+ * Column names are validated against the actual DB schema to prevent injection.
  */
 export async function restoreFromCloud(uid: string): Promise<boolean> {
   const ref = doc(db, 'users', uid);
@@ -66,24 +95,40 @@ export async function restoreFromCloud(uid: string): Promise<boolean> {
 
   const sqlDb = await getDatabase();
 
+  // Pre-load valid column sets for each table
+  const columnSets = new Map<string, Set<string>>();
+  for (const table of TABLES) {
+    columnSets.set(table, await getTableColumns(sqlDb, table));
+  }
+
   await sqlDb.withTransactionAsync(async () => {
-    // Clear all tables in reverse-dependency order
-    for (const table of [...TABLES].reverse()) {
+    // Only clear tables that exist in the backup (preserves newer tables)
+    const tablesToRestore = TABLES.filter(t => {
+      const rows = backup.tables[t];
+      return rows && rows.length > 0;
+    });
+
+    for (const table of [...tablesToRestore].reverse()) {
       await sqlDb.execAsync(`DELETE FROM ${table}`);
     }
 
-    // Insert all rows
-    for (const table of TABLES) {
-      const rows = backup.tables[table];
-      if (!rows || rows.length === 0) continue;
+    // Insert rows with validated column names
+    for (const table of tablesToRestore) {
+      const validColumns = columnSets.get(table)!;
+      const rows = backup.tables[table]!;
 
       for (const row of rows) {
         const obj = row as Record<string, unknown>;
-        const columns = Object.keys(obj);
-        const placeholders = columns.map(() => '?').join(', ');
-        const values = columns.map(c => obj[c] ?? null);
+        // Filter to only columns that: (a) exist in schema, (b) pass regex safety check
+        const safeColumns = Object.keys(obj).filter(
+          col => SAFE_COLUMN_RE.test(col) && validColumns.has(col)
+        );
+        if (safeColumns.length === 0) continue;
+
+        const placeholders = safeColumns.map(() => '?').join(', ');
+        const values = safeColumns.map(c => obj[c] ?? null);
         await sqlDb.runAsync(
-          `INSERT OR REPLACE INTO ${table} (${columns.join(', ')}) VALUES (${placeholders})`,
+          `INSERT OR REPLACE INTO ${table} (${safeColumns.join(', ')}) VALUES (${placeholders})`,
           values as (string | number | null)[]
         );
       }

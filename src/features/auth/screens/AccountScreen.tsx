@@ -65,7 +65,12 @@ export default function AccountScreen() {
       setBackupDate(now);
       Alert.alert(t('auth.backupSuccess'));
     } catch (error: unknown) {
-      const msg = error instanceof Error ? error.message : t('common.error');
+      const msg =
+        error instanceof Error && error.message === 'BACKUP_TOO_LARGE'
+          ? t('auth.backupTooLarge')
+          : error instanceof Error
+            ? error.message
+            : t('common.error');
       Alert.alert(t('auth.backupError'), msg);
     } finally {
       setBackupLoading(false);

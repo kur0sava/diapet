@@ -2,8 +2,9 @@
  * useAnalyzer — hook that runs the full local analyzer pipeline.
  * Fetches data from repositories and produces trends, patterns, risk score, and alerts.
  */
-import { useMemo, useEffect } from 'react';
+import { useMemo, useEffect, useState, useCallback } from 'react';
 import { useQuery } from '@tanstack/react-query';
+import { useFocusEffect } from '@react-navigation/native';
 import { queryKeys } from '@shared/utils/queryKeys';
 import { usePetStore } from '@shared/stores/petStore';
 import {
@@ -60,18 +61,22 @@ export function useAnalyzer() {
 
   const scheduledInjectionsPerDay = injectionSchedule.length || 2;
 
-  const now = useMemo(() => new Date(), []);
+  // Refresh `now` on every screen focus so alerts don't use stale time
+  const [now, setNow] = useState(() => new Date());
+  useFocusEffect(
+    useCallback(() => {
+      setNow(new Date());
+    }, [])
+  );
 
   const trends = useMemo(
-    () => readings.length > 0 ? analyzeTrends(readings, now) : null,
-    [readings, now],
+    () => (readings.length > 0 ? analyzeTrends(readings, now) : null),
+    [readings, now]
   );
 
   const rawPatterns = useMemo(
-    () => readings.length > 0
-      ? detectPatterns({ readings, injections, feedings, now })
-      : [],
-    [readings, injections, feedings, now],
+    () => (readings.length > 0 ? detectPatterns({ readings, injections, feedings, now }) : []),
+    [readings, injections, feedings, now]
   );
 
   const patterns = useMemo(() => sanitizePatterns(rawPatterns), [rawPatterns]);
@@ -83,19 +88,29 @@ export function useAnalyzer() {
   }, [diagnosisDate, now]);
 
   const riskScore = useMemo(
-    () => readings.length > 0
-      ? calculateRiskScore({
-          readings,
-          injections,
-          feedings,
-          symptoms,
-          weightKg: activePet?.weightKg,
-          diagnosisDays,
-          scheduledInjectionsPerDay,
-          now,
-        })
-      : null,
-    [readings, injections, feedings, symptoms, activePet?.weightKg, diagnosisDays, scheduledInjectionsPerDay, now],
+    () =>
+      readings.length > 0
+        ? calculateRiskScore({
+            readings,
+            injections,
+            feedings,
+            symptoms,
+            weightKg: activePet?.weightKg,
+            diagnosisDays,
+            scheduledInjectionsPerDay,
+            now,
+          })
+        : null,
+    [
+      readings,
+      injections,
+      feedings,
+      symptoms,
+      activePet?.weightKg,
+      diagnosisDays,
+      scheduledInjectionsPerDay,
+      now,
+    ]
   );
 
   const smartAlert = useMemo(() => {
@@ -110,10 +125,7 @@ export function useAnalyzer() {
     }
   }, [smartAlert]);
 
-  const emergencyAlerts = useMemo(
-    () => checkEmergencyThresholds(readings),
-    [readings],
-  );
+  const emergencyAlerts = useMemo(() => checkEmergencyThresholds(readings), [readings]);
 
   const hasEnoughData = readings.length >= 3;
 
