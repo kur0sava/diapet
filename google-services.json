@@ -12,7 +12,20 @@
           "package_name": "com.diapet.app"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "670088531880-mffo2rka45iuf4oh76748h3e7hdspe9k.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.diapet.app",
+            "certificate_hash": "2bb97e6b26b9fc59b0311ade0da298cb1be6e857"
+          }
+        },
+        {
+          "client_id": "670088531880-qa4iau47becj5ptho1dvfubd4pknnn27.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyDarguVirBK5I3W35McnSQ4o1sRIe0KA2o"
@@ -20,7 +33,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "670088531880-qa4iau47becj5ptho1dvfubd4pknnn27.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }
