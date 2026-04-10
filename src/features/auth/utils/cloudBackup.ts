@@ -137,18 +137,16 @@ export async function restoreFromCloud(uid: string): Promise<boolean> {
   }
 
   await sqlDb.withTransactionAsync(async () => {
-    // Only clear tables that exist in the backup (preserves newer tables)
-    const tablesToRestore = TABLES.filter(t => {
-      const rows = backup.tables[t];
-      return rows && rows.length > 0;
-    });
+    // Clear tables present in the backup (even if empty — user may have deleted all records)
+    const tablesInBackup = TABLES.filter(t => t in backup.tables);
 
-    for (const table of [...tablesToRestore].reverse()) {
+    for (const table of [...tablesInBackup].reverse()) {
       await sqlDb.execAsync(`DELETE FROM ${table}`);
     }
 
     // Insert rows with validated column names
-    for (const table of tablesToRestore) {
+    const tablesToInsert = tablesInBackup.filter(t => backup.tables[t]!.length > 0);
+    for (const table of tablesToInsert) {
       const validColumns = columnSets.get(table)!;
       const rows = backup.tables[table]!;
 

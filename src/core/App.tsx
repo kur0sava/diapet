@@ -63,16 +63,16 @@ function AppContent() {
   useMissedInjection();
 
   useEffect(() => {
-    // Restore injection/feeding notifications that Android may have dropped
+    // Initial restore on mount
     restoreScheduleNotifications().catch(() => {});
     scheduleHintPushNotifications().catch(() => {});
-  }, []);
 
-  // Refresh subscription status when app returns to foreground
-  useEffect(() => {
+    // Re-register on every foreground return — Android may silently drop
+    // scheduled alarms after Doze, battery optimization, or app updates
     const sub = AppState.addEventListener('change', state => {
       if (state === 'active') {
         useSubscriptionStore.getState().refreshStatus();
+        restoreScheduleNotifications().catch(() => {});
       }
     });
     return () => sub.remove();

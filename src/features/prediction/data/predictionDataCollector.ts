@@ -276,6 +276,7 @@ export async function collectPredictionData(
       feedings: recent60Feedings,
       symptoms: recent60Symptoms,
       weightKg: pet.weightKg,
+      scheduledInjectionsPerDay,
       diagnosisDays: pet.diagnosisDate
         ? Math.floor(
             (now.getTime() - new Date(pet.diagnosisDate).getTime()) / (24 * 60 * 60 * 1000)

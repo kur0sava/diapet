@@ -1,6 +1,5 @@
-
 import * as Notifications from 'expo-notifications';
-import { Platform } from 'react-native';
+import { Linking, Platform } from 'react-native';
 import i18n from '@shared/i18n';
 
 Notifications.setNotificationHandler({
@@ -42,6 +41,10 @@ export function useNotifications() {
         vibrationPattern: [0, 250],
         lightColor: '#FFD700',
       });
+
+      // On Android 12+, exact alarm permission may not be auto-granted.
+      // Without it, notifications use inexact alarms and arrive late.
+      await promptExactAlarmIfNeeded();
     }
 
     return finalStatus === 'granted';
@@ -109,6 +112,29 @@ export function useNotifications() {
     cancelAllNotifications,
     cancelScheduleNotifications,
   };
+}
+
+/**
+ * On Android 12+ (API 31+), SCHEDULE_EXACT_ALARM may not be auto-granted.
+ * Without it, expo-notifications falls back to inexact alarms that Android
+ * batches and delays — the main cause of "notifications not on time."
+ * Opens app's system settings so the user can grant the exact alarm permission.
+ */
+async function promptExactAlarmIfNeeded(): Promise<void> {
+  if (Platform.OS !== 'android') return;
+
+  try {
+    const perms = await Notifications.getPermissionsAsync();
+    // expo-notifications exposes canScheduleExactAlarms on Android 12+
+    const android = (perms as { android?: { allowsExactAlarms?: boolean } }).android;
+    if (android && 'allowsExactAlarms' in android && android.allowsExactAlarms === false) {
+      // Open the app's notification settings — the nearest available surface
+      // where the user can find Alarms & Reminders toggle
+      await Linking.openSettings();
+    }
+  } catch {
+    // Permission API shape varies across SDK versions — fail silently
+  }
 }
 
 /**
