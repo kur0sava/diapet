@@ -41,7 +41,9 @@ const MIGRATIONS: Migration[] = [
       // glucose_reading_id was included in base CREATE_TABLES_SQL.
       // Idempotent: catch error if column already exists (SQLite lacks IF NOT EXISTS for ALTER TABLE)
       try {
-        await db.execAsync('ALTER TABLE symptoms ADD COLUMN glucose_reading_id TEXT REFERENCES glucose_readings(id)');
+        await db.execAsync(
+          'ALTER TABLE symptoms ADD COLUMN glucose_reading_id TEXT REFERENCES glucose_readings(id)'
+        );
       } catch {
         // Column already exists — safe to ignore
       }
@@ -91,9 +93,7 @@ const MIGRATIONS: Migration[] = [
       // SQLite doesn't support ALTER CONSTRAINT, so we recreate via temp table
       // First, check if the column exists
       try {
-        const rows = await db.getAllAsync<{ name: string }>(
-          "PRAGMA table_info(symptoms)"
-        );
+        const rows = await db.getAllAsync<{ name: string }>('PRAGMA table_info(symptoms)');
         const hasColumn = rows.some(r => r.name === 'glucose_reading_id');
         if (!hasColumn) return; // Column doesn't exist yet, skip
 
@@ -157,6 +157,11 @@ const MIGRATIONS: Migration[] = [
         // Column already exists — safe to ignore
       }
     },
+  },
+  {
+    version: 9,
+    name: 'ensure_pets_species_default_cat',
+    up: [`UPDATE pets SET species = 'cat' WHERE species IS NULL OR species = ''`],
   },
 ];
 

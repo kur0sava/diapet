@@ -25,13 +25,15 @@ export const usePetStore = create<PetStore>((set, get) => ({
       const pets = await petRepository.findActive();
       const activePetId = storage.getString(StorageKeys.ACTIVE_PET_ID);
       const activePet = activePetId
-        ? pets.find(p => p.id === activePetId) ?? pets[0] ?? null
-        : pets[0] ?? null;
+        ? (pets.find(p => p.id === activePetId) ?? pets[0] ?? null)
+        : (pets[0] ?? null);
       // Persist auto-selected pet ID (or clear stale one)
       if (activePet) {
         storage.set(StorageKeys.ACTIVE_PET_ID, activePet.id);
+        storage.set('activeSpecies', activePet.species);
       } else {
         storage.delete(StorageKeys.ACTIVE_PET_ID);
+        storage.delete('activeSpecies');
       }
       set({ pets, activePet, isLoading: false });
     } catch (error) {
@@ -42,6 +44,7 @@ export const usePetStore = create<PetStore>((set, get) => ({
 
   setActivePet: (pet: Pet) => {
     storage.set(StorageKeys.ACTIVE_PET_ID, pet.id);
+    storage.set('activeSpecies', pet.species);
     set({ activePet: pet });
   },
 
@@ -51,7 +54,7 @@ export const usePetStore = create<PetStore>((set, get) => ({
     try {
       const updated = await petRepository.findById(activePet.id);
       if (updated) {
-        const pets = get().pets.map(p => p.id === updated.id ? updated : p);
+        const pets = get().pets.map(p => (p.id === updated.id ? updated : p));
         set({ activePet: updated, pets });
       }
     } catch (error) {

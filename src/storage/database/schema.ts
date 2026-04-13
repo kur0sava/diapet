@@ -12,7 +12,7 @@ export const DB_NAME = 'diapet.db';
  *   - CREATE TABLE / CREATE INDEX use IF NOT EXISTS
  *   - ALTER TABLE ADD COLUMN is wrapped in try/catch (SQLite lacks IF NOT EXISTS for ALTER)
  */
-export const CURRENT_SCHEMA_VERSION = 8;
+export const CURRENT_SCHEMA_VERSION = 9;
 
 export const CREATE_TABLES_SQL = `
   PRAGMA journal_mode = WAL;

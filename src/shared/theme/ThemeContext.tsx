@@ -4,6 +4,8 @@ import { Colors } from './colors';
 import { FontFamily, FontWeight, FontSize, LineHeight } from './typography';
 import { Spacing, BorderRadius, Shadow } from './spacing';
 import { storage } from '@storage/mmkv/storage';
+import type { PetSpecies } from '@storage/domain/types';
+import { getSpeciesConfig } from '@shared/config/speciesConfig';
 
 export type ColorScheme = 'light' | 'dark' | 'system';
 
@@ -58,16 +60,17 @@ export type Theme = {
   isDark: boolean;
 };
 
-const buildTheme = (isDark: boolean): Theme => {
+const buildTheme = (isDark: boolean, species: PetSpecies = 'cat'): Theme => {
   const scheme = isDark ? Colors.dark : Colors.light;
+  const speciesTheme = getSpeciesConfig(species).theme;
   return {
     colors: {
       ...scheme,
-      primary: Colors.primary,
-      primaryDark: Colors.primaryDark,
-      primaryLight: Colors.primaryLight,
-      secondary: Colors.secondary,
-      secondaryLight: Colors.secondaryLight,
+      primary: speciesTheme.primary,
+      primaryDark: speciesTheme.primaryDark,
+      primaryLight: speciesTheme.primaryLight,
+      secondary: speciesTheme.secondary,
+      secondaryLight: speciesTheme.secondaryLight,
       success: Colors.success,
       successLight: Colors.successLight,
       warning: Colors.warning,
@@ -81,7 +84,15 @@ const buildTheme = (isDark: boolean): Theme => {
       glucoseHigh: Colors.glucoseHigh,
       glucoseVeryHigh: Colors.glucoseVeryHigh,
     },
-    gradients: Colors.gradients,
+    gradients: {
+      ...Colors.gradients,
+      primary: [speciesTheme.primary, speciesTheme.secondary] as readonly [string, string],
+      header: speciesTheme.gradientHeader,
+      headerDark: speciesTheme.gradientHeaderDark,
+      headerRich: speciesTheme.gradientHeaderRich,
+      headerRichDark: speciesTheme.gradientHeaderRichDark,
+      cardAccent: speciesTheme.gradientCardAccent,
+    },
     fonts: FontFamily,
     fontWeights: FontWeight,
     fontSizes: FontSize,
@@ -101,7 +112,18 @@ type ThemeContextType = {
 
 const ThemeContext = createContext<ThemeContextType | null>(null);
 
-export function ThemeProvider({ children }: { children: ReactNode }) {
+/**
+ * Species-aware theme provider.
+ * Accepts optional species prop (used during onboarding before petStore is initialized).
+ * After onboarding, reads species from the active pet in petStore.
+ */
+export function ThemeProvider({
+  children,
+  species: speciesProp,
+}: {
+  children: ReactNode;
+  species?: PetSpecies;
+}) {
   const systemScheme = useColorScheme();
   const [colorScheme, setColorSchemeState] = useState<ColorScheme>(() => {
     const saved = storage.getString('colorScheme') as ColorScheme | undefined;
@@ -113,21 +135,20 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     storage.set('colorScheme', scheme);
   }, []);
 
-  const isDark =
-    colorScheme === 'system' ? systemScheme === 'dark' : colorScheme === 'dark';
+  const isDark = colorScheme === 'system' ? systemScheme === 'dark' : colorScheme === 'dark';
 
-  const theme = useMemo(() => buildTheme(isDark), [isDark]);
+  // Species from prop (onboarding) or from MMKV cache (fast, avoids store dependency)
+  const species =
+    speciesProp ?? (storage.getString('activeSpecies') as PetSpecies | undefined) ?? 'cat';
+
+  const theme = useMemo(() => buildTheme(isDark, species), [isDark, species]);
 
   const contextValue = useMemo(
     () => ({ theme, colorScheme, setColorScheme }),
     [theme, colorScheme, setColorScheme]
   );
 
-  return (
-    <ThemeContext.Provider value={contextValue}>
-      {children}
-    </ThemeContext.Provider>
-  );
+  return <ThemeContext.Provider value={contextValue}>{children}</ThemeContext.Provider>;
 }
 
 export function useTheme() {
