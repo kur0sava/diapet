@@ -1,115 +1,468 @@
-# DiaPet — Roadmap
+# DiaPet — Roadmap v3.0: Мульти-animal
 
-> Обновлён: 2026-03-15
+> Обновлён: 2026-04-13
+> Основной план разработки
 
 ---
 
 ## ТЕКУЩИЙ СТАТУС
 
-**Ветка**: master | **Последний коммит**: 7d44871
-**Версия**: 1.1.0, versionCode 4
-**Google Play**: закрытое тестирование, AAB ещё не загружен
+**Ветка**: master | **Версия**: 2.4.3 (versionCode 15)
+**Google Play**: v2.4.3 опубликован
+**RuStore**: v2.4.3 опубликован
+**GitHub**: https://github.com/kur0sava/diapet — актуален
 
 ---
 
-## ПЛАН ПЕРЕД РЕЛИЗОМ v1.2.0
+## ЭТАП 15: РАСШИРЕНИЕ НА СОБАК (multi-animal)
 
-### Шаг 1 — Тестирование на устройстве
-- [ ] `ANDROID_SERIAL=111615546K006735 npx expo run:android`
-- [ ] Проверить HintCard: залогировать инъекцию → появляется подсказка снизу
-- [ ] Проверить утреннее приветствие при первом запуске за день
-- [ ] Проверить пропуск инъекции (>14ч) → мягкая подсказка
-- [ ] Проверить AchievementModal (можно временно снизить порог до 2)
-- [ ] Проверить AI Assistant экран: кнопка в MoreMenu, Pro-gate, чат (с реальным ключом)
-- [ ] Проверить light/dark тема для HintCard и AI Assistant
-- [ ] Проверить что подсказки НЕ появляются при редактировании записи глюкозы
+Цель: DiaPet поддерживает кошек и собак с раздельными клиническими нормами, цветовой схемой, контентом и UI.
 
-### Шаг 2 — Ключи и конфигурация
-- [ ] `app.json` → `extra.anthropicApiKey` → реальный ключ (или серверный proxy URL)
-- [ ] Зарегать Prodamus → создать магазин → 2 товара (monthly 399₽, yearly 3390₽)
-- [ ] Зарегать Supabase → проект → таблица subscriptions + Edge Functions
-- [ ] `.env` → SUPABASE_URL, SUPABASE_ANON_KEY, PRODAMUS_SHOP_URL
-- [ ] `app.json` → `react-native-google-mobile-ads.android_app_id` → реальный AdMob ID
-- [ ] `DashboardScreen.tsx` → `ADMOB_BANNER_ID` → реальный Banner Ad Unit ID
+### Медицинская база (собрана, верифицирована медицинским аудитором)
 
-### Шаг 3 — Версия и билд
-- [ ] `package.json` version → `1.2.0`
-- [ ] `app.json` versionCode → `5`
-- [ ] `npx tsc --noEmit` + `npm run lint` — 0 ошибок
-- [ ] `git commit` + `git push`
-- [ ] `eas build --platform android --profile production --non-interactive`
+| Параметр | Кошка (текущее) | Собака (новое) |
+|----------|----------------|----------------|
+| Тип диабета | Тип 2 (обратимый, 50-90% ремиссия) | Тип 1 (необратимый, ремиссия крайне редка) |
+| Норма глюкозы натощак | 3.9–8.3 ммоль/л | 3.3–6.1 ммоль/л |
+| Целевой диапазон терапии | 4.0–9.0 ммоль/л | 4.4–8.0 ммоль/л |
+| Целевой надир | 4.0–8.0 ммоль/л | 4.4–8.0 ммоль/л |
+| Гипогликемия (тревога) | <2.8 ммоль/л | <3.3 ммоль/л |
+| Гипогликемия (тяжёлая) | <2.2 ммоль/л | <2.2 ммоль/л |
+| Гипергликемия (усилить контроль) | >14.0 ммоль/л | >16.7 ммоль/л |
+| Инсулин 1-й линии | Гларгин (Лантус), PZI (ProZinc) | Caninsulin (лент, U-40), NPH |
+| Дозировка | 1–2 МЕ на кошку (абсолютная) | 0.25–0.5 МЕ/кг (по весу!) |
+| Макс. стартовая доза | ~10 МЕ | ~20 МЕ |
+| Макс. вес | 15 кг | 80 кг |
+| Макс. возраст | 30 лет | 20 лет |
+| Диета | Низкие углеводы (<10% СВ), высокий белок | Высокая клетчатка (>10% СВ), умеренные углеводы |
+| Катаракта | Редко (<5%) | 75-80% за 16 мес |
+| Нейропатия (планиградия) | Часто (30-50%) | Редко |
+| Ремиссия | 50-90% при ранней терапии | Только вторичные формы (прогестерон, стероиды) |
+| Стрессовая гипергликемия | До 15-17 ммоль/л (имитирует диабет) | До 8 ммоль/л (незначительная) |
+| Фруктозамин норма | 170–340 мкмоль/л | 340–450 мкмоль/л |
 
-### Шаг 4 — Публикация
-- [ ] Скачать AAB из EAS Dashboard
-- [ ] Google Play Console → Закрытое тестирование → загрузить AAB
-- [ ] What's New v1.2.0:
-  - **RU:** Система подсказок на 30 дней — советы, факты и поддержка после каждого действия. ИИ-ассистент по диабету кошек (Pro). Достижение «Диабетный герой». Исправления.
-  - **EN:** 30-day tips system — advice, facts and support after every action. AI cat diabetes assistant (Pro). "Diabetes Hero" achievement. Bug fixes.
-- [ ] Отправить на проверку
+### Источники: AAHA 2018, ECVIM-CA 2022, ISFM 2015, Merck Vet Manual 2022, Feldman & Nelson 2015
 
 ---
 
-## ПОСЛЕ РЕЛИЗА v1.2.0
+### ФАЗА 1: Фундамент — speciesConfig + тема + миграция
 
-| # | Задача | Статус |
-|---|--------|--------|
-| 1 | Тестирование подсказок на реальных пользователях (закрытое тестирование) | 🔜 |
-| 2 | Серверный proxy для Anthropic API (Cloudflare Worker) — убрать ключ из клиента | 🔜 |
-| 3 | **Insulin Cycle MVP** — спецификация в `memory/insulin-cycle-spec.md` | ❌ будущее |
-| 4 | Энциклопедия: статьи об инсулинах, мониторинге, фруктозамине | ❌ будущее |
-| 5 | Виртуализация таймлайна DailyDiary (FlatList при 20+ событий) | ❌ будущее |
+**Цель:** Создать инфраструктуру, от которой зависит всё остальное.
+
+#### 1.1 Создать `src/shared/config/speciesConfig.ts`
+- [ ] Интерфейс `SpeciesConfig` со всеми видозависимыми параметрами
+- [ ] Конфиг для `cat` (идентичен текущим захардкоженным значениям — поведение НЕ меняется)
+- [ ] Конфиг для `dog` (из медицинской базы выше)
+- [ ] Функция `getSpeciesConfig(species: PetSpecies): SpeciesConfig`
+- [ ] Хук `useSpeciesConfig()` — берёт species из activePet
+- [ ] **Проверка:** tsc, тесты, убедиться что кошачий сценарий идентичен до рефакторинга
+
+Структура конфига:
+```typescript
+interface SpeciesConfig {
+  species: PetSpecies;
+  label: { ru: string; en: string };           // "Кошка" / "Собака"
+  
+  glucose: {
+    normalLow: number;                          // кошки: 3.9, собаки: 3.3
+    normalHigh: number;                         // кошки: 8.3, собаки: 6.1
+    targetLow: number;                          // кошки: 4.0, собаки: 4.4
+    targetHigh: number;                         // кошки: 9.0, собаки: 8.0
+    rangeHigh: number;                          // кошки: 12.0, собаки: 10.0
+    emergencyLow: number;                       // кошки: 2.8, собаки: 3.3
+    emergencyHigh: number;                      // кошки: 30, собаки: 30
+    severeLow: number;                          // кошки: 2.2, собаки: 2.2
+    highControlThreshold: number;               // кошки: 14.0, собаки: 16.7
+    ranges: GlucoseRangeEntry[];                // полная шкала уровней
+  };
+  
+  insulin: {
+    dosePerKg: boolean;                         // кошки: false, собаки: true
+    typicalDoseMin: number;                     // кошки: 1 МЕ, собаки: 0.25 МЕ/кг
+    typicalDoseMax: number;                     // кошки: 4 МЕ, собаки: 0.5 МЕ/кг
+    warningDose: number;                        // кошки: 4, собаки: рассчитывается
+    dangerDose: number;                         // кошки: 6, собаки: рассчитывается
+    absoluteMaxDose: number;                    // кошки: 10, собаки: 20
+    commonTypes: InsulinTypeInfo[];             // список инсулинов с фармакокинетикой
+  };
+  
+  analyzer: {
+    somogyiNadirThreshold: number;              // кошки: 4, собаки: 3.3
+    somogyiReboundThreshold: number;            // кошки: 18, собаки: 16
+    postMealSpikeThreshold: number;             // кошки: 15, собаки: 14
+    remissionRelevant: boolean;                 // кошки: true, собаки: false
+    remissionMorningThreshold: number;          // кошки: 7, собаки: N/A
+  };
+  
+  validation: {
+    maxWeightKg: number;                        // кошки: 15, собаки: 80
+    maxAgeYears: number;                        // кошки: 30, собаки: 20
+  };
+  
+  nutrition: {
+    carbsDMGood: number;                        // кошки: 10, собаки: 30
+    carbsDMAcceptable: number;                  // кошки: 15, собаки: 40
+    proteinDMMin: number;                       // кошки: 40, собаки: 25
+    fatDMMax: number;                           // кошки: 40, собаки: 50
+    fiberImportant: boolean;                    // кошки: false, собаки: true
+    fiberDMMin?: number;                        // собаки: 10
+  };
+  
+  symptoms: {
+    available: SymptomType[];                   // видоспецифичные симптомы
+  };
+  
+  theme: {
+    primary: string;                            // кошки: '#4F8EF7', собаки: TBD
+    primaryDark: string;
+    primaryLight: string;
+    secondary: string;
+    secondaryLight: string;
+    gradientHeader: [string, string];
+    gradientHeaderDark: [string, string];
+    gradientHeaderRich: [string, string, string];
+    gradientHeaderRichDark: [string, string, string];
+  };
+}
+```
+
+#### 1.2 Цветовая схема для собак
+- [ ] Определить палитру для dog (контрастную с кошачьей)
+  - Кошки: синяя (#4F8EF7) + фиолетовая (#7C5CBF)
+  - Собаки: предлагаю тёплая — оранжево-янтарная (#E67E22) + коричневая (#8B6914) или зелёно-изумрудная (#2ECC71) + тёмно-зелёная (#1A9A5C)
+  - **Решение за пользователем — уточнить цвета перед реализацией**
+- [ ] Расширить `ThemeContext.tsx` — `buildTheme(isDark, species)` вместо `buildTheme(isDark)`
+- [ ] Градиенты хедера зависят от species активного питомца
+- [ ] **Проверка:** переключение между питомцами мгновенно меняет цветовую схему
+
+#### 1.3 Заголовок (шапка)
+- [ ] В хедере отображать "Cats" или "Dogs" в зависимости от species активного питомца
+- [ ] i18n ключи: `header.cats`, `header.dogs`
+- [ ] **Проверка:** переключение питомца → заголовок и цвета меняются
+
+#### 1.4 Миграция БД (version 9)
+- [ ] Safety-net: `UPDATE pets SET species = 'cat' WHERE species IS NULL OR species = ''`
+- [ ] **Проверка:** существующие юзеры не затронуты, все питомцы явно = cat
+
+#### Контрольная точка Фазы 1:
+- [ ] `npx tsc --noEmit` — 0 ошибок
+- [ ] `npm test` — все тесты проходят
+- [ ] Кошачий сценарий работает **идентично** текущему (регрессий нет)
+- [ ] Коммит: `feat: species config infrastructure + dog color theme`
 
 ---
 
-## НОВОЕ В v1.2.0 (коммит 7d44871)
+### ФАЗА 2: Onboarding и UI — выбор вида
 
-### Система подсказок (hints)
-- 137 контекстных подсказок RU/EN на 30 дней
-- 5 триггеров: инъекция (утро/вечер), глюкоза, кормление, утреннее приветствие, пропуск инъекции
-- 5 стадий: неделя 1-4 + дни 29-30
-- Баланс категорий: 40% практика, 30% медфакты, 30% поддержка
-- Animated HintCard (slide-in снизу, авто-скрытие 10с)
-- Движок с дедупликацией и балансировкой категорий
+**Цель:** Пользователь выбирает кошку или собаку при создании питомца.
 
-### Достижение "Диабетный герой"
-- Условие: 30 инъекций или 30 дней (что раньше)
-- Золотой модал с поздравлением
+#### 2.1 Экран выбора вида (первый шаг онбординга)
+- [ ] Новый экран или секция в `PetInfoScreen.tsx` — выбор: Кошка / Собака
+- [ ] Крупные карточки с иконками (кот и пёс)
+- [ ] `OnboardingState` → добавить `petSpecies: PetSpecies`
+- [ ] При выборе → цветовая схема приложения сразу переключается
 
-### Пуш-уведомления пост-30 дней
-- 25 ротируемых сообщений, 3/неделю
-- Идемпотентный планировщик, канал `hints`
-- 4 из 25 мягко упоминают Pro
+#### 2.2 `NotificationsScreen.tsx`
+- [ ] Убрать хардкод `species: 'cat'` (строка 38) → использовать выбранный species
 
-### AI-ассистент (премиум)
-- Экран чата в MoreMenu (Pro-gate для бесплатных)
-- Claude Sonnet через Anthropic API
-- Системный промпт с данными питомца, медицинскими правилами безопасности
-- История чата в MMKV (50 сообщений)
+#### 2.3 `MoreMenuScreen.tsx`
+- [ ] Добавить ветку для `'dog'` (строка 150)
 
-### Фиксы аудита
-- C007 — точность конвертации глюкозы (1→2 знака)
-- C004 — детерминированный fallback-ключ MMKV при сбое SecureStore
+#### 2.4 `EditPetScreen.tsx`
+- [ ] Selector вида + валидация из `speciesConfig` (maxWeight, maxAge)
 
----
+#### 2.5 i18n
+- [ ] Ключи: `pets.dog`, `pets.species`, `pets.selectSpecies`, видозависимые тексты
+- [ ] Placeholder имени: "Барсик" для кошек, "Бобик" для собак
 
-## АУДИТ — ВСЁ ИСПРАВЛЕНО ✅
-
-Волна 1 (9 критических) + Волна 2 (13 высоких) — все закрыты.
-Детали в `memory/fix-plan-v1.8.md`.
-
-Открытые пункты низкого приоритета (не блокируют релиз):
-- L006 — версия хардкодена в MoreMenu/Settings
-- L005 — Terms и Privacy ведут на одну страницу
-- L004 — таблица vet_contacts не используется
+#### Контрольная точка Фазы 2:
+- [ ] Полный цикл онбординга с выбором "Собака" — без крашей
+- [ ] Переключение между питомцами разных видов — тема и заголовок меняются
+- [ ] `npx tsc --noEmit` + `npm test`
+- [ ] Коммит: `feat: species selection in onboarding + UI adaptation`
 
 ---
 
-## ИСТОРИЯ СЕССИЙ
+### ФАЗА 3: Анализатор — параметризация под вид
 
-| Дата | Что сделано |
-|------|-------------|
-| 2026-03-15 | Система подсказок (137 хинтов), AI-ассистент, пуш-планировщик, ачивка, фиксы C007/C004 |
-| 2026-03-13 | Иконка DiaPet, Android 15/16 совместимость |
-| 2026-03-11 | Деплой v1.1.0, EAS билд versionCode 3 |
-| 2026-03-09 | Edge-cases, layout 320px, encyclopedia fixes |
-| 2026-03-08 | Daily Diary, аудит 29 проблем, рефакторинг |
+**Цель:** Все клинические пороги берутся из speciesConfig.
+
+#### 3.1 `src/storage/domain/types.ts`
+- [ ] `GLUCOSE_RANGES` → `getGlucoseRanges(species)` из конфига
+- [ ] `getGlucoseLevel()` → принимает species
+- [ ] `getGlucoseColor()` → принимает species
+- [ ] Заменить `MAX_CAT_WEIGHT_KG`, `MAX_CAT_AGE_YEARS` → конфиг
+- [ ] `HIGH_CARBS_DM_THRESHOLD` → конфиг
+
+#### 3.2 `trendEngine.ts`
+- [ ] `TARGET_LOW/TARGET_HIGH` → из конфига
+- [ ] `calculateTimeInRange` → видозависимые пороги
+- [ ] `analyzeTrends(readings, now, speciesConfig)`
+
+#### 3.3 `patternDetector.ts`
+- [ ] Somogyi пороги: low < config.somogyiNadirThreshold, rebound > config.somogyiReboundThreshold
+- [ ] Post-meal spike: > config.postMealSpikeThreshold
+- [ ] Remission: пропускать если `config.remissionRelevant === false`
+- [ ] Missed injection impact: порог из конфига
+
+#### 3.4 `safetyGuard.ts`
+- [ ] `EMERGENCY_GLUCOSE_LOW/HIGH` → конфиг
+
+#### 3.5 `riskScoreCalculator.ts`
+- [ ] Пороги из конфига
+
+#### 3.6 `diaryAnalyzer.ts`
+- [ ] `inRange` (4.0-9.0) → конфиг
+
+#### 3.7 `predictionDataCollector.ts`
+- [ ] `computeGlucoseStats` inRange → конфиг
+
+#### 3.8 Тесты
+- [ ] Обновить тесты в `analyzer/engine/__tests__/`
+- [ ] Добавить тест-кейсы для dog-конфига (другие пороги)
+
+#### Контрольная точка Фазы 3:
+- [ ] Кошачьи тесты проходят с идентичными результатами
+- [ ] Собачьи тесты корректно используют другие пороги
+- [ ] `npx tsc --noEmit` + `npm test`
+- [ ] Коммит: `feat: analyzer species-aware thresholds`
+
+---
+
+### ФАЗА 4: Дозировки и валидация инсулина
+
+**Цель:** Дозовые пороги и инсулины соответствуют виду.
+
+#### 4.1 `LogGlucoseScreen.tsx`
+- [ ] Хардкод `10/6/4` МЕ → конфиг
+- [ ] Для собак: доза зависит от веса (`dosePerKg * petWeight`)
+- [ ] Предупреждения адаптированы: "Опасно высокая доза для собаки" vs "для кошки"
+
+#### 4.2 `feedCalculator/utils/calculateDryMatter.ts`
+- [ ] Пороги carbsDM, proteinDM, fatDM → конфиг
+- [ ] Для собак: добавить оценку клетчатки (fiberDM)
+
+#### 4.3 i18n тексты дозировок
+- [ ] `highDoseWarningDesc` — видозависимый
+- [ ] `veryHighDoseWarningDesc` — видозависимый
+- [ ] `doseAbsoluteLimitDesc` — видозависимый
+
+#### Контрольная точка Фазы 4:
+- [ ] Для кошки: предупреждение на 4 МЕ, блок на 10 МЕ (как раньше)
+- [ ] Для собаки 30кг: предупреждение на ~10 МЕ, блок на 20 МЕ
+- [ ] FeedCalculator: правильные пороги для каждого вида
+- [ ] `npx tsc --noEmit` + `npm test`
+- [ ] Коммит: `feat: species-aware insulin dosing + feed calculator`
+
+---
+
+### ФАЗА 5: AI промпты и прогнозы
+
+**Цель:** AI знает, с каким животным работает, и даёт корректные рекомендации.
+
+#### 5.1 `aiSystemPrompt.ts` (чат)
+- [ ] "cat owner" → species-aware
+- [ ] "feline diabetes" → species-specific контекст
+- [ ] "obligate carnivore" → только для кошек
+- [ ] Целевой диапазон → из конфига
+- [ ] Для собак: контекст про тип 1, пожизненный инсулин, катаракту, высокую клетчатку
+
+#### 5.2 `predictionSystemPrompt.ts` (прогнозы)
+- [ ] "domestic cats" → species-aware
+- [ ] "Cat name:" → "Pet name:" + species
+- [ ] Целевые диапазоны → из конфига
+- [ ] Remission assessment → только для кошек
+- [ ] Для собак: добавить контекст про Caninsulin/NPH, дозы по весу
+
+#### 5.3 `predictionDataCollector.ts`
+- [ ] Передавать species в данные для AI
+- [ ] `computeGlucoseStats` inRange → из конфига (уже сделано в фазе 3, проверить)
+
+#### 5.4 `AiPetContext`
+- [ ] Добавить поле `species: PetSpecies`
+
+#### Контрольная точка Фазы 5:
+- [ ] AI чат для кошки: ответы как раньше
+- [ ] AI чат для собаки: корректные рекомендации (Caninsulin, клетчатка, нет ремиссии)
+- [ ] Прогнозы используют правильные пороги для вида
+- [ ] `npx tsc --noEmit` + `npm test`
+- [ ] Коммит: `feat: species-aware AI prompts and predictions`
+
+---
+
+### ФАЗА 6: Симптомы
+
+**Цель:** Симптомы соответствуют виду животного.
+
+#### 6.1 Расширить `SymptomType`
+- [ ] Добавить собачьи: `cataracts`, `urinaryInfection`, `panting`, `ataxia`
+- [ ] `hindLimbWeakness` — только для кошек
+- [ ] Mapping в speciesConfig: `symptoms.available`
+
+#### 6.2 UI фильтрация
+- [ ] `AddSymptomScreen.tsx` — показывать только симптомы из конфига
+- [ ] i18n ключи для новых симптомов
+
+#### Контрольная точка Фазы 6:
+- [ ] Кошка: те же симптомы что раньше
+- [ ] Собака: катаракта, ИМП, атаксия вместо планиградии
+- [ ] `npx tsc --noEmit` + `npm test`
+- [ ] Коммит: `feat: species-specific symptoms`
+
+---
+
+### ФАЗА 7: Контент — хинты, пуши, энциклопедия
+
+**Цель:** Весь текстовый контент адаптирован под вид животного.
+
+#### 7.1 Хинты (`hintsContent.ts` — 137 шт)
+- [ ] Добавить поле `species?: PetSpecies | 'all'` в `HintContent`
+- [ ] Шаблонизация: "кот/кошка" → `{{speciesNom}}`, `{{speciesGen}}`
+- [ ] Хинты про ремиссию, планиградию → `species: 'cat'`
+- [ ] Хинты про катаракту, клетчатку → `species: 'dog'`
+- [ ] Общие хинты → `species: 'all'`
+- [ ] `useHintEngine` — фильтрация по species
+
+#### 7.2 Пуш-уведомления (`pushContent.ts`)
+- [ ] "Котейка" → видозависимое
+- [ ] Добавить собачьи варианты
+
+#### 7.3 Энциклопедия (22 статьи)
+- [ ] Добавить `species?: PetSpecies | 'all'` в `Article` interface
+- [ ] Текущие 22 статьи → `species: 'cat'` (или `'all'` где универсально)
+- [ ] Создать 10-15 статей для собак:
+  - Что такое диабет у собак (тип 1)
+  - Caninsulin и NPH — инсулины для собак
+  - Кривая глюкозы у собак
+  - Катаракта — главное осложнение
+  - Диета для диабетической собаки (клетчатка)
+  - Гипогликемия у собак — первая помощь
+  - Диэструсный диабет у сук
+  - Болезнь Кушинга и диабет
+  - Мониторинг дома
+  - Породная предрасположенность
+- [ ] Фильтр в UI по species активного питомца
+
+#### 7.4 Корма (`naturalFoods.ts`, `diabeticFoods.ts`, `alternativeFoods.ts`)
+- [ ] Добавить `species` к каждой записи
+- [ ] Собачьи рекомендации: Hills w/d, Royal Canin Diabetic, высокая клетчатка
+- [ ] Порции: собачьи нормы (зависят от веса)
+
+#### Контрольная точка Фазы 7:
+- [ ] Кошка: весь контент как раньше
+- [ ] Собака: релевантные хинты, статьи, корма
+- [ ] Нет "кошачьего" контента при выборе собаки
+- [ ] `npx tsc --noEmit` + `npm test`
+- [ ] Коммит: `feat: species-specific content (hints, encyclopedia, foods)`
+
+---
+
+### ФАЗА 8: Интеграционное тестирование и финализация
+
+#### 8.1 Полный прогон на устройстве
+- [ ] Онбординг с выбором "Собака" → полный цикл
+- [ ] Онбординг с выбором "Кошка" → регрессий нет
+- [ ] Переключение между питомцами разных видов
+- [ ] Цветовая схема переключается корректно
+- [ ] Заголовок "Cats" / "Dogs" переключается
+- [ ] LogGlucose: дозы для собаки по весу
+- [ ] Analyzer: собачьи пороги, нет ремиссии
+- [ ] AI чат: корректные ответы для собаки
+- [ ] Энциклопедия: собачьи статьи
+- [ ] Хинты: собачий контент
+- [ ] FeedCalculator: клетчатка для собак
+
+#### 8.2 Edge cases
+- [ ] Питомец без species (миграция) → cat
+- [ ] Смена вида у существующего питомца → данные сохраняются
+- [ ] Dark theme + dog color scheme
+- [ ] Маленький экран (320px) + dog onboarding
+
+#### 8.3 Версия
+- [ ] Bump version → v2.5.0 (versionCode 16)
+- [ ] `npx tsc --noEmit` + `npm test`
+- [ ] Коммит + push + EAS build
+
+#### Контрольная точка Фазы 8:
+- [ ] Всё работает на физическом устройстве
+- [ ] 0 регрессий для кошачьего сценария
+- [ ] Коммит: `chore: bump to v2.5.0 — multi-animal support`
+
+---
+
+## ЗАХАРДКОЖЕННЫЕ МЕСТА (найдены архитектурным агентом)
+
+Полный список файлов, где зашита "кошка":
+
+### Клинические константы (КРИТИЧНО)
+| Файл | Что захардкожено | Фаза |
+|------|-----------------|------|
+| `src/storage/domain/types.ts` | GLUCOSE_RANGES, getGlucoseLevel(), MAX_CAT_WEIGHT_KG, MAX_CAT_AGE_YEARS, HIGH_CARBS_DM_THRESHOLD | 3 |
+| `src/features/analyzer/engine/trendEngine.ts` | TARGET_LOW=4, TARGET_HIGH=12 | 3 |
+| `src/features/analyzer/engine/patternDetector.ts` | Somogyi: low<4, rebound>18; post-meal>15; remission morning<7 | 3 |
+| `src/features/analyzer/engine/safetyGuard.ts` | EMERGENCY_GLUCOSE_LOW=2.8, HIGH=30 | 3 |
+| `src/features/diary/utils/diaryAnalyzer.ts` | inRange: 4.0-9.0 | 3 |
+| `src/features/prediction/data/predictionDataCollector.ts` | inRange: 4.0-12.0 | 3 |
+
+### Дозировки (КРИТИЧНО)
+| Файл | Что захардкожено | Фаза |
+|------|-----------------|------|
+| `src/features/glucose/screens/LogGlucoseScreen.tsx` | limit 10 IU, warning 6, elevated 4 | 4 |
+| `src/features/feedCalculator/utils/calculateDryMatter.ts` | carbsDM<10, proteinDM>=40, fatDM<=40 | 4 |
+
+### AI промпты
+| Файл | Что захардкожено | Фаза |
+|------|-----------------|------|
+| `src/features/hints/data/aiSystemPrompt.ts` | "cat owner", "feline diabetes", target 4-9 | 5 |
+| `src/features/prediction/data/predictionSystemPrompt.ts` | "domestic cats", "Cat name:", remission ISFM | 5 |
+
+### UI и логика
+| Файл | Что захардкожено | Фаза |
+|------|-----------------|------|
+| `src/features/onboarding/screens/NotificationsScreen.tsx` | species: 'cat' (строка 38) | 2 |
+| `src/features/pets/screens/MoreMenuScreen.tsx` | нет ветки для 'dog' | 2 |
+
+### Контент (самый объёмный)
+| Файл | Объём | Фаза |
+|------|-------|------|
+| `src/features/hints/data/hintsContent.ts` | 137 хинтов, 258 упоминаний кот/кош | 7 |
+| `src/features/hints/data/pushContent.ts` | пуши с "котейка" | 7 |
+| `src/features/encyclopedia/data/articles/` | 22 статьи, 317 упоминаний | 7 |
+| `src/features/encyclopedia/data/naturalFoods.ts` | порции для кошек | 7 |
+| `src/shared/i18n/locales/ru.ts` + `en.ts` | "для кошки", "диабет кошек" | 4,7 |
+
+---
+
+## ОТЛОЖЕННЫЕ ЭТАПЫ (после собак)
+
+| Этап | Описание | Зависимость |
+|------|----------|-------------|
+| 13A | Подписки (Prodamus + Supabase) | Мерчант Prodamus + Supabase проект |
+| 13B | AdMob | Google AdMob app + ad units |
+| 13C | AI proxy (Supabase Edge Function) | Supabase проект |
+| 13D | Cloud backup через Supabase | Supabase проект |
+| 14 | Bluetooth, виджеты | Будущее |
+
+---
+
+## ПРАВИЛА РАБОТЫ
+
+1. **Каждая фаза заканчивается:** `npx tsc --noEmit` + `npm test` + проверка регрессий + коммит
+2. **Кошачий сценарий НЕ ДОЛЖЕН ломаться** — это главный инвариант
+3. **Проверка на баги встроена:** после каждой фазы прогон тестов + ручная проверка на устройстве
+4. **Сессия заканчивается:** обновление MEMORY.md с указанием текущей фазы и что осталось
+5. **Следующая сессия начинается:** чтение MEMORY.md → продолжение с последней незавершённой фазы
+
+---
+
+## ИСТОРИЯ
+
+| Дата | Версия | Что |
+|------|--------|-----|
+| 2026-04-13 | v2.4.3 | План ЭТАП 15 (multi-animal) создан и утверждён |
+| 2026-04-10 | v2.4.3 | Сборки EAS, загрузка в Google Play + RuStore |
+| 2026-04-06 | v2.4.3 | Privacy policy, Terms, google-services.json |
+| 2026-04-05 | v2.4.2 | ЭТАП 12 complete, Firebase Auth, аудиты |
+| 2026-03-30 | v2.4.0 | ЭТАП 9-10 (Analyzer + Encyclopedia) |
+| 2026-03-29 | v2.3.0 | Design Refresh + ЭТАП 8 |
+| Ранее | v1.x-2.x | MVP → PRO → AI → аудиты |

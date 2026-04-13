@@ -48,7 +48,21 @@
       "Bash(ANDROID_SERIAL=111615546K006735 eas build --platform android --profile production --non-interactive 2>&1)",
       "Bash(python3 -c \"from PIL import Image; print\\('PIL available'\\)\" 2>/dev/null || python -c \"from PIL import Image; print\\('PIL available'\\)\" 2>/dev/null || pip install Pillow 2>&1 | tail -3)",
       "Bash(pip3 install:*)",
-      "Bash(py -m pip install Pillow 2>&1 | tail -5)"
+      "Bash(py -m pip install Pillow 2>&1 | tail -5)",
+      "Bash(eas build:view 96fb3517-40cf-40a6-a0e4-d74517888a23)",
+      "Bash(xargs cat:*)",
+      "Bash(eas:*)",
+      "Bash(wc:*)",
+      "Bash(find . -name \"*.ts\" -type f -exec grep -l \"nextCursor.*\\\\?\" {})",
+      "Bash(done)",
+      "Bash(adb:*)",
+      "Bash(ipconfig)",
+      "Bash(npx eas:*)",
+      "Bash(npx husky:*)",
+      "Bash(find:*)",
+      "Bash(npx expo-cli:*)",
+      "Bash(npx eas-cli@latest credentials -p android --profile production)",
+      "Bash(keytool -list -v -keystore C:/Users/Admin/.android/debug.keystore -alias androiddebugkey -storepass android)"
     ]
   }
 }

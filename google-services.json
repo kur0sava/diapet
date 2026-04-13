@@ -14,6 +14,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "670088531880-5mjl72l5mkjh0puh61elic2fha4u02uh.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.diapet.app",
+            "certificate_hash": "58238bea5b19770342498b256e3deff642ac9d53"
+          }
+        },
+        {
           "client_id": "670088531880-mffo2rka45iuf4oh76748h3e7hdspe9k.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {

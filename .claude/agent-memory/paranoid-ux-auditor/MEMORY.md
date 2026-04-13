@@ -7,28 +7,31 @@
 - **Storage**: expo-sqlite + react-native-mmkv
 - **i18n**: i18next (ru/en), translations in `src/shared/i18n/locales/`
 
-## Key UX Patterns (Updated 2026-03-16)
+## Key UX Patterns (Updated 2026-03-21)
 - **Delete**: Visible trash icons + long-press + confirmation dialog on list screens (with item details)
-- **Delete all data**: DOUBLE confirmation dialog, irreversible, no backup offered
-- **Forms**: useUnsavedChangesGuard on LogGlucose, LogInjection, LogFeeding, AddSymptom, EditPet, Assessment
-- **MISSING guard**: AddExpense has NO useUnsavedChangesGuard
-- **Validation**: Glucose >0 to <35 mmol / <630 mg/dL; insulin hard limit 20 (FORM-004)
-- **savingRef**: Present on all save forms including AddExpense and EditPet
-- **Onboarding draft**: Only PetInfo saved to MMKV. Schedule/VetContact NOT persisted.
+- **Delete all data**: DOUBLE confirmation, BUT MMKV deletes before SQL transaction (BUG-020 CRITICAL)
+- **Forms**: useUnsavedChangesGuard on LogGlucose, LogInjection, LogFeeding, AddSymptom, EditPet, Assessment, AddExpense
+- **AddExpense guard bug**: HAS guard now but triggers falsely in edit mode (no isDirty pattern)
+- **Validation**: Glucose >0 to <35 mmol / <630 mg/dL; insulin hard limit 10 IU
+- **savingRef**: Present on all save forms
+- **Onboarding draft**: Only PetInfo saved to MMKV. Schedule/VetContact NOT persisted
+- **Glucose unit change**: Does NOT invalidate React Query cache (BUG-021 HIGH)
+- **File locations**: Expenses in `src/features/expenses/`, Emergency in `src/features/emergency/`, Subscription in `src/features/subscription/`
 
-## Full Audit 2026-03-16
-See `audit-full-2026-03-16.md` for comprehensive adversarial audit.
-Key critical/high issues:
+## Still OPEN from all audits:
 - LogInjection has NO edit mode (no editId support)
-- AddExpense has NO unsaved changes guard
-- FeedCalculator accepts values >100% without warning
-- Emergency screen: no vet phone => user offered only 112
-- Onboarding draft only covers PetInfo step
-- DailyDiary add-buttons navigate to forms that log for TODAY, not the selected diary date
-- LogFeeding has no date/time picker (always logs as "now")
+- SettingsScreen: MMKV deleted BEFORE SQL transaction in handleDeleteAllData
+- AdvancedAnalyticsScreen: pro-gate navigate+goBack race condition
+- EmergencyScreen: "tapToAddVet" text misleading
+- PetProfileScreen: no empty state for empty schedules
+- ExpensesScreen: missing long-press hint (inconsistent with SymptomsListScreen)
+- Touch targets < 44px: AI back button (36px), trash icons (~34px), bookmark button
 
 ## Audit History
 - 2026-03-03: 6 Critical, 11 High, 16 Medium, 14 Low
 - 2026-03-07: Full re-audit with focus on restructure + visual/layout audit
 - 2026-03-08: POST-FIX audit: 1 Critical, 4 High, 6 Medium, 3 Low
 - 2026-03-16: Comprehensive adversarial audit: 5 Critical, 10 High, 15 Medium, 8 Low
+- 2026-03-21 (AM): Glucose & Diary focused: 3C, 5H, 8M, 4L. See `audit-glucose-diary-2026-03-21.md`
+- 2026-03-21 (PM): More/AI/Encyclopedia/FeedCalc/Assessment: 1C, 4H, 10M, 5L. See `audit-2026-03-21.md`
+- 2026-03-21 (PM2): Onboarding+Dashboard: 2C, 5M, 3L. See `audit-onboarding-dashboard-2026-03-21.md`
