@@ -45,6 +45,17 @@ export const stressHyperglycemia: Article = {
 - Избегайте шумных залов ожидания — попросите подождать в машине
 - Запишитесь на утро, когда клиника спокойнее
 
+### Типичные стрессоры и их влияние
+
+| Стрессор | Ожидаемый подъём глюкозы | Длительность |
+|----------|------------------------|-------------|
+| Визит в клинику | +3-10 ммоль/л | 1-3 ч |
+| Переезд / ремонт | +2-5 ммоль/л | 2-7 дней |
+| Новое животное в доме | +2-6 ммоль/л | 1-4 нед |
+| Громкие звуки (стройка, гости) | +1-4 ммоль/л | Часы |
+
+**Тактика:** не корректируйте дозу при разовом стрессовом подъёме — ждите 2-3 дня устойчивого изменения. При переезде: усиленный мониторинг в первые 2 недели.
+
 ### Когда это НЕ стресс
 
 Если домашние замеры тоже высокие (>15 ммоль/л регулярно), это не стресс. Поговорите с ветеринаром о корректировке дозы.
@@ -84,6 +95,17 @@ Stress triggers the release of cortisol and adrenaline. These hormones:
 - Avoid noisy waiting rooms — ask to wait in the car
 - Book morning appointments when the clinic is quieter
 
+### Common Stressors and Their Impact
+
+| Stressor | Expected glucose rise | Duration |
+|----------|----------------------|----------|
+| Vet visit | +3-10 mmol/L | 1-3 h |
+| Moving / renovation | +2-5 mmol/L | 2-7 days |
+| New pet in the house | +2-6 mmol/L | 1-4 weeks |
+| Loud noises (construction, guests) | +1-4 mmol/L | Hours |
+
+**Strategy:** don't adjust the dose after a one-time stress spike — wait 2-3 days for a sustained change. After moving: increase monitoring for the first 2 weeks.
+
 ### When It's NOT Stress
 
 If home readings are also consistently high (>15 mmol/L regularly), it's not stress. Talk to your vet about dose adjustment.
@@ -95,9 +117,18 @@ If home readings are also consistently high (>15 mmol/L regularly), it's not str
   order: 10,
   relatedArticleIds: ['glucose_monitoring', 'flexible-monitoring', 'fructosamine'],
   references: [
-    { ru: 'Rand J. — Feline Diabetes Mellitus, Veterinary Clinics, 2012', en: 'Rand J. — Feline Diabetes Mellitus, Veterinary Clinics, 2012' },
-    { ru: 'ISFM Guidelines on Diabetes Mellitus in Cats, 2023', en: 'ISFM Guidelines on Diabetes Mellitus in Cats, 2023' },
-    { ru: 'Sparkes AH et al. — ISFM Consensus on Feline Diabetes, JFMS 2015', en: 'Sparkes AH et al. — ISFM Consensus on Feline Diabetes, JFMS 2015' },
+    {
+      ru: 'Rand J. — Feline Diabetes Mellitus, Veterinary Clinics, 2012',
+      en: 'Rand J. — Feline Diabetes Mellitus, Veterinary Clinics, 2012',
+    },
+    {
+      ru: 'ISFM Guidelines on Diabetes Mellitus in Cats, 2023',
+      en: 'ISFM Guidelines on Diabetes Mellitus in Cats, 2023',
+    },
+    {
+      ru: 'Sparkes AH et al. — ISFM Consensus on Feline Diabetes, JFMS 2015',
+      en: 'Sparkes AH et al. — ISFM Consensus on Feline Diabetes, JFMS 2015',
+    },
   ],
   tags: [
     { ru: 'стресс', en: 'stress' },

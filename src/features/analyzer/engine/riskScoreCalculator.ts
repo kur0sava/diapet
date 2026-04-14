@@ -3,15 +3,16 @@
  * Score 0-100: lower is better.
  */
 import { GlucoseReading, InjectionLog, FeedingLog, SymptomEntry } from '@storage/domain/types';
+import type { SpeciesConfig } from '@shared/config/speciesConfig';
 import { analyzeTrends, type TrendResult } from './trendEngine';
 
 export type RiskLevel = 'excellent' | 'good' | 'attention' | 'danger';
 
 export interface FactorScore {
   name: string;
-  score: number;      // 0-100, higher = worse
+  score: number; // 0-100, higher = worse
   weight: number;
-  weighted: number;    // score * weight
+  weighted: number; // score * weight
   detail: string;
 }
 
@@ -36,16 +37,17 @@ interface RiskInput {
   diagnosisDays?: number;
   scheduledInjectionsPerDay?: number;
   now?: Date;
+  config?: SpeciesConfig;
 }
 
 /** C14: Factor weights */
 const WEIGHTS = {
-  glucose_stability: 0.30,
-  injection_adherence: 0.20,
+  glucose_stability: 0.3,
+  injection_adherence: 0.2,
   feeding_regularity: 0.15,
   symptom_severity: 0.15,
-  weight_trend: 0.10,
-  time_since_diagnosis: 0.10,
+  weight_trend: 0.1,
+  time_since_diagnosis: 0.1,
 };
 
 /**
@@ -64,18 +66,28 @@ function scoreGlucoseStability(trends: TrendResult): FactorScore {
     // CV contribution (0-50)
     const cvScore = trends.cv < 25 ? 0 : trends.cv < 30 ? 20 : trends.cv < 36 ? 35 : 50;
     // TIR contribution (0-50): 100% TIR = 0, 0% TIR = 50
-    const tirScore = Math.max(0, 50 - (trends.timeInRange / 2));
+    const tirScore = Math.max(0, 50 - trends.timeInRange / 2);
     score = cvScore + tirScore;
     detail = `CV ${trends.cv.toFixed(0)}%, TIR ${trends.timeInRange.toFixed(0)}%`;
   }
 
-  return { name: 'glucose_stability', score, weight: WEIGHTS.glucose_stability, weighted: score * WEIGHTS.glucose_stability, detail };
+  return {
+    name: 'glucose_stability',
+    score,
+    weight: WEIGHTS.glucose_stability,
+    weighted: score * WEIGHTS.glucose_stability,
+    detail,
+  };
 }
 
 /**
  * Injection adherence — ratio of actual vs expected injections.
  */
-function scoreInjectionAdherence(injections: InjectionLog[], scheduledPerDay: number, days: number): FactorScore {
+function scoreInjectionAdherence(
+  injections: InjectionLog[],
+  scheduledPerDay: number,
+  days: number
+): FactorScore {
   let score: number;
   let detail: string;
 
@@ -91,7 +103,13 @@ function scoreInjectionAdherence(injections: InjectionLog[], scheduledPerDay: nu
     detail = `${actual}/${Math.round(expected)} injections (${Math.round(ratio * 100)}%)`;
   }
 
-  return { name: 'injection_adherence', score, weight: WEIGHTS.injection_adherence, weighted: score * WEIGHTS.injection_adherence, detail };
+  return {
+    name: 'injection_adherence',
+    score,
+    weight: WEIGHTS.injection_adherence,
+    weighted: score * WEIGHTS.injection_adherence,
+    detail,
+  };
 }
 
 /**
@@ -122,7 +140,13 @@ function scoreFeedingRegularity(feedings: FeedingLog[]): FactorScore {
     detail = `${avgPerDay.toFixed(1)} meals/day, stddev ${stddev.toFixed(1)}`;
   }
 
-  return { name: 'feeding_regularity', score, weight: WEIGHTS.feeding_regularity, weighted: score * WEIGHTS.feeding_regularity, detail };
+  return {
+    name: 'feeding_regularity',
+    score,
+    weight: WEIGHTS.feeding_regularity,
+    weighted: score * WEIGHTS.feeding_regularity,
+    detail,
+  };
 }
 
 /**
@@ -137,13 +161,22 @@ function scoreSymptomSeverity(symptoms: SymptomEntry[]): FactorScore {
     detail = 'No symptoms recorded';
   } else {
     const severityMap = { mild: 10, moderate: 30, severe: 60 };
-    const total = symptoms.reduce((s, sym) => s + (severityMap[sym.severity as keyof typeof severityMap] ?? 20), 0);
+    const total = symptoms.reduce(
+      (s, sym) => s + (severityMap[sym.severity as keyof typeof severityMap] ?? 20),
+      0
+    );
     score = Math.min(100, Math.round(total / symptoms.length + symptoms.length * 5));
     const severe = symptoms.filter(s => s.severity === 'severe').length;
     detail = `${symptoms.length} symptoms (${severe} severe)`;
   }
 
-  return { name: 'symptom_severity', score, weight: WEIGHTS.symptom_severity, weighted: score * WEIGHTS.symptom_severity, detail };
+  return {
+    name: 'symptom_severity',
+    score,
+    weight: WEIGHTS.symptom_severity,
+    weighted: score * WEIGHTS.symptom_severity,
+    detail,
+  };
 }
 
 /**
@@ -158,13 +191,28 @@ function scoreWeightTrend(currentKg?: number, previousKg?: number): FactorScore 
     detail = 'Weight data unavailable';
   } else {
     const changePercent = ((currentKg - previousKg) / previousKg) * 100;
-    if (changePercent < -10) { score = 90; detail = `Lost ${Math.abs(changePercent).toFixed(0)}% (${previousKg}→${currentKg} kg)`; }
-    else if (changePercent < -5) { score = 60; detail = `Lost ${Math.abs(changePercent).toFixed(0)}% (${previousKg}→${currentKg} kg)`; }
-    else if (changePercent < 5) { score = 0; detail = `Stable weight (${currentKg} kg)`; }
-    else { score = 40; detail = `Gained ${changePercent.toFixed(0)}% (${previousKg}→${currentKg} kg)`; }
+    if (changePercent < -10) {
+      score = 90;
+      detail = `Lost ${Math.abs(changePercent).toFixed(0)}% (${previousKg}→${currentKg} kg)`;
+    } else if (changePercent < -5) {
+      score = 60;
+      detail = `Lost ${Math.abs(changePercent).toFixed(0)}% (${previousKg}→${currentKg} kg)`;
+    } else if (changePercent < 5) {
+      score = 0;
+      detail = `Stable weight (${currentKg} kg)`;
+    } else {
+      score = 40;
+      detail = `Gained ${changePercent.toFixed(0)}% (${previousKg}→${currentKg} kg)`;
+    }
   }
 
-  return { name: 'weight_trend', score, weight: WEIGHTS.weight_trend, weighted: score * WEIGHTS.weight_trend, detail };
+  return {
+    name: 'weight_trend',
+    score,
+    weight: WEIGHTS.weight_trend,
+    weighted: score * WEIGHTS.weight_trend,
+    detail,
+  };
 }
 
 /**
@@ -177,12 +225,27 @@ function scoreTimeSinceDiagnosis(days?: number): FactorScore {
   if (!days || days < 0) {
     score = 50;
     detail = 'Diagnosis date unknown';
-  } else if (days < 30) { score = 80; detail = `${days} days — newly diagnosed`; }
-  else if (days < 90) { score = 50; detail = `${days} days — stabilizing`; }
-  else if (days < 365) { score = 25; detail = `${Math.round(days / 30)} months — established`; }
-  else { score = 10; detail = `${Math.round(days / 365)} years — long-term`; }
+  } else if (days < 30) {
+    score = 80;
+    detail = `${days} days — newly diagnosed`;
+  } else if (days < 90) {
+    score = 50;
+    detail = `${days} days — stabilizing`;
+  } else if (days < 365) {
+    score = 25;
+    detail = `${Math.round(days / 30)} months — established`;
+  } else {
+    score = 10;
+    detail = `${Math.round(days / 365)} years — long-term`;
+  }
 
-  return { name: 'time_since_diagnosis', score, weight: WEIGHTS.time_since_diagnosis, weighted: score * WEIGHTS.time_since_diagnosis, detail };
+  return {
+    name: 'time_since_diagnosis',
+    score,
+    weight: WEIGHTS.time_since_diagnosis,
+    weighted: score * WEIGHTS.time_since_diagnosis,
+    detail,
+  };
 }
 
 /** C15: Classify score into risk level */
@@ -197,14 +260,27 @@ function classifyRisk(score: number): RiskLevel {
  * C14-C16: Calculate multi-factor risk score.
  */
 export function calculateRiskScore(input: RiskInput): RiskScoreResult {
-  const { readings, injections, feedings, symptoms, weightKg, previousWeightKg, diagnosisDays, scheduledInjectionsPerDay = 2, now = new Date() } = input;
+  const {
+    readings,
+    injections,
+    feedings,
+    symptoms,
+    weightKg,
+    previousWeightKg,
+    diagnosisDays,
+    scheduledInjectionsPerDay = 2,
+    now = new Date(),
+    config,
+  } = input;
 
-  // Get trends for glucose stability
-  const trends = analyzeTrends(readings, now);
+  // Get trends for glucose stability (species-aware)
+  const trends = analyzeTrends(readings, now, config);
 
   // Calculate 14-day data windows
   const cutoff14d = now.getTime() - 14 * 24 * 60 * 60 * 1000;
-  const recentInjections = injections.filter(i => new Date(i.administeredAt).getTime() >= cutoff14d);
+  const recentInjections = injections.filter(
+    i => new Date(i.administeredAt).getTime() >= cutoff14d
+  );
   const recentFeedings = feedings.filter(f => new Date(f.fedAt).getTime() >= cutoff14d);
   const recentSymptoms = symptoms.filter(s => new Date(s.recordedAt).getTime() >= cutoff14d);
 

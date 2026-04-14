@@ -24,6 +24,7 @@ import type {
 import { analyzeTrends } from '@features/analyzer/engine/trendEngine';
 import { detectPatterns } from '@features/analyzer/engine/patternDetector';
 import { calculateRiskScore } from '@features/analyzer/engine/riskScoreCalculator';
+import { getSpeciesConfig } from '@shared/config/speciesConfig';
 
 // ─── Helpers ───
 
@@ -54,15 +55,19 @@ function stdDev(nums: number[]): number {
 
 // ─── Stats Computation ───
 
-function computeGlucoseStats(all: GlucoseReading[]): GlucoseStats {
+function computeGlucoseStats(
+  all: GlucoseReading[],
+  targetLow = 4.0,
+  targetHigh = 12.0
+): GlucoseStats {
   const last7 = filterByDays(all, r => r.recordedAt, 7);
   const last30 = filterByDays(all, r => r.recordedAt, 30);
 
   const vals7 = last7.map(r => r.valueMmol);
   const vals30 = last30.map(r => r.valueMmol);
 
-  // BL-08: Use ISFM feline target range (4-12 mmol/L), consistent with trendEngine
-  const inRange = (v: number) => v >= 4.0 && v <= 12.0;
+  // Species-aware target range (default: cat 4-12 mmol/L)
+  const inRange = (v: number) => v >= targetLow && v <= targetHigh;
   const inRangePct = (vals: number[]) =>
     vals.length > 0 ? Math.round((vals.filter(inRange).length / vals.length) * 100) : null;
 
@@ -259,16 +264,20 @@ export async function collectPredictionData(
   const recent60Feedings = filterByDays(allFeedings, r => r.fedAt, 60);
   const recent60Symptoms = filterByDays(allSymptoms, r => r.recordedAt, 60);
 
+  // Species-aware config for analyzer thresholds
+  const speciesConfig = getSpeciesConfig(pet.species);
+
   // Run local analyzer for AI context enrichment
   let analyzer: AnalyzerSummary | undefined;
   if (recent60Glucose.length >= 3) {
     const now = new Date();
-    const trends = analyzeTrends(recent60Glucose, now);
+    const trends = analyzeTrends(recent60Glucose, now, speciesConfig);
     const patterns = detectPatterns({
       readings: recent60Glucose,
       injections: recent60Injections,
       feedings: recent60Feedings,
       now,
+      config: speciesConfig,
     });
     const risk = calculateRiskScore({
       readings: recent60Glucose,
@@ -283,6 +292,7 @@ export async function collectPredictionData(
           )
         : undefined,
       now,
+      config: speciesConfig,
     });
     analyzer = {
       riskScore: risk.totalScore,
@@ -298,7 +308,11 @@ export async function collectPredictionData(
 
   return {
     pet: petSnapshot,
-    glucose: computeGlucoseStats(allGlucose),
+    glucose: computeGlucoseStats(
+      allGlucose,
+      speciesConfig.glucose.targetLow,
+      speciesConfig.glucose.rangeHigh
+    ),
     injections: computeInjectionStats(allInjections),
     feedings: computeFeedingStats(allFeedings),
     recentReadings: recent14Glucose.map(r => ({

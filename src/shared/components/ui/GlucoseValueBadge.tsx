@@ -1,6 +1,14 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import { getGlucoseColor, getGlucoseLevel, MGDL_PER_MMOLL } from '@storage/domain/types';
+import {
+  getGlucoseColor,
+  getGlucoseLevel,
+  getGlucoseColorFromRanges,
+  getGlucoseLevelFromRanges,
+  MGDL_PER_MMOLL,
+} from '@storage/domain/types';
+import type { PetSpecies } from '@storage/domain/types';
+import { getSpeciesConfig } from '@shared/config/speciesConfig';
 import { useTranslation } from 'react-i18next';
 import { storage, StorageKeys } from '@storage/mmkv/storage';
 
@@ -8,18 +16,19 @@ interface Props {
   valueMmol: number;
   size?: 'sm' | 'md' | 'lg';
   showLabel?: boolean;
+  species?: PetSpecies;
 }
 
-export function GlucoseValueBadge({ valueMmol, size = 'md', showLabel = true }: Props) {
+export function GlucoseValueBadge({ valueMmol, size = 'md', showLabel = true, species }: Props) {
   const { t } = useTranslation();
   const unit = storage.getString(StorageKeys.GLUCOSE_UNIT) ?? 'mmol/L';
 
-  const displayValue = unit === 'mg/dL'
-    ? Math.round(valueMmol * MGDL_PER_MMOLL).toString()
-    : valueMmol.toFixed(1);
+  const displayValue =
+    unit === 'mg/dL' ? Math.round(valueMmol * MGDL_PER_MMOLL).toString() : valueMmol.toFixed(1);
 
-  const color = getGlucoseColor(valueMmol);
-  const level = getGlucoseLevel(valueMmol);
+  const ranges = species ? getSpeciesConfig(species).glucose.ranges : undefined;
+  const color = ranges ? getGlucoseColorFromRanges(valueMmol, ranges) : getGlucoseColor(valueMmol);
+  const level = ranges ? getGlucoseLevelFromRanges(valueMmol, ranges) : getGlucoseLevel(valueMmol);
 
   const levelLabels: Record<string, string> = {
     severe_low: t('glucose.severeLow'),

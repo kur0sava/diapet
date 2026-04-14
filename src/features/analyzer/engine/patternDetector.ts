@@ -3,6 +3,7 @@
  * All calculations are offline, no API calls.
  */
 import { GlucoseReading, InjectionLog, FeedingLog } from '@storage/domain/types';
+import type { SpeciesConfig } from '@shared/config/speciesConfig';
 
 export type PatternType =
   | 'somogyi'
@@ -27,6 +28,7 @@ interface PatternInput {
   injections: InjectionLog[];
   feedings: FeedingLog[];
   now?: Date;
+  config?: SpeciesConfig;
 }
 
 function hoursApart(a: string, b: string): number {
@@ -38,18 +40,20 @@ function hourOfDay(iso: string): number {
 }
 
 /**
- * C7: Somogyi effect — low nadir followed by rebound spike >18 mmol/L.
- * Look for glucose <4 followed by >18 within 12 hours.
+ * C7: Somogyi effect — low nadir followed by rebound spike.
+ * Thresholds: nadir < somogyiNadirThreshold, rebound > somogyiReboundThreshold.
  */
-function detectSomogyi(readings: GlucoseReading[]): DetectedPattern | null {
+function detectSomogyi(readings: GlucoseReading[], config?: SpeciesConfig): DetectedPattern | null {
+  const nadirThreshold = config?.analyzer.somogyiNadirThreshold ?? 4;
+  const reboundThreshold = config?.analyzer.somogyiReboundThreshold ?? 18;
   const sorted = [...readings].sort((a, b) => a.recordedAt.localeCompare(b.recordedAt));
 
   for (let i = 0; i < sorted.length - 1; i++) {
-    if (sorted[i].valueMmol >= 4) continue; // Need low nadir
+    if (sorted[i].valueMmol >= nadirThreshold) continue; // Need low nadir
     for (let j = i + 1; j < sorted.length; j++) {
       const gap = hoursApart(sorted[i].recordedAt, sorted[j].recordedAt);
       if (gap > 12) break;
-      if (sorted[j].valueMmol >= 18) {
+      if (sorted[j].valueMmol >= reboundThreshold) {
         return {
           type: 'somogyi',
           confidence: 'medium',
@@ -94,19 +98,21 @@ function detectDawnPhenomenon(readings: GlucoseReading[]): DetectedPattern | nul
 }
 
 /**
- * C9: Post-meal spike — feeding followed by glucose >15 mmol/L within 2-4 hours.
+ * C9: Post-meal spike — feeding followed by glucose above postMealSpikeThreshold within 2-4 hours.
  */
 function detectPostMealSpike(
   readings: GlucoseReading[],
-  feedings: FeedingLog[]
+  feedings: FeedingLog[],
+  config?: SpeciesConfig
 ): DetectedPattern | null {
+  const spikeThreshold = config?.analyzer.postMealSpikeThreshold ?? 15;
   const spikes: { feedingId: string; readingId: string; value: number; gap: number }[] = [];
 
   for (const feeding of feedings) {
     for (const reading of readings) {
       const gap = hoursApart(feeding.fedAt, reading.recordedAt);
       if (gap >= 2 && gap <= 4 && new Date(reading.recordedAt) > new Date(feeding.fedAt)) {
-        if (reading.valueMmol > 15) {
+        if (reading.valueMmol > spikeThreshold) {
           spikes.push({
             feedingId: feeding.id,
             readingId: reading.id,
@@ -122,7 +128,7 @@ function detectPostMealSpike(
     return {
       type: 'post_meal_spike',
       confidence: spikes.length >= 4 ? 'high' : 'medium',
-      description: `${spikes.length} post-meal spikes >15 mmol/L detected (2-4h after feeding)`,
+      description: `${spikes.length} post-meal spikes >${spikeThreshold} mmol/L detected (2-4h after feeding)`,
       evidence: spikes.slice(0, 5).map(s => s.readingId),
       detectedAt: new Date().toISOString(),
     };
@@ -135,8 +141,10 @@ function detectPostMealSpike(
  */
 function detectMissedInjectionImpact(
   readings: GlucoseReading[],
-  injections: InjectionLog[]
+  injections: InjectionLog[],
+  config?: SpeciesConfig
 ): DetectedPattern | null {
+  const missedThreshold = config?.analyzer.missedInjectionThreshold ?? 15;
   const sortedInj = [...injections].sort((a, b) =>
     a.administeredAt.localeCompare(b.administeredAt)
   );
@@ -152,7 +160,7 @@ function detectMissedInjectionImpact(
         r.recordedAt > sortedInj[i - 1].administeredAt &&
         r.recordedAt <= sortedInj[i].administeredAt
     );
-    const highReadings = gapReadings.filter(r => r.valueMmol > 15);
+    const highReadings = gapReadings.filter(r => r.valueMmol > missedThreshold);
     if (highReadings.length > 0) {
       impacts.push(...highReadings.map(r => r.id));
     }
@@ -261,9 +269,16 @@ function detectDoseResponse(
 }
 
 /**
- * C13: Remission candidate — morning glucose <7 mmol/L for 14+ consecutive days.
+ * C13: Remission candidate — morning glucose below threshold for 14+ consecutive days.
+ * Skipped if remission is not relevant for this species (e.g. dogs).
  */
-function detectRemissionCandidate(readings: GlucoseReading[], now: Date): DetectedPattern | null {
+function detectRemissionCandidate(
+  readings: GlucoseReading[],
+  now: Date,
+  config?: SpeciesConfig
+): DetectedPattern | null {
+  if (config && !config.analyzer.remissionRelevant) return null;
+  const morningThreshold = config?.analyzer.remissionMorningThreshold ?? 7;
   const morningReadings = readings
     .filter(r => {
       const h = hourOfDay(r.recordedAt);
@@ -278,14 +293,14 @@ function detectRemissionCandidate(readings: GlucoseReading[], now: Date): Detect
   const recent = morningReadings.filter(r => new Date(r.recordedAt).getTime() >= cutoff14d);
 
   if (recent.length < 5) return null;
-  const allUnder7 = recent.every(r => r.valueMmol < 7);
+  const allUnderThreshold = recent.every(r => r.valueMmol < morningThreshold);
 
-  if (allUnder7) {
+  if (allUnderThreshold) {
     const avg = recent.reduce((s, r) => s + r.valueMmol, 0) / recent.length;
     return {
       type: 'remission_candidate',
       confidence: recent.length >= 10 ? 'high' : 'medium',
-      description: `${recent.length} morning readings all <7 mmol/L over 14 days (avg ${avg.toFixed(1)})`,
+      description: `${recent.length} morning readings all <${morningThreshold} mmol/L over 14 days (avg ${avg.toFixed(1)})`,
       evidence: recent.slice(-5).map(r => r.id),
       detectedAt: new Date().toISOString(),
     };
@@ -298,7 +313,7 @@ function detectRemissionCandidate(readings: GlucoseReading[], now: Date): Detect
  * MED-07: Window inputs to last 60 days to avoid O(n²) on large datasets.
  */
 export function detectPatterns(input: PatternInput): DetectedPattern[] {
-  const { now = new Date() } = input;
+  const { now = new Date(), config } = input;
   const cutoff = now.getTime() - 60 * 24 * 60 * 60 * 1000;
   const readings = input.readings.filter(r => new Date(r.recordedAt).getTime() >= cutoff);
   const injections = input.injections.filter(r => new Date(r.administeredAt).getTime() >= cutoff);
@@ -306,13 +321,13 @@ export function detectPatterns(input: PatternInput): DetectedPattern[] {
   const patterns: DetectedPattern[] = [];
 
   const detectors = [
-    () => detectSomogyi(readings),
+    () => detectSomogyi(readings, config),
     () => detectDawnPhenomenon(readings),
-    () => detectPostMealSpike(readings, feedings),
-    () => detectMissedInjectionImpact(readings, injections),
+    () => detectPostMealSpike(readings, feedings, config),
+    () => detectMissedInjectionImpact(readings, injections, config),
     () => detectFoodCorrelation(readings, feedings),
     () => detectDoseResponse(readings, injections),
-    () => detectRemissionCandidate(readings, now),
+    () => detectRemissionCandidate(readings, now, config),
   ];
 
   for (const detect of detectors) {

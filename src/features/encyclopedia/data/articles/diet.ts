@@ -8,7 +8,7 @@ export const diet: Article = {
   },
   summaryKey: {
     ru: 'Правильное питание — одна из самых мощных вещей, которые вы можете сделать для своего котика. Разберёмся, чем кормить и почему это так важно.',
-    en: 'The right diet is one of the most powerful things you can do for your cat. Let\'s figure out what to feed and why it matters so much.',
+    en: "The right diet is one of the most powerful things you can do for your cat. Let's figure out what to feed and why it matters so much.",
   },
   contentKey: {
     ru: `## Диета при диабете у кошек
@@ -17,7 +17,9 @@ export const diet: Article = {
 
 ### Главное правило: меньше углеводов
 
-Кошки — хищники от природы. Их организм создан для переработки мяса, а не каш и злаков. Когда кошка с диабетом получает много углеводов, сахар в крови взлетает.
+Кошки — **облигатные хищники**. В природе их рацион: ~70-80% белка, ~20-25% жира, менее 2% углеводов. В их организме нет амилазы в слюне (в отличие от людей и собак), глюкокиназа печени в 2-5 раз слабее, а глюконеогенез работает постоянно — они не умеют «выключать» выработку глюкозы из аминокислот.
+
+Проще говоря: углеводы для кошек — это не еда, это нагрузка. Когда кошка с диабетом получает много углеводов, сахар в крови взлетает и держится долго.
 
 **Цель:** углеводы должны составлять менее 10% калорийности корма (идеально — 5-7%).
 
@@ -88,7 +90,9 @@ Here's what's truly empowering: the right diet is something entirely in your han
 
 ### The Golden Rule: Fewer Carbohydrates
 
-Cats are natural hunters. Their bodies are designed to process meat, not grains and cereals. When a diabetic cat gets too many carbs, blood sugar spikes.
+Cats are **obligate carnivores**. In nature, their diet is ~70-80% protein, ~20-25% fat, and less than 2% carbohydrates. They lack salivary amylase (unlike humans and dogs), their liver glucokinase activity is 2-5x weaker, and gluconeogenesis runs constantly — they can't "switch off" glucose production from amino acids.
+
+Simply put: carbs aren't food for cats, they're a metabolic burden. When a diabetic cat eats carbs, blood sugar spikes and stays high for a long time.
 
 **The goal:** carbohydrates should make up less than 10% of food calories (ideally 5-7%).
 
@@ -155,12 +159,19 @@ Cats are creatures of habit, so take it slow over 7-10 days:
 Don't rush! A sudden switch can upset the stomach and destabilize blood sugar.`,
   },
   category: 'nutrition',
+  species: 'cat',
   readingTimeMinutes: 7,
   order: 1,
   relatedArticleIds: ['what-is-diabetes', 'remission', 'common-mistakes', 'cost-planning'],
   references: [
-    { ru: 'Bennett N et al — Comparison of a low-carbohydrate vs high-fiber diet in cats with diabetes, JFMS 2006', en: 'Bennett N et al — Comparison of a low-carbohydrate vs high-fiber diet in cats with diabetes, JFMS 2006' },
-    { ru: 'ISFM Guidelines on Diabetes Mellitus in Cats, 2023', en: 'ISFM Guidelines on Diabetes Mellitus in Cats, 2023' },
+    {
+      ru: 'Bennett N et al — Comparison of a low-carbohydrate vs high-fiber diet in cats with diabetes, JFMS 2006',
+      en: 'Bennett N et al — Comparison of a low-carbohydrate vs high-fiber diet in cats with diabetes, JFMS 2006',
+    },
+    {
+      ru: 'ISFM Guidelines on Diabetes Mellitus in Cats, 2023',
+      en: 'ISFM Guidelines on Diabetes Mellitus in Cats, 2023',
+    },
   ],
   tags: [
     { ru: 'диета', en: 'diet' },

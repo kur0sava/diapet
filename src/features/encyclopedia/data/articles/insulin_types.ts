@@ -8,7 +8,7 @@ export const insulinTypes: Article = {
   },
   summaryKey: {
     ru: 'Разбираемся в инсулинах вместе: какие бывают, чем отличаются и как их правильно хранить. Без паники — всё проще, чем кажется.',
-    en: 'Let\'s understand insulins together: what types exist, how they differ, and how to store them properly. No panic — it\'s simpler than it seems.',
+    en: "Let's understand insulins together: what types exist, how they differ, and how to store them properly. No panic — it's simpler than it seems.",
   },
   contentKey: {
     ru: `## Инсулины для кошек
@@ -53,6 +53,17 @@ export const insulinTypes: Article = {
 - **Концентрация:** U-100
 - **Длительность:** 6-10 ч — обычно слишком коротко для кошек
 - **Важно:** не является препаратом первого выбора по рекомендациям ISFM (2023)
+
+### Доступность в России
+
+В России ветеринарные инсулины (ProZinc, Caninsulin) **не зарегистрированы**. Все ветеринары используют человеческие инсулины off-label — это общепринятая практика:
+
+- **Лантус (Sanofi)** — доступен в аптеках, ~3000-4500 руб
+- **РинГлар (Герофарм)** — российский биосимиляр гларгина, то же действующее вещество, дешевле (~1500-2500 руб). Спросите ветеринара
+- **Левемир** — доступен, но глобально снимается с производства
+- **Ринсулин НПХ (Герофарм)** — бюджетный NPH (~500-1000 руб), но менее эффективен для кошек
+
+Все эти инсулины — **U-100**, поэтому в России нужны только шприцы U-100.
 
 ### U-40 и U-100 — не перепутайте!
 
@@ -116,6 +127,17 @@ Insulin works differently in cats than in humans. The onset, peak, and duration 
 - **Duration:** 6-10 h — usually too short for cats
 - **Important:** not a first-line choice per ISFM guidelines (2023)
 
+### Availability in Russia
+
+In Russia, veterinary insulins (ProZinc, Caninsulin) are **not registered**. All vets use human insulins off-label — this is standard practice:
+
+- **Lantus (Sanofi)** — available at pharmacies, ~3,000-4,500 RUB
+- **RinGlar (Geropharm)** — Russian glargine biosimilar, same active ingredient, cheaper (~1,500-2,500 RUB). Ask your vet
+- **Levemir** — available, but being phased out globally
+- **Rinsulin NPH (Geropharm)** — budget NPH (~500-1,000 RUB), but less effective for cats
+
+All of these are **U-100**, so in Russia you only need U-100 syringes.
+
 ### U-40 and U-100 — Don't Mix Them Up!
 
 This is critically important, so please remember:
@@ -139,10 +161,21 @@ This is critically important, so please remember:
   category: 'treatment',
   readingTimeMinutes: 6,
   order: 1,
-  relatedArticleIds: ['injection-technique', 'glucose_monitoring', 'glucose-curves-practice', 'cost-planning'],
+  relatedArticleIds: [
+    'injection-technique',
+    'glucose_monitoring',
+    'glucose-curves-practice',
+    'cost-planning',
+  ],
   references: [
-    { ru: 'ISFM Guidelines on Diabetes Mellitus in Cats, 2023', en: 'ISFM Guidelines on Diabetes Mellitus in Cats, 2023' },
-    { ru: 'Rand J. — Feline Diabetes Mellitus, Veterinary Clinics, 2012', en: 'Rand J. — Feline Diabetes Mellitus, Veterinary Clinics, 2012' },
+    {
+      ru: 'ISFM Guidelines on Diabetes Mellitus in Cats, 2023',
+      en: 'ISFM Guidelines on Diabetes Mellitus in Cats, 2023',
+    },
+    {
+      ru: 'Rand J. — Feline Diabetes Mellitus, Veterinary Clinics, 2012',
+      en: 'Rand J. — Feline Diabetes Mellitus, Veterinary Clinics, 2012',
+    },
   ],
   tags: [
     { ru: 'инсулин', en: 'insulin' },

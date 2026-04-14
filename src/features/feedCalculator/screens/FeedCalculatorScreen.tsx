@@ -7,11 +7,15 @@ import { useTheme } from '@shared/theme';
 import { Card } from '@shared/components/ui';
 import { Input } from '@shared/components/ui';
 import { calculateDryMatter } from '../utils/calculateDryMatter';
+import { usePetStore } from '@shared/stores/petStore';
+import { getSpeciesConfig } from '@shared/config/speciesConfig';
 
 export default function FeedCalculatorScreen() {
   const navigation = useMoreNavigation();
   const { t } = useTranslation();
   const { theme } = useTheme();
+  const activePet = usePetStore(s => s.activePet);
+  const nutritionConfig = getSpeciesConfig(activePet?.species ?? 'cat').nutrition;
 
   const [protein, setProtein] = useState('');
   const [fat, setFat] = useState('');
@@ -33,14 +37,17 @@ export default function FeedCalculatorScreen() {
     const av = p(ash);
     const mv = p(moisture);
     if (pv === null || fv === null || fbv === null || av === null || mv === null) return null;
-    return calculateDryMatter({
-      protein: pv,
-      fat: fv,
-      fiber: fbv,
-      ash: av,
-      moisture: mv,
-    });
-  }, [protein, fat, fiber, ash, moisture, allFilled]);
+    return calculateDryMatter(
+      {
+        protein: pv,
+        fat: fv,
+        fiber: fbv,
+        ash: av,
+        moisture: mv,
+      },
+      nutritionConfig
+    );
+  }, [protein, fat, fiber, ash, moisture, allFilled, nutritionConfig]);
 
   const verdictColors = {
     good: theme.colors.success,
@@ -51,10 +58,18 @@ export default function FeedCalculatorScreen() {
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.background }]}>
       <View style={[styles.navHeader, { borderBottomColor: theme.colors.border }]}>
-        <TouchableOpacity onPress={() => navigation.goBack()} style={{ minHeight: 44, minWidth: 44, justifyContent: 'center' }}>
-          <Text style={{ color: theme.colors.primary }}>{'← '}{t('common.back')}</Text>
+        <TouchableOpacity
+          onPress={() => navigation.goBack()}
+          style={{ minHeight: 44, minWidth: 44, justifyContent: 'center' }}
+        >
+          <Text style={{ color: theme.colors.primary }}>
+            {'← '}
+            {t('common.back')}
+          </Text>
         </TouchableOpacity>
-        <Text numberOfLines={1} style={[styles.headerTitle, { color: theme.colors.text }]}>{t('feedCalculator.title')}</Text>
+        <Text numberOfLines={1} style={[styles.headerTitle, { color: theme.colors.text }]}>
+          {t('feedCalculator.title')}
+        </Text>
         <View style={{ width: 60 }} />
       </View>
 
@@ -127,10 +142,10 @@ export default function FeedCalculatorScreen() {
               <Text style={[styles.carbsDMValue, { color: verdictColors[result.verdict] }]}>
                 {result.carbsDM.toFixed(1)}%
               </Text>
-              <View style={[styles.verdictBadge, { backgroundColor: verdictColors[result.verdict] }]}>
-                <Text style={styles.verdictBadgeText}>
-                  {t(`feedCalculator.${result.verdict}`)}
-                </Text>
+              <View
+                style={[styles.verdictBadge, { backgroundColor: verdictColors[result.verdict] }]}
+              >
+                <Text style={styles.verdictBadgeText}>{t(`feedCalculator.${result.verdict}`)}</Text>
               </View>
             </View>
             <Text style={[styles.carbsLabel, { color: theme.colors.textSecondary }]}>
@@ -150,9 +165,20 @@ export default function FeedCalculatorScreen() {
                 <Text style={[styles.macroNumber, { color: theme.colors.text }]}>
                   {result.proteinDM.toFixed(1)}%
                 </Text>
-                <View style={[styles.indicator, { backgroundColor: result.proteinOk ? theme.colors.success : theme.colors.danger }]}>
+                <View
+                  style={[
+                    styles.indicator,
+                    {
+                      backgroundColor: result.proteinOk
+                        ? theme.colors.success
+                        : theme.colors.danger,
+                    },
+                  ]}
+                >
                   <Text style={styles.indicatorText}>
-                    {t(result.proteinOk ? 'feedCalculator.proteinGood' : 'feedCalculator.proteinLow')}
+                    {t(
+                      result.proteinOk ? 'feedCalculator.proteinGood' : 'feedCalculator.proteinLow'
+                    )}
                   </Text>
                 </View>
               </View>
@@ -166,12 +192,41 @@ export default function FeedCalculatorScreen() {
                 <Text style={[styles.macroNumber, { color: theme.colors.text }]}>
                   {result.fatDM.toFixed(1)}%
                 </Text>
-                <View style={[styles.indicator, { backgroundColor: result.fatOk ? theme.colors.success : theme.colors.danger }]}>
+                <View
+                  style={[
+                    styles.indicator,
+                    { backgroundColor: result.fatOk ? theme.colors.success : theme.colors.danger },
+                  ]}
+                >
                   <Text style={styles.indicatorText}>
                     {t(result.fatOk ? 'feedCalculator.fatNormal' : 'feedCalculator.fatHigh')}
                   </Text>
                 </View>
               </View>
+              {result.fiberOk !== undefined && (
+                <View style={styles.macroRow}>
+                  <Text style={[styles.macroLabel, { color: theme.colors.textSecondary }]}>
+                    {t('feedCalculator.fiberDM')}
+                  </Text>
+                  <Text style={[styles.macroNumber, { color: theme.colors.text }]}>
+                    {result.fiberDM.toFixed(1)}%
+                  </Text>
+                  <View
+                    style={[
+                      styles.indicator,
+                      {
+                        backgroundColor: result.fiberOk
+                          ? theme.colors.success
+                          : theme.colors.warning,
+                      },
+                    ]}
+                  >
+                    <Text style={styles.indicatorText}>
+                      {t(result.fiberOk ? 'feedCalculator.fiberGood' : 'feedCalculator.fiberLow')}
+                    </Text>
+                  </View>
+                </View>
+              )}
             </View>
           </Card>
         )}

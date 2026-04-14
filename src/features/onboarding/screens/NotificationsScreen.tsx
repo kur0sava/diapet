@@ -19,7 +19,8 @@ export default function NotificationsScreen() {
   const route = useRoute<RouteProp<OnboardingStackParamList, 'Notifications'>>();
   const { t } = useTranslation();
   const { theme } = useTheme();
-  const { requestPermissions, scheduleInjectionReminder, scheduleFeedingReminder } = useNotifications();
+  const { requestPermissions, scheduleInjectionReminder, scheduleFeedingReminder } =
+    useNotifications();
   const [loading, setLoading] = useState(false);
 
   const { petData, injectionTimes, feedingTimes, vetName, vetPhone } = route.params ?? {};
@@ -35,14 +36,14 @@ export default function NotificationsScreen() {
         birthYear: petData.birthYear,
         diabetesType: petData.diabetesType,
         diagnosisDate: petData.diagnosisDate,
-        species: 'cat',
+        species: petData.species,
       });
 
       // Save schedules
-      for (const time of (injectionTimes ?? [])) {
+      for (const time of injectionTimes ?? []) {
         await scheduleRepository.addInjectionTime(pet.id, time);
       }
-      for (const time of (feedingTimes ?? [])) {
+      for (const time of feedingTimes ?? []) {
         await scheduleRepository.addFeedingTime(pet.id, time);
       }
 
@@ -55,10 +56,10 @@ export default function NotificationsScreen() {
         const granted = await requestPermissions();
         storage.set(StorageKeys.NOTIFICATIONS_ENABLED, granted);
         if (granted) {
-          for (const time of (injectionTimes ?? [])) {
+          for (const time of injectionTimes ?? []) {
             await scheduleInjectionReminder(time, pet.name);
           }
-          for (const time of (feedingTimes ?? [])) {
+          for (const time of feedingTimes ?? []) {
             await scheduleFeedingReminder(time, pet.name);
           }
         }
@@ -91,15 +92,32 @@ export default function NotificationsScreen() {
         <Text style={{ color: theme.colors.primary, fontSize: 16 }}>← {t('common.back')}</Text>
       </TouchableOpacity>
       <View style={styles.content}>
-        <Icon name="notifications-outline" size={72} color={theme.colors.primary} style={{ marginBottom: 24 }} />
-        <Text style={[styles.title, { color: theme.colors.text }]}>{t('onboarding.setupNotifications')}</Text>
+        <Icon
+          name="notifications-outline"
+          size={72}
+          color={theme.colors.primary}
+          style={{ marginBottom: 24 }}
+        />
+        <Text style={[styles.title, { color: theme.colors.text }]}>
+          {t('onboarding.setupNotifications')}
+        </Text>
         <Text style={[styles.subtitle, { color: theme.colors.textSecondary }]}>
           {t('onboarding.notificationsDesc')}
         </Text>
 
         <View style={styles.features}>
-          {[t('onboarding.notifInjections'), t('onboarding.notifFeedings'), t('onboarding.notifGlucose')].map((feature) => (
-            <View key={feature} style={[styles.featureRow, { backgroundColor: theme.colors.surface, borderRadius: 12 }]}>
+          {[
+            t('onboarding.notifInjections'),
+            t('onboarding.notifFeedings'),
+            t('onboarding.notifGlucose'),
+          ].map(feature => (
+            <View
+              key={feature}
+              style={[
+                styles.featureRow,
+                { backgroundColor: theme.colors.surface, borderRadius: 12 },
+              ]}
+            >
               <Text style={[styles.featureText, { color: theme.colors.text }]}>{feature}</Text>
             </View>
           ))}
@@ -127,7 +145,13 @@ export default function NotificationsScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
-  backBtn: { paddingHorizontal: 24, paddingTop: 16, minHeight: 44, minWidth: 44, justifyContent: 'center' },
+  backBtn: {
+    paddingHorizontal: 24,
+    paddingTop: 16,
+    minHeight: 44,
+    minWidth: 44,
+    justifyContent: 'center',
+  },
   content: { flex: 1, padding: 24, alignItems: 'center', justifyContent: 'center' },
   title: { fontSize: 28, fontWeight: '800', textAlign: 'center', marginBottom: 12 },
   subtitle: { fontSize: 15, lineHeight: 22, textAlign: 'center', marginBottom: 40 },

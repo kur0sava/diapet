@@ -3,10 +3,12 @@
  * RULE: NEVER recommend a specific insulin dose. ALWAYS direct to vet.
  */
 import { GlucoseReading } from '@storage/domain/types';
+import type { SpeciesConfig } from '@shared/config/speciesConfig';
 import { DetectedPattern } from './patternDetector';
 
-const EMERGENCY_GLUCOSE_LOW = 2.8; // mmol/L — hypoglycemia emergency
-const EMERGENCY_GLUCOSE_HIGH = 30; // mmol/L — severe hyperglycemia
+/** Default cat emergency thresholds — used when no species config provided */
+const DEFAULT_EMERGENCY_LOW = 2.8; // mmol/L — hypoglycemia emergency
+const DEFAULT_EMERGENCY_HIGH = 30; // mmol/L — severe hyperglycemia
 
 /** Forbidden phrases that must never appear in user-facing text */
 const FORBIDDEN_PATTERNS = [
@@ -61,8 +63,14 @@ export function sanitizeRecommendation(text: string): SafetyCheckResult {
 /**
  * C19: Emergency threshold detection.
  * Returns alerts for dangerous glucose values.
+ * Accepts optional species config for species-aware thresholds.
  */
-export function checkEmergencyThresholds(readings: GlucoseReading[]): EmergencyAlert[] {
+export function checkEmergencyThresholds(
+  readings: GlucoseReading[],
+  config?: SpeciesConfig
+): EmergencyAlert[] {
+  const emergencyLow = config?.glucose.emergencyLow ?? DEFAULT_EMERGENCY_LOW;
+  const emergencyHigh = config?.glucose.emergencyHigh ?? DEFAULT_EMERGENCY_HIGH;
   const alerts: EmergencyAlert[] = [];
 
   // Check only last 24 hours
@@ -71,7 +79,7 @@ export function checkEmergencyThresholds(readings: GlucoseReading[]): EmergencyA
   for (const reading of readings) {
     if (new Date(reading.recordedAt).getTime() < cutoff) continue;
 
-    if (reading.valueMmol < EMERGENCY_GLUCOSE_LOW) {
+    if (reading.valueMmol < emergencyLow) {
       alerts.push({
         type: 'hypoglycemia',
         value: reading.valueMmol,
@@ -80,7 +88,7 @@ export function checkEmergencyThresholds(readings: GlucoseReading[]): EmergencyA
       });
     }
 
-    if (reading.valueMmol > EMERGENCY_GLUCOSE_HIGH) {
+    if (reading.valueMmol > emergencyHigh) {
       alerts.push({
         type: 'severe_hyperglycemia',
         value: reading.valueMmol,
@@ -98,11 +106,15 @@ export function checkEmergencyThresholds(readings: GlucoseReading[]): EmergencyA
  */
 export function getAnalyzerDisclaimer(lang: 'ru' | 'en'): string {
   if (lang === 'ru') {
-    return 'Данные анализа носят информационный характер и не являются медицинской рекомендацией. ' +
-      'Все решения об изменении лечения принимайте только совместно с ветеринарным врачом.';
+    return (
+      'Данные анализа носят информационный характер и не являются медицинской рекомендацией. ' +
+      'Все решения об изменении лечения принимайте только совместно с ветеринарным врачом.'
+    );
   }
-  return 'This analysis is for informational purposes only and does not constitute medical advice. ' +
-    'All treatment decisions should be made in consultation with your veterinarian.';
+  return (
+    'This analysis is for informational purposes only and does not constitute medical advice. ' +
+    'All treatment decisions should be made in consultation with your veterinarian.'
+  );
 }
 
 /**

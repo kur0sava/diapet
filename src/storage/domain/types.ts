@@ -179,13 +179,14 @@ export interface CreateFeedingDTO {
   verdict?: string;
 }
 
+/** @deprecated Use getSpeciesConfig(species).glucose.ranges instead */
 export const GLUCOSE_RANGES = {
-  severe_low:   { max: 2.8,  color: '#CC0000' }, // Deep red — emergency
-  low:          { min: 2.8,  max: 3.3,  color: '#FF3B30' }, // Red — hypoglycemia
-  below_target: { min: 3.3,  max: 4.0,  color: '#FF9500' }, // Orange — below target
-  normal:       { min: 4.0,  max: 9.0,  color: '#34C759' }, // Green — target
-  high:         { min: 9.0,  max: 14.0, color: '#FF9500' }, // Orange — hyperglycemia
-  very_high:    { min: 14.0, color: '#FF3B30' },            // Red — severe hyper
+  severe_low: { max: 2.8, color: '#CC0000' }, // Deep red — emergency
+  low: { min: 2.8, max: 3.3, color: '#FF3B30' }, // Red — hypoglycemia
+  below_target: { min: 3.3, max: 4.0, color: '#FF9500' }, // Orange — below target
+  normal: { min: 4.0, max: 9.0, color: '#34C759' }, // Green — target
+  high: { min: 9.0, max: 14.0, color: '#FF9500' }, // Orange — hyperglycemia
+  very_high: { min: 14.0, color: '#FF3B30' }, // Red — severe hyper
 };
 
 export function mmolToMgdl(valueMmol: number): number {
@@ -202,6 +203,49 @@ export function convertGlucoseValue(value: number, from: GlucoseUnit, to: Glucos
   return to === 'mg/dL' ? mmolToMgdl(value) : mgdlToMmol(value);
 }
 
+/**
+ * Glucose level from ranges array. Used by species-aware overloads.
+ */
+export function getGlucoseLevelFromRanges(
+  valueMmol: number,
+  ranges: readonly { key: string; min?: number; max?: number; color: string }[]
+): GlucoseLevel {
+  for (const range of ranges) {
+    const min = range.min ?? -Infinity;
+    const max = range.max ?? Infinity;
+    // 'normal' uses inclusive upper bound, others use exclusive
+    const inRange =
+      range.key === 'normal'
+        ? valueMmol >= min && valueMmol <= max
+        : valueMmol >= min && valueMmol < max;
+    if (inRange) return range.key as GlucoseLevel;
+  }
+  return 'very_high';
+}
+
+/**
+ * Glucose color from ranges array.
+ */
+export function getGlucoseColorFromRanges(
+  valueMmol: number,
+  ranges: readonly { key: string; min?: number; max?: number; color: string }[]
+): string {
+  for (const range of ranges) {
+    const min = range.min ?? -Infinity;
+    const max = range.max ?? Infinity;
+    const inRange =
+      range.key === 'normal'
+        ? valueMmol >= min && valueMmol <= max
+        : valueMmol >= min && valueMmol < max;
+    if (inRange) return range.color;
+  }
+  return '#FF3B30';
+}
+
+/**
+ * Get glucose level — cat defaults (backward compatible).
+ * For species-aware classification, use getGlucoseLevelFromRanges with speciesConfig ranges.
+ */
 export function getGlucoseLevel(valueMmol: number): GlucoseLevel {
   if (valueMmol < 2.8) return 'severe_low';
   if (valueMmol < 3.3) return 'low';
@@ -228,6 +272,10 @@ export type SymptomType =
   | 'lethargy'
   | 'vomiting'
   | 'diarrhea'
+  | 'cataracts'
+  | 'urinaryInfection'
+  | 'panting'
+  | 'ataxia'
   | 'other';
 
 export type SymptomSeverity = 'mild' | 'moderate' | 'severe';

@@ -87,12 +87,36 @@ export const commonMistakes: Article = {
 
 ---
 
+### Ошибка 8: Не снижают дозу при приближении к ремиссии
+
+**В чём опасность:** кошка идёт к ремиссии — потребность в инсулине падает, а дозу не меняют. Результат — тяжёлая гипогликемия.
+
+**Сигнал тревоги:** надир ниже 4-5 ммоль/л при стабильной дозе, особенно если повторяется. Это не «отлично контролируется» — это сигнал к снижению дозы!
+
+---
+
+### Ошибка 9: Не измеряют надир
+
+**В чём опасность:** многие корректируют дозу только по предынъекционному значению. Но без знания надира (самой низкой точки) легко пропустить опасную гипогликемию или эффект Сомоджи.
+
+**Простое правило:** полная кривая глюкозы раз в 1-2 недели при подборе дозы, раз в 1-3 месяца при стабильном контроле.
+
+---
+
+### Ошибка 10: Принимают стресс за плохой контроль
+
+**В чём опасность:** привезли кошку в клинику, сахар показал 22 ммоль/л. Паника! Повышают дозу → дома начинается гипогликемия.
+
+**Простое правило:** никогда не корректируйте дозу по одному замеру в клинике. У кошек стресс может поднять сахар на 10-15 ммоль/л за минуты. Доверяйте домашним замерам и фруктозамину.
+
+---
+
 ### Золотые правила — запомните эти пять
 
 1. Еда, потом укол — никогда наоборот
 2. Регулярность — основа стабильности
 3. Низкоуглеводная диета
-4. Измеряйте сахар дома
+4. Измеряйте сахар дома — и надир тоже!
 5. Ветеринар — каждые 3-6 месяцев при стабильном состоянии
 
 Вы справляетесь. Правда.`,
@@ -172,23 +196,60 @@ Ask your vet to show you the technique — it's easier than it sounds. Most cats
 
 ---
 
+### Mistake 8: Not Reducing Dose When Remission Approaches
+
+**The danger:** your cat is heading toward remission — insulin needs are dropping, but the dose stays the same. Result: severe hypoglycemia.
+
+**The alarm signal:** nadir below 4-5 mmol/L at a stable dose, especially if it repeats. This isn't "excellent control" — it's a signal to reduce the dose!
+
+---
+
+### Mistake 9: Not Measuring the Nadir
+
+**The danger:** many owners only check pre-injection glucose. But without knowing the nadir (lowest point), it's easy to miss dangerous hypoglycemia or the Somogyi effect.
+
+**Simple rule:** full glucose curve every 1-2 weeks during dose adjustment, every 1-3 months when stable.
+
+---
+
+### Mistake 10: Mistaking Stress for Poor Control
+
+**The danger:** you brought your cat to the clinic, glucose read 22 mmol/L. Panic! You increase the dose → hypoglycemia at home.
+
+**Simple rule:** never adjust the dose based on a single clinic reading. In cats, stress can spike blood sugar by 10-15 mmol/L within minutes. Trust home readings and fructosamine.
+
+---
+
 ### Golden Rules — Remember These Five
 
 1. Food first, injection second — never the other way around
 2. Consistency is the foundation of stability
 3. Low-carbohydrate diet
-4. Measure blood sugar at home
+4. Measure blood sugar at home — including the nadir!
 5. Vet visits every 3-6 months when things are stable
 
 You're doing great. Really.`,
   },
   category: 'tips',
-  readingTimeMinutes: 6,
+  readingTimeMinutes: 8,
   order: 1,
-  relatedArticleIds: ['first-days', 'injection-technique', 'hypoglycemia', 'choosing-vet'],
+  relatedArticleIds: [
+    'first-days',
+    'injection-technique',
+    'hypoglycemia',
+    'choosing-vet',
+    'stress-hyperglycemia',
+    'remission',
+  ],
   references: [
-    { ru: 'ISFM Guidelines on Diabetes Mellitus in Cats, 2023', en: 'ISFM Guidelines on Diabetes Mellitus in Cats, 2023' },
-    { ru: 'AAHA Diabetes Management Guidelines for Dogs and Cats, 2018', en: 'AAHA Diabetes Management Guidelines for Dogs and Cats, 2018' },
+    {
+      ru: 'ISFM Guidelines on Diabetes Mellitus in Cats, 2023',
+      en: 'ISFM Guidelines on Diabetes Mellitus in Cats, 2023',
+    },
+    {
+      ru: 'AAHA Diabetes Management Guidelines for Dogs and Cats, 2018',
+      en: 'AAHA Diabetes Management Guidelines for Dogs and Cats, 2018',
+    },
   ],
   tags: [
     { ru: 'ошибки', en: 'mistakes' },

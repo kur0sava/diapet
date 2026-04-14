@@ -389,9 +389,11 @@ const DOG_CONFIG: SpeciesConfig = {
       'lethargy',
       'vomiting',
       'diarrhea',
+      'cataracts',
+      'urinaryInfection',
+      'panting',
+      'ataxia',
       'other',
-      // Dog-specific symptoms will be added in Phase 6
-      // 'cataracts', 'urinaryInfection', 'panting', 'ataxia'
     ],
   },
 

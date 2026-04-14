@@ -19,10 +19,15 @@ import { detectPatterns } from '../engine/patternDetector';
 import { calculateRiskScore } from '../engine/riskScoreCalculator';
 import { generateSmartAlerts, markAlertFired } from '../engine/smartAlerts';
 import { sanitizePatterns, checkEmergencyThresholds } from '../engine/safetyGuard';
+import { getSpeciesConfig } from '@shared/config/speciesConfig';
 
 export function useAnalyzer() {
   const activePet = usePetStore(s => s.activePet);
   const petId = activePet?.id ?? '';
+  const speciesConfig = useMemo(
+    () => getSpeciesConfig(activePet?.species ?? 'cat'),
+    [activePet?.species]
+  );
 
   const { data: readings = [] } = useQuery({
     queryKey: [...queryKeys.glucose.all, 'analyzer', petId],
@@ -70,13 +75,16 @@ export function useAnalyzer() {
   );
 
   const trends = useMemo(
-    () => (readings.length > 0 ? analyzeTrends(readings, now) : null),
-    [readings, now]
+    () => (readings.length > 0 ? analyzeTrends(readings, now, speciesConfig) : null),
+    [readings, now, speciesConfig]
   );
 
   const rawPatterns = useMemo(
-    () => (readings.length > 0 ? detectPatterns({ readings, injections, feedings, now }) : []),
-    [readings, injections, feedings, now]
+    () =>
+      readings.length > 0
+        ? detectPatterns({ readings, injections, feedings, now, config: speciesConfig })
+        : [],
+    [readings, injections, feedings, now, speciesConfig]
   );
 
   const patterns = useMemo(() => sanitizePatterns(rawPatterns), [rawPatterns]);
@@ -99,6 +107,7 @@ export function useAnalyzer() {
             diagnosisDays,
             scheduledInjectionsPerDay,
             now,
+            config: speciesConfig,
           })
         : null,
     [
@@ -110,6 +119,7 @@ export function useAnalyzer() {
       diagnosisDays,
       scheduledInjectionsPerDay,
       now,
+      speciesConfig,
     ]
   );
 
@@ -125,7 +135,10 @@ export function useAnalyzer() {
     }
   }, [smartAlert]);
 
-  const emergencyAlerts = useMemo(() => checkEmergencyThresholds(readings), [readings]);
+  const emergencyAlerts = useMemo(
+    () => checkEmergencyThresholds(readings, speciesConfig),
+    [readings, speciesConfig]
+  );
 
   const hasEnoughData = readings.length >= 3;
 

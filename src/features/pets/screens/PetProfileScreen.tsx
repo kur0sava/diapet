@@ -140,6 +140,14 @@ export default function PetProfileScreen() {
           >
             {t('pets.basicInfo')}
           </Text>
+          {renderInfoRow(
+            t('pets.species'),
+            activePet.species === 'cat'
+              ? t('pets.cat')
+              : activePet.species === 'dog'
+                ? t('pets.dog')
+                : t('pets.pet')
+          )}
           {activePet.weightKg &&
             renderInfoRow(t('pets.weight'), `${activePet.weightKg} ${t('common.kg')}`)}
           {activePet.birthYear &&

@@ -147,7 +147,11 @@ export default function MoreMenuScreen() {
                 {activePet.name}
               </Text>
               <Text style={styles.petDetails} numberOfLines={2}>
-                {activePet.species === 'cat' ? t('pets.cat') : t('pets.pet')}
+                {activePet.species === 'cat'
+                  ? t('pets.cat')
+                  : activePet.species === 'dog'
+                    ? t('pets.dog')
+                    : t('pets.pet')}
                 {activePet.weightKg ? ` · ${activePet.weightKg} ${t('common.kg')}` : ''}
                 {activePet.diabetesType !== 'unknown'
                   ? ` · ${t('pets.diabetesType')} ${activePet.diabetesType === 'type1' ? '1' : '2'}`

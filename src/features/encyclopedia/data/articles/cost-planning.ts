@@ -47,21 +47,29 @@ export const costPlanning: Article = {
 - Один флакон Лантуса (10 мл) хватает на 2-6 месяцев при малых дозах
 - Храните правильно: в холодильнике, не замораживать
 - Открытый флакон можно использовать до 28 дней (по инструкции), но на практике многие ветеринары разрешают до 3-4 месяцев при хранении в холодильнике
+- **В России:** РинГлар (Герофарм) — биосимиляр Лантуса, то же действующее вещество, но ~1500-2500 руб vs 3000-4500 руб за Лантус. Спросите ветеринара
+- Ринсулин НПХ — самый бюджетный (500-1000 руб), но менее эффективен для кошек
 
 **Полоски:**
-- Человеческий глюкометр дешевле ветеринарного
+- **В России:** AlphaTRAK 2 недоступен. Рекомендуем **Contour Plus** (хорошее качество) или **Сателлит Экспресс** (самые дешёвые полоски — 400-600 руб/50 шт, но точность ниже). Помните: человеческие глюкометры занижают результат у кошек на 10-15%
+- За рубежом: AlphaTRAK 2 — точнее, но полоски дороже
 - Покупайте полоски оптом (100 шт = дешевле за штуку)
 - Не тестируйте каждый день, если кошка стабильна (2-3 раза в неделю достаточно)
+- FreeStyle Libre 2 (~5000-7000 руб/сенсор на 14 дней) может быть выгоднее, чем ежедневные полоски при построении кривых
 
 **Корм:**
+- **В России:** Royal Canin Diabetic — самый надёжный (завод в Дмитрове, стабильные поставки). Karmy Veterinary Diabetic — российский бюджетный вариант
 - Fancy Feast Classic (в США) — дешёвая низкоуглеводная альтернатива
-- В России: некоторые бюджетные паштеты также подходят (смотрите состав)
+- Hill's m/d: в России поставки нерегулярные, цены x2-3
 - Готовьте сами? Только после консультации с ветеринарным диетологом
 
 **Ветеринар:**
 - Спросите о программе лояльности
 - Некоторые клиники предлагают пакетные обследования со скидкой
 - Онлайн-консультации дешевле очных (для контрольных визитов)
+
+**Сообщества:**
+- Группы владельцев кошек-диабетиков (ВКонтакте, Telegram) — взаимная помощь, советы, оптовые закупки полосок
 
 ### Отслеживание расходов
 
@@ -110,14 +118,19 @@ Diabetes is a long-term expense. But the good news: with proper planning, it's q
 - One vial of Lantus (10 mL) lasts 2-6 months at low doses
 - Store properly: refrigerated, never freeze
 - An opened vial is labeled for 28 days, but many vets allow 3-4 months when refrigerated
+- **In Russia:** RinGlar (Geropharm) is a Lantus biosimilar — same active ingredient, ~1,500-2,500 RUB vs 3,000-4,500 RUB for Lantus. Ask your vet
+- **In the USA:** NPH insulin at Walmart (ReliOn brand) costs just $25/vial — the cheapest option
 
 **Test strips:**
-- A human glucometer is cheaper than a vet-specific one
+- **In Russia:** AlphaTRAK 2 is unavailable. Use **Contour Plus** (good quality) or **Satellite Express** (cheapest strips ~400-600 RUB/50 pcs, but less accurate). Note: human glucometers read 10-15% lower for cats
+- **In the USA/EU:** AlphaTRAK 2 is the gold standard for pets
 - Buy strips in bulk (100 pcs = cheaper per strip)
 - Don't test every day if the cat is stable (2-3 times per week is enough)
+- FreeStyle Libre 2 sensor (14-day wear) may be more economical than daily strips when building glucose curves
 
 **Food:**
-- Fancy Feast Classic — affordable low-carb option
+- **In Russia:** Royal Canin Diabetic is the most reliably available (local Dmitrov factory). Karmy Veterinary Diabetic is a budget Russian alternative
+- **In the USA:** Fancy Feast Classic — affordable low-carb option
 - Check the ingredients: look for pate/classic varieties with no gravy
 - Home cooking? Only after consulting a veterinary nutritionist
 
@@ -125,6 +138,9 @@ Diabetes is a long-term expense. But the good news: with proper planning, it's q
 - Ask about loyalty programs
 - Some clinics offer discounted package deals
 - Telemedicine is cheaper for follow-up checks
+
+**Communities:**
+- Look for diabetic pet owner groups on social media — mutual support, tips, and group purchases for supplies
 
 ### Tracking Expenses
 
@@ -143,7 +159,10 @@ Keep a safety fund for:
   order: 15,
   relatedArticleIds: ['first-days', 'insulin_types', 'diet', 'flexible-monitoring'],
   references: [
-    { ru: 'ISFM Guidelines on Diabetes Mellitus in Cats, 2023', en: 'ISFM Guidelines on Diabetes Mellitus in Cats, 2023' },
+    {
+      ru: 'ISFM Guidelines on Diabetes Mellitus in Cats, 2023',
+      en: 'ISFM Guidelines on Diabetes Mellitus in Cats, 2023',
+    },
   ],
   tags: [
     { ru: 'бюджет', en: 'budget' },

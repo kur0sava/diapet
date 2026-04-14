@@ -3,10 +3,12 @@
  * All calculations are offline, no API calls.
  */
 import { GlucoseReading } from '@storage/domain/types';
+import type { SpeciesConfig } from '@shared/config/speciesConfig';
+import { getSpeciesConfig } from '@shared/config/speciesConfig';
 
-/** Target glucose range for cats (mmol/L) */
-const TARGET_LOW = 4;
-const TARGET_HIGH = 12;
+/** Default cat target glucose range (mmol/L) — used when no species config provided */
+const DEFAULT_TARGET_LOW = 4;
+const DEFAULT_TARGET_HIGH = 12;
 /** Morning window: readings recorded between 05:00-09:00 */
 const MORNING_HOUR_START = 5;
 const MORNING_HOUR_END = 9;
@@ -58,7 +60,8 @@ function mean(readings: GlucoseReading[]): number | null {
 function stdDev(readings: GlucoseReading[]): number | null {
   if (readings.length < 2) return null;
   const avg = mean(readings)!;
-  const variance = readings.reduce((sum, r) => sum + (r.valueMmol - avg) ** 2, 0) / (readings.length - 1);
+  const variance =
+    readings.reduce((sum, r) => sum + (r.valueMmol - avg) ** 2, 0) / (readings.length - 1);
   return Math.sqrt(variance);
 }
 
@@ -89,10 +92,10 @@ function calculateDirection(readings: GlucoseReading[], now: Date): TrendDirecti
   if (avgRecent === null || avgOlder === null) return null;
 
   const diff = avgRecent - avgOlder;
-  const threshold = avgOlder * 0.10; // 10% change is significant
+  const threshold = avgOlder * 0.1; // 10% change is significant
 
   if (diff < -threshold) return 'improving'; // glucose going down
-  if (diff > threshold) return 'worsening';  // glucose going up
+  if (diff > threshold) return 'worsening'; // glucose going up
   return 'stable';
 }
 
@@ -138,12 +141,18 @@ function calculateCV(readings: GlucoseReading[], days: number, now: Date): numbe
 }
 
 /**
- * C5: Time-in-range — % of readings within 4-12 mmol/L.
+ * C5: Time-in-range — % of readings within target range.
  */
-function calculateTimeInRange(readings: GlucoseReading[], days: number, now: Date): number | null {
+function calculateTimeInRange(
+  readings: GlucoseReading[],
+  days: number,
+  now: Date,
+  targetLow: number,
+  targetHigh: number
+): number | null {
   const filtered = filterByDays(readings, days, now);
   if (filtered.length === 0) return null;
-  const inRange = filtered.filter(r => r.valueMmol >= TARGET_LOW && r.valueMmol <= TARGET_HIGH);
+  const inRange = filtered.filter(r => r.valueMmol >= targetLow && r.valueMmol <= targetHigh);
   return (inRange.length / filtered.length) * 100;
 }
 
@@ -151,7 +160,10 @@ function calculateTimeInRange(readings: GlucoseReading[], days: number, now: Dat
  * C6: Morning glucose trend — separate trend for morning readings.
  * Consistently low morning glucose is a remission indicator.
  */
-function calculateMorningTrend(readings: GlucoseReading[], now: Date): { direction: TrendDirection | null; average: number | null } {
+function calculateMorningTrend(
+  readings: GlucoseReading[],
+  now: Date
+): { direction: TrendDirection | null; average: number | null } {
   const morningReadings = readings.filter(r => {
     const hour = new Date(r.recordedAt).getHours();
     return hour >= MORNING_HOUR_START && hour <= MORNING_HOUR_END;
@@ -162,13 +174,14 @@ function calculateMorningTrend(readings: GlucoseReading[], now: Date): { directi
   const avg = mean(morningReadings);
 
   // Compare recent 7d mornings vs older 7-14d mornings
-  const recent = morningReadings.filter(r =>
-    new Date(r.recordedAt).getTime() >= now.getTime() - 7 * 24 * 60 * 60 * 1000
+  const recent = morningReadings.filter(
+    r => new Date(r.recordedAt).getTime() >= now.getTime() - 7 * 24 * 60 * 60 * 1000
   );
   const older = morningReadings.filter(r => {
     const t = new Date(r.recordedAt).getTime();
-    return t >= now.getTime() - 14 * 24 * 60 * 60 * 1000 &&
-           t < now.getTime() - 7 * 24 * 60 * 60 * 1000;
+    return (
+      t >= now.getTime() - 14 * 24 * 60 * 60 * 1000 && t < now.getTime() - 7 * 24 * 60 * 60 * 1000
+    );
   });
 
   const avgRecent = mean(recent);
@@ -177,7 +190,7 @@ function calculateMorningTrend(readings: GlucoseReading[], now: Date): { directi
   if (avgRecent === null || avgOlder === null) return { direction: null, average: avg };
 
   const diff = avgRecent - avgOlder;
-  const threshold = avgOlder * 0.10;
+  const threshold = avgOlder * 0.1;
 
   let direction: TrendDirection | null;
   if (diff < -threshold) direction = 'improving';
@@ -190,11 +203,22 @@ function calculateMorningTrend(readings: GlucoseReading[], now: Date): { directi
 /**
  * Main entry point — analyze all glucose readings for a pet.
  * Expects readings sorted by recordedAt ASC.
+ * Accepts optional species config for species-aware thresholds.
  */
-export function analyzeTrends(readings: GlucoseReading[], now = new Date()): TrendResult {
-  const periodDays = readings.length > 0
-    ? Math.ceil((now.getTime() - new Date(readings[0].recordedAt).getTime()) / (24 * 60 * 60 * 1000))
-    : 0;
+export function analyzeTrends(
+  readings: GlucoseReading[],
+  now = new Date(),
+  config?: SpeciesConfig
+): TrendResult {
+  const targetLow = config?.glucose.targetLow ?? DEFAULT_TARGET_LOW;
+  const targetHigh = config?.glucose.rangeHigh ?? DEFAULT_TARGET_HIGH;
+
+  const periodDays =
+    readings.length > 0
+      ? Math.ceil(
+          (now.getTime() - new Date(readings[0].recordedAt).getTime()) / (24 * 60 * 60 * 1000)
+        )
+      : 0;
 
   const morning = calculateMorningTrend(readings, now);
 
@@ -206,7 +230,7 @@ export function analyzeTrends(readings: GlucoseReading[], now = new Date()): Tre
     direction: calculateDirection(readings, now),
     acceleration: calculateAcceleration(readings, now),
     cv: calculateCV(readings, 14, now),
-    timeInRange: calculateTimeInRange(readings, 14, now),
+    timeInRange: calculateTimeInRange(readings, 14, now, targetLow, targetHigh),
     morningTrend: morning.direction,
     morningAverage: morning.average,
     totalReadings: readings.length,

@@ -20,6 +20,8 @@ export interface Article {
   references?: BilingualText[];
   /** IDs of related articles for cross-navigation */
   relatedArticleIds?: string[];
+  /** Species filter: 'cat', 'dog', or omit/'all' for universal articles */
+  species?: import('@storage/domain/types').PetSpecies | 'all';
 }
 
 export type ArticleCategory =
@@ -67,11 +69,17 @@ export interface AlternativeFood {
   regions: Region[];
   source?: string;
   prescriptionRequired: boolean;
+  /** Species filter. Omit = 'cat' (legacy data). */
+  species?: import('@storage/domain/types').PetSpecies | 'all';
 }
 
 export type NaturalFoodCategory = 'meat' | 'organ' | 'fish' | 'egg' | 'supplement';
 export type NaturalFoodSuitability = 'excellent' | 'good' | 'moderate' | 'limited';
-export type NaturalFoodFrequency = 'daily_base' | 'daily_addition' | 'few_times_week' | 'occasional';
+export type NaturalFoodFrequency =
+  | 'daily_base'
+  | 'daily_addition'
+  | 'few_times_week'
+  | 'occasional';
 
 export interface NaturalFood {
   id: string;
@@ -88,6 +96,7 @@ export interface NaturalFood {
   notes: { ru: string; en: string };
 }
 
+/** Species filter for natural feeding guide */
 export interface NaturalFeedingGuide {
   disclaimer: { ru: string; en: string };
   dailyPortionGuide: { ru: string; en: string };

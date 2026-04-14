@@ -3,9 +3,11 @@ import { useHintStore } from '../store/hintStore';
 import { selectHint, getStage, getTimeOfDay, addShownId } from './useHintEngine';
 import { storage, StorageKeys } from '@storage/mmkv/storage';
 import type { HintTrigger } from '../data/hintsContent';
+import { usePetStore } from '@shared/stores/petStore';
 
 export function useHintTrigger() {
   const { showHint, triggerAchievement } = useHintStore();
+  const activePet = usePetStore(s => s.activePet);
 
   const triggerAfterAction = useCallback(
     (trigger: HintTrigger) => {
@@ -19,7 +21,7 @@ export function useHintTrigger() {
       if (!stage) return; // past 30 days — no free hints
 
       const timeOfDay = getTimeOfDay();
-      const hint = selectHint(trigger, stage, timeOfDay);
+      const hint = selectHint(trigger, stage, timeOfDay, activePet?.species);
       if (hint) {
         addShownId(hint.id);
         showHint(hint);
@@ -39,7 +41,7 @@ export function useHintTrigger() {
         }
       }
     },
-    [showHint, triggerAchievement]
+    [showHint, triggerAchievement, activePet?.species]
   );
 
   return { triggerAfterAction };

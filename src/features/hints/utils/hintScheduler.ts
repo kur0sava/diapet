@@ -4,6 +4,7 @@ import { PUSH_HINTS } from '../data/pushContent';
 import { differenceInDays, parseISO, addDays } from 'date-fns';
 import i18n from '@shared/i18n';
 import { isBackendConfigured } from '@shared/api/subscriptionApi';
+import { usePetStore } from '@shared/stores/petStore';
 
 /**
  * Schedule hint push notifications for the post-30-day period.
@@ -35,11 +36,20 @@ export async function scheduleHintPushNotifications(): Promise<void> {
   // Get shown IDs
   const shownRaw = storage.getString(StorageKeys.HINTS_PUSH_SHOWN_IDS);
   let shownIds: string[] = [];
-  try { shownIds = shownRaw ? JSON.parse(shownRaw) : []; } catch { shownIds = []; }
+  try {
+    shownIds = shownRaw ? JSON.parse(shownRaw) : [];
+  } catch {
+    shownIds = [];
+  }
 
-  // Filter out premium-mentioning hints when backend is not configured
+  // Filter by species and premium availability
+  const species = usePetStore.getState().activePet?.species ?? 'cat';
   const backendReady = isBackendConfigured();
-  const eligibleHints = backendReady ? PUSH_HINTS : PUSH_HINTS.filter(h => !h.mentionsPremium);
+  const eligibleHints = PUSH_HINTS.filter(h => {
+    if (h.mentionsPremium && !backendReady) return false;
+    if (h.species && h.species !== 'all' && h.species !== species) return false;
+    return true;
+  });
 
   // Pick 3 unshown hints
   const available = eligibleHints.filter(h => !shownIds.includes(h.id));
@@ -67,7 +77,7 @@ export async function scheduleHintPushNotifications(): Promise<void> {
 
     await Notifications.scheduleNotificationAsync({
       content: {
-        title: 'DiaPet \uD83D\uDC31',
+        title: species === 'dog' ? 'DiaPet \uD83D\uDC36' : 'DiaPet \uD83D\uDC31',
         body: hint[lang],
         sound: false,
         data: { type: 'hint', hintId: hint.id },

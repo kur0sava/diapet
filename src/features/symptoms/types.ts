@@ -19,6 +19,10 @@ export const SYMPTOM_ICONS: Record<SymptomType, IoniconName> = {
   lethargy: 'bed-outline',
   vomiting: 'alert-circle-outline',
   diarrhea: 'warning-outline',
+  cataracts: 'eye-outline',
+  urinaryInfection: 'medkit-outline',
+  panting: 'fitness-outline',
+  ataxia: 'accessibility-outline',
   other: 'help-circle-outline',
 };
 
@@ -32,5 +36,9 @@ export const SYMPTOM_COLORS: Record<SymptomType, string> = {
   lethargy: '#8E8E93',
   vomiting: '#FF3B30',
   diarrhea: '#FF9500',
+  cataracts: '#5856D6',
+  urinaryInfection: '#FF2D55',
+  panting: '#FF9500',
+  ataxia: '#FF3B30',
   other: '#8E8E93',
 };

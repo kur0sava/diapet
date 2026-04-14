@@ -7,8 +7,10 @@ import {
   HintTimeOfDay,
   HintCategory,
   HintContent,
+  HintSpecies,
 } from '../data/hintsContent';
 import { storage, StorageKeys } from '@storage/mmkv/storage';
+import type { PetSpecies } from '@storage/domain/types';
 
 // ---------------------------------------------------------------------------
 // Pure helpers
@@ -107,16 +109,19 @@ function pickCategory(counts: Record<HintCategory, number>): HintCategory {
 export function selectHint(
   trigger: HintTrigger,
   stage: HintStage,
-  timeOfDay: HintTimeOfDay
+  timeOfDay: HintTimeOfDay,
+  species?: PetSpecies
 ): { text: string; category: HintCategory; id: string } | null {
   const shownIds = getShownIds();
   const lang = i18n.language?.startsWith('en') ? 'en' : 'ru';
+  const sp = species ?? 'cat';
 
   const candidates = HINTS.filter(
     h =>
       h.trigger === trigger &&
       h.stage === stage &&
       (h.timeOfDay === timeOfDay || h.timeOfDay === 'any') &&
+      (!h.species || h.species === 'all' || h.species === sp) &&
       !shownIds.includes(h.id)
   );
 

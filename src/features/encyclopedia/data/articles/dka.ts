@@ -69,6 +69,17 @@ export const dka: Article = {
 - Обострился панкреатит
 - Сильный стресс
 
+### Домашний тест на кетоны
+
+Тест-полоски (Кетостикс, Урикет) — простой способ проверить кетоны дома:
+1. Соберите мочу в чистый контейнер
+2. Окуните полоску на 1 сек, оцените результат через 15 сек
+3. **«Следы» (+/−):** насторожиться, усилить мониторинг
+4. **«+» + плохое самочувствие:** ветеринар **сегодня**
+5. **«++» / «+++»:** экстренная клиника
+
+**Важный нюанс:** полоска определяет ацетоацетат, но **НЕ** β-гидроксибутират (основной кетон при ДКА). Отрицательный результат **не исключает** ДКА! При плохом самочувствии кошки — в клинику независимо от результата полоски.
+
 ### Как предотвратить ДКА
 
 - **Никогда не пропускайте инъекции** — если не уверены, что доза вошла, лучше пропустить, чем вколоть дважды
@@ -138,6 +149,17 @@ DKA most commonly develops when:
 - A pancreatitis flare-up occurred
 - Severe stress
 
+### Home Ketone Testing
+
+Ketone test strips (Ketostix, Uriket) are a simple way to check ketones at home:
+1. Collect urine in a clean container
+2. Dip the strip for 1 second, read the result after 15 seconds
+3. **"Trace" (+/−):** be alert, increase monitoring
+4. **"+" + feeling unwell:** vet **today**
+5. **"++" / "+++":** emergency clinic
+
+**Important nuance:** strips detect acetoacetate but **NOT** β-hydroxybutyrate (the main ketone in DKA). A negative result **does not rule out** DKA! If your cat is unwell — go to the clinic regardless of the strip result.
+
 ### How to Prevent DKA
 
 - **Never skip injections** — if you're unsure the dose went in, it's better to skip than inject twice
@@ -155,8 +177,14 @@ DKA most commonly develops when:
   order: 2,
   relatedArticleIds: ['what-is-diabetes', 'ketone-testing', 'hypoglycemia'],
   references: [
-    { ru: "O'Brien MA — Diabetic Ketoacidosis in Cats, Veterinary Clinics 2010", en: "O'Brien MA — Diabetic Ketoacidosis in Cats, Veterinary Clinics 2010" },
-    { ru: 'ISFM Guidelines on Diabetes Mellitus in Cats, 2023', en: 'ISFM Guidelines on Diabetes Mellitus in Cats, 2023' },
+    {
+      ru: "O'Brien MA — Diabetic Ketoacidosis in Cats, Veterinary Clinics 2010",
+      en: "O'Brien MA — Diabetic Ketoacidosis in Cats, Veterinary Clinics 2010",
+    },
+    {
+      ru: 'ISFM Guidelines on Diabetes Mellitus in Cats, 2023',
+      en: 'ISFM Guidelines on Diabetes Mellitus in Cats, 2023',
+    },
   ],
   tags: [
     { ru: 'кетоацидоз', en: 'ketoacidosis' },

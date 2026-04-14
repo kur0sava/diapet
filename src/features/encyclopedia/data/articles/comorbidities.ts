@@ -57,11 +57,26 @@ IBD вызывает хроническое воспаление, которое
 - Обсудите с ветеринаром альтернативы: будесонид (менее влияет на глюкозу), диетотерапия
 - При обострении IBD готовьтесь к временному повышению дозы инсулина
 
+### Акромегалия — скрытая причина инсулинорезистентности
+
+Акромегалия (избыток гормона роста из-за опухоли гипофиза) обнаруживается у **20-30% кошек с плохо контролируемым диабетом**. Это гораздо чаще, чем думали раньше!
+
+**Когда заподозрить:**
+- Доза инсулина постоянно растёт и превышает **6 IU на инъекцию**
+- Сахар плохо контролируется несмотря на большие дозы
+- Кошка набирает вес (необычно для плохо контролируемого диабета!)
+- Увеличение головы, лап, нижней челюсти (поздние признаки)
+
+**Что делать:**
+- Попросите ветеринара проверить уровень ИФР-1 (IGF-1)
+- Лечение: хирургическое (если доступно) или радиотерапия
+- Даже без лечения — продолжайте инсулинотерапию, контроль возможен при высоких дозах
+
 ### Триадит
 
 У кошек есть уникальный синдром — **триадит** (IBD + панкреатит + холангит). Все три органа воспалены одновременно. Это серьёзно и требует комплексного лечения.
 
-> **Главный вывод:** если диабет плохо контролируется несмотря на правильную дозу и диету — ищите другую болезнь. Комплексный подход с ветеринаром — ключ к стабилизации.`,
+> **Главный вывод:** если диабет плохо контролируется несмотря на правильную дозу и диету — ищите другую болезнь. Акромегалия у кошек встречается чаще, чем думали (20-30% резистентных случаев). Комплексный подход с ветеринаром — ключ к стабилизации.`,
     en: `## Diabetes and Comorbidities: When Problems Come in Pairs
 
 In older cats, diabetes rarely comes alone. The three most common "neighbors": hyperthyroidism, chronic kidney disease (CKD), and inflammatory bowel disease (IBD).
@@ -108,20 +123,41 @@ IBD causes chronic inflammation that worsens insulin resistance.
 - Discuss alternatives with your vet: budesonide (less impact on glucose), dietary therapy
 - During IBD flares, be prepared for temporary insulin dose increases
 
+### Acromegaly — A Hidden Cause of Insulin Resistance
+
+Acromegaly (excess growth hormone from a pituitary tumor) is found in **20-30% of cats with poorly controlled diabetes**. This is far more common than previously thought!
+
+**When to suspect it:**
+- Insulin dose keeps climbing and exceeds **6 IU per injection**
+- Blood sugar stays poorly controlled despite high doses
+- Your cat is gaining weight (unusual for poorly controlled diabetes!)
+- Enlargement of the head, paws, or jaw (late signs)
+
+**What to do:**
+- Ask your vet to check IGF-1 levels
+- Treatment: surgery (if available) or radiation therapy
+- Even without specific treatment — continue insulin therapy, control is possible at higher doses
+
 ### Triaditis
 
 Cats have a unique syndrome — **triaditis** (IBD + pancreatitis + cholangitis). All three organs are inflamed simultaneously. This is serious and requires comprehensive treatment.
 
-> **Key takeaway:** if diabetes is poorly controlled despite correct dosing and diet — look for another disease. A comprehensive approach with your vet is key to stabilization.`,
+> **Key takeaway:** if diabetes is poorly controlled despite correct dosing and diet — look for another disease. Acromegaly in cats is more common than previously thought (20-30% of resistant cases). A comprehensive approach with your vet is key to stabilization.`,
   },
   category: 'medical',
   readingTimeMinutes: 7,
   order: 11,
   relatedArticleIds: ['what-is-diabetes', 'pancreatitis-diabetes', 'diet'],
   references: [
-    { ru: 'ISFM Guidelines on Diabetes Mellitus in Cats, 2023', en: 'ISFM Guidelines on Diabetes Mellitus in Cats, 2023' },
+    {
+      ru: 'ISFM Guidelines on Diabetes Mellitus in Cats, 2023',
+      en: 'ISFM Guidelines on Diabetes Mellitus in Cats, 2023',
+    },
     { ru: 'IRIS Staging of CKD, 2023', en: 'IRIS Staging of CKD, 2023' },
-    { ru: 'Feldman EC — Feline Hyperthyroidism, Canine & Feline Endocrinology, 4th ed', en: 'Feldman EC — Feline Hyperthyroidism, Canine & Feline Endocrinology, 4th ed' },
+    {
+      ru: 'Feldman EC — Feline Hyperthyroidism, Canine & Feline Endocrinology, 4th ed',
+      en: 'Feldman EC — Feline Hyperthyroidism, Canine & Feline Endocrinology, 4th ed',
+    },
   ],
   tags: [
     { ru: 'коморбидности', en: 'comorbidities' },

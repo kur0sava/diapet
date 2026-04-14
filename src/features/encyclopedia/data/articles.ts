@@ -22,6 +22,11 @@ import { dentalDisease } from './articles/dental-disease';
 import { glucoseCurvesPractice } from './articles/glucose-curves-practice';
 import { costPlanning } from './articles/cost-planning';
 import { choosingVet } from './articles/choosing-vet';
+import { dogDiabetesBasics } from './articles/dog-diabetes-basics';
+import { dogCataracts } from './articles/dog-cataracts';
+import { dogDiet } from './articles/dog-diet';
+import { dogInsulin } from './articles/dog-insulin';
+import { dogHypoglycemia } from './articles/dog-hypoglycemia';
 
 export const articles: Article[] = [
   whatIsDiabetes,
@@ -46,4 +51,10 @@ export const articles: Article[] = [
   glucoseCurvesPractice,
   costPlanning,
   choosingVet,
+  // Dog-specific articles
+  dogDiabetesBasics,
+  dogCataracts,
+  dogDiet,
+  dogInsulin,
+  dogHypoglycemia,
 ];

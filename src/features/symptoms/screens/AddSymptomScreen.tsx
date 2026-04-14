@@ -1,7 +1,14 @@
 import React, { useState, useCallback, useEffect, useRef } from 'react';
 import {
-  View, Text, StyleSheet, ScrollView,
-  TouchableOpacity, Alert, Image, KeyboardAvoidingView, Platform,
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  TouchableOpacity,
+  Alert,
+  Image,
+  KeyboardAvoidingView,
+  Platform,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Icon } from '@shared/components/ui/Icon';
@@ -25,11 +32,7 @@ import * as FileSystem from 'expo-file-system/legacy';
 import * as ImagePicker from 'expo-image-picker';
 import * as Haptics from 'expo-haptics';
 import { useUnsavedChangesGuard } from '@shared/hooks/useUnsavedChangesGuard';
-
-const ALL_SYMPTOM_TYPES: SymptomType[] = [
-  'hindLimbWeakness', 'weightLoss', 'polyuria', 'polydipsia',
-  'lossOfAppetite', 'behavioralChanges', 'lethargy', 'vomiting', 'diarrhea', 'other',
-];
+import { getSpeciesConfig } from '@shared/config/speciesConfig';
 
 const SEVERITY_OPTIONS: { value: SymptomSeverity; color: string; labelKey: string }[] = [
   { value: 'mild', color: '#34C759', labelKey: 'symptoms.mild' },
@@ -46,10 +49,12 @@ export default function AddSymptomScreen() {
   const activePet = usePetStore(s => s.activePet);
   const queryClient = useQueryClient();
 
+  const speciesSymptoms = getSpeciesConfig(activePet?.species ?? 'cat').symptoms.available;
   const editId = route.params?.editId;
   // H004: respect glucose unit preference
   const glucoseUnit = storage.getString(StorageKeys.GLUCOSE_UNIT) ?? 'mmol/L';
-  const dateFnsLocale = (storage.getString(StorageKeys.LANGUAGE) ?? 'ru') === 'ru' ? ruLocale : undefined;
+  const dateFnsLocale =
+    (storage.getString(StorageKeys.LANGUAGE) ?? 'ru') === 'ru' ? ruLocale : undefined;
   const [selectedTypes, setSelectedTypes] = useState<SymptomType[]>([]);
   // Severity is always auto-calculated — no manual override
   const [notes, setNotes] = useState('');
@@ -98,7 +103,10 @@ export default function AddSymptomScreen() {
 
   const pickPhoto = useCallback(async () => {
     const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    if (!permission.granted) { Alert.alert(t('symptoms.noGalleryAccess')); return; }
+    if (!permission.granted) {
+      Alert.alert(t('symptoms.noGalleryAccess'));
+      return;
+    }
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ['images'],
       allowsMultipleSelection: true,
@@ -123,7 +131,10 @@ export default function AddSymptomScreen() {
 
   const takePhoto = useCallback(async () => {
     const permission = await ImagePicker.requestCameraPermissionsAsync();
-    if (!permission.granted) { Alert.alert(t('symptoms.noCameraAccess')); return; }
+    if (!permission.granted) {
+      Alert.alert(t('symptoms.noCameraAccess'));
+      return;
+    }
     const result = await ImagePicker.launchCameraAsync({ quality: 0.6, exif: false });
     if (!result.canceled && result.assets && result.assets.length > 0) {
       const dir = `${FileSystem.documentDirectory}symptom_photos/`;
@@ -136,7 +147,10 @@ export default function AddSymptomScreen() {
 
   const handleSave = useCallback(async () => {
     if (savingRef.current || !activePet) return;
-    if (selectedTypes.length === 0) { Alert.alert(t('symptoms.selectAtLeastOne')); return; }
+    if (selectedTypes.length === 0) {
+      Alert.alert(t('symptoms.selectAtLeastOne'));
+      return;
+    }
     savingRef.current = true;
     setLoading(true);
     try {
@@ -173,23 +187,49 @@ export default function AddSymptomScreen() {
       savingRef.current = false;
       setLoading(false);
     }
-  }, [activePet, selectedTypes, severity, notes, photos, removedPhotos, selectedGlucoseId, queryClient, navigation, t, editId, disableGuard]);
+  }, [
+    activePet,
+    selectedTypes,
+    severity,
+    notes,
+    photos,
+    removedPhotos,
+    selectedGlucoseId,
+    queryClient,
+    navigation,
+    t,
+    editId,
+    disableGuard,
+  ]);
 
   return (
-    <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={{ flex: 1 }}>
+    <KeyboardAvoidingView
+      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+      style={{ flex: 1 }}
+    >
       <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.background }]}>
         <View style={[styles.navHeader, { borderBottomColor: theme.colors.border }]}>
-          <TouchableOpacity onPress={() => navigation.goBack()} style={{ minHeight: 44, minWidth: 44, justifyContent: 'center' }}>
-            <Text style={{ color: theme.colors.primary }}>{'\u2190 '}{t('common.back')}</Text>
+          <TouchableOpacity
+            onPress={() => navigation.goBack()}
+            style={{ minHeight: 44, minWidth: 44, justifyContent: 'center' }}
+          >
+            <Text style={{ color: theme.colors.primary }}>
+              {'\u2190 '}
+              {t('common.back')}
+            </Text>
           </TouchableOpacity>
-          <Text numberOfLines={1} style={[styles.title, { color: theme.colors.text }]}>{editId ? t('symptoms.editSymptom') : t('symptoms.addSymptom')}</Text>
+          <Text numberOfLines={1} style={[styles.title, { color: theme.colors.text }]}>
+            {editId ? t('symptoms.editSymptom') : t('symptoms.addSymptom')}
+          </Text>
           <View style={{ width: 60 }} />
         </View>
 
         <ScrollView contentContainerStyle={styles.content}>
-          <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>{t('symptoms.selectSymptoms')}</Text>
+          <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>
+            {t('symptoms.selectSymptoms')}
+          </Text>
           <View style={styles.symptomGrid}>
-            {ALL_SYMPTOM_TYPES.map(type => {
+            {speciesSymptoms.map(type => {
               const selected = selectedTypes.includes(type);
               return (
                 <TouchableOpacity
@@ -205,9 +245,18 @@ export default function AddSymptomScreen() {
                   ]}
                   onPress={() => toggleType(type)}
                 >
-                  <Icon name={SYMPTOM_ICONS[type]} size={24} color={selected ? theme.colors.primary : theme.colors.textSecondary} />
-                  <Text style={[styles.symptomLabel, { color: selected ? theme.colors.primary : theme.colors.text }]}
-                    numberOfLines={2}>
+                  <Icon
+                    name={SYMPTOM_ICONS[type]}
+                    size={24}
+                    color={selected ? theme.colors.primary : theme.colors.textSecondary}
+                  />
+                  <Text
+                    style={[
+                      styles.symptomLabel,
+                      { color: selected ? theme.colors.primary : theme.colors.text },
+                    ]}
+                    numberOfLines={2}
+                  >
                     {t(`symptoms.types.${type}`)}
                   </Text>
                 </TouchableOpacity>
@@ -217,10 +266,29 @@ export default function AddSymptomScreen() {
 
           {/* Auto-severity result */}
           {autoSeverity && (
-            <View style={[styles.severityCard, { backgroundColor: theme.colors.surface, ...theme.shadows.sm }]}>
-              <Text style={[styles.sectionTitle, { color: theme.colors.text, marginTop: 0 }]}>{t('symptoms.autoSeverity')}</Text>
-              <View style={[styles.severityBadge, { backgroundColor: `${SEVERITY_OPTIONS.find(o => o.value === severity)?.color ?? '#999'}20` }]}>
-                <Text style={[styles.severityBadgeText, { color: SEVERITY_OPTIONS.find(o => o.value === severity)?.color }]}>
+            <View
+              style={[
+                styles.severityCard,
+                { backgroundColor: theme.colors.surface, ...theme.shadows.sm },
+              ]}
+            >
+              <Text style={[styles.sectionTitle, { color: theme.colors.text, marginTop: 0 }]}>
+                {t('symptoms.autoSeverity')}
+              </Text>
+              <View
+                style={[
+                  styles.severityBadge,
+                  {
+                    backgroundColor: `${SEVERITY_OPTIONS.find(o => o.value === severity)?.color ?? '#999'}20`,
+                  },
+                ]}
+              >
+                <Text
+                  style={[
+                    styles.severityBadgeText,
+                    { color: SEVERITY_OPTIONS.find(o => o.value === severity)?.color },
+                  ]}
+                >
                   {t(`symptoms.${severity}`)}
                 </Text>
               </View>
@@ -233,7 +301,9 @@ export default function AddSymptomScreen() {
                   onPress={() => rootNav.navigate('Emergency')}
                 >
                   <Icon name="warning" size={16} color="#fff" style={{ marginRight: 6 }} />
-                  <Text style={{ color: '#fff', fontWeight: '700', fontSize: 14 }}>{t('emergency.emergencyMode')}</Text>
+                  <Text style={{ color: '#fff', fontWeight: '700', fontSize: 14 }}>
+                    {t('emergency.emergencyMode')}
+                  </Text>
                 </TouchableOpacity>
               )}
             </View>
@@ -241,21 +311,33 @@ export default function AddSymptomScreen() {
 
           {/* Severity is auto-calculated — no manual override */}
 
-          <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>{t('symptoms.photo')}</Text>
+          <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>
+            {t('symptoms.photo')}
+          </Text>
           <View style={styles.photoRow}>
             <TouchableOpacity
-              style={[styles.photoBtn, { backgroundColor: theme.colors.surfaceSecondary, borderRadius: 12 }]}
+              style={[
+                styles.photoBtn,
+                { backgroundColor: theme.colors.surfaceSecondary, borderRadius: 12 },
+              ]}
               onPress={takePhoto}
             >
               <Icon name="camera-outline" size={24} color={theme.colors.primary} />
-              <Text style={{ color: theme.colors.primary, fontSize: 13, fontWeight: '600' }}>{t('symptoms.camera')}</Text>
+              <Text style={{ color: theme.colors.primary, fontSize: 13, fontWeight: '600' }}>
+                {t('symptoms.camera')}
+              </Text>
             </TouchableOpacity>
             <TouchableOpacity
-              style={[styles.photoBtn, { backgroundColor: theme.colors.surfaceSecondary, borderRadius: 12 }]}
+              style={[
+                styles.photoBtn,
+                { backgroundColor: theme.colors.surfaceSecondary, borderRadius: 12 },
+              ]}
               onPress={pickPhoto}
             >
               <Icon name="images-outline" size={24} color={theme.colors.primary} />
-              <Text style={{ color: theme.colors.primary, fontSize: 13, fontWeight: '600' }}>{t('symptoms.gallery')}</Text>
+              <Text style={{ color: theme.colors.primary, fontSize: 13, fontWeight: '600' }}>
+                {t('symptoms.gallery')}
+              </Text>
             </TouchableOpacity>
           </View>
 
@@ -283,7 +365,11 @@ export default function AddSymptomScreen() {
               <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>
                 {t('symptoms.linkGlucose')}
               </Text>
-              <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginHorizontal: -4 }}>
+              <ScrollView
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                style={{ marginHorizontal: -4 }}
+              >
                 {recentReadings.map((reading: GlucoseReading) => {
                   const isSelected = selectedGlucoseId === reading.id;
                   return (
@@ -292,7 +378,9 @@ export default function AddSymptomScreen() {
                       style={[
                         styles.glucoseCard,
                         {
-                          backgroundColor: isSelected ? theme.colors.primaryLight : theme.colors.surface,
+                          backgroundColor: isSelected
+                            ? theme.colors.primaryLight
+                            : theme.colors.surface,
                           borderColor: isSelected ? theme.colors.primary : theme.colors.border,
                         },
                       ]}
@@ -301,13 +389,21 @@ export default function AddSymptomScreen() {
                         setSelectedGlucoseId(isSelected ? undefined : reading.id);
                       }}
                     >
-                      <Text style={[styles.glucoseValue, { color: isSelected ? theme.colors.primary : theme.colors.text }]}>
+                      <Text
+                        style={[
+                          styles.glucoseValue,
+                          { color: isSelected ? theme.colors.primary : theme.colors.text },
+                        ]}
+                      >
                         {glucoseUnit === 'mg/dL'
                           ? `${reading.valueMgdl} ${t('common.mg_dl')}`
                           : `${reading.valueMmol.toFixed(1)} ${t('common.mmol_l')}`}
                       </Text>
                       <Text style={[styles.glucoseTime, { color: theme.colors.textSecondary }]}>
-                        {formatDistanceToNow(new Date(reading.recordedAt), { addSuffix: true, locale: dateFnsLocale })}
+                        {formatDistanceToNow(new Date(reading.recordedAt), {
+                          addSuffix: true,
+                          locale: dateFnsLocale,
+                        })}
                       </Text>
                     </TouchableOpacity>
                   );
@@ -326,7 +422,14 @@ export default function AddSymptomScreen() {
             style={{ height: 100, paddingTop: 12 }}
           />
 
-          <Button title={t('common.save')} onPress={handleSave} fullWidth size="lg" loading={loading} style={{ marginTop: 24 }} />
+          <Button
+            title={t('common.save')}
+            onPress={handleSave}
+            fullWidth
+            size="lg"
+            loading={loading}
+            style={{ marginTop: 24 }}
+          />
         </ScrollView>
       </SafeAreaView>
     </KeyboardAvoidingView>
@@ -335,7 +438,14 @@ export default function AddSymptomScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
-  navHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', padding: 16, borderBottomWidth: 0.5, gap: 8 },
+  navHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    padding: 16,
+    borderBottomWidth: 0.5,
+    gap: 8,
+  },
   title: { fontSize: 17, fontWeight: '600', flex: 1, textAlign: 'center' },
   content: { padding: 20, gap: 14, paddingBottom: 40 },
   sectionTitle: { fontSize: 16, fontWeight: '700', marginTop: 4 },
@@ -344,19 +454,52 @@ const styles = StyleSheet.create({
   symptomEmoji: { fontSize: 28 },
   symptomLabel: { fontSize: 12, fontWeight: '600', textAlign: 'center' },
   severityCard: { padding: 16, borderRadius: 16, gap: 10 },
-  severityCardHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-  severityBadge: { alignSelf: 'flex-start', paddingHorizontal: 14, paddingVertical: 6, borderRadius: 12 },
+  severityCardHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  severityBadge: {
+    alignSelf: 'flex-start',
+    paddingHorizontal: 14,
+    paddingVertical: 6,
+    borderRadius: 12,
+  },
   severityBadgeText: { fontSize: 15, fontWeight: '700' },
   severityExplanation: { fontSize: 13, lineHeight: 18 },
-  emergencyBtn: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', padding: 14, borderRadius: 12, marginTop: 4 },
+  emergencyBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 14,
+    borderRadius: 12,
+    marginTop: 4,
+  },
   // severity override removed — auto-calculated only
   photoRow: { flexDirection: 'row', gap: 12 },
   photoBtn: { flex: 1, padding: 16, alignItems: 'center', gap: 6 },
   photosGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
   photoThumbContainer: { position: 'relative' },
   photoThumb: { width: 80, height: 80, borderRadius: 8 },
-  removePhotoBtn: { position: 'absolute', top: -6, right: -6, width: 22, height: 22, borderRadius: 11, backgroundColor: '#FF3B30', alignItems: 'center', justifyContent: 'center' },
-  glucoseCard: { padding: 12, borderRadius: 12, borderWidth: 2, marginHorizontal: 4, minWidth: 120, alignItems: 'center' },
+  removePhotoBtn: {
+    position: 'absolute',
+    top: -6,
+    right: -6,
+    width: 22,
+    height: 22,
+    borderRadius: 11,
+    backgroundColor: '#FF3B30',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  glucoseCard: {
+    padding: 12,
+    borderRadius: 12,
+    borderWidth: 2,
+    marginHorizontal: 4,
+    minWidth: 120,
+    alignItems: 'center',
+  },
   glucoseValue: { fontSize: 16, fontWeight: '700' },
   glucoseTime: { fontSize: 11, marginTop: 4 },
 });

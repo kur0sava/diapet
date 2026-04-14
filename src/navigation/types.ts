@@ -4,6 +4,7 @@ import type { CompositeScreenProps, NavigatorScreenParams } from '@react-navigat
 
 // Onboarding pet data passed between onboarding screens
 export type OnboardingPetData = {
+  species: import('@storage/domain/types').PetSpecies;
   name: string;
   gender: 'male' | 'female';
   weightKg?: number;

@@ -39,7 +39,7 @@ export function useMissedInjection() {
         if (hoursSince > 14) {
           storage.set(MISSED_CHECK_DATE_KEY, today);
 
-          const hint = selectHint('missed_injection', stage, 'any');
+          const hint = selectHint('missed_injection', stage, 'any', activePet.species);
           if (hint) {
             addShownId(hint.id);
             useHintStore.getState().showHint(hint);

@@ -115,6 +115,8 @@ export default function AiAssistantScreen() {
 
       const context: AiPetContext = {
         petName: activePet.name,
+        species: activePet.species,
+        weightKg: activePet.weightKg ?? undefined,
         diagnosisDate: activePet.diagnosisDate ?? null,
         insulinType: activePet.insulinType ?? null,
         insulinDose: latestInjection?.doseUnits ?? null,
@@ -131,6 +133,8 @@ export default function AiAssistantScreen() {
       // Fallback: minimal context
       const context: AiPetContext = {
         petName: activePet.name,
+        species: activePet.species,
+        weightKg: activePet.weightKg ?? undefined,
         diagnosisDate: activePet.diagnosisDate ?? null,
         insulinType: activePet.insulinType ?? null,
         insulinDose: null,

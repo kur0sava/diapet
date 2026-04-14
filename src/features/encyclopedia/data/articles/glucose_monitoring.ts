@@ -8,7 +8,7 @@ export const glucoseMonitoring: Article = {
   },
   summaryKey: {
     ru: 'Домашние измерения сахара — ваш суперинструмент в борьбе с диабетом. Разбираемся, как это делать, что такое кривая глюкозы и надир.',
-    en: 'Home blood sugar testing is your superpower in managing diabetes. Let\'s learn how to do it, what a glucose curve is, and what nadir means.',
+    en: "Home blood sugar testing is your superpower in managing diabetes. Let's learn how to do it, what a glucose curve is, and what nadir means.",
   },
   contentKey: {
     ru: `## Мониторинг глюкозы дома
@@ -26,11 +26,21 @@ export const glucoseMonitoring: Article = {
 - Нужна крошечная капелька крови — 0.3-0.5 мкл
 - Полоски подходят только для AlphaTRAK 2
 
+#### Человеческий глюкометр (Contour Plus, OneTouch, Accu-Chek)
+
+В России AlphaTRAK 2 недоступен (Zoetis ушёл с рынка). Хорошие альтернативы:
+- **Contour Plus** — оптимальное качество/цена (~500-1000 руб, полоски ~600-900/50 шт)
+- **OneTouch Select** — аналогичное качество
+- **Сателлит Экспресс** — самый дешёвый (полоски ~400-600/50 шт), но точность ниже
+
+**Важно:** человеческие глюкометры показывают у кошек на **10-15% ниже** реальной глюкозы. У собак разница меньше (~5-8%). Учитывайте это при интерпретации результатов!
+
 #### FreeStyle Libre — непрерывный мониторинг
 
 - Это человеческий прибор, но его адаптируют для кошек
 - Маленький сенсор крепится на кожу (обычно на холку или бок)
 - Измеряет сахар непрерывно, но с задержкой 10-15 минут и погрешностью 10-20%
+- В России: ~5000-7000 руб за сенсор (14 дней). Доступен в аптеках, на Ozon/WB
 - Устанавливать и интерпретировать данные лучше вместе с ветеринаром
 
 ### Как брать кровь — это проще, чем кажется
@@ -98,6 +108,15 @@ Why is home better than the clinic? Because travel stress alone can raise blood 
 - Needs a tiny drop of blood — just 0.3-0.5 uL
 - Strips are specific to AlphaTRAK 2
 
+#### Human Glucometers (Contour Plus, OneTouch, Accu-Chek)
+
+In some countries, AlphaTRAK 2 may be unavailable. Good alternatives:
+- **Contour Plus** — excellent quality-to-price ratio
+- **OneTouch Select** — similar quality
+- **FreeStyle** — widely available
+
+**Important:** human glucometers read **10-15% lower** than actual glucose in cats. In dogs, the difference is smaller (~5-8%). Keep this in mind when interpreting results!
+
 #### FreeStyle Libre — Continuous Monitoring
 
 - This is a human device adapted for cats
@@ -159,10 +178,21 @@ This is exactly why changing the dose on your own is risky — without a full gl
   category: 'monitoring',
   readingTimeMinutes: 7,
   order: 1,
-  relatedArticleIds: ['flexible-monitoring', 'fructosamine', 'glucose-curves-practice', 'stress-hyperglycemia'],
+  relatedArticleIds: [
+    'flexible-monitoring',
+    'fructosamine',
+    'glucose-curves-practice',
+    'stress-hyperglycemia',
+  ],
   references: [
-    { ru: 'ISFM Guidelines on Diabetes Mellitus in Cats, 2023', en: 'ISFM Guidelines on Diabetes Mellitus in Cats, 2023' },
-    { ru: 'Cornell Feline Health Center — Feline Diabetes, 2021', en: 'Cornell Feline Health Center — Feline Diabetes, 2021' },
+    {
+      ru: 'ISFM Guidelines on Diabetes Mellitus in Cats, 2023',
+      en: 'ISFM Guidelines on Diabetes Mellitus in Cats, 2023',
+    },
+    {
+      ru: 'Cornell Feline Health Center — Feline Diabetes, 2021',
+      en: 'Cornell Feline Health Center — Feline Diabetes, 2021',
+    },
   ],
   tags: [
     { ru: 'мониторинг', en: 'monitoring' },

@@ -3,8 +3,10 @@ import { useHintStore } from '../store/hintStore';
 import { selectHint, getStage, getDayNumber, addShownId } from './useHintEngine';
 import { storage, StorageKeys } from '@storage/mmkv/storage';
 import { format } from 'date-fns';
+import { usePetStore } from '@shared/stores/petStore';
 
 export function useMorningGreeting() {
+  const species = usePetStore(s => s.activePet?.species);
   useEffect(() => {
     if (storage.getBoolean(StorageKeys.HINTS_DISABLED)) return;
 
@@ -34,7 +36,7 @@ export function useMorningGreeting() {
     // Delay morning greeting to not interfere with app loading
     const timer = setTimeout(() => {
       if (useHintStore.getState().currentHint) return; // Something else shown
-      const hint = selectHint('morning', stage, 'any');
+      const hint = selectHint('morning', stage, 'any', species);
       if (hint) {
         addShownId(hint.id);
         useHintStore.getState().showHint(hint);
@@ -42,5 +44,5 @@ export function useMorningGreeting() {
     }, 2000);
 
     return () => clearTimeout(timer);
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [species]); // eslint-disable-line react-hooks/exhaustive-deps
 }

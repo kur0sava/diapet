@@ -8,7 +8,7 @@ export const remission: Article = {
   },
   summaryKey: {
     ru: 'Вот что вселяет надежду: многие кошки с диабетом выходят в ремиссию и больше не нуждаются в инсулине. Давайте разберёмся, как к этому прийти.',
-    en: 'Here\'s what gives hope: many diabetic cats achieve remission and no longer need insulin. Let\'s explore how to get there.',
+    en: "Here's what gives hope: many diabetic cats achieve remission and no longer need insulin. Let's explore how to get there.",
   },
   contentKey: {
     ru: `## Ремиссия диабета у кошек
@@ -43,32 +43,70 @@ export const remission: Article = {
 **5. Правильный инсулин**
 Инсулины длительного действия (Гларгин/Лантус, Детемир/Левемир) дают более высокий процент ремиссии. Обсудите выбор с ветеринаром.
 
-### Как понять, что ремиссия близко?
+### Почему раннее лечение так важно — глюкозотоксичность
 
-Вот радостные знаки, которые говорят — вы на верном пути:
+Есть научный термин — **глюкозотоксичность**. Хроническая гипергликемия повреждает β-клетки поджелудочной, подавляя их способность вырабатывать инсулин.
 
-- Требуется всё меньше инсулина
-- Сахар стабильно в норме
-- Жажда и частое мочеиспускание уходят
-- Котик снова активный, набирает здоровый вес
+Хорошая новость: это **обратимо**! Когда глюкоза приходит в норму, β-клетки «отдыхают» и восстанавливают функцию. Именно поэтому раннее агрессивное лечение даёт максимальный шанс на ремиссию.
 
-Если замечаете это — вы делаете потрясающую работу!
+Каждый месяц промедления с правильным лечением снижает шансы. **Начать рано = дать шанс на выздоровление.**
+
+### Как понять, что ремиссия приближается?
+
+Вот **тревожные** (в хорошем смысле!) признаки за 1-4 недели до ремиссии:
+
+- **Повторяющийся надир ниже 4-5 ммоль/л** при стабильной дозе — сигнал снизить дозу!
+- Предынъекционные значения стабильно ниже 10 ммоль/л
+- Кошка пьёт меньше, мочится реже
+- Кошка стала активнее, набирает вес
+- Аппетит уменьшился при той же дозе (инсулин становится «лишним»)
+
+**Опасность:** если не заметить приближающуюся ремиссию и не снизить дозу → тяжёлая гипогликемия. Надир ниже 4 ммоль/л дважды подряд = сигнал к немедленному снижению дозы.
+
+### Протокол снижения дозы
+
+| Надир (ммоль/л) | Что делать |
+|----------------|-----------|
+| 5-8 | Продолжать текущую дозу |
+| Ниже 5 (два раза подряд) | Снизить на 0.5-1 IU |
+| Ниже 4 | Снизить на 1-2 IU или пропустить следующую дозу |
+| Предынъекционная стабильно <7 | Попробовать снизить до 0.5-1 IU |
+| Предынъекционная стабильно <6 на мин. дозе | Попробовать отмену под контролем ветеринара |
+
+**Важно:** снижение дозы — ТОЛЬКО совместно с ветеринаром! Таблица — ориентир для понимания, не для самолечения.
+
+### «Медовый месяц» (Honeymoon)
+
+Иногда перед ремиссией наступает переходный период — поджелудочная частично восстанавливает функцию, но полной ремиссии ещё нет.
+
+Признаки: нестабильные значения, частые гипо при прежней дозе, то нужна доза, то не нужна.
+
+Это может длиться от 2-4 недель до нескольких месяцев. Не паникуйте — это хороший знак! Тактика: реагировать на каждое измерение, снижать при надире ниже 5 ммоль/л.
 
 ### Как подтвердить ремиссию
 
 1. Ветеринар постепенно снижает дозу инсулина, наблюдая за кривыми глюкозы
-2. Если сахар держится ниже 7 ммоль/л (126 мг/дл) без инсулина 4 недели — ремиссия подтверждена!
+2. Если сахар держится ниже 7 ммоль/л (126 мг/дл) без инсулина **4 недели** — ремиссия подтверждена!
 3. Но не расслабляемся — продолжаем диету и мониторинг
 
-### Важно помнить
+### Мониторинг после ремиссии
 
-Ремиссия — это не «вылечился и забыл». Диабет может вернуться, если:
-- Нарушить диету
-- Допустить набор веса
-- Кошка переживает сильный стресс
-- Назначены стероидные препараты
+| Период | Что делать |
+|--------|-----------|
+| 1-4 неделя | Измерение каждые 3-4 дня |
+| 1-3 месяц | 1 раз в неделю дома + фруктозамин 1 раз/мес |
+| 3-6 месяц | Каждые 2 недели + фруктозамин раз в 2 мес |
+| Более 6 месяцев | 1 раз/мес + фруктозамин раз в 3 мес |
 
-Поэтому даже в ремиссии проверяйте сахар раз в 1-2 месяца. Это несложно, а спокойствие — бесценно.`,
+### Рецидив — к нему нужно быть готовым
+
+Вероятность рецидива: **~30-35%** в течение 1-2 лет. Это не редкость и не катастрофа.
+
+Провоцирующие факторы: нарушение диеты (возврат к сухому корму), набор веса, стероидная терапия, стресс, новые болезни.
+
+Признаки рецидива: снова жажда, частое мочеиспускание, потеря веса. Измерьте глюкозу + фруктозамин → возобновите инсулинотерапию незамедлительно.
+
+**Чем раньше возобновлён контроль, тем выше шанс повторной ремиссии!**`,
     en: `## Diabetes Remission in Cats
 
 When owners first hear about diabetes, it often feels like insulin injections are forever. But we have wonderful news! Remission means your cat can maintain normal blood sugar without insulin injections. And it's absolutely achievable.
@@ -101,40 +139,85 @@ If your kitty is carrying extra weight, losing it noticeably improves how the bo
 **5. The right insulin**
 Long-acting insulins (Glargine/Lantus, Detemir/Levemir) are associated with higher remission rates. Discuss the choice with your vet.
 
+### Why Early Treatment Matters So Much — Glucotoxicity
+
+There's a scientific concept called **glucotoxicity**. Chronic high blood sugar damages the pancreatic β-cells, suppressing their ability to produce insulin.
+
+The good news: this is **reversible**! When glucose returns to normal, the β-cells "rest" and recover their function. This is exactly why early aggressive treatment gives the best chance of remission.
+
+Every month of delay with proper treatment lowers the odds. **Starting early = giving your cat a real chance at recovery.**
+
 ### How to Tell Remission Is Near
 
-Here are the joyful signs that you're on the right track:
+Here are the **warning** (in a good way!) signs that appear 1-4 weeks before remission:
 
-- Lower and lower insulin doses are needed
-- Blood sugar is consistently in the normal range
-- Excessive thirst and frequent urination fade away
-- Your cat is active again, gaining healthy weight
+- **Recurring nadir below 4-5 mmol/L** at a stable dose — signal to reduce the dose!
+- Pre-injection values consistently below 10 mmol/L
+- Your cat drinks less, urinates less
+- Your cat is more active, gaining weight
+- Appetite decreases at the same dose (insulin is becoming "unnecessary")
 
-If you're seeing these signs — you're doing an amazing job!
+**Danger:** failing to notice approaching remission and not reducing the dose → severe hypoglycemia. Nadir below 4 mmol/L twice in a row = signal for immediate dose reduction.
+
+### Dose Reduction Protocol
+
+| Nadir (mmol/L) | What to Do |
+|----------------|-----------|
+| 5-8 | Continue current dose |
+| Below 5 (twice in a row) | Reduce by 0.5-1 IU |
+| Below 4 | Reduce by 1-2 IU or skip next dose |
+| Pre-injection consistently <7 | Try reducing to 0.5-1 IU |
+| Pre-injection consistently <6 at min. dose | Try discontinuing under vet supervision |
+
+**Important:** dose reduction should ONLY be done with your vet! This table is for understanding, not self-treatment.
+
+### The "Honeymoon" Period
+
+Sometimes before remission, there's a transitional phase where the pancreas partially recovers function, but full remission isn't here yet.
+
+Signs: unstable readings, frequent hypos at the same dose, insulin needs that fluctuate day to day.
+
+This can last from 2-4 weeks to several months. Don't panic — it's a good sign! Strategy: respond to each reading, reduce dose when nadir drops below 5 mmol/L.
 
 ### How to Confirm Remission
 
 1. Your vet gradually reduces the insulin dose while monitoring glucose curves
-2. If blood sugar stays below 7 mmol/L (126 mg/dL) without insulin for 4 weeks — remission is confirmed!
+2. If blood sugar stays below 7 mmol/L (126 mg/dL) without insulin for **4 weeks** — remission is confirmed!
 3. But don't let your guard down — continue the diet and monitoring
 
-### Important to Remember
+### Post-Remission Monitoring
 
-Remission doesn't mean "cured and done." Diabetes can come back if:
-- The diet is disrupted
-- Weight creeps back up
-- Your cat experiences significant stress
-- Steroid medications are prescribed
+| Period | What to Do |
+|--------|-----------|
+| Weeks 1-4 | Measure every 3-4 days |
+| Months 1-3 | Once weekly at home + fructosamine monthly |
+| Months 3-6 | Every 2 weeks + fructosamine every 2 months |
+| Beyond 6 months | Monthly at home + fructosamine every 3 months |
 
-So even during remission, check blood sugar every 1-2 months. It's a small effort, and the peace of mind is priceless.`,
+### Relapse — Be Prepared for It
+
+Relapse probability: **~30-35%** within 1-2 years. This is neither rare nor catastrophic.
+
+Triggers: diet disruption (returning to dry food), weight gain, steroid therapy, stress, new illnesses.
+
+Signs of relapse: thirst returns, frequent urination, weight loss. Check glucose + fructosamine → restart insulin therapy without delay.
+
+**The sooner control is restored, the higher the chance of a second remission!**`,
   },
   category: 'remission',
-  readingTimeMinutes: 6,
+  species: 'cat',
+  readingTimeMinutes: 10,
   order: 1,
   relatedArticleIds: ['what-is-diabetes', 'diet', 'glucose_monitoring', 'flexible-monitoring'],
   references: [
-    { ru: 'Roomp K, Rand J — Intensive blood glucose control is safe and effective in diabetic cats using home monitoring and treatment with glargine, JFMS 2009', en: 'Roomp K, Rand J — Intensive blood glucose control is safe and effective in diabetic cats using home monitoring and treatment with glargine, JFMS 2009' },
-    { ru: 'ISFM Guidelines on Diabetes Mellitus in Cats, 2023', en: 'ISFM Guidelines on Diabetes Mellitus in Cats, 2023' },
+    {
+      ru: 'Roomp K, Rand J — Intensive blood glucose control is safe and effective in diabetic cats using home monitoring and treatment with glargine, JFMS 2009',
+      en: 'Roomp K, Rand J — Intensive blood glucose control is safe and effective in diabetic cats using home monitoring and treatment with glargine, JFMS 2009',
+    },
+    {
+      ru: 'ISFM Guidelines on Diabetes Mellitus in Cats, 2023',
+      en: 'ISFM Guidelines on Diabetes Mellitus in Cats, 2023',
+    },
   ],
   tags: [
     { ru: 'ремиссия', en: 'remission' },

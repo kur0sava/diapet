@@ -13,7 +13,8 @@ import { useOnboardingNavigation } from '@navigation/hooks';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '@shared/theme';
 import { Button, Input } from '@shared/components/ui';
-import { MAX_CAT_WEIGHT_KG, MAX_CAT_AGE_YEARS } from '@storage/domain/types';
+import type { PetSpecies } from '@storage/domain/types';
+import { getSpeciesConfig } from '@shared/config/speciesConfig';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { storage, StorageKeys } from '@storage/mmkv/storage';
 import { parseDateOnly } from '@shared/utils/dateUtils';
@@ -35,6 +36,7 @@ export default function PetInfoScreen() {
     }
   })();
 
+  const [species, setSpecies] = useState<PetSpecies>(draft?.species ?? 'cat');
   const [name, setName] = useState(draft?.name ?? '');
   const [gender, setGender] = useState<'male' | 'female'>(draft?.gender ?? 'male');
   const [weightKg, setWeightKg] = useState(draft?.weightKg ?? '');
@@ -48,16 +50,26 @@ export default function PetInfoScreen() {
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
 
+  const speciesValidation = getSpeciesConfig(species).validation;
+
+  const handleSpeciesSelect = (s: PetSpecies) => {
+    setSpecies(s);
+    // Immediately switch theme colors via MMKV cache
+    storage.set('activeSpecies', s);
+  };
+
   const validate = () => {
     const newErrors: Record<string, string> = {};
     if (!name.trim()) newErrors.name = t('onboarding.nameRequired');
     if (weightKg) {
       const w = parseFloat(weightKg.replace(',', '.'));
-      if (isNaN(w) || w <= 0 || w > MAX_CAT_WEIGHT_KG) newErrors.weightKg = t('pets.invalidWeight');
+      if (isNaN(w) || w <= 0 || w > speciesValidation.maxWeightKg)
+        newErrors.weightKg = t('pets.invalidWeight');
     }
     if (age) {
       const a = parseInt(age, 10);
-      if (isNaN(a) || a < 0 || a > MAX_CAT_AGE_YEARS) newErrors.age = t('onboarding.ageInvalid');
+      if (isNaN(a) || a < 0 || a > speciesValidation.maxAgeYears)
+        newErrors.age = t('onboarding.ageInvalid');
     }
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -69,6 +81,7 @@ export default function PetInfoScreen() {
     storage.set(
       StorageKeys.ONBOARDING_DRAFT,
       JSON.stringify({
+        species,
         name: name.trim(),
         gender,
         weightKg,
@@ -79,6 +92,7 @@ export default function PetInfoScreen() {
     );
     navigation.navigate('Schedule', {
       petData: {
+        species,
         name: name.trim(),
         gender,
         weightKg: weightKg ? parseFloat(weightKg.replace(',', '.')) : undefined,
@@ -124,11 +138,58 @@ export default function PetInfoScreen() {
           </View>
 
           <View style={styles.form}>
+            <View style={styles.field}>
+              <Text style={[styles.label, { color: theme.colors.textSecondary }]}>
+                {t('onboarding.selectSpecies')}
+              </Text>
+              <View style={styles.speciesRow}>
+                {(
+                  [
+                    { value: 'cat' as PetSpecies, label: t('onboarding.speciesCat'), emoji: '🐱' },
+                    { value: 'dog' as PetSpecies, label: t('onboarding.speciesDog'), emoji: '🐶' },
+                  ] as const
+                ).map(opt => (
+                  <TouchableOpacity
+                    key={opt.value}
+                    style={[
+                      styles.speciesCard,
+                      {
+                        backgroundColor:
+                          species === opt.value
+                            ? theme.colors.primaryLight
+                            : theme.colors.surfaceSecondary,
+                        borderColor: species === opt.value ? theme.colors.primary : 'transparent',
+                      },
+                    ]}
+                    onPress={() => handleSpeciesSelect(opt.value)}
+                    activeOpacity={0.7}
+                  >
+                    <Text style={styles.speciesEmoji}>{opt.emoji}</Text>
+                    <Text
+                      style={[
+                        styles.speciesLabel,
+                        {
+                          color: species === opt.value ? theme.colors.primary : theme.colors.text,
+                          fontWeight: species === opt.value ? '700' : '500',
+                        },
+                      ]}
+                    >
+                      {opt.label}
+                    </Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+            </View>
+
             <Input
               label={t('onboarding.petName') + ' *'}
               value={name}
               onChangeText={setName}
-              placeholder={t('onboarding.petNamePlaceholder')}
+              placeholder={
+                species === 'dog'
+                  ? t('onboarding.petNamePlaceholderDog')
+                  : t('onboarding.petNamePlaceholder')
+              }
               error={errors.name}
               maxLength={50}
             />
@@ -171,7 +232,7 @@ export default function PetInfoScreen() {
                 label={t('onboarding.petWeight')}
                 value={weightKg}
                 onChangeText={setWeightKg}
-                placeholder="4.5"
+                placeholder={species === 'dog' ? '15' : '4.5'}
                 keyboardType="decimal-pad"
                 containerStyle={{ flex: 1 }}
                 error={errors.weightKg}
@@ -287,6 +348,17 @@ const styles = StyleSheet.create({
   row: { flexDirection: 'row', gap: 12 },
   rowInputs: { flexDirection: 'row', gap: 12 },
   optionBtn: { padding: 14, borderRadius: 12, alignItems: 'center' },
+  speciesRow: { flexDirection: 'row', gap: 12 },
+  speciesCard: {
+    flex: 1,
+    paddingVertical: 20,
+    borderRadius: 16,
+    borderWidth: 2,
+    alignItems: 'center',
+    gap: 8,
+  },
+  speciesEmoji: { fontSize: 40 },
+  speciesLabel: { fontSize: 16 },
   dateBtn: { overflow: 'hidden' },
   radioRow: {
     flexDirection: 'row',

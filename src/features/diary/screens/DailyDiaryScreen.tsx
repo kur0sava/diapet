@@ -14,7 +14,16 @@ import { useTranslation } from 'react-i18next';
 import { Icon } from '@shared/components/ui/Icon';
 import { useQuery } from '@tanstack/react-query';
 import { queryKeys } from '@shared/utils/queryKeys';
-import { format, parseISO, isToday, isYesterday, addDays, subDays, startOfDay, isValid } from 'date-fns';
+import {
+  format,
+  parseISO,
+  isToday,
+  isYesterday,
+  addDays,
+  subDays,
+  startOfDay,
+  isValid,
+} from 'date-fns';
 import { ru as dateFnsRu, enUS } from 'date-fns/locale';
 import i18next from 'i18next';
 
@@ -28,6 +37,7 @@ import { feedingRepository } from '@storage/database/repositories/feedingReposit
 import { getGlucoseColor, GlucoseUnit, mmolToMgdl } from '@storage/domain/types';
 import { storage, StorageKeys } from '@storage/mmkv/storage';
 import { analyzeDayGlucose, computeDayStats } from '../utils/diaryAnalyzer';
+import { getSpeciesConfig } from '@shared/config/speciesConfig';
 import { useRoute, RouteProp } from '@react-navigation/native';
 import type { HomeStackParamList } from '@navigation/types';
 
@@ -74,7 +84,10 @@ export default function DailyDiaryScreen() {
   const dateStr = format(currentDate, 'yyyy-MM-dd');
   const isFuture = startOfDay(currentDate) > startOfDay(new Date());
 
-  const historyMinDate = useMemo(() => historyLimited ? subDays(new Date(), 30) : null, [historyLimited]);
+  const historyMinDate = useMemo(
+    () => (historyLimited ? subDays(new Date(), 30) : null),
+    [historyLimited]
+  );
   const canGoPrev = !historyMinDate || startOfDay(currentDate) > startOfDay(historyMinDate);
 
   const goToPrevDay = useCallback(() => {
@@ -93,19 +106,34 @@ export default function DailyDiaryScreen() {
     }
   }, [currentDate]);
 
-  const { data: glucoseReadings = [], isLoading: loadingGlucose, isError: errGlucose, refetch: refetchGlucose } = useQuery({
+  const {
+    data: glucoseReadings = [],
+    isLoading: loadingGlucose,
+    isError: errGlucose,
+    refetch: refetchGlucose,
+  } = useQuery({
     queryKey: queryKeys.diary.glucose(petId, dateStr),
     queryFn: () => glucoseRepository.findForDay(petId, dateStr),
     enabled: !!petId,
   });
 
-  const { data: injections = [], isLoading: loadingInj, isError: errInj, refetch: refetchInj } = useQuery({
+  const {
+    data: injections = [],
+    isLoading: loadingInj,
+    isError: errInj,
+    refetch: refetchInj,
+  } = useQuery({
     queryKey: queryKeys.diary.injection(petId, dateStr),
     queryFn: () => injectionRepository.findForDay(petId, dateStr),
     enabled: !!petId,
   });
 
-  const { data: feedings = [], isLoading: loadingFeed, isError: errFeed, refetch: refetchFeed } = useQuery({
+  const {
+    data: feedings = [],
+    isLoading: loadingFeed,
+    isError: errFeed,
+    refetch: refetchFeed,
+  } = useQuery({
     queryKey: queryKeys.diary.feeding(petId, dateStr),
     queryFn: () => feedingRepository.findForDay(petId, dateStr),
     enabled: !!petId,
@@ -125,18 +153,23 @@ export default function DailyDiaryScreen() {
     const events: TimelineEvent[] = [];
 
     for (const g of glucoseReadings) {
-      const valueStr = glucoseUnit === 'mg/dL'
-        ? `${g.valueMgdl} ${t('common.mg_dl')}`
-        : `${g.valueMmol.toFixed(1)} ${t('common.mmol_l')}`;
+      const valueStr =
+        glucoseUnit === 'mg/dL'
+          ? `${g.valueMgdl} ${t('common.mg_dl')}`
+          : `${g.valueMmol.toFixed(1)} ${t('common.mmol_l')}`;
       events.push({
         id: g.id,
         time: g.recordedAt,
         type: 'glucose',
         title: valueStr,
-        subtitle: g.mealRelation === 'before_meal' ? t('glucose.beforeMeal')
-          : g.mealRelation === 'after_meal' ? t('glucose.afterMeal')
-          : g.mealRelation === 'fasting' ? t('glucose.fasting')
-          : undefined,
+        subtitle:
+          g.mealRelation === 'before_meal'
+            ? t('glucose.beforeMeal')
+            : g.mealRelation === 'after_meal'
+              ? t('glucose.afterMeal')
+              : g.mealRelation === 'fasting'
+                ? t('glucose.fasting')
+                : undefined,
         color: getGlucoseColor(g.valueMmol),
       });
     }
@@ -172,8 +205,18 @@ export default function DailyDiaryScreen() {
     return events.sort((a, b) => a.time.localeCompare(b.time));
   }, [glucoseReadings, injections, feedings, glucoseUnit, t, theme]);
 
-  const stats = useMemo(() => computeDayStats(glucoseReadings), [glucoseReadings]);
-  const recommendations = useMemo(() => analyzeDayGlucose(glucoseReadings), [glucoseReadings]);
+  const speciesConfig = useMemo(
+    () => getSpeciesConfig(activePet?.species ?? 'cat'),
+    [activePet?.species]
+  );
+  const stats = useMemo(
+    () => computeDayStats(glucoseReadings, speciesConfig),
+    [glucoseReadings, speciesConfig]
+  );
+  const recommendations = useMemo(
+    () => analyzeDayGlucose(glucoseReadings, speciesConfig),
+    [glucoseReadings, speciesConfig]
+  );
 
   const recTypeColors: Record<string, string> = {
     critical: theme.colors.danger,
@@ -190,38 +233,76 @@ export default function DailyDiaryScreen() {
 
   function getEventIcon(type: TimelineEvent['type']): string {
     switch (type) {
-      case 'glucose': return 'water';
-      case 'injection': return 'medkit';
-      case 'feeding': return 'restaurant';
+      case 'glucose':
+        return 'water';
+      case 'injection':
+        return 'medkit';
+      case 'feeding':
+        return 'restaurant';
     }
   }
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.background }]} edges={['left', 'right']}>
+    <SafeAreaView
+      style={[styles.container, { backgroundColor: theme.colors.background }]}
+      edges={['left', 'right']}
+    >
       <StatusBar barStyle={theme.isDark ? 'light-content' : 'dark-content'} />
 
       {/* Header */}
-      <SafeAreaView edges={['top']} style={[styles.header, { backgroundColor: theme.colors.surface, borderBottomColor: theme.colors.divider }]}>
-        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backBtn} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
+      <SafeAreaView
+        edges={['top']}
+        style={[
+          styles.header,
+          { backgroundColor: theme.colors.surface, borderBottomColor: theme.colors.divider },
+        ]}
+      >
+        <TouchableOpacity
+          onPress={() => navigation.goBack()}
+          style={styles.backBtn}
+          hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+        >
           <Icon name="chevron-back" size={24} color={theme.colors.text} />
         </TouchableOpacity>
-        <Text numberOfLines={1} style={[styles.screenTitle, { color: theme.colors.text, fontFamily: theme.fonts.bold }]}>
+        <Text
+          numberOfLines={1}
+          style={[styles.screenTitle, { color: theme.colors.text, fontFamily: theme.fonts.bold }]}
+        >
           {t('diary.title')}
         </Text>
         <View style={{ width: 40 }} />
       </SafeAreaView>
 
       {/* Date Navigator */}
-      <View style={[styles.dateNav, { backgroundColor: theme.colors.surface, borderBottomColor: theme.colors.divider }]}>
-        <TouchableOpacity onPress={goToPrevDay} disabled={!canGoPrev} style={[styles.dateNavBtn, !canGoPrev && styles.dateNavBtnDisabled]} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
-          <Icon name="chevron-back" size={20} color={canGoPrev ? theme.colors.primary : theme.colors.textTertiary} />
+      <View
+        style={[
+          styles.dateNav,
+          { backgroundColor: theme.colors.surface, borderBottomColor: theme.colors.divider },
+        ]}
+      >
+        <TouchableOpacity
+          onPress={goToPrevDay}
+          disabled={!canGoPrev}
+          style={[styles.dateNavBtn, !canGoPrev && styles.dateNavBtnDisabled]}
+          hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+        >
+          <Icon
+            name="chevron-back"
+            size={20}
+            color={canGoPrev ? theme.colors.primary : theme.colors.textTertiary}
+          />
         </TouchableOpacity>
         <TouchableOpacity
           onPress={() => !isToday(currentDate) && setCurrentDate(new Date())}
           disabled={isToday(currentDate)}
           style={styles.dateLabelBtn}
         >
-          <Text style={[styles.dateLabel, { color: theme.colors.text, fontFamily: theme.fonts.semibold }]}>
+          <Text
+            style={[
+              styles.dateLabel,
+              { color: theme.colors.text, fontFamily: theme.fonts.semibold },
+            ]}
+          >
             {formatDayHeader(currentDate, t)}
           </Text>
           {!isToday(currentDate) && (
@@ -236,54 +317,98 @@ export default function DailyDiaryScreen() {
           disabled={isToday(currentDate)}
           hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
         >
-          <Icon name="chevron-forward" size={20} color={isToday(currentDate) ? theme.colors.textTertiary : theme.colors.primary} />
+          <Icon
+            name="chevron-forward"
+            size={20}
+            color={isToday(currentDate) ? theme.colors.textTertiary : theme.colors.primary}
+          />
         </TouchableOpacity>
       </View>
 
       {!petId && (
         <View style={styles.centered}>
-          <Icon name="paw-outline" size={40} color={theme.colors.textTertiary} style={{ marginBottom: 10 }} />
-          <Text style={[styles.emptyText, { color: theme.colors.textSecondary }]}>{t('common.noData')}</Text>
+          <Icon
+            name="paw-outline"
+            size={40}
+            color={theme.colors.textTertiary}
+            style={{ marginBottom: 10 }}
+          />
+          <Text style={[styles.emptyText, { color: theme.colors.textSecondary }]}>
+            {t('common.noData')}
+          </Text>
         </View>
       )}
 
       {isError && petId && (
         <View style={styles.centered}>
-          <Icon name="alert-circle-outline" size={32} color={theme.colors.danger} style={{ marginBottom: 8 }} />
-          <Text style={[styles.emptyText, { color: theme.colors.textSecondary }]}>{t('common.error')}</Text>
+          <Icon
+            name="alert-circle-outline"
+            size={32}
+            color={theme.colors.danger}
+            style={{ marginBottom: 8 }}
+          />
+          <Text style={[styles.emptyText, { color: theme.colors.textSecondary }]}>
+            {t('common.error')}
+          </Text>
         </View>
       )}
 
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.scrollContent}
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={theme.colors.primary} />}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            tintColor={theme.colors.primary}
+          />
+        }
       >
-
         {/* Stats Row */}
         {stats.count > 0 && (
           <View style={[styles.statsRow, { backgroundColor: theme.colors.surface }]}>
             <View style={styles.statItem}>
-              <Text style={[styles.statValue, { color: theme.colors.text, fontFamily: theme.fonts.bold }]}>
+              <Text
+                style={[
+                  styles.statValue,
+                  { color: theme.colors.text, fontFamily: theme.fonts.bold },
+                ]}
+              >
                 {glucoseUnit === 'mg/dL'
                   ? `${mmolToMgdl(stats.avg ?? 0)}`
                   : `${stats.avg?.toFixed(1) ?? '—'}`}
               </Text>
-              <Text style={[styles.statLabel, { color: theme.colors.textSecondary }]}>{t('diary.avg')}</Text>
+              <Text style={[styles.statLabel, { color: theme.colors.textSecondary }]}>
+                {t('diary.avg')}
+              </Text>
             </View>
             <View style={[styles.statDivider, { backgroundColor: theme.colors.divider }]} />
             <View style={styles.statItem}>
-              <Text style={[styles.statValue, { color: theme.colors.success, fontFamily: theme.fonts.bold }]}>
+              <Text
+                style={[
+                  styles.statValue,
+                  { color: theme.colors.success, fontFamily: theme.fonts.bold },
+                ]}
+              >
                 {stats.inRangePercent ?? 0}%
               </Text>
-              <Text style={[styles.statLabel, { color: theme.colors.textSecondary }]}>{t('diary.inRange')}</Text>
+              <Text style={[styles.statLabel, { color: theme.colors.textSecondary }]}>
+                {t('diary.inRange')}
+              </Text>
             </View>
             <View style={[styles.statDivider, { backgroundColor: theme.colors.divider }]} />
             <View style={styles.statItem}>
-              <Text style={[styles.statValue, { color: theme.colors.text, fontFamily: theme.fonts.bold }]}>
+              <Text
+                style={[
+                  styles.statValue,
+                  { color: theme.colors.text, fontFamily: theme.fonts.bold },
+                ]}
+              >
                 {stats.count}
               </Text>
-              <Text style={[styles.statLabel, { color: theme.colors.textSecondary }]}>{t('diary.measurements')}</Text>
+              <Text style={[styles.statLabel, { color: theme.colors.textSecondary }]}>
+                {t('diary.measurements')}
+              </Text>
             </View>
           </View>
         )}
@@ -291,7 +416,12 @@ export default function DailyDiaryScreen() {
         {/* AI Recommendation Panel */}
         {glucoseReadings.length > 0 && (
           <View style={[styles.section, { marginTop: 16 }]}>
-            <Text style={[styles.sectionTitle, { color: theme.colors.text, fontFamily: theme.fonts.bold }]}>
+            <Text
+              style={[
+                styles.sectionTitle,
+                { color: theme.colors.text, fontFamily: theme.fonts.bold },
+              ]}
+            >
               {t('diary.adviceTitle')}
             </Text>
             {recommendations.map((rec, i) => {
@@ -300,9 +430,17 @@ export default function DailyDiaryScreen() {
               return (
                 <View
                   key={i}
-                  style={[styles.recCard, { backgroundColor: recColor + '18', borderLeftColor: recColor }]}
+                  style={[
+                    styles.recCard,
+                    { backgroundColor: recColor + '18', borderLeftColor: recColor },
+                  ]}
                 >
-                  <Icon name={recIcon as never} size={18} color={recColor} style={{ marginRight: 8 }} />
+                  <Icon
+                    name={recIcon as never}
+                    size={18}
+                    color={recColor}
+                    style={{ marginRight: 8 }}
+                  />
                   <Text style={[styles.recText, { color: theme.colors.text }]}>
                     {t(rec.messageKey, rec.params ?? {})}
                   </Text>
@@ -314,7 +452,12 @@ export default function DailyDiaryScreen() {
 
         {/* Timeline */}
         <View style={styles.section}>
-          <Text style={[styles.sectionTitle, { color: theme.colors.text, fontFamily: theme.fonts.bold }]}>
+          <Text
+            style={[
+              styles.sectionTitle,
+              { color: theme.colors.text, fontFamily: theme.fonts.bold },
+            ]}
+          >
             {t('diary.timeline')}
           </Text>
 
@@ -326,47 +469,73 @@ export default function DailyDiaryScreen() {
 
           {!isLoading && timeline.length === 0 && (
             <View style={styles.emptyState}>
-              <Icon name="calendar-outline" size={40} color={theme.colors.textTertiary} style={{ marginBottom: 10 }} />
+              <Icon
+                name="calendar-outline"
+                size={40}
+                color={theme.colors.textTertiary}
+                style={{ marginBottom: 10 }}
+              />
               <Text style={[styles.emptyText, { color: theme.colors.textSecondary }]}>
                 {isFuture ? t('diary.futureDate') : t('diary.noEvents')}
               </Text>
             </View>
           )}
 
-          {!isLoading && timeline.map((event, index) => (
-            <View key={event.id} style={styles.timelineItem}>
-              {/* Connector line */}
-              <View style={styles.timelineLeft}>
-                <View style={[styles.timelineDot, { backgroundColor: event.color }]}>
-                  <Icon name={getEventIcon(event.type) as never} size={12} color="#fff" />
+          {!isLoading &&
+            timeline.map((event, index) => (
+              <View key={event.id} style={styles.timelineItem}>
+                {/* Connector line */}
+                <View style={styles.timelineLeft}>
+                  <View style={[styles.timelineDot, { backgroundColor: event.color }]}>
+                    <Icon name={getEventIcon(event.type) as never} size={12} color="#fff" />
+                  </View>
+                  {index < timeline.length - 1 && (
+                    <View
+                      style={[styles.timelineLine, { backgroundColor: theme.colors.divider }]}
+                    />
+                  )}
                 </View>
-                {index < timeline.length - 1 && (
-                  <View style={[styles.timelineLine, { backgroundColor: theme.colors.divider }]} />
-                )}
-              </View>
-              {/* Content */}
-              <View style={[styles.timelineCard, { backgroundColor: theme.colors.surface, ...theme.shadows.sm }]}>
-                <View style={styles.timelineCardTop}>
-                  <Text style={[styles.timelineTime, { color: theme.colors.textSecondary }]}>
-                    {(() => { const d = parseISO(event.time); return isValid(d) ? format(d, 'HH:mm') : '--:--'; })()}
-                  </Text>
-                  <Text style={[styles.timelineTitle, { color: theme.colors.text, fontFamily: theme.fonts.semibold }]}>
-                    {event.title}
-                  </Text>
+                {/* Content */}
+                <View
+                  style={[
+                    styles.timelineCard,
+                    { backgroundColor: theme.colors.surface, ...theme.shadows.sm },
+                  ]}
+                >
+                  <View style={styles.timelineCardTop}>
+                    <Text style={[styles.timelineTime, { color: theme.colors.textSecondary }]}>
+                      {(() => {
+                        const d = parseISO(event.time);
+                        return isValid(d) ? format(d, 'HH:mm') : '--:--';
+                      })()}
+                    </Text>
+                    <Text
+                      style={[
+                        styles.timelineTitle,
+                        { color: theme.colors.text, fontFamily: theme.fonts.semibold },
+                      ]}
+                    >
+                      {event.title}
+                    </Text>
+                  </View>
+                  {event.subtitle && (
+                    <Text style={[styles.timelineSubtitle, { color: theme.colors.textTertiary }]}>
+                      {event.subtitle}
+                    </Text>
+                  )}
                 </View>
-                {event.subtitle && (
-                  <Text style={[styles.timelineSubtitle, { color: theme.colors.textTertiary }]}>
-                    {event.subtitle}
-                  </Text>
-                )}
               </View>
-            </View>
-          ))}
+            ))}
         </View>
 
         {/* Add Entries Section */}
         <View style={styles.section}>
-          <Text style={[styles.sectionTitle, { color: theme.colors.text, fontFamily: theme.fonts.bold }]}>
+          <Text
+            style={[
+              styles.sectionTitle,
+              { color: theme.colors.text, fontFamily: theme.fonts.bold },
+            ]}
+          >
             {t('diary.addEntry')}
           </Text>
           <View style={styles.addRow}>
@@ -380,7 +549,13 @@ export default function DailyDiaryScreen() {
               }}
             >
               <Icon name="water" size={20} color={theme.colors.primary} />
-              <Text style={[styles.addBtnText, { color: theme.colors.primary, fontFamily: theme.fonts.medium }]} numberOfLines={2}>
+              <Text
+                style={[
+                  styles.addBtnText,
+                  { color: theme.colors.primary, fontFamily: theme.fonts.medium },
+                ]}
+                numberOfLines={2}
+              >
                 {t('dashboard.logGlucose')}
               </Text>
             </TouchableOpacity>
@@ -394,7 +569,13 @@ export default function DailyDiaryScreen() {
               }}
             >
               <Icon name="medkit" size={20} color={theme.colors.secondary} />
-              <Text style={[styles.addBtnText, { color: theme.colors.secondary, fontFamily: theme.fonts.medium }]} numberOfLines={2}>
+              <Text
+                style={[
+                  styles.addBtnText,
+                  { color: theme.colors.secondary, fontFamily: theme.fonts.medium },
+                ]}
+                numberOfLines={2}
+              >
                 {t('dashboard.logInjection')}
               </Text>
             </TouchableOpacity>
@@ -408,13 +589,18 @@ export default function DailyDiaryScreen() {
               }}
             >
               <Icon name="restaurant" size={20} color={theme.colors.success} />
-              <Text style={[styles.addBtnText, { color: theme.colors.success, fontFamily: theme.fonts.medium }]} numberOfLines={2}>
+              <Text
+                style={[
+                  styles.addBtnText,
+                  { color: theme.colors.success, fontFamily: theme.fonts.medium },
+                ]}
+                numberOfLines={2}
+              >
                 {t('dashboard.logFeeding')}
               </Text>
             </TouchableOpacity>
           </View>
         </View>
-
       </ScrollView>
     </SafeAreaView>
   );

@@ -1,7 +1,11 @@
 import React, { useState, useCallback, useRef, useMemo } from 'react';
 import {
-  View, Text, StyleSheet, ScrollView,
-  TouchableOpacity, LayoutChangeEvent,
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  TouchableOpacity,
+  LayoutChangeEvent,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRoute, RouteProp } from '@react-navigation/native';
@@ -13,6 +17,7 @@ import { Icon } from '@shared/components/ui/Icon';
 import { articles } from '../data/articles';
 import { BilingualText } from '../types';
 import { storageUtils, StorageKeys } from '@storage/mmkv/storage';
+import { usePetStore } from '@shared/stores/petStore';
 
 const useLang = () => {
   const { i18n } = useTranslation();
@@ -32,6 +37,7 @@ export default function ArticleDetailScreen() {
   const { theme } = useTheme();
   const lang = useLang();
   const scrollRef = useRef<ScrollView>(null);
+  const species = usePetStore(s => s.activePet?.species ?? 'cat');
 
   const article = articles.find(a => a.id === route.params.articleId);
 
@@ -40,7 +46,7 @@ export default function ArticleDetailScreen() {
     storageUtils.getObject<string[]>(StorageKeys.BOOKMARKED_ARTICLES) ?? [];
 
   const [isBookmarked, setIsBookmarked] = useState(() =>
-    article ? getBookmarks().includes(article.id) : false,
+    article ? getBookmarks().includes(article.id) : false
   );
 
   const toggleBookmark = useCallback(() => {
@@ -65,13 +71,15 @@ export default function ArticleDetailScreen() {
   const headings: HeadingEntry[] = useMemo(() => {
     if (!article) return [];
     const result: HeadingEntry[] = [];
-    lang(article.contentKey).split('\n').forEach((line, i) => {
-      if (line.startsWith('### ')) {
-        result.push({ level: 3, text: line.replace('### ', ''), lineIndex: i });
-      } else if (line.startsWith('## ')) {
-        result.push({ level: 2, text: line.replace('## ', ''), lineIndex: i });
-      }
-    });
+    lang(article.contentKey)
+      .split('\n')
+      .forEach((line, i) => {
+        if (line.startsWith('### ')) {
+          result.push({ level: 3, text: line.replace('### ', ''), lineIndex: i });
+        } else if (line.startsWith('## ')) {
+          result.push({ level: 2, text: line.replace('## ', ''), lineIndex: i });
+        }
+      });
     return result;
   }, [article, lang]);
 
@@ -95,7 +103,9 @@ export default function ArticleDetailScreen() {
   if (!article) {
     return (
       <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.background }]}>
-        <Text style={{ color: theme.colors.text, padding: 20 }}>{t('encyclopedia.articleNotFound')}</Text>
+        <Text style={{ color: theme.colors.text, padding: 20 }}>
+          {t('encyclopedia.articleNotFound')}
+        </Text>
       </SafeAreaView>
     );
   }
@@ -103,12 +113,21 @@ export default function ArticleDetailScreen() {
   // Render inline text with **bold** segments
   const renderInline = (text: string, baseStyle: object, key: string) => {
     const parts = text.split(/(\*\*[^*]+\*\*)/g);
-    if (parts.length === 1) return <Text key={key} style={[baseStyle, { color: theme.colors.text }]}>{text}</Text>;
+    if (parts.length === 1)
+      return (
+        <Text key={key} style={[baseStyle, { color: theme.colors.text }]}>
+          {text}
+        </Text>
+      );
     return (
       <Text key={key} style={[baseStyle, { color: theme.colors.text }]}>
         {parts.map((part, j) => {
           if (part.startsWith('**') && part.endsWith('**')) {
-            return <Text key={j} style={{ fontWeight: '700' }}>{part.slice(2, -2)}</Text>;
+            return (
+              <Text key={j} style={{ fontWeight: '700' }}>
+                {part.slice(2, -2)}
+              </Text>
+            );
           }
           return part;
         })}
@@ -123,7 +142,7 @@ export default function ArticleDetailScreen() {
           <Text
             key={`line-${i}`}
             style={[styles.h2, { color: theme.colors.text }]}
-            onLayout={(e) => handleHeadingLayout(i, e)}
+            onLayout={e => handleHeadingLayout(i, e)}
           >
             {line.replace('## ', '')}
           </Text>
@@ -134,7 +153,7 @@ export default function ArticleDetailScreen() {
           <Text
             key={`line-${i}`}
             style={[styles.h3, { color: theme.colors.text }]}
-            onLayout={(e) => handleHeadingLayout(i, e)}
+            onLayout={e => handleHeadingLayout(i, e)}
           >
             {line.replace('### ', '')}
           </Text>
@@ -142,13 +161,24 @@ export default function ArticleDetailScreen() {
       }
       if (line.startsWith('> ')) {
         return (
-          <View key={`line-${i}`} style={[styles.blockquote, { borderLeftColor: theme.colors.primary, backgroundColor: theme.colors.primaryLight }]}>
+          <View
+            key={`line-${i}`}
+            style={[
+              styles.blockquote,
+              { borderLeftColor: theme.colors.primary, backgroundColor: theme.colors.primaryLight },
+            ]}
+          >
             {renderInline(line.replace('> ', ''), styles.blockquoteText, `bq-${i}`)}
           </View>
         );
       }
       if (line.startsWith('---')) {
-        return <View key={`line-${i}`} style={[styles.divider, { backgroundColor: theme.colors.border }]} />;
+        return (
+          <View
+            key={`line-${i}`}
+            style={[styles.divider, { backgroundColor: theme.colors.border }]}
+          />
+        );
       }
       if (line.trim() === '') {
         return <View key={`line-${i}`} style={{ height: 8 }} />;
@@ -158,7 +188,9 @@ export default function ArticleDetailScreen() {
       if (numMatch) {
         return (
           <View key={`line-${i}`} style={styles.bulletItem}>
-            <Text style={[styles.bulletDot, { color: theme.colors.textSecondary }]}>{numMatch[1]}.</Text>
+            <Text style={[styles.bulletDot, { color: theme.colors.textSecondary }]}>
+              {numMatch[1]}.
+            </Text>
             {renderInline(numMatch[2], styles.body, `ni-${i}`)}
           </View>
         );
@@ -172,7 +204,11 @@ export default function ArticleDetailScreen() {
         );
       }
       if (line.startsWith('**') && line.endsWith('**')) {
-        return <Text key={`line-${i}`} style={[styles.bold, { color: theme.colors.text }]}>{line.replace(/\*\*/g, '')}</Text>;
+        return (
+          <Text key={`line-${i}`} style={[styles.bold, { color: theme.colors.text }]}>
+            {line.replace(/\*\*/g, '')}
+          </Text>
+        );
       }
       return renderInline(line, styles.body, `line-${i}`);
     });
@@ -181,7 +217,10 @@ export default function ArticleDetailScreen() {
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.background }]}>
       <View style={[styles.navHeader, { borderBottomColor: theme.colors.border }]}>
-        <TouchableOpacity onPress={() => navigation.goBack()} style={{ minHeight: 44, minWidth: 44, justifyContent: 'center' }}>
+        <TouchableOpacity
+          onPress={() => navigation.goBack()}
+          style={{ minHeight: 44, minWidth: 44, justifyContent: 'center' }}
+        >
           <Text style={{ color: theme.colors.primary }}>← {t('common.back')}</Text>
         </TouchableOpacity>
         <Text style={[styles.headerTitle, { color: theme.colors.text }]} numberOfLines={1}>
@@ -196,26 +235,55 @@ export default function ArticleDetailScreen() {
         </TouchableOpacity>
       </View>
 
-      <ScrollView ref={scrollRef} showsVerticalScrollIndicator={false} contentContainerStyle={styles.content}>
-        <Text style={[styles.articleTitle, { color: theme.colors.text }]}>{lang(article.titleKey)}</Text>
+      <ScrollView
+        ref={scrollRef}
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={styles.content}
+      >
+        <Text style={[styles.articleTitle, { color: theme.colors.text }]}>
+          {lang(article.titleKey)}
+        </Text>
         <View style={styles.meta}>
           <Text style={[styles.metaText, { color: theme.colors.textSecondary }]}>
             ⏱ {article.readingTimeMinutes} {t('encyclopedia.minutesRead')}
           </Text>
         </View>
-        <Text style={[styles.summary, { color: theme.colors.textSecondary, backgroundColor: theme.colors.primaryLight }]}>
+        <Text
+          style={[
+            styles.summary,
+            { color: theme.colors.textSecondary, backgroundColor: theme.colors.primaryLight },
+          ]}
+        >
           {lang(article.summaryKey)}
         </Text>
 
-        <View style={[styles.disclaimerBanner, { backgroundColor: `${theme.colors.warning}15`, borderColor: `${theme.colors.warning}40` }]}>
-          <Icon name="information-circle-outline" size={16} color={theme.colors.warning} style={{ marginTop: 2 }} />
+        <View
+          style={[
+            styles.disclaimerBanner,
+            {
+              backgroundColor: `${theme.colors.warning}15`,
+              borderColor: `${theme.colors.warning}40`,
+            },
+          ]}
+        >
+          <Icon
+            name="information-circle-outline"
+            size={16}
+            color={theme.colors.warning}
+            style={{ marginTop: 2 }}
+          />
           <Text style={[styles.disclaimerText, { color: theme.colors.textSecondary }]}>
             {t('encyclopedia.disclaimer')}
           </Text>
         </View>
 
         {showToc && (
-          <View style={[styles.tocContainer, { backgroundColor: theme.colors.surface, borderColor: theme.colors.border }]}>
+          <View
+            style={[
+              styles.tocContainer,
+              { backgroundColor: theme.colors.surface, borderColor: theme.colors.border },
+            ]}
+          >
             <TouchableOpacity
               style={styles.tocHeader}
               onPress={() => setTocExpanded(!tocExpanded)}
@@ -238,18 +306,17 @@ export default function ArticleDetailScreen() {
                 {headings.map((heading, idx) => (
                   <TouchableOpacity
                     key={idx}
-                    style={[
-                      styles.tocItem,
-                      heading.level === 3 && styles.tocItemIndented,
-                    ]}
+                    style={[styles.tocItem, heading.level === 3 && styles.tocItemIndented]}
                     onPress={() => scrollToHeading(heading.lineIndex)}
                     activeOpacity={0.6}
                   >
-                    <Text style={[
-                      styles.tocItemText,
-                      { color: theme.colors.primary },
-                      heading.level === 3 && styles.tocItemTextSub,
-                    ]}>
+                    <Text
+                      style={[
+                        styles.tocItemText,
+                        { color: theme.colors.primary },
+                        heading.level === 3 && styles.tocItemTextSub,
+                      ]}
+                    >
                       {heading.text}
                     </Text>
                   </TouchableOpacity>
@@ -261,7 +328,9 @@ export default function ArticleDetailScreen() {
 
         <View
           style={styles.articleContent}
-          onLayout={(e) => { articleContentY.current = e.nativeEvent.layout.y; }}
+          onLayout={e => {
+            articleContentY.current = e.nativeEvent.layout.y;
+          }}
         >
           {renderContent(lang(article.contentKey))}
         </View>
@@ -274,8 +343,12 @@ export default function ArticleDetailScreen() {
             </Text>
             {article.references.map((ref, i) => (
               <View key={`ref-${i}`} style={styles.referenceItem}>
-                <Text style={[styles.referenceNumber, { color: theme.colors.textTertiary }]}>{i + 1}.</Text>
-                <Text style={[styles.referenceText, { color: theme.colors.textSecondary }]}>{lang(ref)}</Text>
+                <Text style={[styles.referenceNumber, { color: theme.colors.textTertiary }]}>
+                  {i + 1}.
+                </Text>
+                <Text style={[styles.referenceText, { color: theme.colors.textSecondary }]}>
+                  {lang(ref)}
+                </Text>
               </View>
             ))}
           </View>
@@ -290,18 +363,30 @@ export default function ArticleDetailScreen() {
             {article.relatedArticleIds.map(relId => {
               const related = articles.find(a => a.id === relId);
               if (!related) return null;
+              // Skip cross-species articles
+              if (related.species && related.species !== 'all' && related.species !== species)
+                return null;
               return (
                 <TouchableOpacity
                   key={relId}
-                  style={[styles.relatedCard, { backgroundColor: theme.colors.surface, borderColor: theme.colors.border }]}
+                  style={[
+                    styles.relatedCard,
+                    { backgroundColor: theme.colors.surface, borderColor: theme.colors.border },
+                  ]}
                   onPress={() => navigation.push('ArticleDetail', { articleId: relId })}
                   activeOpacity={0.7}
                 >
                   <View style={{ flex: 1 }}>
-                    <Text style={[styles.relatedCardTitle, { color: theme.colors.text }]} numberOfLines={1}>
+                    <Text
+                      style={[styles.relatedCardTitle, { color: theme.colors.text }]}
+                      numberOfLines={1}
+                    >
                       {lang(related.titleKey)}
                     </Text>
-                    <Text style={[styles.relatedCardSummary, { color: theme.colors.textSecondary }]} numberOfLines={2}>
+                    <Text
+                      style={[styles.relatedCardSummary, { color: theme.colors.textSecondary }]}
+                      numberOfLines={2}
+                    >
                       {lang(related.summaryKey)}
                     </Text>
                   </View>
@@ -318,29 +403,62 @@ export default function ArticleDetailScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
-  navHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 16, paddingVertical: 12, borderBottomWidth: 0.5 },
-  headerTitle: { fontSize: 16, fontWeight: '600', flex: 1, textAlign: 'center', marginHorizontal: 8 },
+  navHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    borderBottomWidth: 0.5,
+  },
+  headerTitle: {
+    fontSize: 16,
+    fontWeight: '600',
+    flex: 1,
+    textAlign: 'center',
+    marginHorizontal: 8,
+  },
   bookmarkButton: { width: 60, alignItems: 'flex-end' },
   content: { padding: 20, paddingBottom: 60 },
   articleTitle: { fontSize: 24, fontWeight: '800', lineHeight: 32, marginBottom: 12 },
   meta: { flexDirection: 'row', marginBottom: 16 },
   metaText: { fontSize: 13 },
   summary: { fontSize: 15, lineHeight: 22, padding: 16, borderRadius: 12, marginBottom: 12 },
-  disclaimerBanner: { flexDirection: 'row', alignItems: 'flex-start', gap: 8, padding: 12, borderRadius: 10, borderWidth: 1, marginBottom: 20 },
+  disclaimerBanner: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    gap: 8,
+    padding: 12,
+    borderRadius: 10,
+    borderWidth: 1,
+    marginBottom: 20,
+  },
   disclaimerText: { fontSize: 12, lineHeight: 18, flex: 1 },
   articleContent: { gap: 4 },
   h2: { fontSize: 20, fontWeight: '800', marginTop: 20, marginBottom: 8 },
   h3: { fontSize: 17, fontWeight: '700', marginTop: 16, marginBottom: 6 },
   bold: { fontSize: 15, fontWeight: '700', marginTop: 4 },
   body: { fontSize: 15, lineHeight: 24 },
-  blockquote: { borderLeftWidth: 4, paddingLeft: 12, paddingVertical: 10, paddingRight: 12, borderRadius: 4, marginVertical: 8 },
+  blockquote: {
+    borderLeftWidth: 4,
+    paddingLeft: 12,
+    paddingVertical: 10,
+    paddingRight: 12,
+    borderRadius: 4,
+    marginVertical: 8,
+  },
   blockquoteText: { fontSize: 14, lineHeight: 20, fontStyle: 'italic' },
   divider: { height: 1, marginVertical: 16 },
   bulletItem: { flexDirection: 'row', alignItems: 'flex-start', gap: 8, marginVertical: 2 },
   bulletDot: { fontSize: 15, lineHeight: 24, width: 12 },
   // TOC styles
   tocContainer: { borderWidth: 1, borderRadius: 12, marginBottom: 20, overflow: 'hidden' },
-  tocHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', padding: 14 },
+  tocHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    padding: 14,
+  },
   tocHeaderLeft: { flexDirection: 'row', alignItems: 'center', gap: 8 },
   tocTitle: { fontSize: 15, fontWeight: '600' },
   tocList: { paddingHorizontal: 14, paddingBottom: 14, gap: 4 },
@@ -357,7 +475,15 @@ const styles = StyleSheet.create({
   // Related Articles
   relatedSection: { marginTop: 24 },
   relatedTitle: { fontSize: 17, fontWeight: '700', marginBottom: 10 },
-  relatedCard: { flexDirection: 'row', alignItems: 'center', gap: 12, padding: 14, borderRadius: 12, borderWidth: 1, marginBottom: 8 },
+  relatedCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    padding: 14,
+    borderRadius: 12,
+    borderWidth: 1,
+    marginBottom: 8,
+  },
   relatedCardTitle: { fontSize: 14, fontWeight: '600' },
   relatedCardSummary: { fontSize: 12, lineHeight: 17, marginTop: 2 },
 });

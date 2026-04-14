@@ -22,12 +22,12 @@
 export type FoodType = 'dry' | 'wet' | 'both';
 export type FoodCategory = 'prescription' | 'veterinary' | 'otc_low_carb';
 export type Region =
-  | 'RU'    // Россия
-  | 'EU'    // Европа (ЕС)
-  | 'UK'    // Великобритания
-  | 'US'    // США
-  | 'DE'    // Германия
-  | 'MX'    // Мексика
+  | 'RU' // Россия
+  | 'EU' // Европа (ЕС)
+  | 'UK' // Великобритания
+  | 'US' // США
+  | 'DE' // Германия
+  | 'MX' // Мексика
   | 'GLOBAL'; // Глобально
 
 export const VALID_REGIONS: readonly Region[] = ['RU', 'EU', 'UK', 'US', 'DE', 'MX', 'GLOBAL'];
@@ -60,6 +60,8 @@ export interface DiabeticCatFood {
   notes?: string;
   /** Localized names */
   nameRu?: string;
+  /** Species: 'cat' | 'dog' | 'all'. Defaults to 'cat' if omitted. */
+  species?: import('@storage/domain/types').PetSpecies | 'all';
 }
 
 // ────────────────────────────────────────────────────
@@ -67,7 +69,7 @@ export interface DiabeticCatFood {
 // ────────────────────────────────────────────────────
 
 export const DIABETIC_NUTRITION_GUIDELINES = {
-  carbsMaxPercent: 15,   // MH003: aligned with calculator (was 12, causing conflict)
+  carbsMaxPercent: 15, // MH003: aligned with calculator (was 12, causing conflict)
   carbsIdealPercent: 7,
   proteinMinPercent: 40,
   fatRangePercent: { min: 20, max: 40 }, // MH005: ISFM guideline 20-40% DM (was 15-25)
@@ -124,7 +126,8 @@ export const PRESCRIPTION_FOODS: DiabeticCatFood[] = [
     },
     priceHint: 'RU: 800-1200₽/400г, 2500-3500₽/1.5кг',
     prescriptionRequired: true,
-    notes: 'Самый распространённый ветеринарный корм для диабетических кошек. Низкий гликемический индекс. Доступен повсеместно в РФ.',
+    notes:
+      'Самый распространённый ветеринарный корм для диабетических кошек. Низкий гликемический индекс. Доступен повсеместно в РФ.',
   },
   {
     id: 'rc-diabetic-wet',
@@ -155,7 +158,7 @@ export const PRESCRIPTION_FOODS: DiabeticCatFood[] = [
     id: 'hills-md-dry',
     brand: "Hill's",
     product: 'Prescription Diet m/d GlucoSupport (Dry)',
-    nameRu: "Хиллс m/d сухой",
+    nameRu: 'Хиллс m/d сухой',
     type: 'dry',
     category: 'prescription',
     proteinDM: 51,
@@ -172,13 +175,14 @@ export const PRESCRIPTION_FOODS: DiabeticCatFood[] = [
     },
     priceHint: 'RU: 1500-2500₽/1.5кг',
     prescriptionRequired: true,
-    notes: 'Высокобелковый, низкоуглеводный. Один из лучших по составу для диабета. Наличие в РФ может варьироваться.',
+    notes:
+      'Высокобелковый, низкоуглеводный. Один из лучших по составу для диабета. Наличие в РФ может варьироваться.',
   },
   {
     id: 'hills-wd-dry',
     brand: "Hill's",
     product: 'Prescription Diet w/d Multi-Benefit (Dry)',
-    nameRu: "Хиллс w/d сухой",
+    nameRu: 'Хиллс w/d сухой',
     type: 'dry',
     category: 'prescription',
     proteinDM: 38,
@@ -195,7 +199,8 @@ export const PRESCRIPTION_FOODS: DiabeticCatFood[] = [
       DE: [],
     },
     prescriptionRequired: true,
-    notes: '⚠️ Углеводы 34% — выше рекомендуемого для диабета (<12%). Менее подходит чем m/d. Чаще назначают при ожирении + диабет.',
+    notes:
+      '⚠️ Углеводы 34% — выше рекомендуемого для диабета (<12%). Менее подходит чем m/d. Чаще назначают при ожирении + диабет.',
   },
 
   // ── Purina ──
@@ -243,7 +248,8 @@ export const PRESCRIPTION_FOODS: DiabeticCatFood[] = [
     },
     priceHint: 'RU: 130-200₽/пауч 85г, 250-350₽/банка 195г',
     prescriptionRequired: true,
-    notes: 'Всего 6% углеводов! Лучший показатель среди рецептурных влажных кормов. Доступен в паучах и банках.',
+    notes:
+      'Всего 6% углеводов! Лучший показатель среди рецептурных влажных кормов. Доступен в паучах и банках.',
   },
 
   // ── Farmina ──
@@ -269,7 +275,8 @@ export const PRESCRIPTION_FOODS: DiabeticCatFood[] = [
     },
     priceHint: 'RU: 700-1000₽/400г, 2000-3000₽/2кг',
     prescriptionRequired: true,
-    notes: 'Источник углеводов — овёс и полба (низкий ГИ). Один из лучших по углеводам (11% DM). Итальянское производство.',
+    notes:
+      'Источник углеводов — овёс и полба (низкий ГИ). Один из лучших по углеводам (11% DM). Итальянское производство.',
   },
   {
     id: 'farmina-diabetic-wet',
@@ -371,7 +378,8 @@ export const OTC_LOW_CARB_FOODS: DiabeticCatFood[] = [
     carbsDM: 3,
     regions: ['US', 'UK', 'EU'],
     prescriptionRequired: false,
-    notes: 'Бюджетный вариант! Серия Classic Pate имеет ~3-7% углеводов. Рекомендуется ветеринарами как доступная альтернатива. В UK продаётся как Purina Gourmet Gold.',
+    notes:
+      'Бюджетный вариант! Серия Classic Pate имеет ~3-7% углеводов. Рекомендуется ветеринарами как доступная альтернатива. В UK продаётся как Purina Gourmet Gold.',
   },
   {
     id: 'sheba-pate',
@@ -385,19 +393,20 @@ export const OTC_LOW_CARB_FOODS: DiabeticCatFood[] = [
     whereToBuy: {
       RU: ['4lapy.ru', 'Ozon', 'любой зоомагазин'],
       EU: ['любой супермаркет'],
-      UK: ['Tesco', 'Sainsbury\'s'],
+      UK: ['Tesco', "Sainsbury's"],
       US: ['Walmart', 'Amazon'],
       GLOBAL: [],
       DE: [],
     },
     prescriptionRequired: false,
-    notes: 'Широко доступен, включая Россию. Fine Flakes популярны в UK. Углеводы ~7.5% — приемлемо.',
+    notes:
+      'Широко доступен, включая Россию. Fine Flakes популярны в UK. Углеводы ~7.5% — приемлемо.',
   },
   {
     id: 'dr-elseys-clean-protein',
     brand: "Dr. Elsey's",
     product: 'Clean Protein Chicken (Dry)',
-    nameRu: "Доктор Элси Клин Протеин с курицей",
+    nameRu: 'Доктор Элси Клин Протеин с курицей',
     type: 'dry',
     category: 'otc_low_carb',
     carbsDM: 0.3,
@@ -452,7 +461,8 @@ export const OTC_LOW_CARB_FOODS: DiabeticCatFood[] = [
       GLOBAL: [],
     },
     prescriptionRequired: false,
-    notes: 'Немецкое производство. Высокое содержание мяса, низкие углеводы. Доступен через Zooplus.',
+    notes:
+      'Немецкое производство. Высокое содержание мяса, низкие углеводы. Доступен через Zooplus.',
   },
   {
     id: 'catz-finefood',
@@ -492,13 +502,14 @@ export const OTC_LOW_CARB_FOODS: DiabeticCatFood[] = [
       GLOBAL: [],
     },
     prescriptionRequired: false,
-    notes: 'Немецкий бренд, ДОСТУПЕН В РОССИИ. 100% мясо, без зерна, без сои. Один из лучших не-рецептурных вариантов для РФ.',
+    notes:
+      'Немецкий бренд, ДОСТУПЕН В РОССИИ. 100% мясо, без зерна, без сои. Один из лучших не-рецептурных вариантов для РФ.',
   },
   {
     id: 'macs-cat',
     brand: "MAC's",
     product: 'Cat Wet Food (various)',
-    nameRu: "Мэкс влажный корм",
+    nameRu: 'Мэкс влажный корм',
     type: 'wet',
     category: 'otc_low_carb',
     carbsDM: 2,
@@ -512,7 +523,7 @@ export const OTC_LOW_CARB_FOODS: DiabeticCatFood[] = [
     id: 'lilys-kitchen-chicken',
     brand: "Lily's Kitchen",
     product: 'Chicken Casserole (Wet)',
-    nameRu: "Лилис Китчен запеканка с курицей",
+    nameRu: 'Лилис Китчен запеканка с курицей',
     type: 'wet',
     category: 'otc_low_carb',
     carbsDM: 8,
@@ -532,13 +543,14 @@ export const OTC_LOW_CARB_FOODS: DiabeticCatFood[] = [
     whereToBuy: {
       RU: ['любой супермаркет', 'Ozon', '4lapy.ru'],
       EU: ['супермаркеты'],
-      UK: ['Tesco', 'Sainsbury\'s', 'ASDA'],
+      UK: ['Tesco', "Sainsbury's", 'ASDA'],
       US: [],
       GLOBAL: [],
       DE: [],
     },
     prescriptionRequired: false,
-    notes: 'ШИРОКО ДОСТУПЕН В РОССИИ. UK-аналог Fancy Feast. Паштетные варианты имеют ~5% углеводов. Бюджетный вариант.',
+    notes:
+      'ШИРОКО ДОСТУПЕН В РОССИИ. UK-аналог Fancy Feast. Паштетные варианты имеют ~5% углеводов. Бюджетный вариант.',
   },
 
   // ── Доступные в России без рецепта ──
@@ -598,7 +610,8 @@ export const OTC_LOW_CARB_FOODS: DiabeticCatFood[] = [
       EU: ['zooplus.de'],
     },
     prescriptionRequired: false,
-    notes: 'Немецкий бренд. Без злаков, с мясом птицы и лосося. Один из лучших сухих для диабетиков.',
+    notes:
+      'Немецкий бренд. Без злаков, с мясом птицы и лосося. Один из лучших сухих для диабетиков.',
   },
   {
     id: 'applaws-dry-chicken',
@@ -642,7 +655,7 @@ export const OTC_LOW_CARB_FOODS: DiabeticCatFood[] = [
     id: 'hills-md-mx',
     brand: "Hill's",
     product: 'Prescription Diet m/d Feline',
-    nameRu: "Хиллс m/d",
+    nameRu: 'Хиллс m/d',
     type: 'both',
     category: 'prescription',
     proteinDM: 51,
@@ -669,7 +682,8 @@ export const OTC_LOW_CARB_FOODS: DiabeticCatFood[] = [
       US: ['Walmart', 'Target', 'chewy.com'],
     },
     prescriptionRequired: false,
-    notes: 'Ampliamente disponible en México. Paté clásico, bajo en carbohidratos. Opción económica.',
+    notes:
+      'Ampliamente disponible en México. Paté clásico, bajo en carbohidratos. Opción económica.',
   },
 ];
 

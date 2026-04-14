@@ -1,7 +1,10 @@
+import type { PetSpecies } from '@storage/domain/types';
+
 export type HintTrigger = 'injection' | 'glucose' | 'feeding' | 'missed_injection' | 'morning';
 export type HintStage = 'week1' | 'week2' | 'week3' | 'week4' | 'days29_30';
 export type HintCategory = 'practical' | 'medical_fact' | 'support';
 export type HintTimeOfDay = 'morning' | 'evening' | 'any';
+export type HintSpecies = PetSpecies | 'all';
 
 export interface HintContent {
   id: string;
@@ -9,6 +12,8 @@ export interface HintContent {
   stage: HintStage;
   category: HintCategory;
   timeOfDay: HintTimeOfDay;
+  /** Species filter. Omit or 'all' = shown to everyone. */
+  species?: HintSpecies;
   ru: string;
   en: string;
 }
@@ -22,11 +27,10 @@ export interface AchievementContent {
 // =============================================================================
 // HINTS ARRAY
 // =============================================================================
-// Total: 60 injection + 30 glucose + 30 feeding + 12 morning + 5 missed = 137
+// Total: 63 injection + 33 glucose + 32 feeding + 12 morning + 5 missed + 8 extras = 145
 // =============================================================================
 
 export const HINTS: HintContent[] = [
-
   // ===========================================================================
   // INJECTION HINTS — Week 1 (14 hints: 7 days × morning + evening)
   // ===========================================================================
@@ -38,7 +42,7 @@ export const HINTS: HintContent[] = [
     category: 'practical',
     timeOfDay: 'morning',
     ru: 'Лучшее место для укола — складка кожи в области холки или между лопатками. Слегка оттяни кожу, введи иглу под углом 45°, и всё будет хорошо.',
-    en: 'The best spot for an injection is a skin fold at the scruff or between the shoulder blades. Gently lift the skin, insert the needle at a 45° angle, and you\'ll be fine.',
+    en: "The best spot for an injection is a skin fold at the scruff or between the shoulder blades. Gently lift the skin, insert the needle at a 45° angle, and you'll be fine.",
   },
   {
     id: 'inj_w1_d1e',
@@ -83,7 +87,7 @@ export const HINTS: HintContent[] = [
     category: 'practical',
     timeOfDay: 'evening',
     ru: 'Не используй одну иглу дважды — она тупеет после первого использования и укол становится болезненнее. Каждый раз — новая игла.',
-    en: 'Don\'t reuse a needle — it dulls after the first use and makes injections more painful. Use a fresh needle every time.',
+    en: "Don't reuse a needle — it dulls after the first use and makes injections more painful. Use a fresh needle every time.",
   },
   {
     id: 'inj_w1_d4m',
@@ -119,7 +123,7 @@ export const HINTS: HintContent[] = [
     category: 'support',
     timeOfDay: 'evening',
     ru: 'Ты делаешь что-то очень сложное — и делаешь это каждый день. Это требует не только любви, но и настоящего мужества.',
-    en: 'You\'re doing something very hard — and you do it every single day. That takes not just love, but real courage.',
+    en: "You're doing something very hard — and you do it every single day. That takes not just love, but real courage.",
   },
   {
     id: 'inj_w1_d6m',
@@ -146,7 +150,7 @@ export const HINTS: HintContent[] = [
     category: 'medical_fact',
     timeOfDay: 'morning',
     ru: 'Хранить открытый флакон инсулина нужно в холодильнике (2–8°C). Неоткрытый запас — тоже. Проверь, чтобы он не оказался рядом с морозильной камерой.',
-    en: 'An opened insulin vial should be kept in the fridge (2–8°C). So should unopened stock. Make sure it\'s not sitting too close to the freezer.',
+    en: "An opened insulin vial should be kept in the fridge (2–8°C). So should unopened stock. Make sure it's not sitting too close to the freezer.",
   },
   {
     id: 'inj_w1_d7e',
@@ -155,7 +159,7 @@ export const HINTS: HintContent[] = [
     category: 'support',
     timeOfDay: 'evening',
     ru: 'Ты уже завершил первую неделю. Это не просто цифра — это 14 уколов, 14 раз ты выбрал здоровье своего кота. ❤️',
-    en: 'You\'ve just finished your first week. That\'s not just a number — it\'s 14 injections, 14 times you chose your cat\'s health. ❤️',
+    en: "You've just finished your first week. That's not just a number — it's 14 injections, 14 times you chose your cat's health. ❤️",
   },
 
   // ===========================================================================
@@ -178,7 +182,7 @@ export const HINTS: HintContent[] = [
     category: 'support',
     timeOfDay: 'evening',
     ru: 'Вторая неделя — уже не первый шаг, а уверенная поступь. Ты знаешь, что делаешь, даже если иногда кажется иначе.',
-    en: 'Week two — no longer a first step, but a confident stride. You know what you\'re doing, even when it doesn\'t feel that way.',
+    en: "Week two — no longer a first step, but a confident stride. You know what you're doing, even when it doesn't feel that way.",
   },
   {
     id: 'inj_w2_d2m',
@@ -196,7 +200,7 @@ export const HINTS: HintContent[] = [
     category: 'medical_fact',
     timeOfDay: 'evening',
     ru: 'Если ты видишь маленькое влажное пятно на шерсти после укола — возможно, часть инсулина вышла. Не нужно делать дополнительный укол: сообщи ветеринару при следующем контакте.',
-    en: 'If you notice a small wet spot on the fur after an injection, some insulin may have leaked. Don\'t give an extra dose — mention it to your vet at the next contact.',
+    en: "If you notice a small wet spot on the fur after an injection, some insulin may have leaked. Don't give an extra dose — mention it to your vet at the next contact.",
   },
   {
     id: 'inj_w2_d3m',
@@ -214,7 +218,7 @@ export const HINTS: HintContent[] = [
     category: 'support',
     timeOfDay: 'evening',
     ru: 'Если сегодня укол прошёл лучше, чем вчера — отметь это. Прогресс есть, даже когда кажется незаметным.',
-    en: 'If today\'s injection went better than yesterday\'s — notice that. Progress is real, even when it feels invisible.',
+    en: "If today's injection went better than yesterday's — notice that. Progress is real, even when it feels invisible.",
   },
   {
     id: 'inj_w2_d4m',
@@ -223,7 +227,7 @@ export const HINTS: HintContent[] = [
     category: 'medical_fact',
     timeOfDay: 'morning',
     ru: 'Инсулин начинает действовать через 1–3 часа после укола. В это время лучше держать кота в привычной обстановке без лишнего стресса.',
-    en: 'Insulin starts working 1–3 hours after injection. During this time, it\'s best to keep your cat in a calm, familiar environment.',
+    en: "Insulin starts working 1–3 hours after injection. During this time, it's best to keep your cat in a calm, familiar environment.",
   },
   {
     id: 'inj_w2_d4e',
@@ -232,7 +236,7 @@ export const HINTS: HintContent[] = [
     category: 'practical',
     timeOfDay: 'evening',
     ru: 'Если кот начал вырываться во время уколов — попробуй сделать его, пока кот стоит или сидит естественно, без фиксации. Иногда меньше сдерживания означает меньше стресса.',
-    en: 'If your cat has started wriggling during injections, try giving the shot while they\'re standing or sitting naturally, without restraint. Sometimes less holding means less stress.',
+    en: "If your cat has started wriggling during injections, try giving the shot while they're standing or sitting naturally, without restraint. Sometimes less holding means less stress.",
   },
   {
     id: 'inj_w2_d5m',
@@ -241,7 +245,7 @@ export const HINTS: HintContent[] = [
     category: 'practical',
     timeOfDay: 'morning',
     ru: 'Используй инсулиновые шприцы с коротким стволом (4–6 мм) — они специально разработаны для подкожных инъекций и вызывают меньше дискомфорта.',
-    en: 'Use insulin syringes with a short barrel (4–6 mm) — they\'re designed specifically for subcutaneous injections and cause less discomfort.',
+    en: "Use insulin syringes with a short barrel (4–6 mm) — they're designed specifically for subcutaneous injections and cause less discomfort.",
   },
   {
     id: 'inj_w2_d5e',
@@ -259,7 +263,7 @@ export const HINTS: HintContent[] = [
     category: 'support',
     timeOfDay: 'morning',
     ru: 'Ритм складывается незаметно: сначала это усилие, потом — привычка. Ты уже на полпути к этому.',
-    en: 'A routine forms quietly: first it\'s effort, then it\'s habit. You\'re already halfway there.',
+    en: "A routine forms quietly: first it's effort, then it's habit. You're already halfway there.",
   },
   {
     id: 'inj_w2_d6e',
@@ -268,7 +272,7 @@ export const HINTS: HintContent[] = [
     category: 'practical',
     timeOfDay: 'evening',
     ru: 'Следи за сроком годности открытого флакона инсулина — обычно он составляет 28–30 дней после вскрытия. Напиши дату вскрытия прямо на флаконе.',
-    en: 'Keep track of your opened insulin vial\'s expiry — it\'s usually 28–30 days after opening. Write the opening date directly on the vial.',
+    en: "Keep track of your opened insulin vial's expiry — it's usually 28–30 days after opening. Write the opening date directly on the vial.",
   },
   {
     id: 'inj_w2_d7m',
@@ -286,7 +290,7 @@ export const HINTS: HintContent[] = [
     category: 'support',
     timeOfDay: 'evening',
     ru: 'Две недели позади. Ты справился со всем, что казалось невозможным в первый день. 💪',
-    en: 'Two weeks down. You\'ve handled everything that seemed impossible on day one. 💪',
+    en: "Two weeks down. You've handled everything that seemed impossible on day one. 💪",
   },
 
   // ===========================================================================
@@ -300,7 +304,7 @@ export const HINTS: HintContent[] = [
     category: 'medical_fact',
     timeOfDay: 'morning',
     ru: 'Обрати внимание: если кот стал более активным и меньше пьёт воды — это хороший знак. Глюкоза начинает контролироваться.',
-    en: 'Pay attention: if your cat has become more active and is drinking less water — that\'s a good sign. Glucose is starting to come under control.',
+    en: "Pay attention: if your cat has become more active and is drinking less water — that's a good sign. Glucose is starting to come under control.",
   },
   {
     id: 'inj_w3_d1e',
@@ -309,7 +313,7 @@ export const HINTS: HintContent[] = [
     category: 'practical',
     timeOfDay: 'evening',
     ru: 'На третьей неделе обрати внимание на уплотнения в местах уколов. Если прощупываешь бугорки под кожей — обязательно чередуй стороны.',
-    en: 'In week three, check for lumps at injection sites. If you feel small bumps under the skin, make sure you\'re rotating sides consistently.',
+    en: "In week three, check for lumps at injection sites. If you feel small bumps under the skin, make sure you're rotating sides consistently.",
   },
   {
     id: 'inj_w3_d2m',
@@ -318,7 +322,7 @@ export const HINTS: HintContent[] = [
     category: 'support',
     timeOfDay: 'morning',
     ru: 'Три недели — это серьёзный срок. Ты уже видишь свою кошку иначе: не как пациента, а как партнёра в этом маршруте.',
-    en: 'Three weeks is significant. You\'re already seeing your cat differently — not as a patient, but as a partner in this journey.',
+    en: "Three weeks is significant. You're already seeing your cat differently — not as a patient, but as a partner in this journey.",
   },
   {
     id: 'inj_w3_d2e',
@@ -345,7 +349,7 @@ export const HINTS: HintContent[] = [
     category: 'support',
     timeOfDay: 'evening',
     ru: 'Иногда всё идёт не по плану — укол получился неловким, кот вырвался. Это бывает. Один несовершенный укол ничего не сломает.',
-    en: 'Sometimes things don\'t go smoothly — an awkward injection, a wriggling cat. It happens. One imperfect shot won\'t break anything.',
+    en: "Sometimes things don't go smoothly — an awkward injection, a wriggling cat. It happens. One imperfect shot won't break anything.",
   },
   {
     id: 'inj_w3_d4m',
@@ -381,7 +385,7 @@ export const HINTS: HintContent[] = [
     category: 'practical',
     timeOfDay: 'evening',
     ru: 'Не нужно дезинфицировать кожу кошки перед уколом — кошачья шерсть чистая, а спирт может дать дискомфорт. Просто чистые руки и новая игла.',
-    en: 'You don\'t need to disinfect your cat\'s skin before injecting — cat fur is clean, and alcohol can cause stinging. Just clean hands and a fresh needle.',
+    en: "You don't need to disinfect your cat's skin before injecting — cat fur is clean, and alcohol can cause stinging. Just clean hands and a fresh needle.",
   },
   {
     id: 'inj_w3_d6m',
@@ -390,7 +394,7 @@ export const HINTS: HintContent[] = [
     category: 'medical_fact',
     timeOfDay: 'morning',
     ru: 'Если кот потолстел после начала инсулинотерапии — это возможный побочный эффект. Обсуди с ветеринаром корректировку диеты и дозы.',
-    en: 'If your cat has gained weight since starting insulin therapy, that\'s a possible side effect. Discuss diet and dose adjustments with your vet.',
+    en: "If your cat has gained weight since starting insulin therapy, that's a possible side effect. Discuss diet and dose adjustments with your vet.",
   },
   {
     id: 'inj_w3_d6e',
@@ -399,7 +403,7 @@ export const HINTS: HintContent[] = [
     category: 'support',
     timeOfDay: 'evening',
     ru: 'Ты научился видеть кота по-новому — замечать маленькие сигналы его самочувствия. Это навык, который мало кто имеет.',
-    en: 'You\'ve learned to read your cat in a new way — noticing small signals of how they\'re feeling. That\'s a skill very few people have.',
+    en: "You've learned to read your cat in a new way — noticing small signals of how they're feeling. That's a skill very few people have.",
   },
   {
     id: 'inj_w3_d7m',
@@ -430,6 +434,7 @@ export const HINTS: HintContent[] = [
     stage: 'week4',
     category: 'medical_fact',
     timeOfDay: 'morning',
+    species: 'cat',
     ru: 'У части кошек диабет входит в ремиссию — глюкоза нормализуется, и доза инсулина снижается до нуля. Продолжай мониторить: это реально возможно.',
     en: 'Some cats achieve diabetic remission — glucose normalizes and the insulin dose drops to zero. Keep monitoring: this is genuinely possible.',
   },
@@ -440,7 +445,7 @@ export const HINTS: HintContent[] = [
     category: 'support',
     timeOfDay: 'evening',
     ru: 'Четыре недели. Ты уже эксперт по своему коту — знаешь его реакции, его настроение, его паттерны. Это ценнее любых книжных знаний.',
-    en: 'Four weeks. You\'re already an expert on your cat — you know their reactions, their mood, their patterns. That\'s worth more than any textbook.',
+    en: "Four weeks. You're already an expert on your cat — you know their reactions, their mood, their patterns. That's worth more than any textbook.",
   },
   {
     id: 'inj_w4_d2m',
@@ -449,7 +454,7 @@ export const HINTS: HintContent[] = [
     category: 'practical',
     timeOfDay: 'morning',
     ru: 'Если ты путешествуешь, берёшь кота с собой или оставляешь с кем-то — составь письменную инструкцию с дозой, временем и контактами ветеринара.',
-    en: 'If you\'re travelling, taking your cat along, or leaving them with someone — write a clear care sheet with the dose, timing, and your vet\'s contact.',
+    en: "If you're travelling, taking your cat along, or leaving them with someone — write a clear care sheet with the dose, timing, and your vet's contact.",
   },
   {
     id: 'inj_w4_d2e',
@@ -467,7 +472,7 @@ export const HINTS: HintContent[] = [
     category: 'support',
     timeOfDay: 'morning',
     ru: 'На четвёртой неделе многие замечают, что уколы занимают меньше умственных сил. Это потому что ты стал настоящим специалистом. 💉',
-    en: 'By week four, many people notice injections take less mental effort. That\'s because you\'ve become genuinely skilled. 💉',
+    en: "By week four, many people notice injections take less mental effort. That's because you've become genuinely skilled. 💉",
   },
   {
     id: 'inj_w4_d3e',
@@ -476,7 +481,7 @@ export const HINTS: HintContent[] = [
     category: 'practical',
     timeOfDay: 'evening',
     ru: 'Если планируешь визит к ветеринару — не меняй ничего за 2–3 дня до визита. Стабильные данные помогут врачу принять точное решение.',
-    en: 'If you\'re planning a vet visit, try not to change anything 2–3 days before. Stable data helps the vet make a precise decision.',
+    en: "If you're planning a vet visit, try not to change anything 2–3 days before. Stable data helps the vet make a precise decision.",
   },
   {
     id: 'inj_w4_d4m',
@@ -494,7 +499,7 @@ export const HINTS: HintContent[] = [
     category: 'support',
     timeOfDay: 'evening',
     ru: 'Ты мог сдаться в первый день — но не сдался. Это не мелочь.',
-    en: 'You could have given up on day one — but you didn\'t. That\'s not a small thing.',
+    en: "You could have given up on day one — but you didn't. That's not a small thing.",
   },
   {
     id: 'inj_w4_d5m',
@@ -521,7 +526,7 @@ export const HINTS: HintContent[] = [
     category: 'support',
     timeOfDay: 'morning',
     ru: 'Ты стал частью небольшого, но очень преданного сообщества людей, которые каждый день делают всё возможное для своих котов. ❤️',
-    en: 'You\'ve become part of a small but deeply dedicated community of people who do everything they can for their cats every single day. ❤️',
+    en: "You've become part of a small but deeply dedicated community of people who do everything they can for their cats every single day. ❤️",
   },
   {
     id: 'inj_w4_d6e',
@@ -548,7 +553,7 @@ export const HINTS: HintContent[] = [
     category: 'support',
     timeOfDay: 'evening',
     ru: 'Завтра — последний рубеж. Ты прошёл 28 дней. Это достижение, которое не каждый смог бы повторить.',
-    en: 'Tomorrow is the final stretch. You\'ve made it through 28 days. That\'s something not everyone could do.',
+    en: "Tomorrow is the final stretch. You've made it through 28 days. That's something not everyone could do.",
   },
 
   // ===========================================================================
@@ -562,7 +567,7 @@ export const HINTS: HintContent[] = [
     category: 'support',
     timeOfDay: 'morning',
     ru: 'День 29. Ты прошёл огромный путь от первого неуверенного укола. Сегодня — почти финиш.',
-    en: 'Day 29. You\'ve come so far from that first uncertain injection. Today is almost the finish line.',
+    en: "Day 29. You've come so far from that first uncertain injection. Today is almost the finish line.",
   },
   {
     id: 'inj_w5_d1e',
@@ -571,7 +576,7 @@ export const HINTS: HintContent[] = [
     category: 'practical',
     timeOfDay: 'evening',
     ru: 'Всё, что ты делал эти 30 дней — чередование мест, точное время, записи — это теперь часть тебя. Эти навыки останутся.',
-    en: 'Everything you\'ve done these 30 days — rotating sites, keeping to schedule, logging — is now part of you. These skills stay.',
+    en: "Everything you've done these 30 days — rotating sites, keeping to schedule, logging — is now part of you. These skills stay.",
   },
   {
     id: 'inj_w5_d2m',
@@ -589,7 +594,7 @@ export const HINTS: HintContent[] = [
     category: 'support',
     timeOfDay: 'evening',
     ru: '30 дней. Твой кот не может сказать спасибо, но каждый день, когда он ест, играет и спит рядом — это его ответ тебе. ❤️',
-    en: '30 days. Your cat can\'t say thank you, but every day they eat, play, and sleep beside you — that\'s their answer to you. ❤️',
+    en: "30 days. Your cat can't say thank you, but every day they eat, play, and sleep beside you — that's their answer to you. ❤️",
   },
 
   // ===========================================================================
@@ -602,6 +607,7 @@ export const HINTS: HintContent[] = [
     stage: 'week1',
     category: 'practical',
     timeOfDay: 'any',
+    species: 'cat',
     ru: 'Лучшее место для замера глюкозы у кошки — внутренняя поверхность ушной раковины. Слегка помассируй ухо перед уколом, чтобы усилить кровоток.',
     en: 'The best spot for a glucose check in cats is the inner surface of the ear flap. Gently massage the ear before pricking to improve blood flow.',
   },
@@ -621,7 +627,7 @@ export const HINTS: HintContent[] = [
     category: 'support',
     timeOfDay: 'any',
     ru: 'Не расстраивайся из-за одного высокого показателя. Важна тенденция за несколько дней, а не единственное значение.',
-    en: 'Don\'t be discouraged by one high reading. What matters is the trend over several days, not a single number.',
+    en: "Don't be discouraged by one high reading. What matters is the trend over several days, not a single number.",
   },
   {
     id: 'glu_w1_04',
@@ -680,7 +686,7 @@ export const HINTS: HintContent[] = [
     category: 'support',
     timeOfDay: 'any',
     ru: 'Если показатели скачут и ты чувствуешь, что всё делаешь неправильно — это нормальный этап. Диабет у кошек требует терпения, и ты с этим справляешься.',
-    en: 'If readings are all over the place and you feel like you\'re doing everything wrong — that\'s a normal phase. Feline diabetes takes patience, and you\'re handling it.',
+    en: "If readings are all over the place and you feel like you're doing everything wrong — that's a normal phase. Feline diabetes takes patience, and you're handling it.",
   },
   {
     id: 'glu_w2_04',
@@ -706,6 +712,7 @@ export const HINTS: HintContent[] = [
     stage: 'week2',
     category: 'practical',
     timeOfDay: 'any',
+    species: 'cat',
     ru: 'Убедись, что глюкометр откалиброван для кошек — некоторые человеческие глюкометры дают неточные результаты для кошачьей крови. Уточни у ветеринара.',
     en: 'Make sure your glucometer is calibrated for cats — some human meters give inaccurate results for feline blood. Check with your vet.',
   },
@@ -721,7 +728,7 @@ export const HINTS: HintContent[] = [
     category: 'medical_fact',
     timeOfDay: 'any',
     ru: 'К третьей неделе у тебя достаточно данных, чтобы видеть суточный ритм глюкозы кота. Посмотри: в какое время суток показатели обычно выше?',
-    en: 'By week three you have enough data to see your cat\'s daily glucose rhythm. Look: at what time of day are the readings typically highest?',
+    en: "By week three you have enough data to see your cat's daily glucose rhythm. Look: at what time of day are the readings typically highest?",
   },
   {
     id: 'glu_w3_02',
@@ -739,7 +746,7 @@ export const HINTS: HintContent[] = [
     category: 'support',
     timeOfDay: 'any',
     ru: 'Три недели регулярного мониторинга — это не просто данные. Это забота, воплощённая в цифрах.',
-    en: 'Three weeks of consistent monitoring isn\'t just data. It\'s care expressed in numbers.',
+    en: "Three weeks of consistent monitoring isn't just data. It's care expressed in numbers.",
   },
   {
     id: 'glu_w3_04',
@@ -748,7 +755,7 @@ export const HINTS: HintContent[] = [
     category: 'medical_fact',
     timeOfDay: 'any',
     ru: 'Если глюкоза несколько дней подряд остаётся в целевом диапазоне — это хороший знак. Обсуди с ветеринаром, нужна ли корректировка дозы.',
-    en: 'If glucose stays in the target range for several days in a row, that\'s a good sign. Discuss with your vet whether a dose adjustment might be worth considering.',
+    en: "If glucose stays in the target range for several days in a row, that's a good sign. Discuss with your vet whether a dose adjustment might be worth considering.",
   },
   {
     id: 'glu_w3_05',
@@ -765,8 +772,9 @@ export const HINTS: HintContent[] = [
     stage: 'week3',
     category: 'support',
     timeOfDay: 'any',
+    species: 'cat',
     ru: 'Кот не понимает, зачем ты колешь его в ухо. Но он чувствует, что ты рядом — и это важнее всего.',
-    en: 'Your cat doesn\'t understand why you\'re pricking their ear. But they feel that you\'re there — and that matters most.',
+    en: "Your cat doesn't understand why you're pricking their ear. But they feel that you're there — and that matters most.",
   },
 
   // ===========================================================================
@@ -779,8 +787,9 @@ export const HINTS: HintContent[] = [
     stage: 'week4',
     category: 'medical_fact',
     timeOfDay: 'any',
+    species: 'cat',
     ru: 'Если за четыре недели глюкоза стабильно снижается к норме — это признак возможной ремиссии. Не прекращай инсулин самостоятельно, но обязательно обсуди это с ветеринаром.',
-    en: 'If glucose has been consistently trending toward normal over four weeks, that could signal remission. Don\'t stop insulin on your own, but do discuss it with your vet.',
+    en: "If glucose has been consistently trending toward normal over four weeks, that could signal remission. Don't stop insulin on your own, but do discuss it with your vet.",
   },
   {
     id: 'glu_w4_02',
@@ -789,7 +798,7 @@ export const HINTS: HintContent[] = [
     category: 'practical',
     timeOfDay: 'any',
     ru: 'Четыре недели данных — хорошее время для расширенного анализа крови и мочи. Уточни у ветеринара, что стоит проверить.',
-    en: 'Four weeks of data is a good time for a broader blood and urine check. Ask your vet what\'s worth testing.',
+    en: "Four weeks of data is a good time for a broader blood and urine check. Ask your vet what's worth testing.",
   },
   {
     id: 'glu_w4_03',
@@ -798,7 +807,7 @@ export const HINTS: HintContent[] = [
     category: 'support',
     timeOfDay: 'any',
     ru: 'Мониторинг глюкозы — это не бесконечная тревога. Это инструмент контроля, который даёт уверенность. Ты умеешь им пользоваться. 💪',
-    en: 'Monitoring glucose isn\'t endless anxiety. It\'s a control tool that gives you confidence. You know how to use it. 💪',
+    en: "Monitoring glucose isn't endless anxiety. It's a control tool that gives you confidence. You know how to use it. 💪",
   },
   {
     id: 'glu_w4_04',
@@ -807,7 +816,7 @@ export const HINTS: HintContent[] = [
     category: 'medical_fact',
     timeOfDay: 'any',
     ru: 'Стресс, новая пища, болезнь или гормональные изменения могут дать неожиданный скачок. Один плохой день не отменяет четыре недели хорошей работы.',
-    en: 'Stress, new food, illness, or hormonal changes can cause an unexpected spike. One bad day doesn\'t erase four weeks of good work.',
+    en: "Stress, new food, illness, or hormonal changes can cause an unexpected spike. One bad day doesn't erase four weeks of good work.",
   },
   {
     id: 'glu_w4_05',
@@ -816,7 +825,7 @@ export const HINTS: HintContent[] = [
     category: 'practical',
     timeOfDay: 'any',
     ru: 'Веди журнал наблюдений помимо чисел: аппетит, жажда, активность, настроение. Это помогает видеть связь между состоянием кота и показателями глюкозы.',
-    en: 'Keep observational notes alongside the numbers: appetite, thirst, activity, mood. This helps you see the link between your cat\'s wellbeing and glucose readings.',
+    en: "Keep observational notes alongside the numbers: appetite, thirst, activity, mood. This helps you see the link between your cat's wellbeing and glucose readings.",
   },
   {
     id: 'glu_w4_06',
@@ -825,7 +834,7 @@ export const HINTS: HintContent[] = [
     category: 'support',
     timeOfDay: 'any',
     ru: 'Ты превратил измерение глюкозы из пугающей процедуры в обычную часть дня. Это большой путь.',
-    en: 'You\'ve turned glucose testing from a scary procedure into a normal part of your day. That\'s a long journey.',
+    en: "You've turned glucose testing from a scary procedure into a normal part of your day. That's a long journey.",
   },
 
   // ===========================================================================
@@ -848,7 +857,7 @@ export const HINTS: HintContent[] = [
     category: 'medical_fact',
     timeOfDay: 'any',
     ru: 'Через 30 дней имеет смысл пересмотреть целевые показатели вместе с ветеринаром. Первоначальные цифры могут потребовать корректировки.',
-    en: 'After 30 days, it\'s worth reviewing target values with your vet. Initial numbers may need adjustment.',
+    en: "After 30 days, it's worth reviewing target values with your vet. Initial numbers may need adjustment.",
   },
   {
     id: 'glu_w5_03',
@@ -875,7 +884,7 @@ export const HINTS: HintContent[] = [
     category: 'medical_fact',
     timeOfDay: 'any',
     ru: 'Первые 30 дней — самые трудные для подбора дозы и режима. Дальше становится стабильнее. Ты уже прошёл самую сложную часть.',
-    en: 'The first 30 days are the hardest for finding the right dose and routine. Things stabilise after this. You\'ve already been through the hardest part.',
+    en: "The first 30 days are the hardest for finding the right dose and routine. Things stabilise after this. You've already been through the hardest part.",
   },
   {
     id: 'glu_w5_06',
@@ -906,6 +915,7 @@ export const HINTS: HintContent[] = [
     stage: 'week1',
     category: 'medical_fact',
     timeOfDay: 'any',
+    species: 'cat',
     ru: 'Диета с низким содержанием углеводов — лучший выбор для кошки с диабетом. Влажный корм обычно предпочтительнее сухого. Уточни у ветеринара.',
     en: 'A low-carbohydrate diet is the best choice for a diabetic cat. Wet food is usually preferable to dry. Check with your vet.',
   },
@@ -916,7 +926,7 @@ export const HINTS: HintContent[] = [
     category: 'support',
     timeOfDay: 'any',
     ru: 'Если кот отказался от еды — это серьёзно при диабете. Не паникуй, но свяжись с ветеринаром в этот же день.',
-    en: 'If your cat refuses to eat — that\'s serious with diabetes. Don\'t panic, but contact your vet the same day.',
+    en: "If your cat refuses to eat — that's serious with diabetes. Don't panic, but contact your vet the same day.",
   },
   {
     id: 'feed_w1_04',
@@ -957,7 +967,7 @@ export const HINTS: HintContent[] = [
     category: 'practical',
     timeOfDay: 'any',
     ru: 'Если кот ест медленно — подожди, пока он съест большую часть порции, прежде чем делать укол. Цель — чтобы инсулин начал работать, когда глюкоза уже поднимается.',
-    en: 'If your cat eats slowly, wait until they\'ve eaten most of their portion before giving the injection. The goal is for insulin to start working as glucose is rising.',
+    en: "If your cat eats slowly, wait until they've eaten most of their portion before giving the injection. The goal is for insulin to start working as glucose is rising.",
   },
   {
     id: 'feed_w2_02',
@@ -975,7 +985,7 @@ export const HINTS: HintContent[] = [
     category: 'support',
     timeOfDay: 'any',
     ru: 'Жёсткий режим кормления может быть неудобен для тебя тоже. Это нормально — ставить будильники, планировать день вокруг кота. Ты делаешь это из любви.',
-    en: 'A strict feeding schedule can be inconvenient for you too. It\'s okay — setting alarms, planning your day around your cat. You\'re doing it out of love.',
+    en: "A strict feeding schedule can be inconvenient for you too. It's okay — setting alarms, planning your day around your cat. You're doing it out of love.",
   },
   {
     id: 'feed_w2_04',
@@ -1002,7 +1012,7 @@ export const HINTS: HintContent[] = [
     category: 'practical',
     timeOfDay: 'any',
     ru: 'Если котов в доме несколько — корми диабетического кота отдельно. Он должен съедать только свою порцию, без подъедания за другими.',
-    en: 'If you have multiple cats, feed your diabetic cat separately. They should eat only their portion, not finish off the others\'.',
+    en: "If you have multiple cats, feed your diabetic cat separately. They should eat only their portion, not finish off the others'.",
   },
 
   // ===========================================================================
@@ -1015,6 +1025,7 @@ export const HINTS: HintContent[] = [
     stage: 'week3',
     category: 'medical_fact',
     timeOfDay: 'any',
+    species: 'cat',
     ru: 'Белковая диета — ключ к стабилизации диабета у кошек. Кошки — облигатные хищники, и корм с высоким содержанием белка даёт более предсказуемые показатели глюкозы.',
     en: 'A protein-rich diet is key to stabilising diabetes in cats. Cats are obligate carnivores, and high-protein food gives more predictable glucose readings.',
   },
@@ -1025,7 +1036,7 @@ export const HINTS: HintContent[] = [
     category: 'practical',
     timeOfDay: 'any',
     ru: 'На третьей неделе обрати внимание: меняется ли аппетит кота в разное время суток? Это может помочь скорректировать расписание кормления.',
-    en: 'In week three, notice: does your cat\'s appetite vary at different times of day? This can help fine-tune the feeding schedule.',
+    en: "In week three, notice: does your cat's appetite vary at different times of day? This can help fine-tune the feeding schedule.",
   },
   {
     id: 'feed_w3_03',
@@ -1034,7 +1045,7 @@ export const HINTS: HintContent[] = [
     category: 'support',
     timeOfDay: 'any',
     ru: 'Строгое расписание — это не тюрьма для кота, а его безопасность. С каждой неделей ты видишь, как стабильность помогает. 🐱',
-    en: 'A strict schedule isn\'t a prison for your cat — it\'s their safety. Each week you can see how consistency helps. 🐱',
+    en: "A strict schedule isn't a prison for your cat — it's their safety. Each week you can see how consistency helps. 🐱",
   },
   {
     id: 'feed_w3_04',
@@ -1043,7 +1054,7 @@ export const HINTS: HintContent[] = [
     category: 'practical',
     timeOfDay: 'any',
     ru: 'Остатки влажного корма не оставляй в миске дольше 30–40 минут. Испортившийся корм — риск расстройства желудка, которое нарушит всё расписание.',
-    en: 'Don\'t leave wet food in the bowl for more than 30–40 minutes. Spoiled food risks an upset stomach that will throw off the whole schedule.',
+    en: "Don't leave wet food in the bowl for more than 30–40 minutes. Spoiled food risks an upset stomach that will throw off the whole schedule.",
   },
   {
     id: 'feed_w3_05',
@@ -1052,7 +1063,7 @@ export const HINTS: HintContent[] = [
     category: 'medical_fact',
     timeOfDay: 'any',
     ru: 'Если ты думаешь о переходе на лечебный корм для диабетиков — обсуди это с ветеринаром. Такой корм может потребовать коррекции дозы инсулина.',
-    en: 'If you\'re thinking about switching to prescription diabetic food, discuss it with your vet first. It may require adjusting the insulin dose.',
+    en: "If you're thinking about switching to prescription diabetic food, discuss it with your vet first. It may require adjusting the insulin dose.",
   },
   {
     id: 'feed_w3_06',
@@ -1075,7 +1086,7 @@ export const HINTS: HintContent[] = [
     category: 'medical_fact',
     timeOfDay: 'any',
     ru: 'К четвёртой неделе становится понятно, какой корм подходит коту лучше всего. Не торопись менять то, что работает.',
-    en: 'By week four you have a clearer picture of which food works best for your cat. Don\'t rush to change what\'s working.',
+    en: "By week four you have a clearer picture of which food works best for your cat. Don't rush to change what's working.",
   },
   {
     id: 'feed_w4_02',
@@ -1093,7 +1104,7 @@ export const HINTS: HintContent[] = [
     category: 'support',
     timeOfDay: 'any',
     ru: 'Ты перестроил весь свой день вокруг потребностей кота. Это большая жертва, которую видишь только ты — и кот.',
-    en: 'You\'ve restructured your entire day around your cat\'s needs. That\'s a big sacrifice that only you — and your cat — truly see.',
+    en: "You've restructured your entire day around your cat's needs. That's a big sacrifice that only you — and your cat — truly see.",
   },
   {
     id: 'feed_w4_04',
@@ -1134,7 +1145,7 @@ export const HINTS: HintContent[] = [
     category: 'practical',
     timeOfDay: 'any',
     ru: 'Ты нашёл режим кормления, который работает для вас обоих. Это ценное знание — сохрани его в заметках.',
-    en: 'You\'ve found a feeding routine that works for both of you. That\'s valuable knowledge — save it in your notes.',
+    en: "You've found a feeding routine that works for both of you. That's valuable knowledge — save it in your notes.",
   },
   {
     id: 'feed_w5_02',
@@ -1152,7 +1163,7 @@ export const HINTS: HintContent[] = [
     category: 'support',
     timeOfDay: 'any',
     ru: 'Каждая миска еды, поставленная вовремя — это маленький акт заботы. За 30 дней их накопилось 60. Это много.',
-    en: 'Every bowl of food put down on time is a small act of care. Over 30 days, that\'s 60 of them. That adds up.',
+    en: "Every bowl of food put down on time is a small act of care. Over 30 days, that's 60 of them. That adds up.",
   },
   {
     id: 'feed_w5_04',
@@ -1161,7 +1172,7 @@ export const HINTS: HintContent[] = [
     category: 'practical',
     timeOfDay: 'any',
     ru: 'Запиши рацион кота и расписание кормлений — это пригодится, если придётся объяснять ситуацию новому ветеринару или при госпитализации кота.',
-    en: 'Write down your cat\'s diet and feeding schedule — it\'ll be useful if you need to explain the situation to a new vet or if your cat is hospitalised.',
+    en: "Write down your cat's diet and feeding schedule — it'll be useful if you need to explain the situation to a new vet or if your cat is hospitalised.",
   },
   {
     id: 'feed_w5_05',
@@ -1170,7 +1181,7 @@ export const HINTS: HintContent[] = [
     category: 'medical_fact',
     timeOfDay: 'any',
     ru: 'Стабильный вес + хороший аппетит + снижение жажды — три признака того, что лечение работает. Если видишь все три, ты на правильном пути.',
-    en: 'Stable weight + good appetite + reduced thirst — three signs that treatment is working. If you see all three, you\'re on the right track.',
+    en: "Stable weight + good appetite + reduced thirst — three signs that treatment is working. If you see all three, you're on the right track.",
   },
   {
     id: 'feed_w5_06',
@@ -1193,7 +1204,7 @@ export const HINTS: HintContent[] = [
     category: 'support',
     timeOfDay: 'any',
     ru: 'Доброе утро. Первая неделя — самая тяжёлая, и ты в ней. Один день за раз.',
-    en: 'Good morning. The first week is the hardest, and you\'re in it. One day at a time.',
+    en: "Good morning. The first week is the hardest, and you're in it. One day at a time.",
   },
   {
     id: 'morn_w1_02',
@@ -1234,7 +1245,7 @@ export const HINTS: HintContent[] = [
     category: 'practical',
     timeOfDay: 'any',
     ru: 'Утро. Отличный момент записать вчерашние наблюдения, пока они свежие — аппетит, активность, самочувствие.',
-    en: 'Morning. A great moment to log yesterday\'s observations while they\'re fresh — appetite, activity, how they seemed.',
+    en: "Morning. A great moment to log yesterday's observations while they're fresh — appetite, activity, how they seemed.",
   },
   {
     id: 'morn_w2_03',
@@ -1257,7 +1268,7 @@ export const HINTS: HintContent[] = [
     category: 'support',
     timeOfDay: 'any',
     ru: 'Доброе утро. Три недели в строю. Ты, наверное, и сам не заметил, как рутина стала частью тебя.',
-    en: 'Good morning. Three weeks in. You probably didn\'t notice when the routine became part of you.',
+    en: "Good morning. Three weeks in. You probably didn't notice when the routine became part of you.",
   },
   {
     id: 'morn_w3_02',
@@ -1266,7 +1277,7 @@ export const HINTS: HintContent[] = [
     category: 'medical_fact',
     timeOfDay: 'any',
     ru: 'На третьей неделе стоит оценить динамику: стала ли глюкоза стабильнее, чем в первую неделю? Если да — это результат твоей работы.',
-    en: 'In week three, it\'s worth reviewing the trend: is glucose more stable than in week one? If so — that\'s the result of your work.',
+    en: "In week three, it's worth reviewing the trend: is glucose more stable than in week one? If so — that's the result of your work.",
   },
   {
     id: 'morn_w3_03',
@@ -1275,7 +1286,7 @@ export const HINTS: HintContent[] = [
     category: 'support',
     timeOfDay: 'any',
     ru: 'Утро — хорошее время напомнить себе: ты делаешь всё возможное. Этого достаточно. 💪',
-    en: 'Morning is a good time to remind yourself: you\'re doing everything possible. That\'s enough. 💪',
+    en: "Morning is a good time to remind yourself: you're doing everything possible. That's enough. 💪",
   },
 
   // ===========================================================================
@@ -1289,7 +1300,7 @@ export const HINTS: HintContent[] = [
     category: 'support',
     timeOfDay: 'any',
     ru: 'Доброе утро, герой. Последние дни первого месяца. Ты прошёл дальше, чем думал.',
-    en: 'Good morning, hero. The last days of the first month. You\'ve gone further than you thought you would.',
+    en: "Good morning, hero. The last days of the first month. You've gone further than you thought you would.",
   },
   {
     id: 'morn_w5_02',
@@ -1298,7 +1309,7 @@ export const HINTS: HintContent[] = [
     category: 'support',
     timeOfDay: 'any',
     ru: 'Почти финиш. Сегодня — ещё один день, который ты проведёшь рядом со своим котом. Это и есть главное. ❤️',
-    en: 'Almost there. Today is one more day you\'ll spend beside your cat. That\'s what matters most. ❤️',
+    en: "Almost there. Today is one more day you'll spend beside your cat. That's what matters most. ❤️",
   },
   {
     id: 'morn_w5_03',
@@ -1321,7 +1332,7 @@ export const HINTS: HintContent[] = [
     category: 'support',
     timeOfDay: 'any',
     ru: 'Это бывает. Жизнь не всегда идёт по плану. Свяжись с ветеринаром и уточни, что делать в твоём конкретном случае — пропустить или сделать позже.',
-    en: 'It happens. Life doesn\'t always follow a schedule. Contact your vet to ask what\'s best in your specific case — skip it or give it later.',
+    en: "It happens. Life doesn't always follow a schedule. Contact your vet to ask what's best in your specific case — skip it or give it later.",
   },
   {
     id: 'miss_02',
@@ -1339,7 +1350,7 @@ export const HINTS: HintContent[] = [
     category: 'support',
     timeOfDay: 'any',
     ru: 'Один пропуск не перечёркивает всё, что ты сделал. Продолжай с следующего укола — и всё вернётся в норму.',
-    en: 'One missed injection doesn\'t cancel everything you\'ve done. Pick up at the next injection and things will return to normal.',
+    en: "One missed injection doesn't cancel everything you've done. Pick up at the next injection and things will return to normal.",
   },
   {
     id: 'miss_04',
@@ -1348,7 +1359,7 @@ export const HINTS: HintContent[] = [
     category: 'practical',
     timeOfDay: 'any',
     ru: 'Если пропуски случаются регулярно — стоит обсудить с ветеринаром, можно ли скорректировать расписание под твой реальный день.',
-    en: 'If missed injections happen regularly, it\'s worth discussing with your vet whether the schedule can be adjusted to fit your actual day.',
+    en: "If missed injections happen regularly, it's worth discussing with your vet whether the schedule can be adjusted to fit your actual day.",
   },
   {
     id: 'miss_05',
@@ -1357,7 +1368,292 @@ export const HINTS: HintContent[] = [
     category: 'support',
     timeOfDay: 'any',
     ru: 'Ты делаешь всё возможное, и этого достаточно. Измерь глюкозу, чтобы понять текущее состояние, и двигайся дальше.',
-    en: 'You\'re doing everything you can, and that\'s enough. Check the glucose to understand the current state, and move forward.',
+    en: "You're doing everything you can, and that's enough. Check the glucose to understand the current state, and move forward.",
+  },
+  // ===========================================================================
+  // ADDITIONAL PRACTICAL HINTS (from medical guide) — 8 hints
+  // ===========================================================================
+
+  {
+    id: 'inj_extra_01',
+    trigger: 'injection',
+    stage: 'week2',
+    category: 'medical_fact',
+    timeOfDay: 'morning',
+    ru: 'ProZinc (PZI) хранить ТОЛЬКО в холодильнике после вскрытия. Лантус и Левемир можно при комнатной температуре до 28 дней (42 дня для Левемира).',
+    en: 'ProZinc (PZI) must be stored ONLY in the fridge after opening. Lantus and Levemir can stay at room temperature for up to 28 days (42 days for Levemir).',
+  },
+  {
+    id: 'inj_extra_02',
+    trigger: 'injection',
+    stage: 'week3',
+    category: 'medical_fact',
+    timeOfDay: 'evening',
+    ru: 'Если используешь ProZinc (U-40) — убедись, что у тебя шприцы U-40! С обычным шприцем U-100 ты введёшь в 2.5 раза больше инсулина.',
+    en: "If you use ProZinc (U-40) — make sure you have U-40 syringes! With a regular U-100 syringe, you'd give 2.5 times too much insulin.",
+  },
+  {
+    id: 'gluc_extra_01',
+    trigger: 'glucose',
+    stage: 'week3',
+    category: 'medical_fact',
+    timeOfDay: 'morning',
+    species: 'cat',
+    ru: 'Надир ниже 4-5 ммоль/л при стабильной дозе — возможный признак приближения ремиссии! Обсуди с ветеринаром снижение дозы.',
+    en: 'A nadir below 4-5 mmol/L at a stable dose may signal approaching remission! Discuss dose reduction with your vet.',
+  },
+  {
+    id: 'gluc_extra_02',
+    trigger: 'glucose',
+    stage: 'week4',
+    category: 'medical_fact',
+    timeOfDay: 'evening',
+    ru: 'Стресс может поднять сахар у кошки на 10-15 ммоль/л за минуты. Если был стресс — не меняй дозу по одному замеру, подожди 2-3 дня.',
+    en: "Stress can spike your cat's blood sugar by 10-15 mmol/L in minutes. If there was stress — don't adjust the dose from one reading, wait 2-3 days.",
+  },
+  {
+    id: 'feed_extra_01',
+    trigger: 'feeding',
+    stage: 'week2',
+    category: 'medical_fact',
+    timeOfDay: 'morning',
+    species: 'cat',
+    ru: 'Кошки — облигатные хищники. У них нет амилазы в слюне и слабая печёночная глюкокиназа. Углеводы для них — физиологическая нагрузка, а не норма.',
+    en: 'Cats are obligate carnivores. They lack salivary amylase and have low hepatic glucokinase. Carbs are a physiological burden, not normal for them.',
+  },
+  {
+    id: 'feed_extra_02',
+    trigger: 'feeding',
+    stage: 'week3',
+    category: 'practical',
+    timeOfDay: 'evening',
+    species: 'cat',
+    ru: 'Если кот отказывается от влажного корма, попробуй подогреть его до температуры тела — кошки едят по запаху, а тёплый корм пахнет сильнее.',
+    en: 'If your cat refuses wet food, try warming it to body temperature — cats eat by smell, and warm food smells stronger.',
+  },
+  {
+    id: 'gluc_extra_03',
+    trigger: 'glucose',
+    stage: 'week2',
+    category: 'practical',
+    timeOfDay: 'morning',
+    species: 'cat',
+    ru: 'Если используешь AlphaTRAK 2 — обязательно установи код 7 для кошек. Неправильный код даёт неточные результаты!',
+    en: 'If you use AlphaTRAK 2 — make sure to set code 7 for cats. The wrong code gives inaccurate results!',
+  },
+  {
+    id: 'inj_extra_03',
+    trigger: 'injection',
+    stage: 'week4',
+    category: 'practical',
+    timeOfDay: 'morning',
+    species: 'cat',
+    ru: 'Лайфхак: делай укол, когда кот ест. 80% кошек настолько увлечены едой, что вообще не замечают инъекцию.',
+    en: "Life hack: give the injection while your cat is eating. 80% of cats are so focused on food that they don't even notice the injection.",
+  },
+
+  // ===========================================================================
+  // DOG-SPECIFIC HINTS
+  // ===========================================================================
+
+  // --- Injection hints for dogs ---
+  {
+    id: 'dog_inj_w1_01',
+    trigger: 'injection',
+    stage: 'week1',
+    category: 'practical',
+    timeOfDay: 'morning',
+    species: 'dog',
+    ru: 'Лучшие места для инъекции собаке — холка, область между лопатками или бок. Чередуй стороны, чтобы избежать уплотнений в коже.',
+    en: 'The best injection sites for dogs are the scruff, between the shoulder blades, or along the flank. Alternate sides to avoid skin lumps.',
+  },
+  {
+    id: 'dog_inj_w1_02',
+    trigger: 'injection',
+    stage: 'week1',
+    category: 'medical_fact',
+    timeOfDay: 'evening',
+    species: 'dog',
+    ru: 'Если твоя собака на Канинсулине — это суспензия, её нужно аккуратно перемешать перед уколом. Покатай флакон между ладонями 10–15 раз, не встряхивай.',
+    en: "If your dog is on Caninsulin — it's a suspension, so you need to mix it gently before injecting. Roll the vial between your palms 10–15 times, don't shake.",
+  },
+  {
+    id: 'dog_inj_w2_01',
+    trigger: 'injection',
+    stage: 'week2',
+    category: 'medical_fact',
+    timeOfDay: 'morning',
+    species: 'dog',
+    ru: 'Доза инсулина для собак рассчитывается по весу — обычно 0.25–0.5 ЕД/кг дважды в день. Ветеринар подбирает дозу по кривой глюкозы.',
+    en: 'Insulin dose for dogs is calculated by weight — typically 0.25–0.5 IU/kg twice daily. Your vet adjusts the dose based on a glucose curve.',
+  },
+  {
+    id: 'dog_inj_w2_02',
+    trigger: 'injection',
+    stage: 'week2',
+    category: 'support',
+    timeOfDay: 'evening',
+    species: 'dog',
+    ru: 'Собаки удивительно терпеливы. Многие привыкают к уколам уже через несколько дней и даже сами подходят к месту кормления-инъекции.',
+    en: 'Dogs are remarkably patient. Many get used to injections within just a few days and even come to the feeding-injection spot on their own.',
+  },
+  {
+    id: 'dog_inj_w3_01',
+    trigger: 'injection',
+    stage: 'week3',
+    category: 'medical_fact',
+    timeOfDay: 'morning',
+    species: 'dog',
+    ru: 'Диабет у собак — почти всегда 1-го типа: бета-клетки поджелудочной разрушены. Это значит, что инсулин нужен пожизненно. Но при хорошем контроле собаки живут долго и счастливо.',
+    en: 'Diabetes in dogs is almost always type 1: the pancreatic beta cells are destroyed. This means lifelong insulin. But with good control, dogs live long, happy lives.',
+  },
+  {
+    id: 'dog_inj_w4_01',
+    trigger: 'injection',
+    stage: 'week4',
+    category: 'medical_fact',
+    timeOfDay: 'morning',
+    species: 'dog',
+    ru: 'У собак диабетическая ремиссия крайне редка — в отличие от кошек. Но это не плохая новость: стабильная доза без неожиданностей — это предсказуемый и управляемый процесс.',
+    en: "Diabetic remission in dogs is extremely rare — unlike in cats. But that's not bad news: a stable dose without surprises means a predictable, manageable routine.",
+  },
+
+  // --- Glucose hints for dogs ---
+  {
+    id: 'dog_glu_w1_01',
+    trigger: 'glucose',
+    stage: 'week1',
+    category: 'practical',
+    timeOfDay: 'any',
+    species: 'dog',
+    ru: 'Лучшие места для забора крови у собаки — внутренняя поверхность губы или мозолистая подушечка уха. Попроси ветеринара показать технику.',
+    en: 'The best spots for blood sampling in dogs are the inner lip or the callused ear pad. Ask your vet to show you the technique.',
+  },
+  {
+    id: 'dog_glu_w2_01',
+    trigger: 'glucose',
+    stage: 'week2',
+    category: 'practical',
+    timeOfDay: 'any',
+    species: 'dog',
+    ru: 'Если используешь AlphaTRAK 2 — установи код 5 для собак. Для Libre — калибровка не нужна, но обязательно проверь совместимость с ветеринаром.',
+    en: 'If using AlphaTRAK 2 — set code 5 for dogs. For Libre — no calibration needed, but verify compatibility with your vet.',
+  },
+  {
+    id: 'dog_glu_w3_01',
+    trigger: 'glucose',
+    stage: 'week3',
+    category: 'medical_fact',
+    timeOfDay: 'any',
+    species: 'dog',
+    ru: 'Целевой диапазон глюкозы для диабетической собаки дома — обычно 4.4–8.0 ммоль/л. Но индивидуальные цели определяет ветеринар.',
+    en: 'The target glucose range for a diabetic dog at home is usually 4.4–8.0 mmol/L. But individual targets are set by your vet.',
+  },
+  {
+    id: 'dog_glu_w3_02',
+    trigger: 'glucose',
+    stage: 'week3',
+    category: 'support',
+    timeOfDay: 'any',
+    species: 'dog',
+    ru: 'Пёс не понимает, зачем ты берёшь у него кровь. Но он чувствует твоё спокойствие и доверие — и это самое важное.',
+    en: "Your dog doesn't understand why you're taking blood. But they feel your calm and trust — and that's what matters most.",
+  },
+  {
+    id: 'dog_glu_w4_01',
+    trigger: 'glucose',
+    stage: 'week4',
+    category: 'medical_fact',
+    timeOfDay: 'any',
+    species: 'dog',
+    ru: 'Если глюкоза стабильно в пределах 4.4–8.0 ммоль/л — отлично! Не меняй ничего без ветеринара. Стабильность — главная цель при собачьем диабете.',
+    en: "If glucose is consistently within 4.4–8.0 mmol/L — great! Don't change anything without your vet. Stability is the main goal in canine diabetes.",
+  },
+
+  // --- Feeding hints for dogs ---
+  {
+    id: 'dog_feed_w1_01',
+    trigger: 'feeding',
+    stage: 'week1',
+    category: 'medical_fact',
+    timeOfDay: 'any',
+    species: 'dog',
+    ru: 'Для собак с диабетом идеальна диета с высоким содержанием клетчатки и сложных углеводов, умеренным белком и низким жиром. Корми одинаково каждый день.',
+    en: 'For diabetic dogs, a diet high in fiber and complex carbs, moderate in protein, and low in fat is ideal. Feed the same amount every day.',
+  },
+  {
+    id: 'dog_feed_w1_02',
+    trigger: 'feeding',
+    stage: 'week1',
+    category: 'practical',
+    timeOfDay: 'any',
+    species: 'dog',
+    ru: 'Главное правило: корми собаку в одно и то же время, одним и тем же кормом, в одинаковом количестве. Стабильность питания = стабильность глюкозы.',
+    en: 'The golden rule: feed your dog at the same time, with the same food, in the same amount. Feeding consistency = glucose consistency.',
+  },
+  {
+    id: 'dog_feed_w2_01',
+    trigger: 'feeding',
+    stage: 'week2',
+    category: 'medical_fact',
+    timeOfDay: 'any',
+    species: 'dog',
+    ru: 'Hills w/d, Royal Canin Diabetic, Purina DM — специализированные корма для собак с диабетом. Уточни у ветеринара, какой подойдёт.',
+    en: 'Hills w/d, Royal Canin Diabetic, Purina DM — specialized foods for diabetic dogs. Check with your vet which one is right.',
+  },
+  {
+    id: 'dog_feed_w3_01',
+    trigger: 'feeding',
+    stage: 'week3',
+    category: 'medical_fact',
+    timeOfDay: 'any',
+    species: 'dog',
+    ru: 'Клетчатка замедляет всасывание глюкозы после еды, что даёт более плавные показатели. Для собак с диабетом это ключевой компонент рациона.',
+    en: "Fiber slows glucose absorption after meals, giving smoother readings. For diabetic dogs, it's a key dietary component.",
+  },
+
+  // --- Morning hints for dogs ---
+  {
+    id: 'dog_morn_w1_01',
+    trigger: 'morning',
+    stage: 'week1',
+    category: 'support',
+    timeOfDay: 'morning',
+    species: 'dog',
+    ru: 'Доброе утро! Твой пёс уже ждёт тебя у миски. Каждый новый день — это шаг к стабильному контролю. Ты справляешься.',
+    en: "Good morning! Your dog is already waiting by the bowl. Each new day is a step toward stable control. You're doing great.",
+  },
+  {
+    id: 'dog_morn_w2_01',
+    trigger: 'morning',
+    stage: 'week2',
+    category: 'medical_fact',
+    timeOfDay: 'morning',
+    species: 'dog',
+    ru: 'Обрати внимание на глаза собаки — помутнение может быть ранним признаком катаракты. Это происходит у 75–80% диабетических собак. Ранний визит к офтальмологу важен.',
+    en: "Watch your dog's eyes — cloudiness can be an early sign of cataracts. This happens in 75–80% of diabetic dogs. An early ophthalmologist visit matters.",
+  },
+  {
+    id: 'dog_morn_w3_01',
+    trigger: 'morning',
+    stage: 'week3',
+    category: 'practical',
+    timeOfDay: 'morning',
+    species: 'dog',
+    ru: 'Поддерживай одинаковый режим прогулок — резкая физическая нагрузка может вызвать гипогликемию. Лучше спокойные, но регулярные прогулки.',
+    en: 'Keep a consistent exercise routine — sudden intense activity can cause hypoglycemia. Calm but regular walks are better.',
+  },
+
+  // --- Missed injection hints for dogs ---
+  {
+    id: 'dog_miss_01',
+    trigger: 'missed_injection',
+    stage: 'week1',
+    category: 'practical',
+    timeOfDay: 'any',
+    species: 'dog',
+    ru: 'Пропущенный укол — не катастрофа. Не вводи двойную дозу при следующем уколе. Вернись к обычному расписанию и следи за глюкозой.',
+    en: "A missed injection isn't a disaster. Don't give a double dose next time. Return to your normal schedule and monitor glucose.",
   },
 ];
 
@@ -1372,10 +1668,10 @@ export const ACHIEVEMENT_HERO: AchievementContent = {
   },
   congratulation: {
     ru: 'Ты прошёл 30 дней — 30 дней уколов, замеров, строгих расписаний и бессонных мыслей о том, всё ли ты делаешь правильно. Это требует не просто любви к коту, но и настоящей силы духа. Твой кот не может сказать спасибо словами — но его аппетит, его желание играть, его тепло рядом с тобой — это и есть его благодарность. Ты справился с самым сложным первым месяцем. Продолжай в том же духе.',
-    en: 'You made it through 30 days — 30 days of injections, glucose checks, strict schedules, and quiet worries about whether you were doing everything right. It takes more than love for your cat; it takes real strength of character. Your cat can\'t say thank you in words — but their appetite, their willingness to play, their warmth beside you — that is their gratitude. You got through the hardest first month. Keep going.',
+    en: "You made it through 30 days — 30 days of injections, glucose checks, strict schedules, and quiet worries about whether you were doing everything right. It takes more than love for your cat; it takes real strength of character. Your cat can't say thank you in words — but their appetite, their willingness to play, their warmth beside you — that is their gratitude. You got through the hardest first month. Keep going.",
   },
   cardText: {
     ru: '30 дней рядом с котом. Каждый день.',
-    en: '30 days by your cat\'s side. Every single day.',
+    en: "30 days by your cat's side. Every single day.",
   },
 };

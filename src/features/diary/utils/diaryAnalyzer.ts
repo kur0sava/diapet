@@ -1,4 +1,5 @@
-import { GlucoseReading, getGlucoseLevel } from '@storage/domain/types';
+import { GlucoseReading, getGlucoseLevel, getGlucoseLevelFromRanges } from '@storage/domain/types';
+import type { SpeciesConfig } from '@shared/config/speciesConfig';
 
 export type DiaryRecommendation = {
   type: 'critical' | 'warning' | 'info' | 'good';
@@ -14,37 +15,45 @@ export type DayStats = {
   inRangePercent: number | null;
 };
 
-export function computeDayStats(readings: GlucoseReading[]): DayStats {
+export function computeDayStats(readings: GlucoseReading[], config?: SpeciesConfig): DayStats {
   if (readings.length === 0) {
     return { avg: null, min: null, max: null, count: 0, inRangePercent: null };
   }
+  const targetLow = config?.glucose.targetLow ?? 4.0;
+  const targetHigh = config?.glucose.targetHigh ?? 9.0;
   const values = readings.map(r => r.valueMmol);
   const sum = values.reduce((a, b) => a + b, 0);
   const avg = Math.round((sum / values.length) * 10) / 10;
   const min = Math.round(Math.min(...values) * 10) / 10;
   const max = Math.round(Math.max(...values) * 10) / 10;
-  const inRange = values.filter(v => v >= 4.0 && v <= 9.0).length;
+  const inRange = values.filter(v => v >= targetLow && v <= targetHigh).length;
   const inRangePercent = Math.round((inRange / values.length) * 100);
   return { avg, min, max, count: values.length, inRangePercent };
 }
 
-export function analyzeDayGlucose(readings: GlucoseReading[]): DiaryRecommendation[] {
+export function analyzeDayGlucose(
+  readings: GlucoseReading[],
+  config?: SpeciesConfig
+): DiaryRecommendation[] {
   if (readings.length === 0) {
     return [{ type: 'info', messageKey: 'diary.advice.noData' }];
   }
 
   const recommendations: DiaryRecommendation[] = [];
-  const stats = computeDayStats(readings);
+  const stats = computeDayStats(readings, config);
+  const ranges = config?.glucose.ranges;
+  const levelOf = (v: number) =>
+    ranges ? getGlucoseLevelFromRanges(v, ranges) : getGlucoseLevel(v);
 
   // Check for critical low readings
-  const severeLows = readings.filter(r => getGlucoseLevel(r.valueMmol) === 'severe_low');
+  const severeLows = readings.filter(r => levelOf(r.valueMmol) === 'severe_low');
   if (severeLows.length > 0) {
     recommendations.push({ type: 'critical', messageKey: 'diary.advice.severeLow' });
   }
 
   // Check for hypoglycemia (low readings)
   const lowReadings = readings.filter(r => {
-    const lvl = getGlucoseLevel(r.valueMmol);
+    const lvl = levelOf(r.valueMmol);
     return lvl === 'low' || lvl === 'below_target';
   });
   if (lowReadings.length > 0 && severeLows.length === 0) {
@@ -57,10 +66,10 @@ export function analyzeDayGlucose(readings: GlucoseReading[]): DiaryRecommendati
 
   // Check for hyperglycemia: any very_high, or 2+ high readings
   const highReadings = readings.filter(r => {
-    const lvl = getGlucoseLevel(r.valueMmol);
+    const lvl = levelOf(r.valueMmol);
     return lvl === 'high' || lvl === 'very_high';
   });
-  const veryHighReadings = highReadings.filter(r => getGlucoseLevel(r.valueMmol) === 'very_high');
+  const veryHighReadings = highReadings.filter(r => levelOf(r.valueMmol) === 'very_high');
   if (veryHighReadings.length >= 1 || highReadings.length >= 2) {
     recommendations.push({
       type: 'warning',
@@ -94,5 +103,11 @@ export function analyzeDayGlucose(readings: GlucoseReading[]): DiaryRecommendati
 
   return recommendations.length > 0
     ? recommendations
-    : [{ type: 'good', messageKey: 'diary.advice.goodControl', params: { percent: stats.inRangePercent ?? 100 } }];
+    : [
+        {
+          type: 'good',
+          messageKey: 'diary.advice.goodControl',
+          params: { percent: stats.inRangePercent ?? 100 },
+        },
+      ];
 }

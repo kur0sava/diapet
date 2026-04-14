@@ -1,5 +1,14 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert, KeyboardAvoidingView, Platform } from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  TouchableOpacity,
+  Alert,
+  KeyboardAvoidingView,
+  Platform,
+} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useMoreNavigation } from '@navigation/hooks';
 import { useTranslation } from 'react-i18next';
@@ -9,7 +18,8 @@ import { petRepository, scheduleRepository, getDatabase } from '@storage/databas
 import { usePetStore } from '@shared/stores/petStore';
 import { useQueryClient } from '@tanstack/react-query';
 import { queryKeys } from '@shared/utils/queryKeys';
-import { MAX_CAT_WEIGHT_KG, MAX_SCHEDULE_TIMES } from '@storage/domain/types';
+import { MAX_SCHEDULE_TIMES } from '@storage/domain/types';
+import { getSpeciesConfig } from '@shared/config/speciesConfig';
 import { Icon } from '@shared/components/ui/Icon';
 import { storage, StorageKeys } from '@storage/mmkv/storage';
 import { useUnsavedChangesGuard } from '@shared/hooks/useUnsavedChangesGuard';
@@ -22,7 +32,8 @@ export default function EditPetScreen() {
   const activePet = usePetStore(s => s.activePet);
   const refreshActivePet = usePetStore(s => s.refreshActivePet);
   const queryClient = useQueryClient();
-  const { scheduleInjectionReminder, scheduleFeedingReminder, cancelScheduleNotifications } = useNotifications();
+  const { scheduleInjectionReminder, scheduleFeedingReminder, cancelScheduleNotifications } =
+    useNotifications();
 
   const [name, setName] = useState(activePet?.name ?? '');
   const [weightKg, setWeightKg] = useState(activePet?.weightKg?.toString() ?? '');
@@ -54,9 +65,13 @@ export default function EditPetScreen() {
       setInjectionTimes(inj.map(x => x.timeOfDay));
       setFeedingTimes(feed.map(x => x.timeOfDay));
       // Mark initial load done so dirty tracking starts after this
-      setTimeout(() => { initialLoaded.current = true; }, 0);
+      setTimeout(() => {
+        initialLoaded.current = true;
+      }, 0);
     });
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+    };
   }, [activePet]);
 
   const savingRef = useRef(false);
@@ -65,11 +80,15 @@ export default function EditPetScreen() {
 
   const handleSave = async () => {
     if (savingRef.current || !activePet) return;
-    if (!name.trim()) { Alert.alert(t('pets.enterName')); return; }
+    if (!name.trim()) {
+      Alert.alert(t('pets.enterName'));
+      return;
+    }
     // Validate weight: if provided, must be positive
     if (weightKg) {
       const parsedWeight = parseFloat(weightKg.replace(',', '.'));
-      if (isNaN(parsedWeight) || parsedWeight <= 0 || parsedWeight > MAX_CAT_WEIGHT_KG) {
+      const maxWeight = getSpeciesConfig(activePet.species).validation.maxWeightKg;
+      if (isNaN(parsedWeight) || parsedWeight <= 0 || parsedWeight > maxWeight) {
         Alert.alert(t('common.error'), t('pets.invalidWeight'));
         return;
       }
@@ -81,25 +100,42 @@ export default function EditPetScreen() {
       return;
     }
     // Check for duplicate times within each schedule
-    if (new Set(injectionTimes).size !== injectionTimes.length || new Set(feedingTimes).size !== feedingTimes.length) {
+    if (
+      new Set(injectionTimes).size !== injectionTimes.length ||
+      new Set(feedingTimes).size !== feedingTimes.length
+    ) {
       Alert.alert(t('common.error'), t('onboarding.duplicateTime'));
       return;
     }
     savingRef.current = true;
     setLoading(true);
     try {
-      await petRepository.update(activePet.id, { name: name.trim(), weightKg: weightKg ? parseFloat(weightKg.replace(',', '.')) : undefined, insulinType: insulinType || undefined });
-      if (vetName) { storage.set('vetName', vetName); } else { storage.delete('vetName'); }
-      if (vetPhone) { storage.set('vetPhone', vetPhone); } else { storage.delete('vetPhone'); }
+      await petRepository.update(activePet.id, {
+        name: name.trim(),
+        weightKg: weightKg ? parseFloat(weightKg.replace(',', '.')) : undefined,
+        insulinType: insulinType || undefined,
+      });
+      if (vetName) {
+        storage.set('vetName', vetName);
+      } else {
+        storage.delete('vetName');
+      }
+      if (vetPhone) {
+        storage.set('vetPhone', vetPhone);
+      } else {
+        storage.delete('vetPhone');
+      }
       // UX-017: Wrap schedule updates in transaction to prevent partial writes
       const db = await getDatabase();
       await db.withTransactionAsync(async () => {
         const existingInjections = await scheduleRepository.getInjectionTimes(activePet.id);
         for (const s of existingInjections) await scheduleRepository.deleteInjectionTime(s.id);
-        for (const time of injectionTimes) await scheduleRepository.addInjectionTime(activePet.id, time);
+        for (const time of injectionTimes)
+          await scheduleRepository.addInjectionTime(activePet.id, time);
         const existingFeedings = await scheduleRepository.getFeedingTimes(activePet.id);
         for (const s of existingFeedings) await scheduleRepository.deleteFeedingTime(s.id);
-        for (const time of feedingTimes) await scheduleRepository.addFeedingTime(activePet.id, time);
+        for (const time of feedingTimes)
+          await scheduleRepository.addFeedingTime(activePet.id, time);
       });
       // Reschedule notifications after schedule changes
       const notificationsEnabled = storage.getBoolean(StorageKeys.NOTIFICATIONS_ENABLED) !== false;
@@ -116,15 +152,20 @@ export default function EditPetScreen() {
       await queryClient.invalidateQueries({ queryKey: queryKeys.schedule.all });
       disableGuard();
       navigation.goBack();
-    } catch { Alert.alert(t('pets.saveError')); }
-    finally { savingRef.current = false; setLoading(false); }
+    } catch {
+      Alert.alert(t('pets.saveError'));
+    } finally {
+      savingRef.current = false;
+      setLoading(false);
+    }
   };
 
   const validateTime = (value: string): string => {
     const clean = value.replace(/[^0-9:]/g, '');
     const match = clean.match(/^(\d{1,2}):?(\d{0,2})$/);
     if (!match) return clean.slice(0, 5);
-    let h = match[1], m = match[2];
+    let h = match[1],
+      m = match[2];
     if (parseInt(h) > 23) h = '23';
     if (m && parseInt(m) > 59) m = '59';
     return m !== undefined && m !== '' ? `${h}:${m}` : `${h}:`;
@@ -133,60 +174,177 @@ export default function EditPetScreen() {
   const renderTimeList = (type: string, times: string[], setTimes: (t: string[]) => void) => (
     <View style={{ gap: 8 }}>
       {times.map((time, i) => (
-        <View key={`time-${i}-${time}`} style={[styles.timeRow, { backgroundColor: theme.colors.surfaceSecondary, borderRadius: 12 }]}>
-          <Input value={time} onChangeText={v => { const n = [...times]; n[i] = validateTime(v); setTimes(n); }} placeholder="HH:MM" maxLength={5} containerStyle={{ flex: 1 }} />
-          <TouchableOpacity onPress={() => {
-            if (times.length <= 1) { Alert.alert(type === 'injection' ? t('onboarding.minOneInjection') : t('onboarding.minOneFeeding')); return; }
-            setTimes(times.filter((_, idx) => idx !== i));
-          }} style={{ padding: 12 }}>
+        <View
+          key={`time-${i}-${time}`}
+          style={[
+            styles.timeRow,
+            { backgroundColor: theme.colors.surfaceSecondary, borderRadius: 12 },
+          ]}
+        >
+          <Input
+            value={time}
+            onChangeText={v => {
+              const n = [...times];
+              n[i] = validateTime(v);
+              setTimes(n);
+            }}
+            placeholder="HH:MM"
+            maxLength={5}
+            containerStyle={{ flex: 1 }}
+          />
+          <TouchableOpacity
+            onPress={() => {
+              if (times.length <= 1) {
+                Alert.alert(
+                  type === 'injection'
+                    ? t('onboarding.minOneInjection')
+                    : t('onboarding.minOneFeeding')
+                );
+                return;
+              }
+              setTimes(times.filter((_, idx) => idx !== i));
+            }}
+            style={{ padding: 12 }}
+          >
             <Icon name="close-circle" size={24} color={theme.colors.danger} />
           </TouchableOpacity>
         </View>
       ))}
-      <TouchableOpacity style={[styles.addBtn, { borderColor: theme.colors.primary, borderRadius: 12 }]} onPress={() => {
-        if (times.length >= MAX_SCHEDULE_TIMES) return;
-        const existingSet = new Set(times);
-        let newTime = '12:00';
-        for (let h = 6; h < 24; h++) {
-          const candidate = `${h.toString().padStart(2, '0')}:00`;
-          if (!existingSet.has(candidate)) { newTime = candidate; break; }
-        }
-        setTimes([...times, newTime]);
-      }}>
-        <Text style={{ color: theme.colors.primary, fontFamily: theme.fonts.semibold }}>+ {type === 'injection' ? t('pets.addInjection') : t('pets.addFeeding')}</Text>
+      <TouchableOpacity
+        style={[styles.addBtn, { borderColor: theme.colors.primary, borderRadius: 12 }]}
+        onPress={() => {
+          if (times.length >= MAX_SCHEDULE_TIMES) return;
+          const existingSet = new Set(times);
+          let newTime = '12:00';
+          for (let h = 6; h < 24; h++) {
+            const candidate = `${h.toString().padStart(2, '0')}:00`;
+            if (!existingSet.has(candidate)) {
+              newTime = candidate;
+              break;
+            }
+          }
+          setTimes([...times, newTime]);
+        }}
+      >
+        <Text style={{ color: theme.colors.primary, fontFamily: theme.fonts.semibold }}>
+          + {type === 'injection' ? t('pets.addInjection') : t('pets.addFeeding')}
+        </Text>
       </TouchableOpacity>
     </View>
   );
 
   return (
-    <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={{ flex: 1 }}>
+    <KeyboardAvoidingView
+      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+      style={{ flex: 1 }}
+    >
       <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.background }]}>
         <View style={[styles.navHeader, { borderBottomColor: theme.colors.border }]}>
-          <TouchableOpacity onPress={() => navigation.goBack()} style={{ minHeight: 44, minWidth: 44, justifyContent: 'center' }}><Text style={{ color: theme.colors.primary }}>← {t('common.back')}</Text></TouchableOpacity>
-          <Text style={[{ fontSize: 17, fontFamily: theme.fonts.semibold, color: theme.colors.text }]}>{t('pets.editPet')}</Text>
+          <TouchableOpacity
+            onPress={() => navigation.goBack()}
+            style={{ minHeight: 44, minWidth: 44, justifyContent: 'center' }}
+          >
+            <Text style={{ color: theme.colors.primary }}>← {t('common.back')}</Text>
+          </TouchableOpacity>
+          <Text
+            style={[{ fontSize: 17, fontFamily: theme.fonts.semibold, color: theme.colors.text }]}
+          >
+            {t('pets.editPet')}
+          </Text>
           <View style={{ width: 60 }} />
         </View>
         <ScrollView contentContainerStyle={styles.content}>
-          <Input label={t('pets.name')} value={name} onChangeText={setName} placeholder="Барсик" maxLength={50} />
-          <Input label={`${t('pets.weight')} (${t('common.kg')})`} value={weightKg} onChangeText={setWeightKg} placeholder="4.5" keyboardType="decimal-pad" />
-          <Input label={t('pets.insulinType')} value={insulinType} onChangeText={setInsulinType} placeholder="Протафан" />
+          <Input
+            label={t('pets.name')}
+            value={name}
+            onChangeText={setName}
+            placeholder="Барсик"
+            maxLength={50}
+          />
+          <Input
+            label={`${t('pets.weight')} (${t('common.kg')})`}
+            value={weightKg}
+            onChangeText={setWeightKg}
+            placeholder={activePet?.species === 'dog' ? '15' : '4.5'}
+            keyboardType="decimal-pad"
+          />
+          <Input
+            label={t('pets.insulinType')}
+            value={insulinType}
+            onChangeText={setInsulinType}
+            placeholder="Протафан"
+          />
           <View style={styles.sectionHeader}>
-            <Icon name="medkit-outline" size={20} color={theme.colors.primary} style={{ marginRight: 8 }} />
-            <Text style={[styles.sectionTitle, { color: theme.colors.text, fontFamily: theme.fonts.bold }]}>{t('pets.injectionSchedule')}</Text>
+            <Icon
+              name="medkit-outline"
+              size={20}
+              color={theme.colors.primary}
+              style={{ marginRight: 8 }}
+            />
+            <Text
+              style={[
+                styles.sectionTitle,
+                { color: theme.colors.text, fontFamily: theme.fonts.bold },
+              ]}
+            >
+              {t('pets.injectionSchedule')}
+            </Text>
           </View>
           {renderTimeList('injection', injectionTimes, setInjectionTimes)}
           <View style={styles.sectionHeader}>
-            <Icon name="restaurant-outline" size={20} color={theme.colors.warning} style={{ marginRight: 8 }} />
-            <Text style={[styles.sectionTitle, { color: theme.colors.text, fontFamily: theme.fonts.bold }]}>{t('pets.feedingSchedule')}</Text>
+            <Icon
+              name="restaurant-outline"
+              size={20}
+              color={theme.colors.warning}
+              style={{ marginRight: 8 }}
+            />
+            <Text
+              style={[
+                styles.sectionTitle,
+                { color: theme.colors.text, fontFamily: theme.fonts.bold },
+              ]}
+            >
+              {t('pets.feedingSchedule')}
+            </Text>
           </View>
           {renderTimeList('feeding', feedingTimes, setFeedingTimes)}
           <View style={styles.sectionHeader}>
-            <Icon name="medical-outline" size={20} color={theme.colors.success} style={{ marginRight: 8 }} />
-            <Text style={[styles.sectionTitle, { color: theme.colors.text, fontFamily: theme.fonts.bold }]}>{t('pets.vetContact')}</Text>
+            <Icon
+              name="medical-outline"
+              size={20}
+              color={theme.colors.success}
+              style={{ marginRight: 8 }}
+            />
+            <Text
+              style={[
+                styles.sectionTitle,
+                { color: theme.colors.text, fontFamily: theme.fonts.bold },
+              ]}
+            >
+              {t('pets.vetContact')}
+            </Text>
           </View>
-          <Input label={t('onboarding.vetName')} value={vetName} onChangeText={setVetName} placeholder="Др. Иванова" />
-          <Input label={t('onboarding.vetPhone')} value={vetPhone} onChangeText={setVetPhone} placeholder="+7 999 000-00-00" keyboardType="phone-pad" />
-          <Button title={t('common.save')} onPress={handleSave} fullWidth size="lg" loading={loading} style={{ marginTop: 24 }} />
+          <Input
+            label={t('onboarding.vetName')}
+            value={vetName}
+            onChangeText={setVetName}
+            placeholder="Др. Иванова"
+          />
+          <Input
+            label={t('onboarding.vetPhone')}
+            value={vetPhone}
+            onChangeText={setVetPhone}
+            placeholder="+7 999 000-00-00"
+            keyboardType="phone-pad"
+          />
+          <Button
+            title={t('common.save')}
+            onPress={handleSave}
+            fullWidth
+            size="lg"
+            loading={loading}
+            style={{ marginTop: 24 }}
+          />
         </ScrollView>
       </SafeAreaView>
     </KeyboardAvoidingView>
@@ -195,7 +353,13 @@ export default function EditPetScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
-  navHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', padding: 16, borderBottomWidth: 0.5 },
+  navHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    padding: 16,
+    borderBottomWidth: 0.5,
+  },
   content: { padding: 20, gap: 14, paddingBottom: 40 },
   sectionHeader: { flexDirection: 'row', alignItems: 'center', marginTop: 8 },
   sectionTitle: { fontSize: 16 },

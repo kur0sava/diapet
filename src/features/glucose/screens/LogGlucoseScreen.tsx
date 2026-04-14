@@ -1,7 +1,13 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import {
-  View, Text, StyleSheet, ScrollView,
-  TouchableOpacity, Alert, KeyboardAvoidingView, Platform,
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  TouchableOpacity,
+  Alert,
+  KeyboardAvoidingView,
+  Platform,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRoute, RouteProp, useNavigation } from '@react-navigation/native';
@@ -12,7 +18,13 @@ import { Button, Input, Card } from '@shared/components/ui';
 import { glucoseRepository } from '@storage/database';
 import { usePetStore } from '@shared/stores/petStore';
 import { MealRelation, GlucoseUnit, getGlucoseLevel, getGlucoseColor } from '../types';
-import { MGDL_PER_MMOLL, MAX_REASONABLE_GLUCOSE_MMOL, MAX_REASONABLE_GLUCOSE_MGDL, mgdlToMmol } from '@storage/domain/types';
+import {
+  MGDL_PER_MMOLL,
+  MAX_REASONABLE_GLUCOSE_MMOL,
+  MAX_REASONABLE_GLUCOSE_MGDL,
+  mgdlToMmol,
+} from '@storage/domain/types';
+import { getInsulinThresholds } from '@shared/config/speciesConfig';
 import { useQueryClient } from '@tanstack/react-query';
 import { queryKeys } from '@shared/utils/queryKeys';
 import { storage, StorageKeys } from '@storage/mmkv/storage';
@@ -27,11 +39,36 @@ import { useHintTrigger } from '@features/hints/hooks/useHintTrigger';
 import { clearPredictionCache } from '@features/prediction/data/predictionStorage';
 import type { IoniconName } from '@shared/components/ui';
 
-const MEAL_OPTIONS: { value: MealRelation; labelKey: string; iconName: IoniconName; iconColor: string }[] = [
-  { value: 'fasting', labelKey: 'glucose.fasting', iconName: 'sunny-outline', iconColor: '#FF9500' },
-  { value: 'before_meal', labelKey: 'glucose.beforeMeal', iconName: 'restaurant-outline', iconColor: '#FF6B6B' },
-  { value: 'after_meal', labelKey: 'glucose.afterMeal', iconName: 'checkmark-circle-outline', iconColor: '#34C759' },
-  { value: 'unspecified', labelKey: 'glucose.unspecified', iconName: 'help-circle-outline', iconColor: '#8E8E93' },
+const MEAL_OPTIONS: {
+  value: MealRelation;
+  labelKey: string;
+  iconName: IoniconName;
+  iconColor: string;
+}[] = [
+  {
+    value: 'fasting',
+    labelKey: 'glucose.fasting',
+    iconName: 'sunny-outline',
+    iconColor: '#FF9500',
+  },
+  {
+    value: 'before_meal',
+    labelKey: 'glucose.beforeMeal',
+    iconName: 'restaurant-outline',
+    iconColor: '#FF6B6B',
+  },
+  {
+    value: 'after_meal',
+    labelKey: 'glucose.afterMeal',
+    iconName: 'checkmark-circle-outline',
+    iconColor: '#34C759',
+  },
+  {
+    value: 'unspecified',
+    labelKey: 'glucose.unspecified',
+    iconName: 'help-circle-outline',
+    iconColor: '#8E8E93',
+  },
 ];
 
 export default function LogGlucoseScreen() {
@@ -53,7 +90,7 @@ export default function LogGlucoseScreen() {
   const [notes, setNotes] = useState('');
   const [loading, setLoading] = useState(false);
   const [recordedAt, setRecordedAt] = useState(() =>
-    route.params?.presetDate ? new Date(route.params.presetDate) : new Date(),
+    route.params?.presetDate ? new Date(route.params.presetDate) : new Date()
   );
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [showTimePicker, setShowTimePicker] = useState(false);
@@ -72,12 +109,12 @@ export default function LogGlucoseScreen() {
   });
   const disableGuard = useUnsavedChangesGuard(
     value !== initialValuesRef.current.value ||
-    insulinDose !== initialValuesRef.current.insulinDose ||
-    insulinType !== initialValuesRef.current.insulinType ||
-    notes !== initialValuesRef.current.notes ||
-    mealRelation !== initialValuesRef.current.mealRelation ||
-    unit !== initialValuesRef.current.unit ||
-    recordedAt.getTime() !== initialValuesRef.current.recordedAt
+      insulinDose !== initialValuesRef.current.insulinDose ||
+      insulinType !== initialValuesRef.current.insulinType ||
+      notes !== initialValuesRef.current.notes ||
+      mealRelation !== initialValuesRef.current.mealRelation ||
+      unit !== initialValuesRef.current.unit ||
+      recordedAt.getTime() !== initialValuesRef.current.recordedAt
   );
 
   useEffect(() => {
@@ -85,7 +122,8 @@ export default function LogGlucoseScreen() {
     if (editId) {
       glucoseRepository.findById(editId).then(reading => {
         if (cancelled || !reading) return;
-        const displayValue = savedUnit === 'mmol/L' ? reading.valueMmol.toFixed(1) : reading.valueMgdl.toString();
+        const displayValue =
+          savedUnit === 'mmol/L' ? reading.valueMmol.toFixed(1) : reading.valueMgdl.toString();
         const loadedDose = reading.insulinDose ? reading.insulinDose.toString() : '';
         const loadedNotes = reading.notes ?? '';
         setValue(displayValue);
@@ -102,15 +140,22 @@ export default function LogGlucoseScreen() {
           notes: loadedNotes,
           mealRelation: reading.mealRelation,
           unit: savedUnit,
-          recordedAt: reading.recordedAt ? new Date(reading.recordedAt).getTime() : new Date().getTime(),
+          recordedAt: reading.recordedAt
+            ? new Date(reading.recordedAt).getTime()
+            : new Date().getTime(),
         };
       });
     }
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+    };
   }, [editId, savedUnit]);
 
   const numValue = parseFloat(value.replace(',', '.'));
-  const isValidValue = !isNaN(numValue) && numValue > 0 && numValue < (unit === 'mmol/L' ? MAX_REASONABLE_GLUCOSE_MMOL : MAX_REASONABLE_GLUCOSE_MGDL);
+  const isValidValue =
+    !isNaN(numValue) &&
+    numValue > 0 &&
+    numValue < (unit === 'mmol/L' ? MAX_REASONABLE_GLUCOSE_MMOL : MAX_REASONABLE_GLUCOSE_MGDL);
 
   const glucosePreview = isValidValue
     ? {
@@ -139,7 +184,10 @@ export default function LogGlucoseScreen() {
     try {
       if (editId) {
         await glucoseRepository.update(editId, {
-          petId: activePet.id, value: numValue, unit, mealRelation,
+          petId: activePet.id,
+          value: numValue,
+          unit,
+          mealRelation,
           // M003: replace comma so "2,5" parses correctly
           insulinDose: insulinDose ? parseFloat(insulinDose.replace(',', '.')) : undefined,
           insulinType: insulinType || undefined,
@@ -148,7 +196,10 @@ export default function LogGlucoseScreen() {
         });
       } else {
         await glucoseRepository.create({
-          petId: activePet.id, value: numValue, unit, mealRelation,
+          petId: activePet.id,
+          value: numValue,
+          unit,
+          mealRelation,
           insulinDose: insulinDose ? parseFloat(insulinDose.replace(',', '.')) : undefined,
           insulinType: insulinType || undefined,
           notes: notes || undefined,
@@ -172,35 +223,65 @@ export default function LogGlucoseScreen() {
       savingRef.current = false;
       setLoading(false);
     }
-  }, [activePet, numValue, unit, mealRelation, insulinDose, insulinType, notes, recordedAt, editId, queryClient, navigation, t, syncInitialValues, triggerAfterAction, disableGuard]);
+  }, [
+    activePet,
+    numValue,
+    unit,
+    mealRelation,
+    insulinDose,
+    insulinType,
+    notes,
+    recordedAt,
+    editId,
+    queryClient,
+    navigation,
+    t,
+    syncInitialValues,
+    triggerAfterAction,
+    disableGuard,
+  ]);
 
   const handleSave = useCallback(async () => {
     if (savingRef.current) return;
-    if (!activePet) { Alert.alert(t('common.error'), t('glucose.petNotFound')); return; }
-    if (!isValidValue) { Alert.alert(t('common.error'), t('glucose.invalidValue')); return; }
-    // MC002: Warn on unusually high insulin dose (typical cat range: 1–4 units)
+    if (!activePet) {
+      Alert.alert(t('common.error'), t('glucose.petNotFound'));
+      return;
+    }
+    if (!isValidValue) {
+      Alert.alert(t('common.error'), t('glucose.invalidValue'));
+      return;
+    }
+    // MC002: Warn on unusually high insulin dose — species-aware thresholds
     const doseNum = insulinDose ? parseFloat(insulinDose.replace(',', '.')) : 0;
     if (insulinDose && (isNaN(doseNum) || doseNum <= 0)) {
       Alert.alert(t('common.error'), t('injection.doseError'));
       return;
     }
-    // MH-C1: Hard limit 10 IU (ISFM 2021, Rand 2012 — clinical max for cats)
-    if (doseNum > 10) {
+    const doseThresholds = getInsulinThresholds(activePet.species, activePet.weightKg);
+    if (doseNum > doseThresholds.absoluteMax) {
       Alert.alert(t('glucose.doseAbsoluteLimit'), t('glucose.doseAbsoluteLimitDesc'));
       return;
     }
-    if (doseNum > 6) {
-      Alert.alert(t('glucose.veryHighDoseWarning'), t('glucose.veryHighDoseWarningDesc', { dose: doseNum }), [
-        { text: t('common.cancel'), style: 'cancel' },
-        { text: t('common.confirm'), style: 'destructive', onPress: () => doSave() },
-      ]);
+    if (doseNum > doseThresholds.danger) {
+      Alert.alert(
+        t('glucose.veryHighDoseWarning'),
+        t('glucose.veryHighDoseWarningDesc', { dose: doseNum }),
+        [
+          { text: t('common.cancel'), style: 'cancel' },
+          { text: t('common.confirm'), style: 'destructive', onPress: () => doSave() },
+        ]
+      );
       return;
     }
-    if (doseNum > 4) {
-      Alert.alert(t('glucose.highDoseWarning'), t('glucose.highDoseWarningDesc', { dose: doseNum }), [
-        { text: t('common.cancel'), style: 'cancel' },
-        { text: t('common.confirm'), onPress: () => doSave() },
-      ]);
+    if (doseNum > doseThresholds.warning) {
+      Alert.alert(
+        t('glucose.highDoseWarning'),
+        t('glucose.highDoseWarningDesc', { dose: doseNum }),
+        [
+          { text: t('common.cancel'), style: 'cancel' },
+          { text: t('common.confirm'), onPress: () => doSave() },
+        ]
+      );
       return;
     }
     doSave();
@@ -216,20 +297,35 @@ export default function LogGlucoseScreen() {
   };
 
   return (
-    <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={{ flex: 1 }}>
+    <KeyboardAvoidingView
+      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+      style={{ flex: 1 }}
+    >
       <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.background }]}>
         {/* Header */}
         <View>
           <View style={[styles.navHeader, { borderBottomColor: theme.colors.border }]}>
             <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backBtn}>
-              <Text style={{ color: theme.colors.primary, fontSize: 16 }}>← {t('common.back')}</Text>
+              <Text style={{ color: theme.colors.primary, fontSize: 16 }}>
+                ← {t('common.back')}
+              </Text>
             </TouchableOpacity>
-            <Text style={[styles.headerTitle, { color: theme.colors.text, fontFamily: theme.fonts.semibold }]}>
+            <Text
+              style={[
+                styles.headerTitle,
+                { color: theme.colors.text, fontFamily: theme.fonts.semibold },
+              ]}
+            >
               {editId ? t('glucose.editReading') : t('glucose.addReading')}
             </Text>
             <View style={{ width: 60 }} />
           </View>
-          <LinearGradient colors={[...theme.gradients.primary] as [string, string]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} style={{ height: 3 }} />
+          <LinearGradient
+            colors={[...theme.gradients.primary] as [string, string]}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 0 }}
+            style={{ height: 3 }}
+          />
         </View>
 
         <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.content}>
@@ -246,21 +342,33 @@ export default function LogGlucoseScreen() {
                   key={u}
                   style={[
                     styles.unitBtn,
-                    { backgroundColor: unit === u ? theme.colors.primary : theme.colors.surfaceSecondary },
+                    {
+                      backgroundColor:
+                        unit === u ? theme.colors.primary : theme.colors.surfaceSecondary,
+                    },
                   ]}
                   onPress={() => {
                     if (u === unit) return;
                     // UX-001: Convert value when switching units
                     const num = parseFloat(value.replace(',', '.'));
                     if (!isNaN(num) && num > 0) {
-                      const converted = u === 'mg/dL' ? (num * MGDL_PER_MMOLL).toFixed(0) : (num / MGDL_PER_MMOLL).toFixed(1);
+                      const converted =
+                        u === 'mg/dL'
+                          ? (num * MGDL_PER_MMOLL).toFixed(0)
+                          : (num / MGDL_PER_MMOLL).toFixed(1);
                       setValue(converted);
                     }
                     setUnit(u);
                     storage.set(StorageKeys.GLUCOSE_UNIT, u);
                   }}
                 >
-                  <Text style={{ color: unit === u ? '#fff' : theme.colors.text, fontFamily: theme.fonts.semibold, fontSize: 13 }}>
+                  <Text
+                    style={{
+                      color: unit === u ? '#fff' : theme.colors.text,
+                      fontFamily: theme.fonts.semibold,
+                      fontSize: 13,
+                    }}
+                  >
                     {u}
                   </Text>
                 </TouchableOpacity>
@@ -273,12 +381,22 @@ export default function LogGlucoseScreen() {
               placeholder={unit === 'mmol/L' ? '6.5' : '117'}
               keyboardType="decimal-pad"
               containerStyle={{ alignSelf: 'stretch' }}
-              style={{ fontSize: 32, textAlign: 'center', fontFamily: theme.fonts.bold, color: theme.colors.text }}
+              style={{
+                fontSize: 32,
+                textAlign: 'center',
+                fontFamily: theme.fonts.bold,
+                color: theme.colors.text,
+              }}
             />
 
             {glucosePreview && (
               <View style={[styles.levelBadge, { backgroundColor: `${glucosePreview.color}20` }]}>
-                <Text style={[styles.levelText, { color: glucosePreview.color, fontFamily: theme.fonts.bold }]}>
+                <Text
+                  style={[
+                    styles.levelText,
+                    { color: glucosePreview.color, fontFamily: theme.fonts.bold },
+                  ]}
+                >
                   ● {levelLabels[glucosePreview.level]}
                 </Text>
               </View>
@@ -286,15 +404,33 @@ export default function LogGlucoseScreen() {
           </Card>
 
           {/* Date & Time */}
-          <Text style={[styles.sectionTitle, { color: theme.colors.text, fontFamily: theme.fonts.bold }]}>{t('glucose.date')} & {t('glucose.time')}</Text>
+          <Text
+            style={[
+              styles.sectionTitle,
+              { color: theme.colors.text, fontFamily: theme.fonts.bold },
+            ]}
+          >
+            {t('glucose.date')} & {t('glucose.time')}
+          </Text>
           <View style={styles.row}>
             <TouchableOpacity
               style={[styles.dateTimeBtn, { backgroundColor: theme.colors.surfaceSecondary }]}
               onPress={() => setShowDatePicker(true)}
             >
               <View style={styles.dateTimeContent}>
-                <Icon name="calendar-outline" size={18} color={theme.colors.primary} style={{ marginRight: 6 }} />
-                <Text style={{ color: theme.colors.text, fontSize: 15, fontFamily: theme.fonts.semibold }}>
+                <Icon
+                  name="calendar-outline"
+                  size={18}
+                  color={theme.colors.primary}
+                  style={{ marginRight: 6 }}
+                />
+                <Text
+                  style={{
+                    color: theme.colors.text,
+                    fontSize: 15,
+                    fontFamily: theme.fonts.semibold,
+                  }}
+                >
                   {format(recordedAt, i18n.language === 'ru' ? 'dd.MM.yyyy' : 'MM/dd/yyyy')}
                 </Text>
               </View>
@@ -304,8 +440,19 @@ export default function LogGlucoseScreen() {
               onPress={() => setShowTimePicker(true)}
             >
               <View style={styles.dateTimeContent}>
-                <Icon name="time-outline" size={18} color={theme.colors.primary} style={{ marginRight: 6 }} />
-                <Text style={{ color: theme.colors.text, fontSize: 15, fontFamily: theme.fonts.semibold }}>
+                <Icon
+                  name="time-outline"
+                  size={18}
+                  color={theme.colors.primary}
+                  style={{ marginRight: 6 }}
+                />
+                <Text
+                  style={{
+                    color: theme.colors.text,
+                    fontSize: 15,
+                    fontFamily: theme.fonts.semibold,
+                  }}
+                >
                   {format(recordedAt, 'HH:mm')}
                 </Text>
               </View>
@@ -321,7 +468,11 @@ export default function LogGlucoseScreen() {
                 setShowDatePicker(false);
                 if (date) {
                   const merged = new Date(date);
-                  merged.setHours(recordedAt.getHours(), recordedAt.getMinutes(), recordedAt.getSeconds());
+                  merged.setHours(
+                    recordedAt.getHours(),
+                    recordedAt.getMinutes(),
+                    recordedAt.getSeconds()
+                  );
                   setRecordedAt(merged);
                 }
               }}
@@ -344,7 +495,14 @@ export default function LogGlucoseScreen() {
           )}
 
           {/* Meal Relation */}
-          <Text style={[styles.sectionTitle, { color: theme.colors.text, fontFamily: theme.fonts.bold }]}>{t('glucose.mealRelation')}</Text>
+          <Text
+            style={[
+              styles.sectionTitle,
+              { color: theme.colors.text, fontFamily: theme.fonts.bold },
+            ]}
+          >
+            {t('glucose.mealRelation')}
+          </Text>
           <View style={styles.mealGrid}>
             {MEAL_OPTIONS.map(opt => (
               <TouchableOpacity
@@ -352,7 +510,8 @@ export default function LogGlucoseScreen() {
                 style={[
                   styles.mealBtn,
                   {
-                    backgroundColor: mealRelation === opt.value ? theme.colors.primaryLight : theme.colors.surface,
+                    backgroundColor:
+                      mealRelation === opt.value ? theme.colors.primaryLight : theme.colors.surface,
                     borderColor: mealRelation === opt.value ? theme.colors.primary : 'transparent',
                     borderWidth: 2,
                     ...theme.shadows.sm,
@@ -360,8 +519,23 @@ export default function LogGlucoseScreen() {
                 ]}
                 onPress={() => setMealRelation(opt.value)}
               >
-                <Icon name={opt.iconName} size={24} color={mealRelation === opt.value ? theme.colors.primary : opt.iconColor} />
-                <Text style={[styles.mealLabel, { color: mealRelation === opt.value ? theme.colors.primary : theme.colors.text, fontFamily: theme.fonts.semibold }]} numberOfLines={2} adjustsFontSizeToFit minimumFontScale={0.8}>
+                <Icon
+                  name={opt.iconName}
+                  size={24}
+                  color={mealRelation === opt.value ? theme.colors.primary : opt.iconColor}
+                />
+                <Text
+                  style={[
+                    styles.mealLabel,
+                    {
+                      color: mealRelation === opt.value ? theme.colors.primary : theme.colors.text,
+                      fontFamily: theme.fonts.semibold,
+                    },
+                  ]}
+                  numberOfLines={2}
+                  adjustsFontSizeToFit
+                  minimumFontScale={0.8}
+                >
                   {t(opt.labelKey)}
                 </Text>
               </TouchableOpacity>
@@ -369,7 +543,14 @@ export default function LogGlucoseScreen() {
           </View>
 
           {/* Insulin */}
-          <Text style={[styles.sectionTitle, { color: theme.colors.text, fontFamily: theme.fonts.bold }]}>{t('glucose.insulinOptional')}</Text>
+          <Text
+            style={[
+              styles.sectionTitle,
+              { color: theme.colors.text, fontFamily: theme.fonts.bold },
+            ]}
+          >
+            {t('glucose.insulinOptional')}
+          </Text>
           <View style={styles.row}>
             <Input
               label={t('glucose.insulinDose')}
@@ -416,8 +597,13 @@ export default function LogGlucoseScreen() {
 const styles = StyleSheet.create({
   container: { flex: 1 },
   navHeader: {
-    flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
-    paddingHorizontal: 16, paddingVertical: 12, borderBottomWidth: 0.5, gap: 8,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    borderBottomWidth: 0.5,
+    gap: 8,
   },
   backBtn: { width: 60, minHeight: 44, minWidth: 44, justifyContent: 'center' },
   headerTitle: { fontSize: 17, flex: 1, textAlign: 'center' },

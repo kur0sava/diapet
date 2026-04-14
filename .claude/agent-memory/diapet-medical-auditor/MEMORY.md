@@ -86,3 +86,21 @@ New files audited: hintsContent.ts (137 hints), aiSystemPrompt.ts, AssessmentScr
 - EU/DE/UK: Adequate — Zooplus, German brands
 - MX: Store data only, no food data — gap
 - JP/KR/BR: Defined as regions but NO food data, NO stores
+
+## Practical Guides (docs/medical/)
+- `docs/medical/dog-diabetes-practical-guide.md` — 13 sections, 500 lines, canine-specific practical nuances
+- `docs/medical/cat-diabetes-practical-guide.md` — 13 sections + feline-specific addendum, created 2026-04-13
+
+## Key Feline-Specific Clinical Facts (for hint/encyclopedia validation)
+- ProZinc (U-40): MUST stay refrigerated after opening (unique among cat insulins — others can be room temp)
+- AlphaTRAK 2: code 7 for CATS, code 10 for dogs — wrong code = wrong result
+- Glargine "tight regulation" nadir target: 5-9 mmol/L (Roomp & Rand 2009)
+- Remission rates: glargine + low-carb = 50-90%; PZI + low-carb = 40-60%; NPH = <25%
+- Stress hyperglycemia in cats: up to 15-17 mmol/L in healthy cats (clinical measurements unreliable for diagnosis)
+- Acromegaly: suspect if >6-8 IU/injection without control; 20-30% of resistant cats
+- Feline neuropathy (plantigrade stance): REVERSIBLE with normoglycemia in 1-6 months
+- Methylcobalamin dose: 0.5-1 mg PER CAT (not per kg) PO daily
+- Glucagon dose for cats: 0.025-0.1 mg (25-100 mcg) SC/IM — much less than dogs
+- Burmese cats: highest breed risk 5-18x (Australia/NZ populations)
+- Honeymoon period: repeated nadir <4 mmol/L at stable dose = imminent remission signal — reduce dose immediately
+- Hyperthyroidism + diabetes: fructosamine unreliable (falsely low); insulin needs may drop 20-40% after methimazole

@@ -10,6 +10,10 @@ const SYMPTOM_WEIGHTS: Record<SymptomType, number> = {
   lethargy: 2,
   vomiting: 3,
   diarrhea: 2,
+  cataracts: 2,
+  urinaryInfection: 2,
+  panting: 1,
+  ataxia: 3,
   other: 1,
 };
 

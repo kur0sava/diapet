@@ -1,8 +1,5 @@
 import React, { useState } from 'react';
-import {
-  View, Text, StyleSheet, FlatList,
-  TouchableOpacity, TextInput,
-} from 'react-native';
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, TextInput } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useEncyclopediaNavigation } from '@navigation/hooks';
 import { useTranslation } from 'react-i18next';
@@ -12,6 +9,7 @@ import { Article, ArticleCategory, BilingualText } from '../types';
 import { Icon } from '@shared/components/ui/Icon';
 import type { IoniconName } from '@shared/components/ui';
 import { storageUtils, StorageKeys } from '@storage/mmkv/storage';
+import { usePetStore } from '@shared/stores/petStore';
 
 const useLang = () => {
   const { i18n } = useTranslation();
@@ -38,6 +36,7 @@ export default function ArticleListScreen() {
   const [search, setSearch] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<ArticleCategory | null>(null);
   const [showBookmarks, setShowBookmarks] = useState(false);
+  const species = usePetStore(s => s.activePet?.species ?? 'cat');
   const bookmarkedIds = showBookmarks
     ? (storageUtils.getObject<string[]>(StorageKeys.BOOKMARKED_ARTICLES) ?? [])
     : [];
@@ -54,8 +53,13 @@ export default function ArticleListScreen() {
     medical: t('encyclopedia.categories.medical'),
   };
 
-  const filtered = articles.filter(a => {
-    const matchSearch = search === '' ||
+  const speciesArticles = articles.filter(
+    a => !a.species || a.species === 'all' || a.species === species
+  );
+
+  const filtered = speciesArticles.filter(a => {
+    const matchSearch =
+      search === '' ||
       lang(a.titleKey).toLowerCase().includes(search.toLowerCase()) ||
       lang(a.summaryKey).toLowerCase().includes(search.toLowerCase());
     const matchCategory = !selectedCategory || a.category === selectedCategory;
@@ -63,7 +67,7 @@ export default function ArticleListScreen() {
     return matchSearch && matchCategory && matchBookmark;
   });
 
-  const categories = [...new Set(articles.map(a => a.category))] as ArticleCategory[];
+  const categories = [...new Set(speciesArticles.map(a => a.category))] as ArticleCategory[];
 
   const renderArticle = ({ item }: { item: Article }) => (
     <TouchableOpacity
@@ -72,8 +76,17 @@ export default function ArticleListScreen() {
       activeOpacity={0.8}
     >
       <View style={styles.articleHeader}>
-        <View style={[styles.categoryBadge, { backgroundColor: CATEGORY_ICONS[item.category].color + '15' }]}>
-          <Icon name={CATEGORY_ICONS[item.category].name} size={14} color={CATEGORY_ICONS[item.category].color} />
+        <View
+          style={[
+            styles.categoryBadge,
+            { backgroundColor: CATEGORY_ICONS[item.category].color + '15' },
+          ]}
+        >
+          <Icon
+            name={CATEGORY_ICONS[item.category].name}
+            size={14}
+            color={CATEGORY_ICONS[item.category].color}
+          />
           <Text style={[styles.categoryLabel, { color: CATEGORY_ICONS[item.category].color }]}>
             {categoryLabels[item.category]}
           </Text>
@@ -83,13 +96,21 @@ export default function ArticleListScreen() {
         </Text>
       </View>
       <Text style={[styles.articleTitle, { color: theme.colors.text }]}>{lang(item.titleKey)}</Text>
-      <Text style={[styles.articleSummary, { color: theme.colors.textSecondary }]} numberOfLines={2}>
+      <Text
+        style={[styles.articleSummary, { color: theme.colors.textSecondary }]}
+        numberOfLines={2}
+      >
         {lang(item.summaryKey)}
       </Text>
       <View style={styles.tags}>
         {item.tags.slice(0, 3).map(tag => (
-          <View key={lang(tag)} style={[styles.tag, { backgroundColor: theme.colors.surfaceSecondary }]}>
-            <Text style={[styles.tagText, { color: theme.colors.textSecondary }]}>#{lang(tag)}</Text>
+          <View
+            key={lang(tag)}
+            style={[styles.tag, { backgroundColor: theme.colors.surfaceSecondary }]}
+          >
+            <Text style={[styles.tagText, { color: theme.colors.textSecondary }]}>
+              #{lang(tag)}
+            </Text>
           </View>
         ))}
       </View>
@@ -100,10 +121,17 @@ export default function ArticleListScreen() {
     <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.background }]}>
       <View style={styles.header}>
         <Text style={[styles.title, { color: theme.colors.text }]}>{t('encyclopedia.title')}</Text>
-        <Text style={[styles.subtitle, { color: theme.colors.textSecondary }]}>{t('encyclopedia.subtitle')}</Text>
+        <Text style={[styles.subtitle, { color: theme.colors.textSecondary }]}>
+          {t('encyclopedia.subtitle')}
+        </Text>
       </View>
 
-      <View style={[styles.searchContainer, { backgroundColor: theme.colors.surfaceSecondary, margin: 16 }]}>
+      <View
+        style={[
+          styles.searchContainer,
+          { backgroundColor: theme.colors.surfaceSecondary, margin: 16 },
+        ]}
+      >
         <Icon name="search" size={18} color={theme.colors.textTertiary} />
         <TextInput
           style={[styles.searchInput, { color: theme.colors.text }]}
@@ -140,8 +168,18 @@ export default function ArticleListScreen() {
             accessibilityLabel={t('encyclopedia.bookmarks')}
             accessibilityRole="button"
           >
-            <Icon name={showBookmarks ? 'star' : 'star-outline'} size={16} color={showBookmarks ? '#fff' : '#F5A623'} />
-            <Text style={{ color: showBookmarks ? '#fff' : theme.colors.text, fontSize: 13, fontWeight: '500' }}>
+            <Icon
+              name={showBookmarks ? 'star' : 'star-outline'}
+              size={16}
+              color={showBookmarks ? '#fff' : '#F5A623'}
+            />
+            <Text
+              style={{
+                color: showBookmarks ? '#fff' : theme.colors.text,
+                fontSize: 13,
+                fontWeight: '500',
+              }}
+            >
               {t('encyclopedia.bookmarks')}
             </Text>
           </TouchableOpacity>
@@ -151,7 +189,8 @@ export default function ArticleListScreen() {
             style={[
               styles.categoryChip,
               {
-                backgroundColor: selectedCategory === item ? theme.colors.primary : theme.colors.surface,
+                backgroundColor:
+                  selectedCategory === item ? theme.colors.primary : theme.colors.surface,
                 borderColor: selectedCategory === item ? theme.colors.primary : theme.colors.border,
                 borderWidth: 1,
               },
@@ -160,8 +199,18 @@ export default function ArticleListScreen() {
             accessibilityLabel={categoryLabels[item]}
             accessibilityRole="button"
           >
-            <Icon name={CATEGORY_ICONS[item].name} size={16} color={selectedCategory === item ? '#fff' : CATEGORY_ICONS[item].color} />
-            <Text style={{ color: selectedCategory === item ? '#fff' : theme.colors.text, fontSize: 13, fontWeight: '500' }}>
+            <Icon
+              name={CATEGORY_ICONS[item].name}
+              size={16}
+              color={selectedCategory === item ? '#fff' : CATEGORY_ICONS[item].color}
+            />
+            <Text
+              style={{
+                color: selectedCategory === item ? '#fff' : theme.colors.text,
+                fontSize: 13,
+                fontWeight: '500',
+              }}
+            >
               {categoryLabels[item]}
             </Text>
           </TouchableOpacity>
@@ -200,14 +249,36 @@ const styles = StyleSheet.create({
   header: { paddingHorizontal: 20, paddingTop: 16, paddingBottom: 4 },
   title: { fontSize: 28, fontWeight: '800' },
   subtitle: { fontSize: 14, marginTop: 4 },
-  searchContainer: { flexDirection: 'row', alignItems: 'center', borderRadius: 12, paddingHorizontal: 12, paddingVertical: 10, gap: 8 },
+  searchContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderRadius: 12,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    gap: 8,
+  },
   searchInput: { flex: 1, fontSize: 15 },
   categories: { paddingHorizontal: 16, gap: 8, paddingBottom: 12 },
-  categoryChip: { flexDirection: 'row', alignItems: 'center', gap: 6, paddingHorizontal: 14, paddingVertical: 8, borderRadius: 20 },
+  categoryChip: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    paddingHorizontal: 14,
+    paddingVertical: 8,
+    borderRadius: 20,
+  },
   list: { padding: 16, gap: 14, paddingBottom: 100 },
   articleCard: { padding: 16, borderRadius: 16, gap: 10 },
   articleHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
-  categoryBadge: { flexDirection: 'row', alignItems: 'center', gap: 4, paddingHorizontal: 10, paddingVertical: 4, borderRadius: 10, flexShrink: 1 },
+  categoryBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 10,
+    flexShrink: 1,
+  },
   categoryIcon: { fontSize: 14 },
   categoryLabel: { fontSize: 12, fontWeight: '600' },
   readTime: { fontSize: 12, flexShrink: 0 },
@@ -216,8 +287,22 @@ const styles = StyleSheet.create({
   tags: { flexDirection: 'row', flexWrap: 'wrap', gap: 6 },
   tag: { paddingHorizontal: 8, paddingVertical: 3, borderRadius: 8 },
   tagText: { fontSize: 12 },
-  feedGuideBanner: { flexDirection: 'row', alignItems: 'center', gap: 12, padding: 16, borderRadius: 16, marginBottom: 14 },
-  feedGuideBannerIcon: { width: 44, height: 44, borderRadius: 12, backgroundColor: 'rgba(255,255,255,0.2)', justifyContent: 'center', alignItems: 'center' },
+  feedGuideBanner: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    padding: 16,
+    borderRadius: 16,
+    marginBottom: 14,
+  },
+  feedGuideBannerIcon: {
+    width: 44,
+    height: 44,
+    borderRadius: 12,
+    backgroundColor: 'rgba(255,255,255,0.2)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   feedGuideBannerContent: { flex: 1 },
   feedGuideBannerTitle: { fontSize: 16, fontWeight: '700', color: '#fff' },
   feedGuideBannerDesc: { fontSize: 12, color: 'rgba(255,255,255,0.85)', marginTop: 2 },

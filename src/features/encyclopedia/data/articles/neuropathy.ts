@@ -8,7 +8,7 @@ export const neuropathy: Article = {
   },
   summaryKey: {
     ru: 'Заметили, что котик стал странно ходить, «проседая» на задних лапках? Это может быть нейропатия — но не пугайтесь, она обратима!',
-    en: 'Noticed your cat walking strangely, sinking down on their hind legs? This could be neuropathy — but don\'t worry, it\'s reversible!',
+    en: "Noticed your cat walking strangely, sinking down on their hind legs? This could be neuropathy — but don't worry, it's reversible!",
   },
   contentKey: {
     ru: `## Диабетическая нейропатия у кошек
@@ -111,12 +111,19 @@ Call your vet immediately if:
 Remember: your attention and care are already half the treatment.`,
   },
   category: 'complications',
+  species: 'cat',
   readingTimeMinutes: 4,
   order: 1,
   relatedArticleIds: ['what-is-diabetes', 'glucose_monitoring', 'injection-technique'],
   references: [
-    { ru: 'Mizisin AP et al — Feline Diabetic Neuropathy, Veterinary Pathology, 2007', en: 'Mizisin AP et al — Feline Diabetic Neuropathy, Veterinary Pathology, 2007' },
-    { ru: 'ISFM Guidelines on Diabetes Mellitus in Cats, 2023', en: 'ISFM Guidelines on Diabetes Mellitus in Cats, 2023' },
+    {
+      ru: 'Mizisin AP et al — Feline Diabetic Neuropathy, Veterinary Pathology, 2007',
+      en: 'Mizisin AP et al — Feline Diabetic Neuropathy, Veterinary Pathology, 2007',
+    },
+    {
+      ru: 'ISFM Guidelines on Diabetes Mellitus in Cats, 2023',
+      en: 'ISFM Guidelines on Diabetes Mellitus in Cats, 2023',
+    },
   ],
   tags: [
     { ru: 'нейропатия', en: 'neuropathy' },

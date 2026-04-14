@@ -1,7 +1,13 @@
 import React, { useState, useCallback, useRef } from 'react';
 import {
-  View, Text, StyleSheet, ScrollView,
-  TouchableOpacity, Alert, KeyboardAvoidingView, Platform,
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  TouchableOpacity,
+  Alert,
+  KeyboardAvoidingView,
+  Platform,
 } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { format } from 'date-fns';
@@ -18,6 +24,7 @@ import { Button, Input, Card } from '@shared/components/ui';
 import { differenceInMinutes } from 'date-fns';
 import { injectionRepository } from '@storage/database';
 import { usePetStore } from '@shared/stores/petStore';
+import { getInsulinThresholds } from '@shared/config/speciesConfig';
 import { useQueryClient } from '@tanstack/react-query';
 import { queryKeys } from '@shared/utils/queryKeys';
 import * as Haptics from 'expo-haptics';
@@ -38,7 +45,7 @@ export default function LogInjectionScreen() {
   const [insulinType, setInsulinType] = useState(activePet?.insulinType ?? '');
   const [notes, setNotes] = useState('');
   const [administeredAt, setAdministeredAt] = useState(() =>
-    route.params?.presetDate ? new Date(route.params.presetDate) : new Date(),
+    route.params?.presetDate ? new Date(route.params.presetDate) : new Date()
   );
   const initialAdministeredAt = useRef(administeredAt.getTime());
   const [showDatePicker, setShowDatePicker] = useState(false);
@@ -46,11 +53,13 @@ export default function LogInjectionScreen() {
   const [loading, setLoading] = useState(false);
   const { triggerAfterAction } = useHintTrigger();
   const commonInsulinsRaw = t('injection.commonInsulins', { returnObjects: true });
-  const commonInsulins = Array.isArray(commonInsulinsRaw) ? commonInsulinsRaw as string[] : [];
+  const commonInsulins = Array.isArray(commonInsulinsRaw) ? (commonInsulinsRaw as string[]) : [];
   // ARCH005: prevent duplicate injection on double-tap
   const savingRef = useRef(false);
   const dateChanged = administeredAt.getTime() !== initialAdministeredAt.current;
-  const disableGuard = useUnsavedChangesGuard(!!dose || !!notes || dateChanged || insulinType !== (activePet?.insulinType ?? ''));
+  const disableGuard = useUnsavedChangesGuard(
+    !!dose || !!notes || dateChanged || insulinType !== (activePet?.insulinType ?? '')
+  );
 
   const doSaveInjection = useCallback(async () => {
     if (!activePet || savingRef.current) return;
@@ -76,30 +85,52 @@ export default function LogInjectionScreen() {
       savingRef.current = false;
       setLoading(false);
     }
-  }, [activePet, dose, insulinType, notes, administeredAt, queryClient, navigation, t, triggerAfterAction, disableGuard]);
+  }, [
+    activePet,
+    dose,
+    insulinType,
+    notes,
+    administeredAt,
+    queryClient,
+    navigation,
+    t,
+    triggerAfterAction,
+    disableGuard,
+  ]);
 
-  const proceedWithDoseChecks = useCallback((doseNum: number) => {
-    // MH-C1: Hard limit 10 IU (ISFM 2021, Rand 2012 — clinical max for cats)
-    if (doseNum > 10) {
-      Alert.alert(t('glucose.doseAbsoluteLimit'), t('glucose.doseAbsoluteLimitDesc'));
-      return;
-    }
-    if (doseNum > 6) {
-      Alert.alert(t('glucose.veryHighDoseWarning'), t('glucose.veryHighDoseWarningDesc', { dose: doseNum }), [
-        { text: t('common.cancel'), style: 'cancel' },
-        { text: t('common.confirm'), style: 'destructive', onPress: () => doSaveInjection() },
-      ]);
-      return;
-    }
-    if (doseNum > 4) {
-      Alert.alert(t('glucose.highDoseWarning'), t('glucose.highDoseWarningDesc', { dose: doseNum }), [
-        { text: t('common.cancel'), style: 'cancel' },
-        { text: t('common.confirm'), onPress: () => doSaveInjection() },
-      ]);
-      return;
-    }
-    doSaveInjection();
-  }, [t, doSaveInjection]);
+  const proceedWithDoseChecks = useCallback(
+    (doseNum: number) => {
+      const thresholds = getInsulinThresholds(activePet?.species ?? 'cat', activePet?.weightKg);
+      if (doseNum > thresholds.absoluteMax) {
+        Alert.alert(t('glucose.doseAbsoluteLimit'), t('glucose.doseAbsoluteLimitDesc'));
+        return;
+      }
+      if (doseNum > thresholds.danger) {
+        Alert.alert(
+          t('glucose.veryHighDoseWarning'),
+          t('glucose.veryHighDoseWarningDesc', { dose: doseNum }),
+          [
+            { text: t('common.cancel'), style: 'cancel' },
+            { text: t('common.confirm'), style: 'destructive', onPress: () => doSaveInjection() },
+          ]
+        );
+        return;
+      }
+      if (doseNum > thresholds.warning) {
+        Alert.alert(
+          t('glucose.highDoseWarning'),
+          t('glucose.highDoseWarningDesc', { dose: doseNum }),
+          [
+            { text: t('common.cancel'), style: 'cancel' },
+            { text: t('common.confirm'), onPress: () => doSaveInjection() },
+          ]
+        );
+        return;
+      }
+      doSaveInjection();
+    },
+    [t, doSaveInjection, activePet?.species, activePet?.weightKg]
+  );
 
   const handleSave = useCallback(async () => {
     if (savingRef.current || !activePet) return;
@@ -115,10 +146,16 @@ export default function LogInjectionScreen() {
 
     // X.8: Duplicate injection safety — warn if last injection < 6 hours ago
     try {
-      const lastInj = await injectionRepository.findNearestTo(activePet.id, administeredAt.toISOString());
+      const lastInj = await injectionRepository.findNearestTo(
+        activePet.id,
+        administeredAt.toISOString()
+      );
       if (lastInj) {
-        const minutesSince = Math.abs(differenceInMinutes(administeredAt, new Date(lastInj.administeredAt)));
-        if (minutesSince < 360) { // 6 hours
+        const minutesSince = Math.abs(
+          differenceInMinutes(administeredAt, new Date(lastInj.administeredAt))
+        );
+        if (minutesSince < 360) {
+          // 6 hours
           const hours = Math.floor(minutesSince / 60);
           const mins = minutesSince % 60;
           Alert.alert(
@@ -126,34 +163,61 @@ export default function LogInjectionScreen() {
             t('injection.recentInjectionWarningDesc', { hours, minutes: mins }),
             [
               { text: t('common.cancel'), style: 'cancel' },
-              { text: t('common.confirm'), style: 'destructive', onPress: () => proceedWithDoseChecks(doseNum) },
-            ],
+              {
+                text: t('common.confirm'),
+                style: 'destructive',
+                onPress: () => proceedWithDoseChecks(doseNum),
+              },
+            ]
           );
           return;
         }
       }
-    } catch { /* if DB query fails, proceed without check */ }
+    } catch {
+      /* if DB query fails, proceed without check */
+    }
 
     proceedWithDoseChecks(doseNum);
   }, [activePet, dose, insulinType, administeredAt, t, proceedWithDoseChecks]);
 
   return (
-    <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={{ flex: 1 }}>
+    <KeyboardAvoidingView
+      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+      style={{ flex: 1 }}
+    >
       <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.background }]}>
         <View>
           <View style={[styles.navHeader, { borderBottomColor: theme.colors.border }]}>
-            <TouchableOpacity onPress={() => navigation.goBack()} style={{ minHeight: 44, minWidth: 44, justifyContent: 'center' }}>
-              <Text style={{ color: theme.colors.primary }}>{'\u2190 '}{t('common.back')}</Text>
+            <TouchableOpacity
+              onPress={() => navigation.goBack()}
+              style={{ minHeight: 44, minWidth: 44, justifyContent: 'center' }}
+            >
+              <Text style={{ color: theme.colors.primary }}>
+                {'\u2190 '}
+                {t('common.back')}
+              </Text>
             </TouchableOpacity>
-            <Text style={[styles.title, { color: theme.colors.text }]} numberOfLines={1}>{t('injection.title')}</Text>
+            <Text style={[styles.title, { color: theme.colors.text }]} numberOfLines={1}>
+              {t('injection.title')}
+            </Text>
             <View style={{ width: 60 }} />
           </View>
-          <LinearGradient colors={[...theme.gradients.secondary] as [string, string]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} style={{ height: 3 }} />
+          <LinearGradient
+            colors={[...theme.gradients.secondary] as [string, string]}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 0 }}
+            style={{ height: 3 }}
+          />
         </View>
 
         <ScrollView contentContainerStyle={styles.content}>
           <Card style={styles.mainCard}>
-            <Icon name="medkit-outline" size={48} color={theme.colors.primary} style={{ marginBottom: 8 }} />
+            <Icon
+              name="medkit-outline"
+              size={48}
+              color={theme.colors.primary}
+              style={{ marginBottom: 8 }}
+            />
             <Input
               label={t('injection.dose')}
               value={dose}
@@ -162,18 +226,28 @@ export default function LogInjectionScreen() {
               keyboardType="decimal-pad"
               containerStyle={{ width: '100%' }}
               style={{ fontSize: 28, textAlign: 'center', fontWeight: '700' }}
-              rightElement={<Text style={{ fontSize: 18, color: theme.colors.textSecondary, fontWeight: '600' }}>{t('common.units')}</Text>}
+              rightElement={
+                <Text
+                  style={{ fontSize: 18, color: theme.colors.textSecondary, fontWeight: '600' }}
+                >
+                  {t('common.units')}
+                </Text>
+              }
             />
           </Card>
 
-          <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>{t('injection.insulinType')}</Text>
+          <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>
+            {t('injection.insulinType')}
+          </Text>
           <Input
             value={insulinType}
             onChangeText={setInsulinType}
             placeholder={t('glucose.insulinPlaceholder')}
           />
 
-          <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>{t('injection.quickSelect')}</Text>
+          <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>
+            {t('injection.quickSelect')}
+          </Text>
           <View style={styles.chips}>
             {commonInsulins.map(ins => (
               <TouchableOpacity
@@ -181,27 +255,47 @@ export default function LogInjectionScreen() {
                 style={[
                   styles.chip,
                   {
-                    backgroundColor: insulinType === ins ? theme.colors.primary : theme.colors.surfaceSecondary,
+                    backgroundColor:
+                      insulinType === ins ? theme.colors.primary : theme.colors.surfaceSecondary,
                   },
                 ]}
                 onPress={() => setInsulinType(ins)}
               >
-                <Text style={{ color: insulinType === ins ? '#fff' : theme.colors.text, fontSize: 13, fontWeight: '500' }}>
+                <Text
+                  style={{
+                    color: insulinType === ins ? '#fff' : theme.colors.text,
+                    fontSize: 13,
+                    fontWeight: '500',
+                  }}
+                >
                   {ins}
                 </Text>
               </TouchableOpacity>
             ))}
           </View>
 
-          <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>{t('glucose.date')} & {t('glucose.time')}</Text>
+          <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>
+            {t('glucose.date')} & {t('glucose.time')}
+          </Text>
           <View style={styles.row}>
             <TouchableOpacity
               style={[styles.dateTimeBtn, { backgroundColor: theme.colors.surfaceSecondary }]}
               onPress={() => setShowDatePicker(true)}
             >
               <View style={styles.dateTimeContent}>
-                <Icon name="calendar-outline" size={18} color={theme.colors.primary} style={{ marginRight: 6 }} />
-                <Text style={{ color: theme.colors.text, fontSize: 15, fontFamily: theme.fonts.semibold }}>
+                <Icon
+                  name="calendar-outline"
+                  size={18}
+                  color={theme.colors.primary}
+                  style={{ marginRight: 6 }}
+                />
+                <Text
+                  style={{
+                    color: theme.colors.text,
+                    fontSize: 15,
+                    fontFamily: theme.fonts.semibold,
+                  }}
+                >
                   {format(administeredAt, i18n.language === 'ru' ? 'dd.MM.yyyy' : 'MM/dd/yyyy')}
                 </Text>
               </View>
@@ -211,8 +305,19 @@ export default function LogInjectionScreen() {
               onPress={() => setShowTimePicker(true)}
             >
               <View style={styles.dateTimeContent}>
-                <Icon name="time-outline" size={18} color={theme.colors.primary} style={{ marginRight: 6 }} />
-                <Text style={{ color: theme.colors.text, fontSize: 15, fontFamily: theme.fonts.semibold }}>
+                <Icon
+                  name="time-outline"
+                  size={18}
+                  color={theme.colors.primary}
+                  style={{ marginRight: 6 }}
+                />
+                <Text
+                  style={{
+                    color: theme.colors.text,
+                    fontSize: 15,
+                    fontFamily: theme.fonts.semibold,
+                  }}
+                >
                   {format(administeredAt, 'HH:mm')}
                 </Text>
               </View>
@@ -228,7 +333,11 @@ export default function LogInjectionScreen() {
                 setShowDatePicker(false);
                 if (date) {
                   const merged = new Date(date);
-                  merged.setHours(administeredAt.getHours(), administeredAt.getMinutes(), administeredAt.getSeconds());
+                  merged.setHours(
+                    administeredAt.getHours(),
+                    administeredAt.getMinutes(),
+                    administeredAt.getSeconds()
+                  );
                   setAdministeredAt(merged);
                 }
               }}
@@ -274,7 +383,14 @@ export default function LogInjectionScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
-  navHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', padding: 16, borderBottomWidth: 0.5, gap: 8 },
+  navHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    padding: 16,
+    borderBottomWidth: 0.5,
+    gap: 8,
+  },
   title: { fontSize: 17, fontWeight: '600', flex: 1, textAlign: 'center' },
   content: { padding: 20, gap: 14, paddingBottom: 40 },
   mainCard: { alignItems: 'center', paddingVertical: 20 },

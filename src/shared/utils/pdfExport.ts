@@ -92,6 +92,10 @@ function getLabels(): Labels {
         lethargy: 'Вялость',
         vomiting: 'Рвота',
         diarrhea: 'Диарея',
+        cataracts: 'Катаракта',
+        urinaryInfection: 'Инфекция мочевых путей',
+        panting: 'Одышка',
+        ataxia: 'Атаксия',
         other: 'Другое',
       },
       severityLabels: {
@@ -109,9 +113,9 @@ function getLabels(): Labels {
       diabetesType1: 'Тип 1',
       diabetesType2: 'Тип 2',
       diabetesTypeUnknown: 'Неизвестен',
-      sectionGlucose: (count) => `Показания глюкозы (${count} записей)`,
+      sectionGlucose: count => `Показания глюкозы (${count} записей)`,
       sectionInjections: 'Последние инъекции (до 10)',
-      sectionSymptoms: (count) => `Симптомы (${count} записей)`,
+      sectionSymptoms: count => `Симптомы (${count} записей)`,
       colDateTime: 'Дата / время',
       colMmol: 'ммоль/л',
       colMgdl: 'мг/дл',
@@ -147,6 +151,10 @@ function getLabels(): Labels {
       lethargy: 'Lethargy',
       vomiting: 'Vomiting',
       diarrhea: 'Diarrhea',
+      cataracts: 'Cataracts',
+      urinaryInfection: 'Urinary tract infection',
+      panting: 'Panting',
+      ataxia: 'Ataxia',
       other: 'Other',
     },
     severityLabels: {
@@ -164,9 +172,9 @@ function getLabels(): Labels {
     diabetesType1: 'Type 1',
     diabetesType2: 'Type 2',
     diabetesTypeUnknown: 'Unknown',
-    sectionGlucose: (count) => `Glucose readings (${count} records)`,
+    sectionGlucose: count => `Glucose readings (${count} records)`,
     sectionInjections: 'Recent injections (up to 10)',
-    sectionSymptoms: (count) => `Symptoms (${count} records)`,
+    sectionSymptoms: count => `Symptoms (${count} records)`,
     colDateTime: 'Date / time',
     colMmol: 'mmol/L',
     colMgdl: 'mg/dL',
@@ -208,7 +216,7 @@ function buildHtml(
   pet: Pet,
   glucoseReadings: GlucoseReading[],
   injections: InjectionLog[],
-  symptoms: SymptomEntry[],
+  symptoms: SymptomEntry[]
 ): string {
   const L = getLabels();
   const lang = isRu() ? 'ru' : 'en';
@@ -225,14 +233,14 @@ function buildHtml(
   const glucoseRows = glucoseReadings
     .slice(0, 100)
     .map(
-      (r) => `
+      r => `
       <tr>
         <td>${formatDate(r.recordedAt)}</td>
         <td><strong>${r.valueMmol.toFixed(1)}</strong></td>
         <td>${Math.round(r.valueMgdl)}</td>
         <td>${L.mealLabels[r.mealRelation]}</td>
         <td>${escapeHtml(r.notes)}</td>
-      </tr>`,
+      </tr>`
     )
     .join('');
 
@@ -240,13 +248,13 @@ function buildHtml(
   const injectionRows = injections
     .slice(0, 10)
     .map(
-      (inj) => `
+      inj => `
       <tr>
         <td>${formatDate(inj.administeredAt)}</td>
         <td>${inj.doseUnits} ${L.doseUnit}</td>
         <td>${escapeHtml(inj.insulinType)}</td>
         <td>${escapeHtml(inj.notes)}</td>
-      </tr>`,
+      </tr>`
     )
     .join('');
 
@@ -254,13 +262,13 @@ function buildHtml(
   const symptomRows = symptoms
     .slice(0, 50)
     .map(
-      (s) => `
+      s => `
       <tr>
         <td>${formatDate(s.recordedAt)}</td>
-        <td>${s.symptomTypes.map((t) => L.symptomLabels[t] ?? t).join(', ')}</td>
+        <td>${s.symptomTypes.map(t => L.symptomLabels[t] ?? t).join(', ')}</td>
         <td>${L.severityLabels[s.severity]}</td>
         <td>${escapeHtml(s.notes)}</td>
-      </tr>`,
+      </tr>`
     )
     .join('');
 
@@ -466,12 +474,7 @@ export interface VetReportData {
 }
 
 export async function generateVetReportPdf(data: VetReportData): Promise<void> {
-  const html = buildHtml(
-    data.pet,
-    data.glucoseReadings,
-    data.injections,
-    data.symptoms,
-  );
+  const html = buildHtml(data.pet, data.glucoseReadings, data.injections, data.symptoms);
 
   const { uri } = await Print.printToFileAsync({ html });
 
