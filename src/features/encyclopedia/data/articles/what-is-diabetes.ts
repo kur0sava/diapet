@@ -8,7 +8,7 @@ export const whatIsDiabetes: Article = {
   },
   summaryKey: {
     ru: 'Диагноз «диабет» звучит пугающе, но вы не одни. Давайте разберёмся вместе, что происходит с вашим котиком и почему это вовсе не приговор.',
-    en: 'A diabetes diagnosis can feel overwhelming, but you are not alone. Let\'s understand together what\'s happening with your cat and why this is far from a death sentence.',
+    en: "A diabetes diagnosis can feel overwhelming, but you are not alone. Let's understand together what's happening with your cat and why this is far from a death sentence.",
   },
   contentKey: {
     ru: `## Что такое сахарный диабет у кошек?
@@ -50,13 +50,16 @@ export const whatIsDiabetes: Article = {
 
 ### Как ставят диагноз
 
-Ветеринар подтвердит диагноз по нескольким признакам:
-- Повышенный сахар в крови (глюкоза выше 14-16 ммоль/л) при повторном анализе
-- Сахар в моче
-- Повышенный фруктозамин (о нём есть отдельная статья)
-- Характерные симптомы
+Одного высокого сахара **недостаточно** — стресс в клинике у здоровой кошки может дать 16–20 ммоль/л. Диагноз диабета ставится по **совокупности** признаков:
 
-> **Важно знать:** кошки — большие паникёры. Стресс от поездки в клинику может временно поднять сахар до 20 ммоль/л даже у здоровой кошки! Поэтому врач всегда проверяет несколько показателей.
+1. **Характерные клинические симптомы** (полиурия/полидипсия, потеря веса при нормальном/повышенном аппетите)
+2. **Устойчивая гипергликемия** — подтверждённая повторно (не единичное измерение)
+3. **Глюкозурия** — сахар в моче
+4. **Повышенный фруктозамин** — показывает средний сахар за 2–3 недели, не зависит от сиюминутного стресса (о нём есть отдельная статья)
+
+Только сочетание нескольких факторов позволяет отличить реальный диабет от стрессовой гипергликемии. Конкретные числовые пороги определяет ветеринар — не занимайтесь самодиагностикой по одному измерению.
+
+> **Важно знать:** кошки — большие паникёры. Стресс от поездки в клинику может временно поднять сахар до 20 ммоль/л даже у здоровой кошки! Именно поэтому фруктозамин так важен.
 
 ### Что происходит в организме?
 
@@ -106,13 +109,16 @@ Here are signs that might point to diabetes. If you notice any of these, it's ti
 
 ### How Is It Diagnosed?
 
-Your vet will confirm the diagnosis based on several factors:
-- Elevated blood sugar (glucose above 14-16 mmol/L) on repeat testing
-- Sugar in the urine
-- Elevated fructosamine (we have a separate article on that)
-- Characteristic symptoms
+A single high glucose reading is **not enough** — clinic stress alone can push a healthy cat's blood sugar to 16–20 mmol/L. Diagnosis requires a **combination** of findings:
 
-> **Good to know:** cats are champion stress-reactors. The stress of a vet visit alone can temporarily spike blood sugar to 20 mmol/L even in a healthy cat! That's why your vet always checks multiple indicators.
+1. **Characteristic clinical signs** (polyuria/polydipsia, weight loss with normal or increased appetite)
+2. **Persistent hyperglycemia** — confirmed on repeat testing (not a single measurement)
+3. **Glucosuria** — sugar in the urine
+4. **Elevated fructosamine** — reflects average glucose over 2–3 weeks and is not affected by momentary stress (see the dedicated article)
+
+Only the combination of these factors distinguishes true diabetes from stress hyperglycemia. Specific numerical thresholds are for the vet to determine — don't self-diagnose from a single reading.
+
+> **Good to know:** cats are champion stress-reactors. The stress of a vet visit alone can temporarily spike blood sugar to 20 mmol/L even in a healthy cat! That's exactly why fructosamine is so important.
 
 ### What Happens Inside the Body?
 
@@ -129,8 +135,14 @@ But you can prevent this from happening! Consistent treatment and your loving ca
   order: 1,
   relatedArticleIds: ['first-days', 'remission', 'diet', 'dka'],
   references: [
-    { ru: 'Rand J. — Feline Diabetes Mellitus, Veterinary Clinics, 2012', en: 'Rand J. — Feline Diabetes Mellitus, Veterinary Clinics, 2012' },
-    { ru: 'ISFM Guidelines on Diabetes Mellitus in Cats, 2023', en: 'ISFM Guidelines on Diabetes Mellitus in Cats, 2023' },
+    {
+      ru: 'Rand J. — Feline Diabetes Mellitus, Veterinary Clinics, 2012',
+      en: 'Rand J. — Feline Diabetes Mellitus, Veterinary Clinics, 2012',
+    },
+    {
+      ru: 'ISFM Guidelines on Diabetes Mellitus in Cats, 2023',
+      en: 'ISFM Guidelines on Diabetes Mellitus in Cats, 2023',
+    },
   ],
   tags: [
     { ru: 'диабет', en: 'diabetes' },

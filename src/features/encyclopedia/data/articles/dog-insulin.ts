@@ -53,7 +53,11 @@ export const dogInsulin: Article = {
 
 - Закрытый флакон: холодильник (2–8°C)
 - Открытый флакон: комнатная температура или холодильник (зависит от типа)
-- Срок после вскрытия: обычно **28 дней**
+- Срок после вскрытия зависит от препарата:
+  - **Канинсулин / Vetsulin: 28 дней** (при комнатной температуре)
+  - **NPH (Humulin N / Протафан): 28 дней**
+  - **Lantus (гларгин): 28 дней**
+  - **Levemir (детемир): 42 дня** (уникально — дольше остальных)
 - Никогда не замораживать
 - Не использовать, если изменился цвет или появились хлопья
 
@@ -63,7 +67,7 @@ export const dogInsulin: Article = {
 2. Подготовь шприц (для суспензий — покатай флакон)
 3. Набери нужную дозу
 4. Оттяни складку кожи на холке, между лопатками или на боку
-5. Введи иглу под углом 45°
+5. Введи иглу **под углом 45°** (для мелких и худых собак) или **90°** (для крупных пород и собак с хорошо выраженной подкожной клетчаткой). Главное — игла должна попасть в подкожную клетчатку, а не в мышцу
 6. Медленно введи инсулин
 7. Чередуй стороны (сегодня левый бок, завтра правый)`,
     en: `# Insulin for Dogs
@@ -108,7 +112,11 @@ export const dogInsulin: Article = {
 
 - Unopened vial: refrigerator (2–8°C)
 - Opened vial: room temperature or fridge (depends on type)
-- Shelf life after opening: usually **28 days**
+- Shelf life after opening depends on the product:
+  - **Caninsulin / Vetsulin: 28 days** (at room temperature)
+  - **NPH (Humulin N / Protaphane): 28 days**
+  - **Lantus (glargine): 28 days**
+  - **Levemir (detemir): 42 days** (unique — longer than the others)
 - Never freeze
 - Don't use if color has changed or flakes appear
 
@@ -118,7 +126,7 @@ export const dogInsulin: Article = {
 2. Prepare the syringe (for suspensions — roll the vial)
 3. Draw up the correct dose
 4. Lift a fold of skin at the scruff, between the shoulder blades, or on the flank
-5. Insert the needle at a 45° angle
+5. Insert the needle at **45°** (for small, thin dogs) or **90°** (for large breeds and dogs with well-developed subcutaneous tissue). The key is that the needle must reach the subcutaneous tissue, not muscle
 6. Slowly inject the insulin
 7. Alternate sides (left flank today, right tomorrow)`,
   },

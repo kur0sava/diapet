@@ -31,6 +31,15 @@ export interface InsulinTypeInfo {
   storageAfterOpening: 'room' | 'fridge';
   /** Is suspension (needs resuspending) */
   isSuspension: boolean;
+  /**
+   * True when this insulin is NOT a first-line choice for this species and
+   * should be used only when first-line options are unavailable. UI should
+   * surface a caution label (e.g. feline NPH — short duration, low remission
+   * rate ~25% vs glargine 50–90% per ISFM 2023).
+   */
+  notFirstChoice?: boolean;
+  /** Short rationale shown in the UI when notFirstChoice is true */
+  notFirstChoiceReason?: { ru: string; en: string };
 }
 
 export interface SpeciesConfig {
@@ -141,11 +150,12 @@ export interface SpeciesConfig {
 
 const CAT_INSULIN_TYPES: InsulinTypeInfo[] = [
   {
+    // ISFM 2022/2023 feline glargine PK; matches encyclopedia article insulin_types.ts
     name: 'Glargine (Lantus)',
     concentration: 'U-100',
-    onsetHours: [2, 4],
-    peakHours: [8, 14],
-    durationHours: [12, 24],
+    onsetHours: [1, 3],
+    peakHours: [4, 8],
+    durationHours: [10, 16],
     shelfLifeDays: 28,
     storageAfterOpening: 'room',
     isSuspension: false,
@@ -171,13 +181,16 @@ const CAT_INSULIN_TYPES: InsulinTypeInfo[] = [
     isSuspension: false,
   },
   {
+    // Caninsulin is a suspension — MSD label mandates refrigeration
+    // (2–8 °C) both before and after opening. Room-temp storage
+    // accelerates settling of the crystalline fraction and alters dosing.
     name: 'Caninsulin (Lente)',
     concentration: 'U-40',
     onsetHours: [1, 4],
     peakHours: [2, 8],
     durationHours: [8, 16],
     shelfLifeDays: 28,
-    storageAfterOpening: 'room',
+    storageAfterOpening: 'fridge',
     isSuspension: true,
   },
   {
@@ -189,6 +202,11 @@ const CAT_INSULIN_TYPES: InsulinTypeInfo[] = [
     shelfLifeDays: 28,
     storageAfterOpening: 'room',
     isSuspension: true,
+    notFirstChoice: true,
+    notFirstChoiceReason: {
+      ru: 'Для кошек NPH — не первый выбор: короткая продолжительность действия и низкая вероятность ремиссии (~25% против 50–90% на гларгине). Предпочтительны гларгин, PZI или детемир. Используй NPH только если гларгин/PZI недоступны, и обсуди это с ветеринаром.',
+      en: 'For cats, NPH is NOT a first-choice insulin: short duration and low remission rate (~25% vs 50–90% on glargine). Preferred options are glargine, PZI, or detemir. Use NPH only if first-line options are unavailable, and discuss with your vet.',
+    },
   },
 ];
 
@@ -281,13 +299,14 @@ const CAT_CONFIG: SpeciesConfig = {
 
 const DOG_INSULIN_TYPES: InsulinTypeInfo[] = [
   {
+    // MSD label: refrigerate 2–8 °C before and after opening. Suspension.
     name: 'Caninsulin (Lente)',
     concentration: 'U-40',
     onsetHours: [1, 4],
     peakHours: [4, 8],
     durationHours: [8, 24],
     shelfLifeDays: 28,
-    storageAfterOpening: 'room',
+    storageAfterOpening: 'fridge',
     isSuspension: true,
   },
   {
@@ -349,6 +368,10 @@ const DOG_CONFIG: SpeciesConfig = {
     dosePerKg: true,
     typicalDoseMin: 0.25,
     typicalDoseMax: 0.5,
+    // For dogs these absolute values are fallbacks only — actual thresholds
+    // must be computed per-weight via getInsulinThresholds(species, weightKg).
+    // AAHA 2018: starting 0.25 IU/kg BID, typical max ~1.0 IU/kg, absolute
+    // red line ~1.5 IU/kg (above this insulin resistance workup required).
     warningDose: 10,
     dangerDose: 15,
     absoluteMaxDose: 20,
@@ -370,10 +393,13 @@ const DOG_CONFIG: SpeciesConfig = {
   },
 
   nutrition: {
+    // AAHA 2018 / ACVIM: diabetic dogs benefit from moderate-fat, moderate-
+    // complex-carb, high-fiber diets. High fat (>25% DM) raises pancreatitis
+    // risk — a major comorbidity/trigger of insulin resistance in dogs.
     carbsDMGood: 30,
     carbsDMAcceptable: 40,
     proteinDMMin: 25,
-    fatDMMax: 50,
+    fatDMMax: 25,
     fiberImportant: true,
     fiberDMMin: 10,
     highCarbsThreshold: 40,
@@ -430,6 +456,20 @@ export function getSpeciesConfig(species: PetSpecies): SpeciesConfig {
 /**
  * Calculate insulin warning/danger thresholds for dogs based on weight.
  * For cats, returns the fixed thresholds from config.
+ *
+ * Dog dosing rationale (AAHA 2018, ECVIM-CA 2022, Feldman & Nelson 2015):
+ *   - Starting dose:     0.25 IU/kg BID
+ *   - Typical range:     0.25–1.0 IU/kg BID (most stable dogs)
+ *   - warning:           0.75 IU/kg — above expected therapeutic range,
+ *                        verify technique, concentration, confounders
+ *   - danger:            1.5 IU/kg — red line; insulin resistance work-up
+ *                        required (Cushing, infection, steroids, diestrus)
+ *   - absoluteMax:       2.0 IU/kg OR 40 IU, whichever is lower.
+ *                        Doses above this virtually never indicated and
+ *                        carry high hypoglycemia risk. IMPORTANT: for toy
+ *                        breeds (e.g. 3 kg) absoluteMax = 6 IU, not 20.
+ *   - Floor:             minimum absoluteMax of 3 IU so the validator
+ *                        never blocks a clinically plausible small-dog dose.
  */
 export function getInsulinThresholds(
   species: PetSpecies,
@@ -437,7 +477,7 @@ export function getInsulinThresholds(
 ): { warning: number; danger: number; absoluteMax: number } {
   const config = getSpeciesConfig(species);
 
-  if (!config.insulin.dosePerKg || !weightKg) {
+  if (!config.insulin.dosePerKg || !weightKg || weightKg <= 0) {
     return {
       warning: config.insulin.warningDose,
       danger: config.insulin.dangerDose,
@@ -445,13 +485,15 @@ export function getInsulinThresholds(
     };
   }
 
-  // For dogs: dose thresholds scale with weight
-  // warning = 0.5 IU/kg (typical max), danger = 1.0 IU/kg, absolute = AAHA max
-  const warning = Math.round(weightKg * 0.5);
-  const danger = Math.round(weightKg * 1.0);
+  // Dogs: thresholds scale with body weight. Keep one decimal place so
+  // small-dog warnings (e.g. 3 kg → warn at 2.25 IU) aren't lost to rounding.
+  const round1 = (n: number) => Math.round(n * 10) / 10;
+  const warning = round1(weightKg * 0.75);
+  const danger = round1(weightKg * 1.5);
+  const absoluteMax = Math.min(round1(weightKg * 2.0), 40);
   return {
-    warning: Math.max(warning, 2),
-    danger: Math.max(danger, 4),
-    absoluteMax: config.insulin.absoluteMaxDose,
+    warning: Math.max(warning, 1),
+    danger: Math.max(danger, 2),
+    absoluteMax: Math.max(absoluteMax, 3),
   };
 }

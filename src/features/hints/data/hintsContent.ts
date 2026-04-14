@@ -1536,8 +1536,8 @@ export const HINTS: HintContent[] = [
     category: 'practical',
     timeOfDay: 'any',
     species: 'dog',
-    ru: 'Если используешь AlphaTRAK 2 — установи код 5 для собак. Для Libre — калибровка не нужна, но обязательно проверь совместимость с ветеринаром.',
-    en: 'If using AlphaTRAK 2 — set code 5 for dogs. For Libre — no calibration needed, but verify compatibility with your vet.',
+    ru: 'Если используешь AlphaTRAK 2 — установи код 10 для собак (код 7 — для кошек). Для Libre — калибровка не нужна, но обязательно проверь совместимость с ветеринаром.',
+    en: 'If using AlphaTRAK 2 — set code 10 for dogs (code 7 is for cats). For Libre — no calibration needed, but verify compatibility with your vet.',
   },
   {
     id: 'dog_glu_w3_01',

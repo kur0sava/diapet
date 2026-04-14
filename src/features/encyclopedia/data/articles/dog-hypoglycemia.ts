@@ -45,10 +45,14 @@ export const dogHypoglycemia: Article = {
 ## Первая помощь
 
 ### Если собака В СОЗНАНИИ и может глотать:
-1. **Нанеси мёд, кленовый сироп или сахарный раствор на дёсны** (1–2 столовые ложки для средней собаки)
+1. **Нанеси мёд, кленовый сироп или сахарный раствор на дёсны.** Доза **строго зависит от веса** — избыток для мелкой собаки сам по себе опасен:
+   - **до 5 кг** (той-породы, чихуахуа, йорк): **½–1 чайная ложка**
+   - **5–15 кг**: **1–2 чайные ложки**
+   - **15–30 кг**: **1 столовая ложка**
+   - **более 30 кг**: **1–2 столовые ложки**
 2. **Не заливай жидкость в пасть** — только размазывай по дёснам
-3. Симптомы должны улучшиться через **5–15 минут**
-4. Как только собака может есть — дай небольшую порцию еды
+3. Симптомы должны улучшиться через **5–15 минут**. Если через 10–15 минут улучшения нет — повтори ту же дозу и езжай в клинику
+4. Как только собака может есть — дай небольшую порцию обычного корма
 5. **Обязательно позвони ветеринару**, даже если стало лучше
 
 ### Если собака БЕЗ СОЗНАНИЯ или в судорогах:
@@ -105,10 +109,14 @@ Hypoglycemia is a dangerous drop in blood glucose below normal levels. In dogs, 
 ## First Aid
 
 ### If the dog IS CONSCIOUS and can swallow:
-1. **Apply honey, maple syrup, or sugar solution to the gums** (1–2 tablespoons for a medium dog)
+1. **Apply honey, maple syrup, or sugar solution to the gums.** Dose **depends on body weight** — too much is itself risky for small dogs:
+   - **under 5 kg** (toy breeds, Chihuahua, Yorkie): **½–1 teaspoon**
+   - **5–15 kg**: **1–2 teaspoons**
+   - **15–30 kg**: **1 tablespoon**
+   - **over 30 kg**: **1–2 tablespoons**
 2. **Don't pour liquid into the mouth** — just smear on gums
-3. Symptoms should improve within **5–15 minutes**
-4. Once the dog can eat — give a small portion of food
+3. Symptoms should improve within **5–15 minutes**. If no improvement after 10–15 minutes — repeat the same dose and head to the clinic
+4. Once the dog can eat — give a small portion of regular food
 5. **Always call your vet**, even if things improve
 
 ### If the dog is UNCONSCIOUS or having seizures:

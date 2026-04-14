@@ -40,9 +40,9 @@ export const dogDiet: Article = {
 ## Специализированные корма
 
 - **Hills w/d** — высокая клетчатка, низкий жир, для диабета и контроля веса
-- **Royal Canin Diabetic** — специально для собак с диабетом
-- **Purina DM** — высокий белок, низкие углеводы
-- **Farmina Vet Life Diabetic** — доступен в России и Европе
+- **Royal Canin Diabetic (Canine)** — специально для собак с диабетом, высокая клетчатка
+- **Farmina Vet Life Diabetic (Canine)** — доступен в России и Европе
+- **Purina Pro Plan Veterinary Diets DM Canine** — существует отдельная собачья версия DM; **не путай с кошачьим Purina DM** (у кошек другая стратегия — высокий белок/низкие углеводы, собакам это не подходит из-за риска панкреатита)
 
 ## Главное правило: СТАБИЛЬНОСТЬ
 
@@ -89,9 +89,9 @@ Cats are obligate carnivores who need a high-protein, low-carb diet. Dogs are om
 ## Specialized foods
 
 - **Hills w/d** — high fiber, low fat, for diabetes and weight management
-- **Royal Canin Diabetic** — specifically for diabetic dogs
-- **Purina DM** — high protein, low carb
-- **Farmina Vet Life Diabetic** — available in Russia and Europe
+- **Royal Canin Diabetic (Canine)** — specifically for diabetic dogs, high fiber
+- **Farmina Vet Life Diabetic (Canine)** — available in Russia and Europe
+- **Purina Pro Plan Veterinary Diets DM Canine** — there is a separate canine version of DM; **do not confuse with the feline Purina DM** (cats use a different strategy — high protein / low carb, which is unsuitable for dogs due to pancreatitis risk)
 
 ## The golden rule: CONSISTENCY
 

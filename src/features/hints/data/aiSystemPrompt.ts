@@ -61,7 +61,12 @@ export function buildAiSystemPrompt(context: AiPetContext): string {
   const targetHigh = config.glucose.targetHigh;
   const emergencyLow = config.glucose.emergencyLow;
   const highControl = config.glucose.highControlThreshold;
-  const emergencyHigh = 15; // consistent vet-contact threshold
+  // Vet-contact threshold for sustained hyperglycemia — species-aware.
+  // Must stay ≥ highControl so the ordering emergencyLow < targetLow <
+  // targetHigh < highControl < emergencyHigh holds. For dogs highControl
+  // is 16.7 mmol/L; a hardcoded 15 here would invert the scale.
+  // Kept conservatively below config.glucose.emergencyHigh (DKA territory).
+  const emergencyHigh = highControl + 2;
   const toMgDl = (mmol: number) => Math.round(mmol * 18);
 
   // Species-specific diet and medical context

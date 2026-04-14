@@ -66,13 +66,14 @@ export const glucoseMonitoring: Article = {
 
 Надир — это **самая низкая точка** сахара в течение цикла. Именно по этому числу ветеринар решает, правильная ли доза инсулина.
 
-**Целевой надир для кошек:** 5.5-8.0 ммоль/л (100-144 мг/дл)
+**Целевой надир для кошек:** 4.0-8.0 ммоль/л (72-144 мг/дл) по ISFM 2022/2023. Низкий надир в этом диапазоне при отсутствии признаков гипогликемии — признак хорошего контроля и повышает шансы на ремиссию.
 
 | Надир | Что это значит | Что делать |
 |---|---|---|
-| Ниже 3.3 ммоль/л | Гипогликемия — опасно! | Снизить дозу, позвонить врачу |
-| 3.3-5.5 | Чуть ниже цели | Обсудить снижение дозы с врачом |
-| 5.5-8.0 | **Отлично!** | Доза подобрана правильно |
+| Ниже 3.0 ммоль/л | Гипогликемия — опасно! | Снизить дозу, позвонить врачу |
+| 3.0-4.0 | Пограничная зона | Наблюдать, обсудить с врачом |
+| **4.0-5.4** | **Отлично** (оптимально для ремиссии по Roomp & Rand) | Продолжать как есть |
+| 5.5-8.0 | Хорошо | Доза подобрана правильно |
 | 8.0-14.0 | Выше цели | Обсудить повышение дозы с врачом |
 | Выше 14.0 | Контроль недостаточный | Нужна консультация ветеринара |
 
@@ -147,13 +148,14 @@ Don't stress if you can't always do a full curve — even a minimal one gives yo
 
 The nadir is the **lowest blood sugar point** during the cycle. This is the number your vet uses to decide if the insulin dose is right.
 
-**Target nadir for cats:** 5.5-8.0 mmol/L (100-144 mg/dL)
+**Target nadir for cats:** 4.0-8.0 mmol/L (72-144 mg/dL) per ISFM 2022/2023. A low nadir within this range, with no hypoglycemia signs, indicates good control and improves the chance of remission.
 
 | Nadir | What It Means | What to Do |
 |---|---|---|
-| Below 3.3 mmol/L | Hypoglycemia — dangerous! | Reduce dose, call the vet |
-| 3.3-5.5 | Slightly below target | Discuss dose reduction with vet |
-| 5.5-8.0 | **Excellent!** | Dose is well adjusted |
+| Below 3.0 mmol/L | Hypoglycemia — dangerous! | Reduce dose, call the vet |
+| 3.0-4.0 | Borderline zone | Watch, discuss with vet |
+| **4.0-5.4** | **Excellent** (optimal for remission per Roomp & Rand) | Continue as is |
+| 5.5-8.0 | Good | Dose is well adjusted |
 | 8.0-14.0 | Above target | Discuss dose increase with vet |
 | Above 14.0 | Insufficient control | Vet consultation needed |
 
