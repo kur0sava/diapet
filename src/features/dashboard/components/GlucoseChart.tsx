@@ -2,7 +2,9 @@ import React from 'react';
 import { View, Text, StyleSheet, useWindowDimensions } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '@shared/theme';
-import { GlucoseReading, getGlucoseColor } from '@storage/domain/types';
+import { GlucoseReading, getGlucoseColorFromRanges } from '@storage/domain/types';
+import type { PetSpecies } from '@storage/domain/types';
+import { getSpeciesConfig } from '@shared/config/speciesConfig';
 import { formatShortDate } from '@shared/utils/dateUtils';
 import Svg, { Path } from 'react-native-svg';
 
@@ -23,6 +25,7 @@ interface DailyPoint {
 
 interface Props {
   data: GlucoseReading[];
+  species?: PetSpecies;
 }
 
 /** Aggregate readings by calendar day (local timezone). */
@@ -52,7 +55,8 @@ function aggregateByDay(readings: GlucoseReading[]): DailyPoint[] {
     }));
 }
 
-export function GlucoseChart({ data }: Props) {
+export function GlucoseChart({ data, species }: Props) {
+  const speciesRanges = getSpeciesConfig(species ?? 'cat').glucose.ranges;
   const { t } = useTranslation();
   const { theme } = useTheme();
   const { width: screenWidth } = useWindowDimensions();
@@ -187,7 +191,7 @@ export function GlucoseChart({ data }: Props) {
         {daily.map((day, i) => {
           const x = getX(i);
           const y = getY(day.avg);
-          const color = getGlucoseColor(day.avg);
+          const color = getGlucoseColorFromRanges(day.avg, speciesRanges);
           return (
             <View key={`dot-${day.date}`}>
               <View

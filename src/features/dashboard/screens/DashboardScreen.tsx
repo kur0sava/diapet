@@ -15,7 +15,8 @@ import { GlucoseChart } from '../components/GlucoseChart';
 import { StatusCard } from '../components/StatusCard';
 import { QuickActionButton } from '../components/QuickActionButton';
 import { formatRelative, minutesUntil, formatCountdown, hoursSince } from '@shared/utils/dateUtils';
-import { getGlucoseColor } from '@storage/domain/types';
+import { getGlucoseColorFromRanges } from '@storage/domain/types';
+import { getSpeciesConfig } from '@shared/config/speciesConfig';
 import { Icon } from '@shared/components/ui/Icon';
 import { usePetStore } from '@shared/stores/petStore';
 import { useSubscription } from '@features/subscription/hooks/useSubscription';
@@ -73,6 +74,7 @@ export default function DashboardScreen() {
   const { t } = useTranslation();
   const { theme } = useTheme();
   const activePet = usePetStore(s => s.activePet);
+  const speciesRanges = getSpeciesConfig(activePet?.species ?? 'cat').glucose.ranges;
   const { isPro, canAccessAdvanced } = useSubscription();
   const petId = activePet?.id ?? '';
   // H004: respect the user's glucose unit preference
@@ -286,7 +288,7 @@ export default function DashboardScreen() {
                 iconName="water-outline"
                 iconColor={
                   latestGlucose
-                    ? getGlucoseColor(latestGlucose.valueMmol)
+                    ? getGlucoseColorFromRanges(latestGlucose.valueMmol, speciesRanges)
                     : theme.colors.textTertiary
                 }
                 label={t('dashboard.lastGlucose')}
@@ -300,7 +302,7 @@ export default function DashboardScreen() {
                 unit={glucoseUnit === 'mg/dL' ? t('common.mg_dl') : t('common.mmol_l')}
                 color={
                   latestGlucose
-                    ? getGlucoseColor(latestGlucose.valueMmol)
+                    ? getGlucoseColorFromRanges(latestGlucose.valueMmol, speciesRanges)
                     : theme.colors.textTertiary
                 }
                 subtitle={latestGlucose ? formatRelative(latestGlucose.recordedAt) : undefined}
@@ -436,7 +438,7 @@ export default function DashboardScreen() {
           </Text>
           <Card>
             {glucoseHistory && glucoseHistory.length > 0 ? (
-              <GlucoseChart data={glucoseHistory} />
+              <GlucoseChart data={glucoseHistory} species={activePet?.species} />
             ) : (
               <View style={styles.noData}>
                 <Icon

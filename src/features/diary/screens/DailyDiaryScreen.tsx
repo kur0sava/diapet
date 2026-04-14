@@ -34,7 +34,7 @@ import { useSubscription } from '@features/subscription/hooks/useSubscription';
 import { glucoseRepository } from '@storage/database/repositories/glucoseRepository';
 import { injectionRepository } from '@storage/database/repositories/injectionRepository';
 import { feedingRepository } from '@storage/database/repositories/feedingRepository';
-import { getGlucoseColor, GlucoseUnit, mmolToMgdl } from '@storage/domain/types';
+import { getGlucoseColorFromRanges, GlucoseUnit, mmolToMgdl } from '@storage/domain/types';
 import { storage, StorageKeys } from '@storage/mmkv/storage';
 import { analyzeDayGlucose, computeDayStats } from '../utils/diaryAnalyzer';
 import { getSpeciesConfig } from '@shared/config/speciesConfig';
@@ -69,6 +69,10 @@ export default function DailyDiaryScreen() {
   const historyLimited = !canAccessUnlimitedHistory();
 
   const glucoseUnit = (storage.getString(StorageKeys.GLUCOSE_UNIT) ?? 'mmol/L') as GlucoseUnit;
+  const speciesConfig = useMemo(
+    () => getSpeciesConfig(activePet?.species ?? 'cat'),
+    [activePet?.species]
+  );
 
   const [currentDate, setCurrentDate] = useState<Date>(() => {
     if (route.params?.date) {
@@ -170,7 +174,7 @@ export default function DailyDiaryScreen() {
               : g.mealRelation === 'fasting'
                 ? t('glucose.fasting')
                 : undefined,
-        color: getGlucoseColor(g.valueMmol),
+        color: getGlucoseColorFromRanges(g.valueMmol, speciesConfig.glucose.ranges),
       });
     }
 
@@ -203,12 +207,8 @@ export default function DailyDiaryScreen() {
     }
 
     return events.sort((a, b) => a.time.localeCompare(b.time));
-  }, [glucoseReadings, injections, feedings, glucoseUnit, t, theme]);
+  }, [glucoseReadings, injections, feedings, glucoseUnit, t, theme, speciesConfig]);
 
-  const speciesConfig = useMemo(
-    () => getSpeciesConfig(activePet?.species ?? 'cat'),
-    [activePet?.species]
-  );
   const stats = useMemo(
     () => computeDayStats(glucoseReadings, speciesConfig),
     [glucoseReadings, speciesConfig]

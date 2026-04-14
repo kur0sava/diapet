@@ -62,7 +62,9 @@
       "Bash(find:*)",
       "Bash(npx expo-cli:*)",
       "Bash(npx eas-cli@latest credentials -p android --profile production)",
-      "Bash(keytool -list -v -keystore C:/Users/Admin/.android/debug.keystore -alias androiddebugkey -storepass android)"
+      "Bash(keytool -list -v -keystore C:/Users/Admin/.android/debug.keystore -alias androiddebugkey -storepass android)",
+      "Bash(echo \"EXIT: $?\")",
+      "Bash(echo \"EXIT CODE: $?\")"
     ]
   }
 }

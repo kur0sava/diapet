@@ -4,8 +4,14 @@
  */
 import React, { useCallback, useEffect, useState } from 'react';
 import {
-  View, Text, StyleSheet, ScrollView,
-  TouchableOpacity, ActivityIndicator, RefreshControl, AppState,
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  TouchableOpacity,
+  ActivityIndicator,
+  RefreshControl,
+  AppState,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Icon } from '@shared/components/ui/Icon';
@@ -48,29 +54,27 @@ export default function AdvancedAnalyticsScreen() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const {
-    prediction,
-    isLoading,
-    error,
-    canRequestNew,
-    nextAvailableIn,
-    requestNewPrediction,
-  } = usePrediction();
+  const { prediction, isLoading, error, canRequestNew, nextAvailableIn, requestNewPrediction } =
+    usePrediction();
 
   // Load recent glucose readings for the chart
   const { data: recentReadings = [] } = useQuery({
     queryKey: queryKeys.glucose.last7(activePet?.id ?? ''),
-    queryFn: () => activePet ? glucoseRepository.findLast7Days(activePet.id) : Promise.resolve([]),
+    queryFn: () =>
+      activePet ? glucoseRepository.findLast7Days(activePet.id) : Promise.resolve([]),
     enabled: !!activePet?.id,
   });
 
   // Format countdown timer
-  const formatCountdown = useCallback((ms: number): string => {
-    if (ms <= 0) return '';
-    const hours = Math.floor(ms / (60 * 60 * 1000));
-    const minutes = Math.floor((ms % (60 * 60 * 1000)) / (60 * 1000));
-    return `${hours}${t('prediction.hours')} ${minutes}${t('prediction.minutes')}`;
-  }, [t]);
+  const formatCountdown = useCallback(
+    (ms: number): string => {
+      if (ms <= 0) return '';
+      const hours = Math.floor(ms / (60 * 60 * 1000));
+      const minutes = Math.floor((ms % (60 * 60 * 1000)) / (60 * 1000));
+      return `${hours}${t('prediction.hours')} ${minutes}${t('prediction.minutes')}`;
+    },
+    [t]
+  );
 
   // Countdown state for rate limit display — recalculates on app resume
   const [countdown, setCountdown] = useState(nextAvailableIn);
@@ -80,12 +84,15 @@ export default function AdvancedAnalyticsScreen() {
     const interval = setInterval(() => {
       setCountdown(prev => Math.max(0, prev - 60_000));
     }, 60_000);
-    const sub = AppState.addEventListener('change', (state) => {
+    const sub = AppState.addEventListener('change', state => {
       if (state === 'active' && petId) {
         setCountdown(timeUntilNextPrediction(petId));
       }
     });
-    return () => { clearInterval(interval); sub.remove(); };
+    return () => {
+      clearInterval(interval);
+      sub.remove();
+    };
   }, [nextAvailableIn, petId]);
 
   const backendReady = isBackendConfigured();
@@ -99,10 +106,13 @@ export default function AdvancedAnalyticsScreen() {
         <View style={[styles.navHeader, { borderBottomColor: theme.colors.border }]}>
           <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backBtn}>
             <Text style={{ color: theme.colors.primary, fontSize: 16 }}>
-              {'\u2190 '}{t('common.back')}
+              {'\u2190 '}
+              {t('common.back')}
             </Text>
           </TouchableOpacity>
-          <Text style={[styles.headerTitle, { color: theme.colors.text, fontFamily: theme.fonts.bold }]}>
+          <Text
+            style={[styles.headerTitle, { color: theme.colors.text, fontFamily: theme.fonts.bold }]}
+          >
             {t('prediction.title')}
           </Text>
           <View style={{ width: 60 }} />
@@ -132,7 +142,12 @@ export default function AdvancedAnalyticsScreen() {
             <View style={[styles.comingSoonIcon, { backgroundColor: `${theme.colors.primary}15` }]}>
               <Icon name="sparkles" size={40} color={theme.colors.primary} />
             </View>
-            <Text style={[styles.comingSoonTitle, { color: theme.colors.text, fontFamily: theme.fonts.bold }]}>
+            <Text
+              style={[
+                styles.comingSoonTitle,
+                { color: theme.colors.text, fontFamily: theme.fonts.bold },
+              ]}
+            >
               {t('prediction.comingSoonTitle')}
             </Text>
             <Text style={[styles.comingSoonDesc, { color: theme.colors.textSecondary }]}>
@@ -140,12 +155,20 @@ export default function AdvancedAnalyticsScreen() {
             </Text>
 
             <View style={styles.proFeaturesList}>
-              <Text style={[styles.proFeaturesLabel, { color: theme.colors.text, fontFamily: theme.fonts.semibold }]}>
+              <Text
+                style={[
+                  styles.proFeaturesLabel,
+                  { color: theme.colors.text, fontFamily: theme.fonts.semibold },
+                ]}
+              >
                 {t('prediction.comingSoonIncluded')}
               </Text>
               {[
                 { icon: 'sparkles' as const, label: t('subscription.features.aiPrediction') },
-                { icon: 'chatbubble-ellipses' as const, label: t('subscription.features.aiAssistant') },
+                {
+                  icon: 'chatbubble-ellipses' as const,
+                  label: t('subscription.features.aiAssistant'),
+                },
                 { icon: 'analytics' as const, label: t('subscription.features.advancedAnalytics') },
                 { icon: 'document-text' as const, label: t('subscription.features.pdfExport') },
                 { icon: 'paw' as const, label: t('subscription.features.unlimitedPets') },
@@ -153,14 +176,23 @@ export default function AdvancedAnalyticsScreen() {
               ].map((item, i) => (
                 <View key={i} style={styles.proFeatureRow}>
                   <Icon name={item.icon} size={16} color={theme.colors.primary} />
-                  <Text style={[styles.proFeatureText, { color: theme.colors.textSecondary }]}>{item.label}</Text>
+                  <Text style={[styles.proFeatureText, { color: theme.colors.textSecondary }]}>
+                    {item.label}
+                  </Text>
                 </View>
               ))}
             </View>
 
-            <View style={[styles.comingSoonBadge, { backgroundColor: `${theme.colors.success}15` }]}>
+            <View
+              style={[styles.comingSoonBadge, { backgroundColor: `${theme.colors.success}15` }]}
+            >
               <Icon name="gift-outline" size={18} color={theme.colors.success} />
-              <Text style={[styles.comingSoonBadgeText, { color: theme.colors.success, fontFamily: theme.fonts.semibold }]}>
+              <Text
+                style={[
+                  styles.comingSoonBadgeText,
+                  { color: theme.colors.success, fontFamily: theme.fonts.semibold },
+                ]}
+              >
                 {t('subscription.allFeaturesUnlocked')}
               </Text>
             </View>
@@ -168,9 +200,7 @@ export default function AdvancedAnalyticsScreen() {
         ) : (
           <>
             {/* Disclaimer — always visible */}
-            <DisclaimerBanner
-              text={prediction?.disclaimer ?? t('prediction.defaultDisclaimer')}
-            />
+            <DisclaimerBanner text={prediction?.disclaimer ?? t('prediction.defaultDisclaimer')} />
 
             {/* Error state */}
             {error && (
@@ -184,7 +214,12 @@ export default function AdvancedAnalyticsScreen() {
             {!hasPrediction && !isLoading && !error && (
               <Card style={styles.emptyCard}>
                 <Icon name="sparkles" size={40} color={theme.colors.primary} />
-                <Text style={[styles.emptyTitle, { color: theme.colors.text, fontFamily: theme.fonts.bold }]}>
+                <Text
+                  style={[
+                    styles.emptyTitle,
+                    { color: theme.colors.text, fontFamily: theme.fonts.bold },
+                  ]}
+                >
                   {t('prediction.emptyTitle')}
                 </Text>
                 <Text style={[styles.emptyText, { color: theme.colors.textSecondary }]}>
@@ -197,7 +232,12 @@ export default function AdvancedAnalyticsScreen() {
             {isInsufficientData && prediction && (
               <Card style={styles.insufficientCard}>
                 <Icon name="information-circle" size={24} color={theme.colors.warning} />
-                <Text style={[styles.insufficientTitle, { color: theme.colors.text, fontFamily: theme.fonts.semibold }]}>
+                <Text
+                  style={[
+                    styles.insufficientTitle,
+                    { color: theme.colors.text, fontFamily: theme.fonts.semibold },
+                  ]}
+                >
                   {t('prediction.insufficientData')}
                 </Text>
                 <Text style={[styles.insufficientText, { color: theme.colors.textSecondary }]}>
@@ -209,13 +249,19 @@ export default function AdvancedAnalyticsScreen() {
             {/* Prediction chart */}
             {prediction?.status === 'success' && prediction.predictions.length > 0 && (
               <View style={styles.section}>
-                <Text style={[styles.sectionTitle, { color: theme.colors.text, fontFamily: theme.fonts.bold }]}>
+                <Text
+                  style={[
+                    styles.sectionTitle,
+                    { color: theme.colors.text, fontFamily: theme.fonts.bold },
+                  ]}
+                >
                   {t('prediction.chartTitle')}
                 </Text>
                 <Card>
                   <PredictionChart
                     actualData={recentReadings}
                     predictions={prediction.predictions}
+                    species={activePet?.species}
                   />
                 </Card>
               </View>
@@ -224,7 +270,12 @@ export default function AdvancedAnalyticsScreen() {
             {/* Summary */}
             {prediction?.status === 'success' && prediction.summary && (
               <Card style={styles.summaryCard}>
-                <Icon name="analytics" size={20} color={theme.colors.primary} style={{ marginRight: 8 }} />
+                <Icon
+                  name="analytics"
+                  size={20}
+                  color={theme.colors.primary}
+                  style={{ marginRight: 8 }}
+                />
                 <Text style={[styles.summaryText, { color: theme.colors.text }]}>
                   {prediction.summary}
                 </Text>
@@ -234,7 +285,12 @@ export default function AdvancedAnalyticsScreen() {
             {/* Checklist */}
             {prediction?.status === 'success' && prediction.checklist.length > 0 && (
               <View style={styles.section}>
-                <Text style={[styles.sectionTitle, { color: theme.colors.text, fontFamily: theme.fonts.bold }]}>
+                <Text
+                  style={[
+                    styles.sectionTitle,
+                    { color: theme.colors.text, fontFamily: theme.fonts.bold },
+                  ]}
+                >
                   {t('prediction.checklistTitle')}
                 </Text>
                 <ChecklistCard items={prediction.checklist} />
@@ -268,9 +324,11 @@ export default function AdvancedAnalyticsScreen() {
               style={{ marginTop: 16 }}
             >
               <LinearGradient
-                colors={isLoading || !canRequestNew
-                  ? [theme.colors.textTertiary, theme.colors.textTertiary]
-                  : [...theme.gradients.primary] as [string, string]}
+                colors={
+                  isLoading || !canRequestNew
+                    ? [theme.colors.textTertiary, theme.colors.textTertiary]
+                    : ([...theme.gradients.primary] as [string, string])
+                }
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 0 }}
                 style={styles.requestBtn}
@@ -313,8 +371,13 @@ export default function AdvancedAnalyticsScreen() {
 const styles = StyleSheet.create({
   container: { flex: 1 },
   navHeader: {
-    flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
-    paddingHorizontal: 16, paddingVertical: 12, borderBottomWidth: 0.5, gap: 8,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    borderBottomWidth: 0.5,
+    gap: 8,
   },
   backBtn: { width: 60, minHeight: 44, minWidth: 44, justifyContent: 'center' },
   headerTitle: { fontSize: 17, flex: 1, textAlign: 'center' },
@@ -334,18 +397,39 @@ const styles = StyleSheet.create({
   dataQualityCard: { padding: 12 },
   dataQualityRow: { flexDirection: 'row', alignItems: 'center', gap: 6 },
   dataQualityText: { fontSize: 13 },
-  requestBtn: { paddingVertical: 16, borderRadius: 28, flexDirection: 'row', alignItems: 'center', justifyContent: 'center' },
+  requestBtn: {
+    paddingVertical: 16,
+    borderRadius: 28,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   requestBtnText: { color: '#fff', fontSize: 16 },
   countdownText: { fontSize: 12, textAlign: 'center', marginTop: 8 },
   lastUpdated: { fontSize: 11, textAlign: 'center', marginTop: 8 },
   comingSoonCard: { alignItems: 'center', paddingVertical: 28, gap: 12 },
-  comingSoonIcon: { width: 80, height: 80, borderRadius: 40, alignItems: 'center', justifyContent: 'center', marginBottom: 4 },
+  comingSoonIcon: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 4,
+  },
   comingSoonTitle: { fontSize: 20, textAlign: 'center' },
   comingSoonDesc: { fontSize: 14, textAlign: 'center', lineHeight: 20, paddingHorizontal: 12 },
   proFeaturesList: { width: '100%', gap: 8, marginTop: 8 },
   proFeaturesLabel: { fontSize: 14, marginBottom: 4 },
   proFeatureRow: { flexDirection: 'row', alignItems: 'center', gap: 10 },
   proFeatureText: { fontSize: 14 },
-  comingSoonBadge: { flexDirection: 'row', alignItems: 'center', gap: 8, paddingHorizontal: 16, paddingVertical: 10, borderRadius: 12, marginTop: 8 },
+  comingSoonBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+    borderRadius: 12,
+    marginTop: 8,
+  },
   comingSoonBadgeText: { fontSize: 14 },
 });

@@ -5,7 +5,9 @@ import React from 'react';
 import { View, Text, StyleSheet, useWindowDimensions } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '@shared/theme';
-import { GlucoseReading, getGlucoseColor } from '@storage/domain/types';
+import { GlucoseReading, getGlucoseColorFromRanges } from '@storage/domain/types';
+import type { PetSpecies } from '@storage/domain/types';
+import { getSpeciesConfig } from '@shared/config/speciesConfig';
 import { formatShortDate } from '@shared/utils/dateUtils';
 import Svg, { Path, Line } from 'react-native-svg';
 import type { GlucosePredictionPoint } from '../data/predictionTypes';
@@ -18,9 +20,11 @@ const NORMAL_MAX = 9.0;
 interface Props {
   actualData: GlucoseReading[];
   predictions: GlucosePredictionPoint[];
+  species?: PetSpecies;
 }
 
-export function PredictionChart({ actualData, predictions }: Props) {
+export function PredictionChart({ actualData, predictions, species }: Props) {
+  const speciesRanges = getSpeciesConfig(species ?? 'cat').glucose.ranges;
   const { t } = useTranslation();
   const { theme } = useTheme();
   const { width: screenWidth } = useWindowDimensions();
@@ -45,44 +49,53 @@ export function PredictionChart({ actualData, predictions }: Props) {
   const getX = (i: number) => (i / Math.max(totalPoints - 1, 1)) * CHART_WIDTH;
 
   // Actual data path
-  const actualPathD = actualData.map((d, i) => {
-    const x = getX(i);
-    const y = getY(d.valueMmol);
-    return `${i === 0 ? 'M' : 'L'} ${x} ${y}`;
-  }).join(' ');
+  const actualPathD = actualData
+    .map((d, i) => {
+      const x = getX(i);
+      const y = getY(d.valueMmol);
+      return `${i === 0 ? 'M' : 'L'} ${x} ${y}`;
+    })
+    .join(' ');
 
   // Predicted data path (dashed)
   const predStartIdx = actualData.length;
-  const predPathD = predictions.map((p, i) => {
-    const idx = predStartIdx + i;
-    const x = getX(idx);
-    const y = getY(p.predictedMmol);
-    // Connect from last actual point
-    if (i === 0 && actualData.length > 0) {
-      const lastActual = actualData[actualData.length - 1];
-      const lastX = getX(actualData.length - 1);
-      const lastY = getY(lastActual.valueMmol);
-      return `M ${lastX} ${lastY} L ${x} ${y}`;
-    }
-    return `${i === 0 ? 'M' : 'L'} ${x} ${y}`;
-  }).join(' ');
+  const predPathD = predictions
+    .map((p, i) => {
+      const idx = predStartIdx + i;
+      const x = getX(idx);
+      const y = getY(p.predictedMmol);
+      // Connect from last actual point
+      if (i === 0 && actualData.length > 0) {
+        const lastActual = actualData[actualData.length - 1];
+        const lastX = getX(actualData.length - 1);
+        const lastY = getY(lastActual.valueMmol);
+        return `M ${lastX} ${lastY} L ${x} ${y}`;
+      }
+      return `${i === 0 ? 'M' : 'L'} ${x} ${y}`;
+    })
+    .join(' ');
 
   // Confidence band path (closed polygon)
   let confBandD = '';
   if (predictions.length > 0) {
     // Top edge (left to right)
-    const topEdge = predictions.map((p, i) => {
-      const x = getX(predStartIdx + i);
-      const y = getY(p.confidenceHigh);
-      return `${i === 0 ? 'M' : 'L'} ${x} ${y}`;
-    }).join(' ');
+    const topEdge = predictions
+      .map((p, i) => {
+        const x = getX(predStartIdx + i);
+        const y = getY(p.confidenceHigh);
+        return `${i === 0 ? 'M' : 'L'} ${x} ${y}`;
+      })
+      .join(' ');
     // Bottom edge (right to left)
-    const bottomEdge = [...predictions].reverse().map((p, i) => {
-      const origIdx = predictions.length - 1 - i;
-      const x = getX(predStartIdx + origIdx);
-      const y = getY(p.confidenceLow);
-      return `L ${x} ${y}`;
-    }).join(' ');
+    const bottomEdge = [...predictions]
+      .reverse()
+      .map((p, i) => {
+        const origIdx = predictions.length - 1 - i;
+        const x = getX(predStartIdx + origIdx);
+        const y = getY(p.confidenceLow);
+        return `L ${x} ${y}`;
+      })
+      .join(' ');
     confBandD = `${topEdge} ${bottomEdge} Z`;
   }
 
@@ -120,26 +133,57 @@ export function PredictionChart({ actualData, predictions }: Props) {
     <View style={styles.container}>
       {/* Y-axis — positioned to match actual data scale */}
       <View style={styles.yAxis}>
-        <Text style={[styles.axisLabel, { color: theme.colors.textTertiary, position: 'absolute', top: getY(maxVal) - 5 }]}>{maxVal.toFixed(0)}</Text>
-        <Text style={[styles.axisLabel, { color: theme.colors.success, position: 'absolute', top: getY(NORMAL_MAX) - 5 }]}>{NORMAL_MAX}</Text>
-        <Text style={[styles.axisLabel, { color: theme.colors.success, position: 'absolute', top: getY(NORMAL_MIN) - 5 }]}>{NORMAL_MIN}</Text>
-        <Text style={[styles.axisLabel, { color: theme.colors.textTertiary, position: 'absolute', top: getY(minVal) - 5 }]}>{minVal.toFixed(0)}</Text>
+        <Text
+          style={[
+            styles.axisLabel,
+            { color: theme.colors.textTertiary, position: 'absolute', top: getY(maxVal) - 5 },
+          ]}
+        >
+          {maxVal.toFixed(0)}
+        </Text>
+        <Text
+          style={[
+            styles.axisLabel,
+            { color: theme.colors.success, position: 'absolute', top: getY(NORMAL_MAX) - 5 },
+          ]}
+        >
+          {NORMAL_MAX}
+        </Text>
+        <Text
+          style={[
+            styles.axisLabel,
+            { color: theme.colors.success, position: 'absolute', top: getY(NORMAL_MIN) - 5 },
+          ]}
+        >
+          {NORMAL_MIN}
+        </Text>
+        <Text
+          style={[
+            styles.axisLabel,
+            { color: theme.colors.textTertiary, position: 'absolute', top: getY(minVal) - 5 },
+          ]}
+        >
+          {minVal.toFixed(0)}
+        </Text>
       </View>
 
       {/* Chart area */}
       <View style={[styles.chart, { width: CHART_WIDTH, height: CHART_HEIGHT }]}>
         {/* Normal zone band */}
-        <View style={[styles.normalZone, {
-          top: normalMaxY,
-          height: normalMinY - normalMaxY,
-          backgroundColor: `${theme.colors.success}15`,
-        }]} />
+        <View
+          style={[
+            styles.normalZone,
+            {
+              top: normalMaxY,
+              height: normalMinY - normalMaxY,
+              backgroundColor: `${theme.colors.success}15`,
+            },
+          ]}
+        />
 
         <Svg width={CHART_WIDTH} height={CHART_HEIGHT} style={StyleSheet.absoluteFill}>
           {/* Confidence band */}
-          {confBandD ? (
-            <Path d={confBandD} fill={`${theme.colors.info}20`} stroke="none" />
-          ) : null}
+          {confBandD ? <Path d={confBandD} fill={`${theme.colors.info}20`} stroke="none" /> : null}
 
           {/* Actual data line */}
           {actualData.length > 1 && (
@@ -187,16 +231,19 @@ export function PredictionChart({ actualData, predictions }: Props) {
         {actualData.map((reading, i) => {
           const x = getX(i);
           const y = getY(reading.valueMmol);
-          const color = getGlucoseColor(reading.valueMmol);
+          const color = getGlucoseColorFromRanges(reading.valueMmol, speciesRanges);
           return (
             <View
               key={reading.id}
-              style={[styles.dot, {
-                left: x - 5,
-                top: y - 5,
-                backgroundColor: color,
-                borderColor: theme.colors.surface,
-              }]}
+              style={[
+                styles.dot,
+                {
+                  left: x - 5,
+                  top: y - 5,
+                  backgroundColor: color,
+                  borderColor: theme.colors.surface,
+                },
+              ]}
             />
           );
         })}
@@ -208,12 +255,15 @@ export function PredictionChart({ actualData, predictions }: Props) {
           return (
             <View
               key={`pred-${p.date}`}
-              style={[styles.predDot, {
-                left: x - 4,
-                top: y - 4,
-                backgroundColor: theme.colors.info,
-                borderColor: theme.colors.surface,
-              }]}
+              style={[
+                styles.predDot,
+                {
+                  left: x - 4,
+                  top: y - 4,
+                  backgroundColor: theme.colors.info,
+                  borderColor: theme.colors.surface,
+                },
+              ]}
             />
           );
         })}
@@ -236,15 +286,21 @@ export function PredictionChart({ actualData, predictions }: Props) {
       <View style={styles.legend}>
         <View style={styles.legendItem}>
           <View style={[styles.legendLine, { backgroundColor: theme.colors.primary }]} />
-          <Text style={[styles.legendText, { color: theme.colors.textSecondary }]}>{t('prediction.chartActual')}</Text>
+          <Text style={[styles.legendText, { color: theme.colors.textSecondary }]}>
+            {t('prediction.chartActual')}
+          </Text>
         </View>
         <View style={styles.legendItem}>
           <View style={[styles.legendDash, { borderColor: theme.colors.info }]} />
-          <Text style={[styles.legendText, { color: theme.colors.textSecondary }]}>{t('prediction.chartPredicted')}</Text>
+          <Text style={[styles.legendText, { color: theme.colors.textSecondary }]}>
+            {t('prediction.chartPredicted')}
+          </Text>
         </View>
         <View style={styles.legendItem}>
           <View style={[styles.legendBand, { backgroundColor: `${theme.colors.info}30` }]} />
-          <Text style={[styles.legendText, { color: theme.colors.textSecondary }]}>{t('prediction.chartConfidence')}</Text>
+          <Text style={[styles.legendText, { color: theme.colors.textSecondary }]}>
+            {t('prediction.chartConfidence')}
+          </Text>
         </View>
       </View>
     </View>
@@ -259,7 +315,12 @@ const styles = StyleSheet.create({
   normalZone: { position: 'absolute', left: 0, right: 0 },
   dot: { position: 'absolute', width: 10, height: 10, borderRadius: 5, borderWidth: 2 },
   predDot: { position: 'absolute', width: 8, height: 8, borderRadius: 4, borderWidth: 1.5 },
-  xAxis: { flexDirection: 'row', justifyContent: 'space-between', marginTop: 4, marginLeft: Y_AXIS_WIDTH + 4 },
+  xAxis: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 4,
+    marginLeft: Y_AXIS_WIDTH + 4,
+  },
   xLabel: { fontSize: 9, textAlign: 'center' },
   legend: { flexDirection: 'row', gap: 14, marginTop: 8, flexWrap: 'wrap' },
   legendItem: { flexDirection: 'row', alignItems: 'center', gap: 4 },

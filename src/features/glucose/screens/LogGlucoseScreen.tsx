@@ -17,14 +17,16 @@ import { useTheme } from '@shared/theme';
 import { Button, Input, Card } from '@shared/components/ui';
 import { glucoseRepository } from '@storage/database';
 import { usePetStore } from '@shared/stores/petStore';
-import { MealRelation, GlucoseUnit, getGlucoseLevel, getGlucoseColor } from '../types';
+import { MealRelation, GlucoseUnit } from '../types';
 import {
   MGDL_PER_MMOLL,
   MAX_REASONABLE_GLUCOSE_MMOL,
   MAX_REASONABLE_GLUCOSE_MGDL,
   mgdlToMmol,
+  getGlucoseLevelFromRanges,
+  getGlucoseColorFromRanges,
 } from '@storage/domain/types';
-import { getInsulinThresholds } from '@shared/config/speciesConfig';
+import { getInsulinThresholds, getSpeciesConfig } from '@shared/config/speciesConfig';
 import { useQueryClient } from '@tanstack/react-query';
 import { queryKeys } from '@shared/utils/queryKeys';
 import { storage, StorageKeys } from '@storage/mmkv/storage';
@@ -157,10 +159,17 @@ export default function LogGlucoseScreen() {
     numValue > 0 &&
     numValue < (unit === 'mmol/L' ? MAX_REASONABLE_GLUCOSE_MMOL : MAX_REASONABLE_GLUCOSE_MGDL);
 
+  const speciesRanges = getSpeciesConfig(activePet?.species ?? 'cat').glucose.ranges;
   const glucosePreview = isValidValue
     ? {
-        level: getGlucoseLevel(unit === 'mmol/L' ? numValue : mgdlToMmol(numValue)),
-        color: getGlucoseColor(unit === 'mmol/L' ? numValue : mgdlToMmol(numValue)),
+        level: getGlucoseLevelFromRanges(
+          unit === 'mmol/L' ? numValue : mgdlToMmol(numValue),
+          speciesRanges
+        ),
+        color: getGlucoseColorFromRanges(
+          unit === 'mmol/L' ? numValue : mgdlToMmol(numValue),
+          speciesRanges
+        ),
       }
     : null;
 
