@@ -628,6 +628,8 @@ export const ru = {
     alternativesInfo: 'Корма, не позиционируемые как диабетические, но с подходящим составом',
     naturalFood: 'Натуральное питание',
     naturalFoodDesc: 'Натуралка: мясо, субпродукты, рыба',
+    calculator: 'Калькулятор порции',
+    calculatorDesc: 'Рассчитать углеводы и суточную норму корма',
     feedingTips: 'Советы по кормлению',
     storesIn: 'Магазины',
     prescriptionFoods: 'Рецептурные корма',

@@ -1,7 +1,5 @@
 import React from 'react';
-import {
-  View, Text, StyleSheet, ScrollView, TouchableOpacity,
-} from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useEncyclopediaNavigation } from '@navigation/hooks';
 import { useTranslation } from 'react-i18next';
@@ -33,7 +31,9 @@ export default function FeedGuideScreen() {
         </TouchableOpacity>
         <View style={styles.headerText}>
           <Text style={[styles.title, { color: theme.colors.text }]}>{t('feedGuide.title')}</Text>
-          <Text style={[styles.subtitle, { color: theme.colors.textSecondary }]}>{t('feedGuide.subtitle')}</Text>
+          <Text style={[styles.subtitle, { color: theme.colors.textSecondary }]}>
+            {t('feedGuide.subtitle')}
+          </Text>
         </View>
       </View>
 
@@ -57,7 +57,10 @@ export default function FeedGuideScreen() {
           {REGIONS.map(({ key, emoji }) => (
             <TouchableOpacity
               key={key}
-              style={[styles.regionChip, { backgroundColor: theme.colors.surface, ...theme.shadows.sm }]}
+              style={[
+                styles.regionChip,
+                { backgroundColor: theme.colors.surface, ...theme.shadows.sm },
+              ]}
               onPress={() => navigation.navigate('FeedGuideRegion', { region: key })}
               activeOpacity={0.7}
             >
@@ -70,9 +73,35 @@ export default function FeedGuideScreen() {
           ))}
         </View>
 
+        {/* Portion Calculator (tool) */}
+        <TouchableOpacity
+          style={[
+            styles.sectionCard,
+            { backgroundColor: theme.colors.surface, ...theme.shadows.sm },
+          ]}
+          onPress={() => navigation.navigate('FeedCalculator')}
+          activeOpacity={0.7}
+        >
+          <View style={[styles.sectionCardIcon, { backgroundColor: theme.colors.primary + '15' }]}>
+            <Text style={{ fontSize: 24 }}>🧮</Text>
+          </View>
+          <View style={styles.sectionCardContent}>
+            <Text style={[styles.sectionCardTitle, { color: theme.colors.text }]}>
+              {t('feedGuide.calculator')}
+            </Text>
+            <Text style={[styles.sectionCardDesc, { color: theme.colors.textSecondary }]}>
+              {t('feedGuide.calculatorDesc')}
+            </Text>
+          </View>
+          <Icon name="chevron-forward" size={20} color={theme.colors.textTertiary} />
+        </TouchableOpacity>
+
         {/* Alternative Foods */}
         <TouchableOpacity
-          style={[styles.sectionCard, { backgroundColor: theme.colors.surface, ...theme.shadows.sm }]}
+          style={[
+            styles.sectionCard,
+            { backgroundColor: theme.colors.surface, ...theme.shadows.sm },
+          ]}
           onPress={() => navigation.navigate('FeedGuideAlternatives')}
           activeOpacity={0.7}
         >
@@ -92,7 +121,10 @@ export default function FeedGuideScreen() {
 
         {/* Natural Food */}
         <TouchableOpacity
-          style={[styles.sectionCard, { backgroundColor: theme.colors.surface, ...theme.shadows.sm }]}
+          style={[
+            styles.sectionCard,
+            { backgroundColor: theme.colors.surface, ...theme.shadows.sm },
+          ]}
           onPress={() => navigation.navigate('FeedGuideNatural')}
           activeOpacity={0.7}
         >
@@ -114,7 +146,9 @@ export default function FeedGuideScreen() {
         <Text style={[styles.sectionTitle, { color: theme.colors.text, marginTop: 24 }]}>
           {t('feedGuide.feedingTips')}
         </Text>
-        <View style={[styles.tipsCard, { backgroundColor: theme.colors.surface, ...theme.shadows.sm }]}>
+        <View
+          style={[styles.tipsCard, { backgroundColor: theme.colors.surface, ...theme.shadows.sm }]}
+        >
           {tips.map((tip, i) => (
             <View key={i} style={styles.tipRow}>
               <Text style={[styles.tipBullet, { color: theme.colors.primary }]}>•</Text>
@@ -131,22 +165,55 @@ export default function FeedGuideScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
-  header: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 16, paddingTop: 8, paddingBottom: 12, gap: 12 },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    paddingTop: 8,
+    paddingBottom: 12,
+    gap: 12,
+  },
   backButton: { padding: 4, minHeight: 44, minWidth: 44, justifyContent: 'center' },
   headerText: { flex: 1 },
   title: { fontSize: 24, fontWeight: '800' },
   subtitle: { fontSize: 13, marginTop: 2 },
   content: { padding: 16, gap: 12 },
-  disclaimerCard: { flexDirection: 'row', alignItems: 'center', gap: 10, padding: 14, borderRadius: 12 },
+  disclaimerCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+    padding: 14,
+    borderRadius: 12,
+  },
   disclaimerText: { flex: 1, fontSize: 13, lineHeight: 18 },
   sectionTitle: { fontSize: 18, fontWeight: '700', marginTop: 12 },
   sectionDesc: { fontSize: 13, marginBottom: 8 },
   regionGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 10 },
-  regionChip: { flexDirection: 'row', alignItems: 'center', gap: 8, paddingHorizontal: 14, paddingVertical: 12, borderRadius: 14, width: '48%' as unknown as number },
+  regionChip: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    paddingHorizontal: 14,
+    paddingVertical: 12,
+    borderRadius: 14,
+    width: '48%' as unknown as number,
+  },
   regionEmoji: { fontSize: 20 },
   regionLabel: { flex: 1, fontSize: 14, fontWeight: '600' },
-  sectionCard: { flexDirection: 'row', alignItems: 'center', gap: 14, padding: 16, borderRadius: 16 },
-  sectionCardIcon: { width: 48, height: 48, borderRadius: 14, justifyContent: 'center', alignItems: 'center' },
+  sectionCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 14,
+    padding: 16,
+    borderRadius: 16,
+  },
+  sectionCardIcon: {
+    width: 48,
+    height: 48,
+    borderRadius: 14,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   sectionCardContent: { flex: 1 },
   sectionCardTitle: { fontSize: 16, fontWeight: '700' },
   sectionCardDesc: { fontSize: 13, marginTop: 2 },

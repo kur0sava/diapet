@@ -45,6 +45,7 @@ export type HomeStackParamList = {
   FeedGuideRegion: { region: string };
   FeedGuideAlternatives: undefined;
   FeedGuideNatural: undefined;
+  FeedCalculator: undefined;
   AdvancedAnalytics: undefined;
   AnalyzerDashboard: undefined;
 };
@@ -65,6 +66,7 @@ export type EncyclopediaStackParamList = {
   FeedGuideRegion: { region: string };
   FeedGuideAlternatives: undefined;
   FeedGuideNatural: undefined;
+  FeedCalculator: undefined;
 };
 
 // More Stack

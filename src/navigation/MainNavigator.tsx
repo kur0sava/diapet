@@ -139,6 +139,11 @@ function HomeStackNavigator() {
         component={AnalyzerDashboardScreen}
         options={{ headerShown: false }}
       />
+      <HomeStack.Screen
+        name="FeedCalculator"
+        component={FeedCalculatorScreen}
+        options={{ headerShown: false }}
+      />
     </HomeStack.Navigator>
   );
 }
@@ -217,6 +222,11 @@ function EncyclopediaStackNavigator() {
       <EncyclopediaStack.Screen
         name="FeedGuideNatural"
         component={FeedGuideNaturalScreen}
+        options={{ headerShown: false }}
+      />
+      <EncyclopediaStack.Screen
+        name="FeedCalculator"
+        component={FeedCalculatorScreen}
         options={{ headerShown: false }}
       />
     </EncyclopediaStack.Navigator>

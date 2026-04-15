@@ -628,6 +628,8 @@ export const en = {
     alternativesInfo: 'Foods not marketed for diabetes but with suitable composition',
     naturalFood: 'Natural Food',
     naturalFoodDesc: 'Raw/cooked: meat, organs, fish',
+    calculator: 'Portion Calculator',
+    calculatorDesc: 'Compute carbs and daily feeding amount',
     feedingTips: 'Feeding Tips',
     storesIn: 'Stores',
     prescriptionFoods: 'Prescription Foods',
