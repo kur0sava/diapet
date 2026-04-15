@@ -21,10 +21,9 @@ export type RootStackParamList = {
   Paywall: { feature?: string } | undefined;
 };
 
-// Tab Navigator
+// Tab Navigator (H2: GlucoseTab removed — glucose history lives in HomeStack)
 export type MainTabParamList = {
   Home: NavigatorScreenParams<HomeStackParamList> | undefined;
-  GlucoseTab: NavigatorScreenParams<GlucoseStackParamList> | undefined;
   SymptomsTab: NavigatorScreenParams<SymptomsStackParamList> | undefined;
   EncyclopediaTab: NavigatorScreenParams<EncyclopediaStackParamList> | undefined;
   MoreTab: NavigatorScreenParams<MoreStackParamList> | undefined;
@@ -38,6 +37,7 @@ export type HomeStackParamList = {
   LogInjection: { presetDate?: string } | undefined;
   LogFeeding: { presetDate?: string } | undefined;
   AddSymptom: { editId?: string; glucoseReadingId?: string };
+  GlucoseList: undefined;
   InjectionList: undefined;
   FeedingList: undefined;
   FeedGuide: undefined;
@@ -46,11 +46,6 @@ export type HomeStackParamList = {
   FeedGuideNatural: undefined;
   AdvancedAnalytics: undefined;
   AnalyzerDashboard: undefined;
-};
-
-// Glucose Stack (history only — glucose input via Home tab)
-export type GlucoseStackParamList = {
-  GlucoseList: undefined;
 };
 
 // Symptoms Stack
@@ -110,11 +105,6 @@ export type RootStackScreenProps<T extends keyof RootStackParamList> = NativeSta
 export type HomeStackScreenProps<T extends keyof HomeStackParamList> = CompositeScreenProps<
   NativeStackScreenProps<HomeStackParamList, T>,
   BottomTabScreenProps<MainTabParamList>
->;
-
-export type GlucoseStackScreenProps<T extends keyof GlucoseStackParamList> = NativeStackScreenProps<
-  GlucoseStackParamList,
-  T
 >;
 
 export type SymptomsStackScreenProps<T extends keyof SymptomsStackParamList> =

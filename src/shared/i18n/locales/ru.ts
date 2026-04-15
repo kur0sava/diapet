@@ -14,6 +14,7 @@ export const ru = {
     info: 'Информация',
     confirm: 'Подтвердить',
     noData: 'Нет данных',
+    viewAll: 'Все',
     today: 'Сегодня',
     yesterday: 'Вчера',
     unknown: 'Неизвестно',

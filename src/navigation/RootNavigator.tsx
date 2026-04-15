@@ -25,13 +25,9 @@ const linking: LinkingOptions<RootStackParamList> = {
               LogGlucose: 'glucose/log',
               LogInjection: 'injection/log',
               LogFeeding: 'feeding/log',
+              GlucoseList: 'glucose',
               DailyDiary: 'diary',
               AnalyzerDashboard: 'analyzer',
-            },
-          },
-          GlucoseTab: {
-            screens: {
-              GlucoseList: 'glucose',
             },
           },
           EncyclopediaTab: {

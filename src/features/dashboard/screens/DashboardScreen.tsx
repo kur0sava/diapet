@@ -432,14 +432,26 @@ export default function DashboardScreen() {
 
         {/* Glucose Chart */}
         <View style={styles.section}>
-          <Text
-            style={[
-              styles.sectionTitle,
-              { color: theme.colors.text, fontFamily: theme.fonts.bold },
-            ]}
-          >
-            {t('dashboard.glucoseChart')}
-          </Text>
+          <View style={styles.sectionHeader}>
+            <Text
+              style={[
+                styles.sectionTitle,
+                { color: theme.colors.text, marginBottom: 0, fontFamily: theme.fonts.bold },
+              ]}
+            >
+              {t('dashboard.glucoseChart')}
+            </Text>
+            <TouchableOpacity onPress={() => navigation.navigate('GlucoseList')}>
+              <Text
+                style={[
+                  styles.sectionLink,
+                  { color: theme.colors.primary, fontFamily: theme.fonts.semibold },
+                ]}
+              >
+                {t('common.viewAll')}
+              </Text>
+            </TouchableOpacity>
+          </View>
           <Card>
             {glucoseHistory && glucoseHistory.length > 0 ? (
               <GlucoseChart data={glucoseHistory} species={activePet?.species} />

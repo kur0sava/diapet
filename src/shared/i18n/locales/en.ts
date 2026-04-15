@@ -14,6 +14,7 @@ export const en = {
     info: 'Info',
     confirm: 'Confirm',
     noData: 'No data',
+    viewAll: 'View all',
     today: 'Today',
     yesterday: 'Yesterday',
     unknown: 'Unknown',

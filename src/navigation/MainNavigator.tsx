@@ -7,7 +7,6 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import {
   MainTabParamList,
   HomeStackParamList,
-  GlucoseStackParamList,
   SymptomsStackParamList,
   EncyclopediaStackParamList,
   MoreStackParamList,
@@ -50,7 +49,6 @@ const Tab = createBottomTabNavigator<MainTabParamList>();
 
 // Stack navigators for each tab
 const HomeStack = createNativeStackNavigator<HomeStackParamList>();
-const GlucoseStack = createNativeStackNavigator<GlucoseStackParamList>();
 const SymptomsStack = createNativeStackNavigator<SymptomsStackParamList>();
 const EncyclopediaStack = createNativeStackNavigator<EncyclopediaStackParamList>();
 const MoreStack = createNativeStackNavigator<MoreStackParamList>();
@@ -97,6 +95,11 @@ function HomeStackNavigator() {
         options={{ headerShown: false }}
       />
       <HomeStack.Screen
+        name="GlucoseList"
+        component={GlucoseListScreen}
+        options={{ headerShown: false }}
+      />
+      <HomeStack.Screen
         name="InjectionList"
         component={InjectionListScreen}
         options={{ headerShown: false }}
@@ -137,26 +140,6 @@ function HomeStackNavigator() {
         options={{ headerShown: false }}
       />
     </HomeStack.Navigator>
-  );
-}
-
-function GlucoseStackNavigator() {
-  const { theme } = useTheme();
-  return (
-    <GlucoseStack.Navigator
-      screenOptions={{
-        headerStyle: { backgroundColor: theme.colors.header },
-        headerTintColor: theme.colors.text,
-        headerShadowVisible: false,
-        animation: 'slide_from_right',
-      }}
-    >
-      <GlucoseStack.Screen
-        name="GlucoseList"
-        component={GlucoseListScreen}
-        options={{ headerShown: false }}
-      />
-    </GlucoseStack.Navigator>
   );
 }
 
@@ -327,7 +310,6 @@ export default function MainNavigator() {
         tabBarIcon: ({ color, size }) => {
           const icons: Record<string, string> = {
             Home: 'home-outline',
-            GlucoseTab: 'water-outline',
             SymptomsTab: 'paw-outline',
             EncyclopediaTab: 'book-outline',
             MoreTab: 'ellipsis-horizontal-circle-outline',
@@ -347,11 +329,6 @@ export default function MainNavigator() {
         name="Home"
         component={HomeStackNavigator}
         options={{ title: t('navigation.home') }}
-      />
-      <Tab.Screen
-        name="GlucoseTab"
-        component={GlucoseStackNavigator}
-        options={{ title: t('navigation.glucose') }}
       />
       <Tab.Screen
         name="SymptomsTab"
