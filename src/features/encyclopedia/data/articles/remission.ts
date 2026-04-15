@@ -65,15 +65,16 @@ export const remission: Article = {
 
 ### Протокол снижения дозы
 
+Решения принимаются **по надиру** (минимум за цикл), а не по пред-инъекционному сахару — пред-инъекционное значение отражает конец предыдущей дозы и может быть нормальным даже при слишком низком надире.
+
 | Надир (ммоль/л) | Что делать |
 |----------------|-----------|
 | 5-8 | Продолжать текущую дозу |
 | Ниже 5 (два раза подряд) | Снизить на 0.5-1 IU |
 | Ниже 4 | Снизить на 1-2 IU или пропустить следующую дозу |
-| Предынъекционная стабильно <7 | Попробовать снизить до 0.5-1 IU |
-| Предынъекционная стабильно <6 на мин. дозе | Попробовать отмену под контролем ветеринара |
+| Стабильно <5 на минимальной дозе (0.5-1 IU) | Обсудить с ветеринаром попытку отмены инсулина (remission trial) |
 
-**Важно:** снижение дозы — ТОЛЬКО совместно с ветеринаром! Таблица — ориентир для понимания, не для самолечения.
+**Важно:** снижение дозы — ТОЛЬКО совместно с ветеринаром! Таблица — ориентир для понимания, не для самолечения. Низкое пред-инъекционное значение само по себе НЕ повод снижать дозу — нужно делать кривую глюкозы и смотреть надир.
 
 ### «Медовый месяц» (Honeymoon)
 
@@ -86,7 +87,7 @@ export const remission: Article = {
 ### Как подтвердить ремиссию
 
 1. Ветеринар постепенно снижает дозу инсулина, наблюдая за кривыми глюкозы
-2. Если сахар держится ниже 7 ммоль/л (126 мг/дл) без инсулина **4 недели** — ремиссия подтверждена!
+2. Если сахар держится ниже 6 ммоль/л (108 мг/дл) без инсулина **4 недели** — ремиссия подтверждена (Roomp & Rand 2009)!
 3. Но не расслабляемся — продолжаем диету и мониторинг
 
 ### Мониторинг после ремиссии
@@ -163,13 +164,14 @@ Here are the **warning** (in a good way!) signs that appear 1-4 weeks before rem
 
 | Nadir (mmol/L) | What to Do |
 |----------------|-----------|
+Decisions are based on **nadir** (the minimum of the curve), not on pre-injection glucose — pre-injection reflects the end of the previous dose and can be normal even when the nadir is too low.
+
 | 5-8 | Continue current dose |
 | Below 5 (twice in a row) | Reduce by 0.5-1 IU |
 | Below 4 | Reduce by 1-2 IU or skip next dose |
-| Pre-injection consistently <7 | Try reducing to 0.5-1 IU |
-| Pre-injection consistently <6 at min. dose | Try discontinuing under vet supervision |
+| Nadir persistently <5 at minimum dose (0.5-1 IU) | Discuss a remission trial (insulin discontinuation) with your vet |
 
-**Important:** dose reduction should ONLY be done with your vet! This table is for understanding, not self-treatment.
+**Important:** dose reduction should ONLY be done with your vet! This table is for understanding, not self-treatment. A low pre-injection value by itself is NOT a reason to reduce the dose — a glucose curve and nadir are required.
 
 ### The "Honeymoon" Period
 
@@ -182,7 +184,7 @@ This can last from 2-4 weeks to several months. Don't panic — it's a good sign
 ### How to Confirm Remission
 
 1. Your vet gradually reduces the insulin dose while monitoring glucose curves
-2. If blood sugar stays below 7 mmol/L (126 mg/dL) without insulin for **4 weeks** — remission is confirmed!
+2. If blood sugar stays below 6 mmol/L (108 mg/dL) without insulin for **4 weeks** — remission is confirmed (Roomp & Rand 2009)!
 3. But don't let your guard down — continue the diet and monitoring
 
 ### Post-Remission Monitoring

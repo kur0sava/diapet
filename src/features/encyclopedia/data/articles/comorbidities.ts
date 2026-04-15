@@ -62,7 +62,7 @@ IBD вызывает хроническое воспаление, которое
 Акромегалия (избыток гормона роста из-за опухоли гипофиза) обнаруживается у **20-30% кошек с плохо контролируемым диабетом**. Это гораздо чаще, чем думали раньше!
 
 **Когда заподозрить:**
-- Доза инсулина постоянно растёт и превышает **6 IU на инъекцию**
+- Доза инсулина растёт и **превышает ~2-3 IU на инъекцию при сохраняющейся плохой компенсации** — это уже повод заподозрить акромегалию и обследоваться (IGF-1), не ждать 6 IU (Niessen 2007, Posch 2019 рекомендуют ранний скрининг)
 - Сахар плохо контролируется несмотря на большие дозы
 - Кошка набирает вес (необычно для плохо контролируемого диабета!)
 - Увеличение головы, лап, нижней челюсти (поздние признаки)
@@ -128,7 +128,7 @@ IBD causes chronic inflammation that worsens insulin resistance.
 Acromegaly (excess growth hormone from a pituitary tumor) is found in **20-30% of cats with poorly controlled diabetes**. This is far more common than previously thought!
 
 **When to suspect it:**
-- Insulin dose keeps climbing and exceeds **6 IU per injection**
+- Insulin dose climbs and **exceeds ~2-3 IU per injection with persistently poor control** — this is already a reason to suspect acromegaly and test IGF-1; don't wait for 6 IU (Niessen 2007, Posch 2019 recommend early screening)
 - Blood sugar stays poorly controlled despite high doses
 - Your cat is gaining weight (unusual for poorly controlled diabetes!)
 - Enlargement of the head, paws, or jaw (late signs)

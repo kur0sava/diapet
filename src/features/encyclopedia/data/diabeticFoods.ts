@@ -2,10 +2,12 @@
  * Database of cat foods suitable for diabetic cats.
  * Organized by region availability and food type.
  *
- * Nutritional targets for diabetic cats:
+ * Nutritional targets for diabetic cats (ISFM/AAHA):
  * - Carbs: < 12% dry matter basis (ideal < 7%)
  * - Protein: > 40% dry matter basis
- * - Fat: 15-25%
+ * - Fat: preferred 15-25% DM for weight management; acceptable up to ~40%
+ *   DM per ISFM 2023 in normal-weight cats. speciesConfig.fatDMMax=40 is
+ *   the hard warn threshold; 15-25 is the preferred selection target.
  * - Wet food preferred (higher moisture, lower carbs)
  *
  * Formula to calculate carbs from label:

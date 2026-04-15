@@ -27,7 +27,7 @@ export const stressHyperglycemia: Article = {
 | Признак | Стрессовая гипергликемия | Плохой контроль |
 |---------|-------------------------|-----------------|
 | Где замер | Ветклиника | Дома, спокойная обстановка |
-| Фруктозамин | Нормальный (250-350 мкмоль/л) | Повышенный (>400 мкмоль/л) |
+| Фруктозамин | Нормальный (170-340 мкмоль/л, ISFM 2023) | Повышенный (>400 мкмоль/л) |
 | Домашние замеры | Стабильные, в пределах нормы | Тоже высокие |
 | Поведение дома | Нормальное | Жажда, частое мочеиспускание |
 
@@ -58,7 +58,7 @@ export const stressHyperglycemia: Article = {
 
 ### Когда это НЕ стресс
 
-Если домашние замеры тоже высокие (>15 ммоль/л регулярно), это не стресс. Поговорите с ветеринаром о корректировке дозы.
+Если домашние замеры тоже высокие (стабильно >12-13 ммоль/л по кривой, ISFM 2023), это не стресс — поговорите с ветеринаром о корректировке дозы.
 
 > **Ключевой вывод:** один высокий замер в ветклинике — не повод для паники. Доверяйте домашним замерам и фруктозамину.`,
     en: `## Stress Hyperglycemia: When Blood Sugar Lies
@@ -77,7 +77,7 @@ Stress triggers the release of cortisol and adrenaline. These hormones:
 | Sign | Stress Hyperglycemia | Poor Control |
 |------|---------------------|--------------|
 | Where measured | Vet clinic | At home, calm environment |
-| Fructosamine | Normal (250-350 µmol/L) | Elevated (>400 µmol/L) |
+| Fructosamine | Normal (170-340 µmol/L, ISFM 2023) | Elevated (>400 µmol/L) |
 | Home readings | Stable, within range | Also high |
 | Behavior at home | Normal | Excessive thirst, frequent urination |
 
@@ -108,7 +108,7 @@ Stress triggers the release of cortisol and adrenaline. These hormones:
 
 ### When It's NOT Stress
 
-If home readings are also consistently high (>15 mmol/L regularly), it's not stress. Talk to your vet about dose adjustment.
+If home readings are also consistently high (>12-13 mmol/L on home curves, per ISFM 2023), it's not stress — talk to your vet about dose adjustment.
 
 > **Key takeaway:** a single high reading at the vet is not a reason to panic. Trust home readings and fructosamine.`,
   },

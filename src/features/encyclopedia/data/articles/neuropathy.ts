@@ -47,7 +47,7 @@ export const neuropathy: Article = {
 
 **Чем можно помочь:**
 - Самое главное — нормализовать уровень глюкозы
-- Витамин B12 (метилкобаламин) — 0.5-1 мг в день, помогает нервам восстанавливаться
+- Витамин B12 (метилкобаламин) — 0.5-1 мг **перорально**, 1 раз в день (добавить в еду); помогает нервам восстанавливаться. НЕ колоть — пероральная форма эффективна и безопаснее
 - Лёгкий массаж лапок
 - Мягкая удобная подстилка
 - Миски с едой и лоток с низкими бортиками — чтобы котику было удобнее
@@ -96,7 +96,7 @@ Recovery typically takes **1 to 6 months** with good blood sugar control. Patien
 
 **How you can help:**
 - The most important thing — get blood sugar under control
-- Vitamin B12 (methylcobalamin) — 0.5-1 mg daily, supports nerve recovery
+- Vitamin B12 (methylcobalamin) — 0.5-1 mg **orally**, once daily (mix with food); supports nerve recovery. Do NOT inject — the oral form is effective and safer
 - Gentle paw massage
 - Soft, comfortable bedding
 - Food bowls and litter box with low sides — to make life easier for your kitty

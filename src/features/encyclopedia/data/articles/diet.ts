@@ -51,7 +51,7 @@ export const diet: Article = {
 
 ### Чего лучше избегать
 
-- Любой сухой корм — даже «диабетический» сухой корм хуже обычного влажного
+- Сухие корма как правило хуже влажных из-за более высокого содержания углеводов и низкой влажности. Однако если кошка категорически отказывается от влажного — специализированный сухой с <12% углеводов DM (например, Hill's m/d) приемлем (AAHA 2018). Лучше низкоуглеводный сухой, чем голодовка
 - Корма с зерном (пшеница, кукуруза, рис)
 - Полуфабрикаты и «человеческая» еда
 - Сладости и фрукты
@@ -124,7 +124,7 @@ Don't worry if diabetic food isn't available — a good low-carb wet food works 
 
 ### What to Avoid
 
-- Any dry food — even "diabetic" dry food is worse than regular wet food
+- Dry foods are generally worse than wet due to higher carb content and lower moisture. But if your cat categorically refuses wet food — a specialized dry food with <12% DM carbs (e.g. Hill's m/d) is acceptable (AAHA 2018). A low-carb dry food is better than not eating at all
 - Foods with grains (wheat, corn, rice)
 - Processed foods and "human" food
 - Sweets and fruits

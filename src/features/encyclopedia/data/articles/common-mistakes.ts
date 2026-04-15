@@ -60,7 +60,7 @@ export const commonMistakes: Article = {
 - Котик «потерялся», дезориентирован
 - Судороги
 
-**Что делать прямо сейчас:** нанесите мёд или глюкозный сироп на дёсны и звоните ветеринару! Держите мёд всегда наготове — это может спасти жизнь.
+**Что делать прямо сейчас:** если кошка в сознании и может глотать — размажьте мёд или глюкозный сироп по дёснам (не заливайте в пасть!). Если без сознания или в судорогах — НЕ давайте ничего в рот (риск аспирации), просто нанесите мёд на дёсны (всасывается через слизистую) и немедленно везите в клинику. Держите мёд всегда наготове — это может спасти жизнь.
 
 ---
 
@@ -169,7 +169,7 @@ Hypoglycemia is when blood sugar drops too low. Here's what to watch for:
 - Your cat seems "lost," disoriented
 - Seizures
 
-**What to do right now:** rub honey or glucose syrup on the gums and call your vet! Keep honey on hand at all times — it could save a life.
+**What to do right now:** if the cat is conscious and can swallow — smear honey or glucose syrup onto the gums (don't pour anything into the mouth!). If unconscious or seizing — do NOT give anything by mouth (aspiration risk), just apply honey to the gums (absorbs through the mucosa) and get to a clinic immediately. Keep honey on hand at all times — it could save a life.
 
 ---
 

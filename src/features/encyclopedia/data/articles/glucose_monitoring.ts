@@ -70,8 +70,8 @@ export const glucoseMonitoring: Article = {
 
 | Надир | Что это значит | Что делать |
 |---|---|---|
-| Ниже 3.0 ммоль/л | Гипогликемия — опасно! | Снизить дозу, позвонить врачу |
-| 3.0-4.0 | Пограничная зона | Наблюдать, обсудить с врачом |
+| Ниже 3.3 ммоль/л | Гипогликемия — опасно! | Экстренная помощь, снизить дозу, позвонить врачу |
+| 3.3-4.0 | Пограничная зона (риск гипо) | Наблюдать, обсудить с врачом |
 | **4.0-5.4** | **Отлично** (оптимально для ремиссии по Roomp & Rand) | Продолжать как есть |
 | 5.5-8.0 | Хорошо | Доза подобрана правильно |
 | 8.0-14.0 | Выше цели | Обсудить повышение дозы с врачом |
@@ -152,8 +152,8 @@ The nadir is the **lowest blood sugar point** during the cycle. This is the numb
 
 | Nadir | What It Means | What to Do |
 |---|---|---|
-| Below 3.0 mmol/L | Hypoglycemia — dangerous! | Reduce dose, call the vet |
-| 3.0-4.0 | Borderline zone | Watch, discuss with vet |
+| Below 3.3 mmol/L | Hypoglycemia — dangerous! | First aid, reduce dose, call the vet |
+| 3.3-4.0 | Borderline zone (hypo risk) | Watch, discuss with vet |
 | **4.0-5.4** | **Excellent** (optimal for remission per Roomp & Rand) | Continue as is |
 | 5.5-8.0 | Good | Dose is well adjusted |
 | 8.0-14.0 | Above target | Discuss dose increase with vet |

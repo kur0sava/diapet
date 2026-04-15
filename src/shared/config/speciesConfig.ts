@@ -235,21 +235,32 @@ const CAT_CONFIG: SpeciesConfig = {
 
   insulin: {
     dosePerKg: false,
+    // ISFM 2023 / Rand 2012 starting dose is 0.25–0.5 IU/kg BID, with a
+    // per-cat STARTING cap of 2 IU BID. Higher doses are adjusted by the
+    // vet after glucose curves. "typicalMax" here is the expected steady
+    // range for most cats without insulin resistance work-up.
     typicalDoseMin: 1,
-    typicalDoseMax: 4,
-    warningDose: 4,
+    typicalDoseMax: 2,
+    warningDose: 3,
     dangerDose: 6,
     absoluteMaxDose: 10,
     commonTypes: CAT_INSULIN_TYPES,
   },
 
   analyzer: {
-    somogyiNadirThreshold: 4,
-    somogyiReboundThreshold: 18,
+    // ISFM 2023 / Roomp & Rand 2009: Somogyi (insulin-induced hyperglycemia)
+    // is defined by a nadir <3.3 mmol/L followed by rebound >15 mmol/L
+    // within the same cycle. The previous 4.0/18 thresholds were too
+    // permissive on the nadir side and too strict on the rebound side,
+    // causing missed detections.
+    somogyiNadirThreshold: 3.3,
+    somogyiReboundThreshold: 15,
     postMealSpikeThreshold: 15,
     missedInjectionThreshold: 15,
     remissionRelevant: true,
-    remissionMorningThreshold: 7,
+    // Roomp & Rand 2009: fasting <6 mmol/L without insulin is the
+    // remission-candidate signal. 7 was borderline hyperglycemic.
+    remissionMorningThreshold: 6,
   },
 
   validation: {

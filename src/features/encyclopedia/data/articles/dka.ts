@@ -85,7 +85,7 @@ export const dka: Article = {
 - **Никогда не пропускайте инъекции** — если не уверены, что доза вошла, лучше пропустить, чем вколоть дважды
 - **Следите за аппетитом** — отказ от еды более 24 часов = визит к врачу
 - **Регулярно измеряйте глюкозу** дома
-- **Держите тест-полоски на кетоны** — проверяйте мочу, если глюкоза стабильно выше 20 ммоль/л
+- **Держите тест-полоски на кетоны** — проверяйте мочу, если глюкоза стабильно выше 14-15 ммоль/л (по O'Brien 2010 / ISFM 2023 — на этом уровне уже возможен кетогенез, ждать 20 поздно)
 - **Не пропускайте визиты** к ветеринару
 
 ### Главное — не паникуйте
@@ -165,7 +165,7 @@ Ketone test strips (Ketostix, Uriket) are a simple way to check ketones at home:
 - **Never skip injections** — if you're unsure the dose went in, it's better to skip than inject twice
 - **Watch their appetite** — refusal to eat for more than 24 hours = vet visit
 - **Regularly measure glucose** at home
-- **Keep ketone test strips** — check urine if glucose stays above 20 mmol/L
+- **Keep ketone test strips** — check urine if glucose stays above 14-15 mmol/L (per O'Brien 2010 / ISFM 2023 — ketogenesis can already occur at this level; waiting for 20 is too late)
 - **Don't skip vet appointments**
 
 ### Most Importantly — Don't Panic

@@ -44,14 +44,14 @@ export const insulinTypes: Article = {
 #### Caninsulin / Vetsulin — ветеринарный
 
 - **Концентрация:** U-40 — нужны шприцы U-40!
-- **Начало / Пик / Длительность:** 0.5-2 ч / 2-6 ч / 6-12 ч
+- **Начало / Пик / Длительность:** 1-4 ч / 2-8 ч / 8-16 ч (MSD SPC / Feldman & Nelson)
 - **Где доступен:** зарегистрирован для кошек в ЕС, Австралии, Канаде
-- **Хранение:** 28 дней в холодильнике
+- **Хранение:** строго в холодильнике 2-8°C, 28 дней после вскрытия. Это суспензия — перекатывать флакон перед инъекцией, НЕ трясти
 
 #### Протафан / НПХ (NPH)
 
 - **Концентрация:** U-100
-- **Длительность:** 6-10 ч — обычно слишком коротко для кошек
+- **Длительность:** 4-12 ч — обычно слишком коротко для кошек (по Feldman & Nelson)
 - **Важно:** не является препаратом первого выбора по рекомендациям ISFM (2023)
 
 ### Доступность в России
@@ -117,14 +117,14 @@ Insulin works differently in cats than in humans. The onset, peak, and duration 
 #### Caninsulin / Vetsulin — Veterinary
 
 - **Concentration:** U-40 — requires U-40 syringes!
-- **Onset / Peak / Duration:** 0.5-2 h / 2-6 h / 6-12 h
+- **Onset / Peak / Duration:** 1-4 h / 2-8 h / 8-16 h (MSD SPC / Feldman & Nelson)
 - **Availability:** registered for cats in the EU, Australia, and Canada
-- **Storage:** 28 days refrigerated
+- **Storage:** strictly refrigerated at 2-8°C, 28 days after opening. It's a suspension — roll the vial before injection, do NOT shake
 
 #### Protaphane / NPH
 
 - **Concentration:** U-100
-- **Duration:** 6-10 h — usually too short for cats
+- **Duration:** 4-12 h — usually too short for cats (per Feldman & Nelson)
 - **Important:** not a first-line choice per ISFM guidelines (2023)
 
 ### Availability in Russia

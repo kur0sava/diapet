@@ -244,8 +244,8 @@ export const HINTS: HintContent[] = [
     stage: 'week2',
     category: 'practical',
     timeOfDay: 'morning',
-    ru: 'Используй инсулиновые шприцы с коротким стволом (4–6 мм) — они специально разработаны для подкожных инъекций и вызывают меньше дискомфорта.',
-    en: "Use insulin syringes with a short barrel (4–6 mm) — they're designed specifically for subcutaneous injections and cause less discomfort.",
+    ru: 'Используй инсулиновые шприцы с короткой иглой (4–6 мм) — она специально разработана для подкожных инъекций и вызывает меньше дискомфорта.',
+    en: "Use insulin syringes with a short needle (4–6 mm) — it's designed specifically for subcutaneous injections and causes less discomfort.",
   },
   {
     id: 'inj_w2_d5e',
@@ -271,8 +271,8 @@ export const HINTS: HintContent[] = [
     stage: 'week2',
     category: 'practical',
     timeOfDay: 'evening',
-    ru: 'Следи за сроком годности открытого флакона инсулина — обычно он составляет 28–30 дней после вскрытия. Напиши дату вскрытия прямо на флаконе.',
-    en: "Keep track of your opened insulin vial's expiry — it's usually 28–30 days after opening. Write the opening date directly on the vial.",
+    ru: 'Следи за сроком годности открытого флакона инсулина — он зависит от препарата (обычно 28 дней, Левемир — 42 дня). Сверься с инструкцией конкретного инсулина. Напиши дату вскрытия прямо на флаконе.',
+    en: "Keep track of your opened insulin vial's expiry — it depends on the product (usually 28 days; Levemir — 42 days). Check the specific insulin's label. Write the opening date directly on the vial.",
   },
   {
     id: 'inj_w2_d7m',
@@ -384,8 +384,8 @@ export const HINTS: HintContent[] = [
     stage: 'week3',
     category: 'practical',
     timeOfDay: 'evening',
-    ru: 'Не нужно дезинфицировать кожу кошки перед уколом — кошачья шерсть чистая, а спирт может дать дискомфорт. Просто чистые руки и новая игла.',
-    en: "You don't need to disinfect your cat's skin before injecting — cat fur is clean, and alcohol can cause stinging. Just clean hands and a fresh needle.",
+    ru: 'Не нужно дезинфицировать кожу кошки перед уколом: спирт нарушает всасывание инсулина и раздражает место инъекции, а риск инфекции при короткой подкожной инъекции минимален (ISFM). Достаточно чистых рук и свежей иглы для каждого укола.',
+    en: "You don't need to disinfect your cat's skin before injecting: alcohol disrupts insulin absorption and irritates the injection site, and the infection risk from a short subcutaneous needle is minimal (ISFM guidance). Clean hands and a fresh needle for each injection are sufficient.",
   },
   {
     id: 'inj_w3_d6m',
@@ -676,8 +676,8 @@ export const HINTS: HintContent[] = [
     stage: 'week2',
     category: 'medical_fact',
     timeOfDay: 'any',
-    ru: 'Глюкоза выше 20 ммоль/л в течение нескольких дней подряд — сигнал для связи с ветеринаром, а не повод самостоятельно менять дозу.',
-    en: 'Glucose above 20 mmol/L for several days in a row is a signal to contact your vet — not a reason to change the dose yourself.',
+    ru: 'Глюкоза выше 15 ммоль/л стабильно в течение 2–3 дней — сигнал для связи с ветеринаром (ISFM 2023), а не повод самостоятельно менять дозу.',
+    en: 'Glucose consistently above 15 mmol/L for 2–3 days is a signal to contact your vet (ISFM 2023) — not a reason to change the dose yourself.',
   },
   {
     id: 'glu_w2_03',

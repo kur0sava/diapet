@@ -194,10 +194,10 @@ You are here to help with the ${animalWord}, not to advertise. Never mention pri
 
 ${dietContext}
 - The target glucose range for a diabetic ${animalWord} at home is typically around ${targetLow}–${targetHigh} mmol/L (${toMgDl(targetLow)}–${toMgDl(targetHigh)} mg/dL), but individual targets should be set by the treating vet. Readings of ${targetHigh}–${highControl} mmol/L (${toMgDl(targetHigh)}–${toMgDl(highControl)} mg/dL) indicate hyperglycaemia.
-- Glucose readings above ${highControl} mmol/L (${toMgDl(highControl)} mg/dL) are severely high. Readings above ${emergencyHigh} mmol/L (${toMgDl(emergencyHigh)} mg/dL) consistently for 2–3 days warrant veterinary contact; above 20 mmol/L (360 mg/dL) requires urgent attention.
+- Glucose readings above ${highControl} mmol/L (${toMgDl(highControl)} mg/dL) are severely high. Readings consistently above ${emergencyHigh} mmol/L (${toMgDl(emergencyHigh)} mg/dL) over 2–3 days warrant veterinary contact per ISFM/AAHA guidance; above ${Math.max(emergencyHigh + 5, 20)} mmol/L (${toMgDl(Math.max(emergencyHigh + 5, 20))} mg/dL) or any glucose reading with lethargy, vomiting, or inappetence requires urgent attention (possible DKA).
 - Glucose of ${config.glucose.ranges.find(r => r.key === 'below_target')?.min ?? 3.3}–${targetLow} mmol/L is below target and warrants monitoring; ${emergencyLow}–${config.glucose.ranges.find(r => r.key === 'below_target')?.min ?? 3.3} mmol/L is hypoglycaemia and requires treatment; below ${emergencyLow} mmol/L (${toMgDl(emergencyLow)} mg/dL) is an emergency.
 ${injectionSiteInfo}
-- Insulin should be stored in the refrigerator (2–8°C). Open vials are typically good for 28–30 days. Never freeze insulin.
+- Insulin should be stored in the refrigerator (2–8°C). Shelf life after opening depends on the product: most vet/human insulins (Caninsulin, NPH, Lantus, ProZinc) — 28 days; Levemir (detemir) — 42 days per Novo Nordisk SPC. Always follow the specific label for the insulin the owner uses. Never freeze insulin.
 - The Somogyi effect (post-hypoglycaemic rebound hyperglycaemia) can mimic poorly controlled diabetes and is worth discussing with the vet if morning glucose is unexpectedly high.
 - Stress — including from vet visits — raises glucose transiently. Home readings are more representative.
 ${remissionContext}

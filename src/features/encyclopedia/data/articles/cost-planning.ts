@@ -46,7 +46,7 @@ export const costPlanning: Article = {
 **Инсулин:**
 - Один флакон Лантуса (10 мл) хватает на 2-6 месяцев при малых дозах
 - Храните правильно: в холодильнике, не замораживать
-- Открытый флакон можно использовать до 28 дней (по инструкции), но на практике многие ветеринары разрешают до 3-4 месяцев при хранении в холодильнике
+- Открытый флакон: **строго по инструкции производителя — 28 дней** (Sanofi SPC для Лантуса). Некоторые ветеринары используют вскрытый флакон дольше при хранении в холодильнике, но это off-label практика без доказательной базы: после 28 дней не гарантируется ни стерильность, ни стабильность действующего вещества. Если бюджет критичен — обсуди с ветеринаром, но сам не продлевай
 - **В России:** РинГлар (Герофарм) — биосимиляр Лантуса, то же действующее вещество, но ~1500-2500 руб vs 3000-4500 руб за Лантус. Спросите ветеринара
 - Ринсулин НПХ — самый бюджетный (500-1000 руб), но менее эффективен для кошек
 
@@ -117,7 +117,7 @@ Diabetes is a long-term expense. But the good news: with proper planning, it's q
 **Insulin:**
 - One vial of Lantus (10 mL) lasts 2-6 months at low doses
 - Store properly: refrigerated, never freeze
-- An opened vial is labeled for 28 days, but many vets allow 3-4 months when refrigerated
+- An opened vial: **strictly follow the manufacturer label — 28 days** (Sanofi SPC for Lantus). Some vets use opened vials longer if refrigerated, but this is off-label practice without evidence: beyond 28 days neither sterility nor potency is guaranteed. If budget is tight — discuss with your vet, don't extend on your own
 - **In Russia:** RinGlar (Geropharm) is a Lantus biosimilar — same active ingredient, ~1,500-2,500 RUB vs 3,000-4,500 RUB for Lantus. Ask your vet
 - **In the USA:** NPH insulin at Walmart (ReliOn brand) costs just $25/vial — the cheapest option
 
