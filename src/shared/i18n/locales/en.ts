@@ -769,6 +769,7 @@ export const en = {
     notAvailable: 'Subscriptions are not available at the moment. Please try again later.',
     retryLoading: 'Tap to retry loading prices',
     allFeaturesUnlocked: 'All features are currently free',
+    alsoIncluded: 'Also included',
     comingSoon: 'Coming Soon',
     comingSoonDesc:
       'Subscription is being prepared. All PRO features are available for free right now!',

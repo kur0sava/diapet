@@ -769,6 +769,7 @@ export const ru = {
     notAvailable: 'Подписки временно недоступны. Попробуйте позже.',
     retryLoading: 'Нажмите для загрузки цен',
     allFeaturesUnlocked: 'Все функции доступны бесплатно',
+    alsoIncluded: 'А ещё',
     comingSoon: 'Скоро',
     comingSoonDesc:
       'Подписка готовится к запуску. Все PRO-функции доступны бесплатно прямо сейчас!',

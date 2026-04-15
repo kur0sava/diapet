@@ -1,7 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import {
-  View, Text, StyleSheet, ScrollView,
-  TouchableOpacity, Alert, ActivityIndicator, Linking, AppState,
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  TouchableOpacity,
+  Alert,
+  ActivityIndicator,
+  Linking,
+  AppState,
 } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Icon } from '@shared/components/ui/Icon';
@@ -18,15 +25,38 @@ import i18n from 'i18next';
 const PRIVACY_URL = 'https://kur0sava.github.io/diapet/assets/privacy-policy.html';
 const TERMS_URL = 'https://kur0sava.github.io/diapet/assets/terms-of-service.html';
 
+// Top-4 killer features — primary conversion drivers.
+// "No Ads" removed until ads are actually integrated (ETAP 13B).
+// PDF export / feed calculator / extended history remain Pro, but are
+// shown as a secondary "also included" strip to avoid cognitive overload
+// (Apple/RevenueCat research: 3–5 primary features convert best).
 const FEATURES: { icon: IoniconName; titleKey: string; descKey: string }[] = [
-  { icon: 'paw', titleKey: 'subscription.features.unlimitedPets', descKey: 'subscription.features.unlimitedPetsDesc' },
-  { icon: 'document-text', titleKey: 'subscription.features.pdfExport', descKey: 'subscription.features.pdfExportDesc' },
-  { icon: 'sparkles', titleKey: 'subscription.features.aiPrediction', descKey: 'subscription.features.aiPredictionDesc' },
-  { icon: 'calculator', titleKey: 'subscription.features.feedCalculator', descKey: 'subscription.features.feedCalculatorDesc' },
-  { icon: 'chatbubble-ellipses', titleKey: 'subscription.features.aiAssistant', descKey: 'subscription.features.aiAssistantDesc' },
-  { icon: 'analytics', titleKey: 'subscription.features.advancedAnalytics', descKey: 'subscription.features.advancedAnalyticsDesc' },
-  { icon: 'time', titleKey: 'subscription.features.extendedHistory', descKey: 'subscription.features.extendedHistoryDesc' },
-  { icon: 'ban', titleKey: 'subscription.features.noAds', descKey: 'subscription.features.noAdsDesc' },
+  {
+    icon: 'chatbubble-ellipses',
+    titleKey: 'subscription.features.aiAssistant',
+    descKey: 'subscription.features.aiAssistantDesc',
+  },
+  {
+    icon: 'sparkles',
+    titleKey: 'subscription.features.aiPrediction',
+    descKey: 'subscription.features.aiPredictionDesc',
+  },
+  {
+    icon: 'analytics',
+    titleKey: 'subscription.features.advancedAnalytics',
+    descKey: 'subscription.features.advancedAnalyticsDesc',
+  },
+  {
+    icon: 'paw',
+    titleKey: 'subscription.features.unlimitedPets',
+    descKey: 'subscription.features.unlimitedPetsDesc',
+  },
+];
+
+const SECONDARY_FEATURES: { icon: IoniconName; titleKey: string }[] = [
+  { icon: 'document-text', titleKey: 'subscription.features.pdfExport' },
+  { icon: 'calculator', titleKey: 'subscription.features.feedCalculator' },
+  { icon: 'time', titleKey: 'subscription.features.extendedHistory' },
 ];
 
 function getPriceDisplay(plan: SubscriptionPlan): string {
@@ -46,7 +76,7 @@ export default function PaywallScreen() {
   // After user returns from browser, check payment status
   useEffect(() => {
     if (!waitingForPayment) return;
-    const sub = AppState.addEventListener('change', async (state) => {
+    const sub = AppState.addEventListener('change', async state => {
       if (state === 'active' && waitingForPayment) {
         setWaitingForPayment(false);
         const success = await checkAfterPayment();
@@ -90,26 +120,33 @@ export default function PaywallScreen() {
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.background }]}>
       {/* Close button */}
-      <TouchableOpacity style={[styles.closeBtn, { top: insets.top + 8 }]} onPress={() => navigation.goBack()}>
+      <TouchableOpacity
+        style={[styles.closeBtn, { top: insets.top + 8 }]}
+        onPress={() => navigation.goBack()}
+      >
         <Icon name="close" size={28} color={theme.colors.text} />
       </TouchableOpacity>
 
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scroll}>
         {/* Hero */}
         <LinearGradient
-          colors={[...(theme.isDark ? theme.gradients.headerRichDark : theme.gradients.headerRich)] as [string, string, ...string[]]}
+          colors={
+            [...(theme.isDark ? theme.gradients.headerRichDark : theme.gradients.headerRich)] as [
+              string,
+              string,
+              ...string[],
+            ]
+          }
           style={styles.hero}
         >
           <Icon name="star" size={48} color="#FFD700" />
           <Text style={[styles.heroTitle, { fontFamily: theme.fonts.bold }]}>
             {t('subscription.title')}
           </Text>
-          <Text style={styles.heroSubtitle}>
-            {t('subscription.subtitle')}
-          </Text>
+          <Text style={styles.heroSubtitle}>{t('subscription.subtitle')}</Text>
         </LinearGradient>
 
-        {/* Features */}
+        {/* Primary features — 4 killer items */}
         <View style={styles.features}>
           {FEATURES.map((f, i) => (
             <View key={i} style={styles.featureRow}>
@@ -117,7 +154,12 @@ export default function PaywallScreen() {
                 <Icon name={f.icon} size={22} color={theme.colors.primary} />
               </View>
               <View style={styles.featureText}>
-                <Text style={[styles.featureTitle, { color: theme.colors.text, fontFamily: theme.fonts.semibold }]}>
+                <Text
+                  style={[
+                    styles.featureTitle,
+                    { color: theme.colors.text, fontFamily: theme.fonts.semibold },
+                  ]}
+                >
                   {t(f.titleKey)}
                 </Text>
                 <Text style={[styles.featureDesc, { color: theme.colors.textSecondary }]}>
@@ -127,6 +169,23 @@ export default function PaywallScreen() {
               <Icon name="checkmark-circle" size={20} color={theme.colors.success} />
             </View>
           ))}
+        </View>
+
+        {/* Secondary — "and more" strip */}
+        <View style={styles.secondaryStrip}>
+          <Text style={[styles.secondaryLabel, { color: theme.colors.textTertiary }]}>
+            {t('subscription.alsoIncluded')}
+          </Text>
+          <View style={styles.secondaryRow}>
+            {SECONDARY_FEATURES.map((f, i) => (
+              <View key={i} style={styles.secondaryItem}>
+                <Icon name={f.icon} size={14} color={theme.colors.textSecondary} />
+                <Text style={[styles.secondaryText, { color: theme.colors.textSecondary }]}>
+                  {t(f.titleKey)}
+                </Text>
+              </View>
+            ))}
+          </View>
         </View>
 
         {/* Coming Soon / Plan selection */}
@@ -140,7 +199,12 @@ export default function PaywallScreen() {
             </View>
             <View style={[styles.comingSoonCard, { backgroundColor: theme.colors.surface }]}>
               <Icon name="gift-outline" size={32} color={theme.colors.success} />
-              <Text style={[styles.comingSoonTitle, { color: theme.colors.success, fontFamily: theme.fonts.semibold }]}>
+              <Text
+                style={[
+                  styles.comingSoonTitle,
+                  { color: theme.colors.success, fontFamily: theme.fonts.semibold },
+                ]}
+              >
                 {t('subscription.allFeaturesUnlocked')}
               </Text>
               <Text style={[styles.comingSoonDesc, { color: theme.colors.textSecondary }]}>
@@ -156,7 +220,8 @@ export default function PaywallScreen() {
                 style={[
                   styles.planCard,
                   {
-                    backgroundColor: selectedPlan === 'yearly' ? theme.colors.primaryLight : theme.colors.surface,
+                    backgroundColor:
+                      selectedPlan === 'yearly' ? theme.colors.primaryLight : theme.colors.surface,
                     borderColor: selectedPlan === 'yearly' ? theme.colors.primary : 'transparent',
                     borderWidth: 2,
                   },
@@ -164,14 +229,26 @@ export default function PaywallScreen() {
                 onPress={() => setSelectedPlan('yearly')}
               >
                 <View style={styles.planHeader}>
-                  <Text style={[styles.planName, { color: theme.colors.text, fontFamily: theme.fonts.bold }]}>
+                  <Text
+                    style={[
+                      styles.planName,
+                      { color: theme.colors.text, fontFamily: theme.fonts.bold },
+                    ]}
+                  >
                     {t('subscription.yearly')}
                   </Text>
                   <View style={[styles.saveBadge, { backgroundColor: theme.colors.success }]}>
-                    <Text style={styles.saveText}>{t('subscription.yearlySaving', { percent: '29' })}</Text>
+                    <Text style={styles.saveText}>
+                      {t('subscription.yearlySaving', { percent: '29' })}
+                    </Text>
                   </View>
                 </View>
-                <Text style={[styles.planPrice, { color: theme.colors.text, fontFamily: theme.fonts.bold }]}>
+                <Text
+                  style={[
+                    styles.planPrice,
+                    { color: theme.colors.text, fontFamily: theme.fonts.bold },
+                  ]}
+                >
                   {t('subscription.yearlyPrice', { price: yearlyPrice })}
                 </Text>
               </TouchableOpacity>
@@ -181,17 +258,28 @@ export default function PaywallScreen() {
                 style={[
                   styles.planCard,
                   {
-                    backgroundColor: selectedPlan === 'monthly' ? theme.colors.primaryLight : theme.colors.surface,
+                    backgroundColor:
+                      selectedPlan === 'monthly' ? theme.colors.primaryLight : theme.colors.surface,
                     borderColor: selectedPlan === 'monthly' ? theme.colors.primary : 'transparent',
                     borderWidth: 2,
                   },
                 ]}
                 onPress={() => setSelectedPlan('monthly')}
               >
-                <Text style={[styles.planName, { color: theme.colors.text, fontFamily: theme.fonts.bold }]}>
+                <Text
+                  style={[
+                    styles.planName,
+                    { color: theme.colors.text, fontFamily: theme.fonts.bold },
+                  ]}
+                >
                   {t('subscription.monthly')}
                 </Text>
-                <Text style={[styles.planPrice, { color: theme.colors.text, fontFamily: theme.fonts.bold }]}>
+                <Text
+                  style={[
+                    styles.planPrice,
+                    { color: theme.colors.text, fontFamily: theme.fonts.bold },
+                  ]}
+                >
                   {t('subscription.monthlyPrice', { price: monthlyPrice })}
                 </Text>
               </TouchableOpacity>
@@ -225,7 +313,11 @@ export default function PaywallScreen() {
             </Text>
 
             {/* Check subscription status */}
-            <TouchableOpacity onPress={handleRefresh} disabled={isLoading} style={styles.restoreBtn}>
+            <TouchableOpacity
+              onPress={handleRefresh}
+              disabled={isLoading}
+              style={styles.restoreBtn}
+            >
               <Text style={[styles.restoreText, { color: theme.colors.textSecondary }]}>
                 {t('subscription.checkStatus')}
               </Text>
@@ -256,17 +348,37 @@ export default function PaywallScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
-  closeBtn: { position: 'absolute', right: 16, zIndex: 10, padding: 4, minHeight: 44, minWidth: 44, justifyContent: 'center', alignItems: 'center' },
+  closeBtn: {
+    position: 'absolute',
+    right: 16,
+    zIndex: 10,
+    padding: 4,
+    minHeight: 44,
+    minWidth: 44,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   scroll: { paddingBottom: 40 },
   hero: { alignItems: 'center', paddingVertical: 40, paddingHorizontal: 20, gap: 8 },
   heroTitle: { color: '#fff', fontSize: 28 },
   heroSubtitle: { color: 'rgba(255,255,255,0.8)', fontSize: 15, textAlign: 'center' },
   features: { padding: 20, gap: 16 },
   featureRow: { flexDirection: 'row', alignItems: 'center', gap: 12 },
-  featureIcon: { width: 40, height: 40, borderRadius: 12, alignItems: 'center', justifyContent: 'center' },
+  featureIcon: {
+    width: 40,
+    height: 40,
+    borderRadius: 12,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   featureText: { flex: 1 },
   featureTitle: { fontSize: 15 },
   featureDesc: { fontSize: 12, marginTop: 2 },
+  secondaryStrip: { paddingHorizontal: 20, paddingBottom: 8, gap: 6 },
+  secondaryLabel: { fontSize: 11, textTransform: 'uppercase', letterSpacing: 0.5 },
+  secondaryRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 12 },
+  secondaryItem: { flexDirection: 'row', alignItems: 'center', gap: 4 },
+  secondaryText: { fontSize: 12 },
   plans: { paddingHorizontal: 20, gap: 12 },
   planCard: { padding: 16, borderRadius: 14 },
   planHeader: { flexDirection: 'row', alignItems: 'center', gap: 8 },
@@ -275,7 +387,14 @@ const styles = StyleSheet.create({
   saveBadge: { paddingHorizontal: 8, paddingVertical: 3, borderRadius: 8 },
   saveText: { color: '#fff', fontSize: 11, fontWeight: '700' },
   comingSoonBlock: { alignItems: 'center', paddingHorizontal: 20, gap: 12, marginBottom: 8 },
-  comingSoonBadge: { flexDirection: 'row', alignItems: 'center', gap: 6, paddingHorizontal: 16, paddingVertical: 8, borderRadius: 20 },
+  comingSoonBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 20,
+  },
   comingSoonBadgeText: { color: '#fff', fontSize: 14 },
   comingSoonCard: { width: '100%', alignItems: 'center', padding: 24, borderRadius: 16, gap: 8 },
   comingSoonTitle: { fontSize: 16, textAlign: 'center' },
@@ -283,7 +402,13 @@ const styles = StyleSheet.create({
   subscribeBtn: { marginHorizontal: 20, marginTop: 20, borderRadius: 28, overflow: 'hidden' },
   subscribeBtnInner: { paddingVertical: 16, alignItems: 'center' },
   subscribeBtnText: { color: '#fff', fontSize: 17 },
-  autoRenewText: { fontSize: 11, textAlign: 'center', marginHorizontal: 40, marginTop: 10, lineHeight: 16 },
+  autoRenewText: {
+    fontSize: 11,
+    textAlign: 'center',
+    marginHorizontal: 40,
+    marginTop: 10,
+    lineHeight: 16,
+  },
   restoreBtn: { alignSelf: 'center', marginTop: 16, padding: 8 },
   restoreText: { fontSize: 14 },
   legal: { alignItems: 'center', marginTop: 16 },
