@@ -876,7 +876,9 @@ export const ru = {
     errorGeneral: 'Что-то пошло не так. Попробуйте ещё раз.',
   },
   analyzer: {
-    title: 'Аналитика здоровья',
+    title: 'Инсайты',
+    aiPredictionCtaTitle: 'AI-анализ сахара',
+    aiPredictionCtaDesc: 'Прогноз глюкозы и персональные рекомендации',
     riskScore: 'Оценка риска',
     riskExcellent: 'Отлично',
     riskGood: 'Хорошо',

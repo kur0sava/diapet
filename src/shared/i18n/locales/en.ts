@@ -875,7 +875,9 @@ export const en = {
     errorGeneral: 'Something went wrong. Please try again.',
   },
   analyzer: {
-    title: 'Health Analytics',
+    title: 'Insights',
+    aiPredictionCtaTitle: 'AI Glucose Prediction',
+    aiPredictionCtaDesc: 'Forecasts and personalized recommendations',
     riskScore: 'Risk Score',
     riskExcellent: 'Excellent',
     riskGood: 'Good',

@@ -8,8 +8,10 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '@shared/theme';
 import { useNavigation } from '@react-navigation/native';
+import { useHomeNavigation, useRootNavigation } from '@navigation/hooks';
 import { Card } from '@shared/components/ui';
 import { Icon } from '@shared/components/ui/Icon';
+import { useSubscription } from '@features/subscription/hooks/useSubscription';
 import { useAnalyzer } from '../hooks/useAnalyzer';
 import { RiskScoreWidget } from '../components/RiskScoreWidget';
 import { TrendIndicator } from '../components/TrendIndicator';
@@ -38,9 +40,20 @@ const FACTOR_LABEL_KEYS: Record<string, string> = {
 
 export default function AnalyzerDashboardScreen() {
   const navigation = useNavigation();
+  const homeNavigation = useHomeNavigation();
+  const rootNavigation = useRootNavigation();
   const { t, i18n } = useTranslation();
   const { theme } = useTheme();
   const { trends, patterns, riskScore, smartAlert, hasEnoughData, readingsCount } = useAnalyzer();
+  const { isPro, canAccessAdvanced } = useSubscription();
+
+  const handleOpenPrediction = () => {
+    if (canAccessAdvanced()) {
+      homeNavigation.navigate('AdvancedAnalytics');
+    } else {
+      rootNavigation.navigate('Paywall');
+    }
+  };
 
   const disclaimer = getAnalyzerDisclaimer(i18n.language === 'ru' ? 'ru' : 'en');
 
@@ -100,6 +113,38 @@ export default function AnalyzerDashboardScreen() {
               {t('analyzer.readings', { count: readingsCount })}
             </Text>
           </Card>
+        )}
+
+        {/* AI Prediction CTA */}
+        {hasEnoughData && (
+          <TouchableOpacity activeOpacity={0.85} onPress={handleOpenPrediction}>
+            <LinearGradient
+              colors={['#8B5CF6', '#6D28D9']}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+              style={styles.aiCtaCard}
+            >
+              <View style={styles.aiCtaIconWrap}>
+                <Icon name="sparkles" size={22} color="#fff" />
+              </View>
+              <View style={styles.aiCtaContent}>
+                <View style={styles.aiCtaTitleRow}>
+                  <Text style={[styles.aiCtaTitle, { fontFamily: theme.fonts.bold }]}>
+                    {t('analyzer.aiPredictionCtaTitle')}
+                  </Text>
+                  {!isPro && (
+                    <View style={styles.proBadge}>
+                      <Text style={[styles.proBadgeText, { fontFamily: theme.fonts.bold }]}>
+                        PRO
+                      </Text>
+                    </View>
+                  )}
+                </View>
+                <Text style={styles.aiCtaDesc}>{t('analyzer.aiPredictionCtaDesc')}</Text>
+              </View>
+              <Icon name="chevron-forward" size={20} color="rgba(255,255,255,0.8)" />
+            </LinearGradient>
+          </TouchableOpacity>
         )}
 
         {/* Smart Insight */}
@@ -437,4 +482,31 @@ const styles = StyleSheet.create({
   // Disclaimer
   disclaimerCard: { flexDirection: 'row', gap: 8, padding: 12, borderRadius: 12 },
   disclaimerText: { flex: 1, fontSize: 11, lineHeight: 16 },
+  // AI CTA
+  aiCtaCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 16,
+    borderRadius: 16,
+    gap: 12,
+  },
+  aiCtaIconWrap: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: 'rgba(255,255,255,0.2)',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  aiCtaContent: { flex: 1, gap: 2 },
+  aiCtaTitleRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+  aiCtaTitle: { fontSize: 15, color: '#fff' },
+  aiCtaDesc: { fontSize: 12, color: 'rgba(255,255,255,0.85)', lineHeight: 16 },
+  proBadge: {
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: 6,
+    backgroundColor: 'rgba(255,255,255,0.25)',
+  },
+  proBadgeText: { fontSize: 10, color: '#fff', letterSpacing: 0.5 },
 });
