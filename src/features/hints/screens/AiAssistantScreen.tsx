@@ -337,10 +337,25 @@ export default function AiAssistantScreen() {
                 <Text
                   style={[
                     styles.emptyText,
-                    { color: theme.colors.textSecondary, fontFamily: theme.fonts.regular },
+                    { color: theme.colors.text, fontFamily: theme.fonts.semibold, fontSize: 16 },
                   ]}
                 >
-                  {t('hints.aiPlaceholder')}
+                  {t('hints.aiEmptyTitle', {
+                    name: activePet?.name ?? t('hints.aiEmptyFallback'),
+                  })}
+                </Text>
+                <Text
+                  style={[
+                    styles.emptyText,
+                    {
+                      color: theme.colors.textSecondary,
+                      fontFamily: theme.fonts.regular,
+                      marginTop: 6,
+                      fontSize: 13,
+                    },
+                  ]}
+                >
+                  {t('hints.aiEmptyHint')}
                 </Text>
               </View>
             }

@@ -79,6 +79,29 @@ export const en = {
     skip: 'Skip',
     stepOf: '{{current}} of {{total}}',
     savingError: 'Failed to save data. Please try again.',
+    success: {
+      title: 'All set! {{name}} is protected by DiaPet',
+      subtitle: "Here's what we'll do together to help your pet:",
+      aiTitle: 'AI Assistant',
+      aiDesc: 'Answers diabetes questions 24/7',
+      analyzerTitle: 'Trend Analyzer',
+      analyzerDesc: 'Spots patterns and flags risks',
+      remindersTitle: 'Smart Reminders',
+      remindersDesc: 'Never miss an injection or meal',
+      cta: "Let's Go",
+    },
+  },
+
+  firstSteps: {
+    title: 'First steps with {{name}}',
+    subtitle: 'Log one of each type — you’ll get the hang of it',
+    progress: '{{done}} of {{total}}',
+    stepGlucose: 'First glucose reading',
+    stepFeeding: 'First feeding',
+    stepInjection: 'First injection',
+    completed: 'Great start! 🎉',
+    completedDesc: 'You’ve completed the basic loop. Keep it up!',
+    hide: 'Hide',
   },
 
   dashboard: {
@@ -806,6 +829,9 @@ export const en = {
     aiComingSoonDesc:
       'AI Assistant will be available with PRO subscription. Subscription is being prepared — stay tuned!',
     aiPlaceholder: 'Ask about cat diabetes...',
+    aiEmptyTitle: 'Ask anything about {{name}}',
+    aiEmptyHint: 'The AI assistant knows diabetes, insulin, diet, and symptoms. Available 24/7.',
+    aiEmptyFallback: 'your pet',
     aiSend: 'Send',
     aiDisclaimer: 'AI assistant does not replace veterinary consultation',
     tipLabel: 'Tip',
@@ -894,6 +920,8 @@ export const en = {
       'This analysis is for informational purposes only. All treatment decisions should be made with your veterinarian.',
     insufficientData: 'Insufficient data for full analysis. Add more readings.',
     readings: '{{count}} readings',
+    emptyStateHint:
+      'Insights, trends, and risk score will appear here after 3–5 glucose readings — keep logging.',
   },
 
   auth: {

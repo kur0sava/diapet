@@ -98,6 +98,7 @@ export type OnboardingStackParamList = {
     vetName?: string;
     vetPhone?: string;
   };
+  Success: { petName: string };
 };
 
 // Screen props helpers

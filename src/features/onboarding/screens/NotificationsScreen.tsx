@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, Alert, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRoute, RouteProp } from '@react-navigation/native';
-import { useOnboardingNavigation, useRootNavigation } from '@navigation/hooks';
+import { useOnboardingNavigation } from '@navigation/hooks';
 import type { OnboardingStackParamList } from '@navigation/types';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '@shared/theme';
@@ -15,7 +15,6 @@ import { useNotifications } from '@shared/hooks/useNotifications';
 
 export default function NotificationsScreen() {
   const navigation = useOnboardingNavigation();
-  const rootNavigation = useRootNavigation();
   const route = useRoute<RouteProp<OnboardingStackParamList, 'Notifications'>>();
   const { t } = useTranslation();
   const { theme } = useTheme();
@@ -77,8 +76,8 @@ export default function NotificationsScreen() {
       // Load the newly created pet into the store so screens can access it
       await usePetStore.getState().loadPets();
 
-      // Navigate to main app
-      rootNavigation.reset({ index: 0, routes: [{ name: 'Main' }] });
+      // Navigate to celebration screen (H9 First Win — moment B)
+      navigation.navigate('Success', { petName: pet.name });
     } catch {
       Alert.alert(t('common.error'), t('onboarding.savingError'));
     } finally {

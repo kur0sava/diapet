@@ -93,9 +93,13 @@ New files audited: hintsContent.ts (137 hints), aiSystemPrompt.ts, AssessmentScr
 
 ## Key Feline-Specific Clinical Facts (for hint/encyclopedia validation)
 - ProZinc (U-40): MUST stay refrigerated after opening (unique among cat insulins — others can be room temp)
+- Caninsulin: also requires refrigeration after opening — speciesConfig.ts:182 has WRONG 'room', articles correctly say 'fridge'
 - AlphaTRAK 2: code 7 for CATS, code 10 for dogs — wrong code = wrong result
-- Glargine "tight regulation" nadir target: 5-9 mmol/L (Roomp & Rand 2009)
+- Glargine PK in cats: onset 1-3h, peak 4-8h, duration 10-16h (speciesConfig has WRONG [2,4]/[8,14]/[12,24])
+- Glargine "tight regulation" nadir target: 4-9 mmol/L (Roomp & Rand 2009); 5-8 mmol/L (ISFM 2023 conservative) — NOT 5.5-8.0 as in glucose_monitoring.ts
+- Clinical hypoglycemia threshold cats: 3.3 mmol/L (60 mg/dL) — NOT 4.0. Range 3.3-4.0 = below_target, not emergency
 - Remission rates: glargine + low-carb = 50-90%; PZI + low-carb = 40-60%; NPH = <25%
+- Remission confirmation: euglycemia <6-7 mmol/L without insulin for 4 weeks (Roomp & Rand 2009)
 - Stress hyperglycemia in cats: up to 15-17 mmol/L in healthy cats (clinical measurements unreliable for diagnosis)
 - Acromegaly: suspect if >6-8 IU/injection without control; 20-30% of resistant cats
 - Feline neuropathy (plantigrade stance): REVERSIBLE with normoglycemia in 1-6 months
@@ -104,3 +108,10 @@ New files audited: hintsContent.ts (137 hints), aiSystemPrompt.ts, AssessmentScr
 - Burmese cats: highest breed risk 5-18x (Australia/NZ populations)
 - Honeymoon period: repeated nadir <4 mmol/L at stable dose = imminent remission signal — reduce dose immediately
 - Hyperthyroidism + diabetes: fructosamine unreliable (falsely low); insulin needs may drop 20-40% after methimazole
+- Somogyi nadir trigger: <3.3 mmol/L (speciesConfig.ts wrongly uses 4.0 as somogyiNadirThreshold)
+- Fructosamine norms: healthy cats 170-340; good diabetic control 350-450; >450 suboptimal; >550 poor (ISFM 2023)
+- Lantus shelf life after opening: 28 days ONLY per Sanofi SPC; "3-4 months" in cost-planning.ts is unverified off-label
+
+## Audit v3 — Completed 2026-04-15
+Files audited: speciesConfig.ts (CAT_CONFIG full), all 22 cat encyclopedia articles, aiSystemPrompt.ts, diabeticFoods.ts, domain/types.ts (SymptomType), cat-diabetes-practical-guide.md (partial)
+Results: 5 CRITICAL, 11 HIGH, 9 MEDIUM, 6 LOW — see audit report in conversation 2026-04-15

@@ -136,4 +136,6 @@ export const StorageKeys = {
   EXPENSE_BUDGET_MONTHLY: 'expenseBudgetMonthly',
   AUTH_USER: 'authUser',
   HINTS_DISABLED: 'hintsDisabled',
+  FIRST_STEPS_DISMISSED: 'firstStepsDismissed',
+  FIRST_STEPS_COMPLETED_AT: 'firstStepsCompletedAt',
 } as const;

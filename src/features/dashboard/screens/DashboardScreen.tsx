@@ -14,6 +14,7 @@ import { Card } from '@shared/components/ui';
 import { GlucoseChart } from '../components/GlucoseChart';
 import { StatusCard } from '../components/StatusCard';
 import { QuickActionButton } from '../components/QuickActionButton';
+import { FirstStepsCard } from '../components/FirstStepsCard';
 import { formatRelative, minutesUntil, formatCountdown, hoursSince } from '@shared/utils/dateUtils';
 import { getGlucoseColorFromRanges } from '@storage/domain/types';
 import { getSpeciesConfig } from '@shared/config/speciesConfig';
@@ -408,6 +409,9 @@ export default function DashboardScreen() {
             </Text>
           </TouchableOpacity>
         </View>
+
+        {/* H9 First Win — pinned onboarding card */}
+        <FirstStepsCard />
 
         {/* Quick Actions */}
         <View style={styles.section}>

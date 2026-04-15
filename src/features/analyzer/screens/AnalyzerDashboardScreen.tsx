@@ -2,9 +2,7 @@
  * C26: Analyzer Dashboard — full analytics screen with trends, patterns, risk breakdown.
  */
 import React from 'react';
-import {
-  View, Text, StyleSheet, ScrollView, TouchableOpacity,
-} from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useTranslation } from 'react-i18next';
@@ -59,10 +57,13 @@ export default function AnalyzerDashboardScreen() {
       <View style={[styles.navHeader, { borderBottomColor: theme.colors.border }]}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backBtn}>
           <Text style={{ color: theme.colors.primary, fontSize: 16 }}>
-            {'\u2190 '}{t('common.back')}
+            {'\u2190 '}
+            {t('common.back')}
           </Text>
         </TouchableOpacity>
-        <Text style={[styles.headerTitle, { color: theme.colors.text, fontFamily: theme.fonts.bold }]}>
+        <Text
+          style={[styles.headerTitle, { color: theme.colors.text, fontFamily: theme.fonts.bold }]}
+        >
           {t('analyzer.title')}
         </Text>
         <View style={{ width: 60 }} />
@@ -74,37 +75,48 @@ export default function AnalyzerDashboardScreen() {
         style={{ height: 3 }}
       />
 
-      <ScrollView
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={styles.scrollContent}
-      >
+      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
         {/* Insufficient data */}
         {!hasEnoughData && (
           <Card style={styles.emptyCard}>
             <Icon name="analytics" size={40} color={theme.colors.textTertiary} />
-            <Text style={[styles.emptyTitle, { color: theme.colors.text, fontFamily: theme.fonts.bold }]}>
+            <Text
+              style={[
+                styles.emptyTitle,
+                { color: theme.colors.text, fontFamily: theme.fonts.bold },
+              ]}
+            >
               {t('analyzer.insufficientData')}
             </Text>
             <Text style={[styles.emptySubtitle, { color: theme.colors.textSecondary }]}>
+              {t('analyzer.emptyStateHint')}
+            </Text>
+            <Text
+              style={[
+                styles.emptySubtitle,
+                { color: theme.colors.textTertiary, fontSize: 12, marginTop: 6 },
+              ]}
+            >
               {t('analyzer.readings', { count: readingsCount })}
             </Text>
           </Card>
         )}
 
         {/* Smart Insight */}
-        {smartAlert && (
-          <SmartInsightCard alert={smartAlert} />
-        )}
+        {smartAlert && <SmartInsightCard alert={smartAlert} />}
 
         {/* Risk Score Widget */}
-        {riskScore && (
-          <RiskScoreWidget score={riskScore.totalScore} level={riskScore.level} />
-        )}
+        {riskScore && <RiskScoreWidget score={riskScore.totalScore} level={riskScore.level} />}
 
         {/* Trend Section */}
         {trends && (
           <View style={styles.section}>
-            <Text style={[styles.sectionTitle, { color: theme.colors.text, fontFamily: theme.fonts.bold }]}>
+            <Text
+              style={[
+                styles.sectionTitle,
+                { color: theme.colors.text, fontFamily: theme.fonts.bold },
+              ]}
+            >
               {t('analyzer.trendSection')}
             </Text>
             <Card>
@@ -116,7 +128,12 @@ export default function AnalyzerDashboardScreen() {
               <View style={styles.avgGrid}>
                 {trends.movingAverage3d !== null && (
                   <View style={styles.avgItem}>
-                    <Text style={[styles.avgValue, { color: theme.colors.text, fontFamily: theme.fonts.bold }]}>
+                    <Text
+                      style={[
+                        styles.avgValue,
+                        { color: theme.colors.text, fontFamily: theme.fonts.bold },
+                      ]}
+                    >
                       {trends.movingAverage3d.toFixed(1)}
                     </Text>
                     <Text style={[styles.avgLabel, { color: theme.colors.textSecondary }]}>
@@ -126,7 +143,12 @@ export default function AnalyzerDashboardScreen() {
                 )}
                 {trends.movingAverage7d !== null && (
                   <View style={styles.avgItem}>
-                    <Text style={[styles.avgValue, { color: theme.colors.text, fontFamily: theme.fonts.bold }]}>
+                    <Text
+                      style={[
+                        styles.avgValue,
+                        { color: theme.colors.text, fontFamily: theme.fonts.bold },
+                      ]}
+                    >
                       {trends.movingAverage7d.toFixed(1)}
                     </Text>
                     <Text style={[styles.avgLabel, { color: theme.colors.textSecondary }]}>
@@ -136,7 +158,12 @@ export default function AnalyzerDashboardScreen() {
                 )}
                 {trends.movingAverage14d !== null && (
                   <View style={styles.avgItem}>
-                    <Text style={[styles.avgValue, { color: theme.colors.text, fontFamily: theme.fonts.bold }]}>
+                    <Text
+                      style={[
+                        styles.avgValue,
+                        { color: theme.colors.text, fontFamily: theme.fonts.bold },
+                      ]}
+                    >
                       {trends.movingAverage14d.toFixed(1)}
                     </Text>
                     <Text style={[styles.avgLabel, { color: theme.colors.textSecondary }]}>
@@ -146,7 +173,12 @@ export default function AnalyzerDashboardScreen() {
                 )}
                 {trends.movingAverage30d !== null && (
                   <View style={styles.avgItem}>
-                    <Text style={[styles.avgValue, { color: theme.colors.text, fontFamily: theme.fonts.bold }]}>
+                    <Text
+                      style={[
+                        styles.avgValue,
+                        { color: theme.colors.text, fontFamily: theme.fonts.bold },
+                      ]}
+                    >
                       {trends.movingAverage30d.toFixed(1)}
                     </Text>
                     <Text style={[styles.avgLabel, { color: theme.colors.textSecondary }]}>
@@ -160,7 +192,12 @@ export default function AnalyzerDashboardScreen() {
               <View style={[styles.statsRow, { borderTopColor: theme.colors.divider }]}>
                 {trends.cv !== null && (
                   <View style={styles.statItem}>
-                    <Text style={[styles.statValue, { color: theme.colors.text, fontFamily: theme.fonts.semibold }]}>
+                    <Text
+                      style={[
+                        styles.statValue,
+                        { color: theme.colors.text, fontFamily: theme.fonts.semibold },
+                      ]}
+                    >
                       {trends.cv.toFixed(0)}%
                     </Text>
                     <Text style={[styles.statLabel, { color: theme.colors.textSecondary }]}>
@@ -170,7 +207,12 @@ export default function AnalyzerDashboardScreen() {
                 )}
                 {trends.timeInRange !== null && (
                   <View style={styles.statItem}>
-                    <Text style={[styles.statValue, { color: theme.colors.text, fontFamily: theme.fonts.semibold }]}>
+                    <Text
+                      style={[
+                        styles.statValue,
+                        { color: theme.colors.text, fontFamily: theme.fonts.semibold },
+                      ]}
+                    >
                       {trends.timeInRange.toFixed(0)}%
                     </Text>
                     <Text style={[styles.statLabel, { color: theme.colors.textSecondary }]}>
@@ -180,7 +222,12 @@ export default function AnalyzerDashboardScreen() {
                 )}
                 {trends.morningAverage !== null && (
                   <View style={styles.statItem}>
-                    <Text style={[styles.statValue, { color: theme.colors.text, fontFamily: theme.fonts.semibold }]}>
+                    <Text
+                      style={[
+                        styles.statValue,
+                        { color: theme.colors.text, fontFamily: theme.fonts.semibold },
+                      ]}
+                    >
                       {trends.morningAverage.toFixed(1)}
                     </Text>
                     <Text style={[styles.statLabel, { color: theme.colors.textSecondary }]}>
@@ -196,27 +243,55 @@ export default function AnalyzerDashboardScreen() {
         {/* Patterns Section */}
         {patterns.length > 0 && (
           <View style={styles.section}>
-            <Text style={[styles.sectionTitle, { color: theme.colors.text, fontFamily: theme.fonts.bold }]}>
+            <Text
+              style={[
+                styles.sectionTitle,
+                { color: theme.colors.text, fontFamily: theme.fonts.bold },
+              ]}
+            >
               {t('analyzer.patterns')}
             </Text>
             {patterns.map((p, i) => (
               <Card key={`${p.type}-${i}`} style={styles.patternCard}>
                 <View style={styles.patternHeader}>
                   <Icon name="pulse" size={18} color={theme.colors.primary} />
-                  <Text style={[styles.patternTitle, { color: theme.colors.text, fontFamily: theme.fonts.semibold }]}>
+                  <Text
+                    style={[
+                      styles.patternTitle,
+                      { color: theme.colors.text, fontFamily: theme.fonts.semibold },
+                    ]}
+                  >
                     {t(PATTERN_LABEL_KEYS[p.type] ?? p.type)}
                   </Text>
-                  <View style={[styles.confidenceBadge, {
-                    backgroundColor: p.confidence === 'high' ? theme.colors.successLight
-                      : p.confidence === 'medium' ? theme.colors.warningLight
-                      : theme.colors.surfaceSecondary
-                  }]}>
-                    <Text style={[styles.confidenceText, {
-                      color: p.confidence === 'high' ? theme.colors.success
-                        : p.confidence === 'medium' ? theme.colors.warning
-                        : theme.colors.textSecondary
-                    }]}>
-                      {t(`analyzer.confidence${p.confidence.charAt(0).toUpperCase() + p.confidence.slice(1)}`)}
+                  <View
+                    style={[
+                      styles.confidenceBadge,
+                      {
+                        backgroundColor:
+                          p.confidence === 'high'
+                            ? theme.colors.successLight
+                            : p.confidence === 'medium'
+                              ? theme.colors.warningLight
+                              : theme.colors.surfaceSecondary,
+                      },
+                    ]}
+                  >
+                    <Text
+                      style={[
+                        styles.confidenceText,
+                        {
+                          color:
+                            p.confidence === 'high'
+                              ? theme.colors.success
+                              : p.confidence === 'medium'
+                                ? theme.colors.warning
+                                : theme.colors.textSecondary,
+                        },
+                      ]}
+                    >
+                      {t(
+                        `analyzer.confidence${p.confidence.charAt(0).toUpperCase() + p.confidence.slice(1)}`
+                      )}
                     </Text>
                   </View>
                 </View>
@@ -231,7 +306,12 @@ export default function AnalyzerDashboardScreen() {
         {/* Risk Factor Breakdown */}
         {riskScore && (
           <View style={styles.section}>
-            <Text style={[styles.sectionTitle, { color: theme.colors.text, fontFamily: theme.fonts.bold }]}>
+            <Text
+              style={[
+                styles.sectionTitle,
+                { color: theme.colors.text, fontFamily: theme.fonts.bold },
+              ]}
+            >
               {t('analyzer.factors')}
             </Text>
             <Card>
@@ -244,21 +324,44 @@ export default function AnalyzerDashboardScreen() {
                   ]}
                 >
                   <View style={styles.factorInfo}>
-                    <Text style={[styles.factorName, { color: theme.colors.text, fontFamily: theme.fonts.medium }]}>
+                    <Text
+                      style={[
+                        styles.factorName,
+                        { color: theme.colors.text, fontFamily: theme.fonts.medium },
+                      ]}
+                    >
                       {t(FACTOR_LABEL_KEYS[f.name] ?? f.name)}
                     </Text>
-                    <Text style={[styles.factorDetail, { color: theme.colors.textTertiary }]} numberOfLines={2}>
+                    <Text
+                      style={[styles.factorDetail, { color: theme.colors.textTertiary }]}
+                      numberOfLines={2}
+                    >
                       {f.detail}
                     </Text>
                   </View>
                   <View style={styles.factorBar}>
-                    <View style={[styles.factorBarBg, { backgroundColor: theme.colors.surfaceSecondary }]}>
-                      <View style={[
-                        styles.factorBarFill,
-                        { width: `${Math.min(100, f.score)}%`, backgroundColor: getFactorColor(f.score) },
-                      ]} />
+                    <View
+                      style={[
+                        styles.factorBarBg,
+                        { backgroundColor: theme.colors.surfaceSecondary },
+                      ]}
+                    >
+                      <View
+                        style={[
+                          styles.factorBarFill,
+                          {
+                            width: `${Math.min(100, f.score)}%`,
+                            backgroundColor: getFactorColor(f.score),
+                          },
+                        ]}
+                      />
                     </View>
-                    <Text style={[styles.factorScore, { color: getFactorColor(f.score), fontFamily: theme.fonts.semibold }]}>
+                    <Text
+                      style={[
+                        styles.factorScore,
+                        { color: getFactorColor(f.score), fontFamily: theme.fonts.semibold },
+                      ]}
+                    >
                       {f.score}
                     </Text>
                   </View>
@@ -270,7 +373,12 @@ export default function AnalyzerDashboardScreen() {
 
         {/* Disclaimer */}
         <View style={[styles.disclaimerCard, { backgroundColor: theme.colors.surfaceSecondary }]}>
-          <Icon name="shield" size={16} color={theme.colors.textTertiary} style={{ marginTop: 2 }} />
+          <Icon
+            name="shield"
+            size={16}
+            color={theme.colors.textTertiary}
+            style={{ marginTop: 2 }}
+          />
           <Text style={[styles.disclaimerText, { color: theme.colors.textTertiary }]}>
             {disclaimer}
           </Text>
@@ -283,8 +391,13 @@ export default function AnalyzerDashboardScreen() {
 const styles = StyleSheet.create({
   container: { flex: 1 },
   navHeader: {
-    flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
-    paddingHorizontal: 16, paddingVertical: 12, borderBottomWidth: 0.5, gap: 8,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    borderBottomWidth: 0.5,
+    gap: 8,
   },
   backBtn: { width: 60, minHeight: 44, minWidth: 44, justifyContent: 'center' },
   headerTitle: { fontSize: 17, flex: 1, textAlign: 'center' },
