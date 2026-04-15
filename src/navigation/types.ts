@@ -25,6 +25,7 @@ export type RootStackParamList = {
 export type MainTabParamList = {
   Home: NavigatorScreenParams<HomeStackParamList> | undefined;
   SymptomsTab: NavigatorScreenParams<SymptomsStackParamList> | undefined;
+  AiTab: undefined;
   EncyclopediaTab: NavigatorScreenParams<EncyclopediaStackParamList> | undefined;
   MoreTab: NavigatorScreenParams<MoreStackParamList> | undefined;
 };

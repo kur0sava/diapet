@@ -311,6 +311,7 @@ export default function MainNavigator() {
           const icons: Record<string, string> = {
             Home: 'home-outline',
             SymptomsTab: 'paw-outline',
+            AiTab: 'sparkles-outline',
             EncyclopediaTab: 'book-outline',
             MoreTab: 'ellipsis-horizontal-circle-outline',
           };
@@ -334,6 +335,11 @@ export default function MainNavigator() {
         name="SymptomsTab"
         component={SymptomsStackNavigator}
         options={{ title: t('navigation.symptoms') }}
+      />
+      <Tab.Screen
+        name="AiTab"
+        component={AiAssistantScreen}
+        options={{ title: t('navigation.ai') }}
       />
       <Tab.Screen
         name="EncyclopediaTab"

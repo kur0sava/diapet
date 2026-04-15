@@ -30,6 +30,7 @@ const linking: LinkingOptions<RootStackParamList> = {
               AnalyzerDashboard: 'analyzer',
             },
           },
+          AiTab: 'ai',
           EncyclopediaTab: {
             screens: {
               ArticleList: 'articles',

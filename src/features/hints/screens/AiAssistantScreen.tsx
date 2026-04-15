@@ -16,7 +16,8 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Icon } from '@shared/components/ui/Icon';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '@shared/theme';
-import { useMoreNavigation, useRootNavigation } from '@navigation/hooks';
+import { useNavigation } from '@react-navigation/native';
+import { useRootNavigation } from '@navigation/hooks';
 import { useSubscription } from '@features/subscription/hooks/useSubscription';
 import { usePetStore } from '@shared/stores/petStore';
 import { isBackendConfigured } from '@shared/stores/subscriptionStore';
@@ -55,7 +56,7 @@ function getRemainingMessages(): number {
 }
 
 export default function AiAssistantScreen() {
-  const navigation = useMoreNavigation();
+  const navigation = useNavigation();
   const rootNavigation = useRootNavigation();
   const { t, i18n } = useTranslation();
   const { theme } = useTheme();
@@ -293,13 +294,17 @@ export default function AiAssistantScreen() {
         end={{ x: 1, y: 0 }}
         style={styles.header}
       >
-        <TouchableOpacity
-          onPress={() => navigation.goBack()}
-          style={styles.backButton}
-          hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
-        >
-          <Icon name="chevron-back" size={24} color="#fff" />
-        </TouchableOpacity>
+        {navigation.canGoBack() ? (
+          <TouchableOpacity
+            onPress={() => navigation.goBack()}
+            style={styles.backButton}
+            hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+          >
+            <Icon name="chevron-back" size={24} color="#fff" />
+          </TouchableOpacity>
+        ) : (
+          <View style={styles.backButton} />
+        )}
         <View style={styles.headerTitleContainer}>
           <Icon name="chatbubble-ellipses" size={20} color="#fff" style={{ marginRight: 8 }} />
           <Text style={[styles.headerTitle, { fontFamily: theme.fonts.semibold }]}>
