@@ -21,6 +21,7 @@ import { getSpeciesConfig } from '@shared/config/speciesConfig';
 import { Icon } from '@shared/components/ui/Icon';
 import { usePetStore } from '@shared/stores/petStore';
 import { useSubscription } from '@features/subscription/hooks/useSubscription';
+import { TRIAL_REMINDER_DAYS } from '@features/subscription/utils/trial';
 import { useFocusEffect } from '@react-navigation/native';
 import { useAnalyzer } from '@features/analyzer/hooks/useAnalyzer';
 import { RiskScoreWidget } from '@features/analyzer/components/RiskScoreWidget';
@@ -76,7 +77,9 @@ export default function DashboardScreen() {
   const { theme } = useTheme();
   const activePet = usePetStore(s => s.activePet);
   const speciesRanges = getSpeciesConfig(activePet?.species ?? 'cat').glucose.ranges;
-  const { isPro } = useSubscription();
+  const { isPro, isPaidPro, isTrialActive, trialDaysLeft } = useSubscription();
+  const showTrialBanner = isTrialActive && !isPaidPro;
+  const trialUrgent = showTrialBanner && trialDaysLeft <= TRIAL_REMINDER_DAYS;
   const petId = activePet?.id ?? '';
   // H004: respect the user's glucose unit preference
   const [glucoseUnit, setGlucoseUnit] = useState(
@@ -410,6 +413,50 @@ export default function DashboardScreen() {
           </TouchableOpacity>
         </View>
 
+        {/* H7 Trial banner — shown while free trial is active (non-paid users only) */}
+        {showTrialBanner && (
+          <TouchableOpacity
+            onPress={() => rootNavigation.navigate('Paywall')}
+            activeOpacity={0.85}
+            style={[
+              styles.trialBanner,
+              {
+                backgroundColor: trialUrgent
+                  ? theme.colors.warning + '18'
+                  : theme.colors.success + '15',
+                borderColor: trialUrgent ? theme.colors.warning : theme.colors.success,
+              },
+            ]}
+          >
+            <Icon
+              name={trialUrgent ? 'time' : 'gift'}
+              size={20}
+              color={trialUrgent ? theme.colors.warning : theme.colors.success}
+            />
+            <View style={{ flex: 1 }}>
+              <Text
+                style={[
+                  styles.trialBannerTitle,
+                  {
+                    color: trialUrgent ? theme.colors.warning : theme.colors.success,
+                    fontFamily: theme.fonts.bold,
+                  },
+                ]}
+              >
+                {trialUrgent
+                  ? t('subscription.trial.bannerUrgentTitle', { count: trialDaysLeft })
+                  : t('subscription.trial.bannerActiveTitle', { count: trialDaysLeft })}
+              </Text>
+              <Text style={[styles.trialBannerDesc, { color: theme.colors.textSecondary }]}>
+                {trialUrgent
+                  ? t('subscription.trial.bannerUrgentDesc')
+                  : t('subscription.trial.bannerActiveDesc')}
+              </Text>
+            </View>
+            <Icon name="chevron-forward" size={18} color={theme.colors.textTertiary} />
+          </TouchableOpacity>
+        )}
+
         {/* H9 First Win — pinned onboarding card */}
         <FirstStepsCard />
 
@@ -713,6 +760,18 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   upgradeText: { flex: 1, fontSize: 13 },
+  trialBanner: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    marginHorizontal: 20,
+    marginTop: 12,
+    padding: 14,
+    borderRadius: 14,
+    borderWidth: 1,
+  },
+  trialBannerTitle: { fontSize: 14 },
+  trialBannerDesc: { fontSize: 12, marginTop: 2, lineHeight: 16 },
   analyzerRow: { marginTop: 8 },
   analyzerTrendRow: { flexDirection: 'row', gap: 8, marginTop: 8, flexWrap: 'wrap' },
   tirBadge: { paddingHorizontal: 10, paddingVertical: 4, borderRadius: 12 },

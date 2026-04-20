@@ -138,4 +138,5 @@ export const StorageKeys = {
   HINTS_DISABLED: 'hintsDisabled',
   FIRST_STEPS_DISMISSED: 'firstStepsDismissed',
   FIRST_STEPS_COMPLETED_AT: 'firstStepsCompletedAt',
+  TRIAL_STARTED_AT: 'trialStartedAt',
 } as const;

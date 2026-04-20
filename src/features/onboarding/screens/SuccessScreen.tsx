@@ -10,6 +10,7 @@ import { Button } from '@shared/components/ui';
 import { Icon } from '@shared/components/ui/Icon';
 import type { IoniconName } from '@shared/components/ui';
 import * as Haptics from 'expo-haptics';
+import { startTrial } from '@features/subscription/utils/trial';
 
 const PROMISES: { icon: IoniconName; titleKey: string; descKey: string }[] = [
   {
@@ -58,6 +59,7 @@ export default function SuccessScreen() {
   }, [checkScale, contentOpacity]);
 
   const handleStart = () => {
+    startTrial();
     rootNavigation.reset({ index: 0, routes: [{ name: 'Main' }] });
   };
 
@@ -105,6 +107,18 @@ export default function SuccessScreen() {
               </View>
             ))}
           </View>
+
+          <View style={[styles.trialBadge, { backgroundColor: theme.colors.primaryLight }]}>
+            <Icon name="gift" size={18} color={theme.colors.primary} />
+            <Text
+              style={[
+                styles.trialBadgeText,
+                { color: theme.colors.primary, fontFamily: theme.fonts.semibold },
+              ]}
+            >
+              {t('onboarding.success.trialBadge')}
+            </Text>
+          </View>
         </Animated.View>
       </View>
 
@@ -145,5 +159,15 @@ const styles = StyleSheet.create({
   },
   promiseTitle: { fontSize: 15 },
   promiseDesc: { fontSize: 12, marginTop: 2 },
+  trialBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    paddingHorizontal: 14,
+    paddingVertical: 10,
+    borderRadius: 12,
+    marginTop: 20,
+  },
+  trialBadgeText: { fontSize: 14, flexShrink: 1 },
   footer: { paddingHorizontal: 24, paddingBottom: 16 },
 });

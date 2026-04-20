@@ -90,6 +90,7 @@ export const en = {
       remindersTitle: 'Smart Reminders',
       remindersDesc: 'Never miss an injection or meal',
       cta: "Let's Go",
+      trialBadge: 'Plus 7 days of Pro free — starts now',
     },
   },
 
@@ -808,6 +809,21 @@ export const en = {
       'Subscription is being prepared. All PRO features are available for free right now!',
     terms: 'Terms of Service',
     privacy: 'Privacy Policy',
+    trial: {
+      ctaTitle: 'Try Pro free for {{days}} days',
+      ctaDesc: 'All features unlocked — no card required. Tap to activate.',
+      activeTitle: 'Free trial is active',
+      activeDesc: '{{count}} day left — then continue with a plan below.',
+      activeDesc_plural: '{{count}} days left — then continue with a plan below.',
+      expiredTitle: 'Your free trial has ended',
+      expiredDesc: 'Subscribe to keep unlimited pets, AI and PDF export.',
+      bannerActiveTitle: 'Pro trial — {{count}} day left',
+      bannerActiveTitle_plural: 'Pro trial — {{count}} days left',
+      bannerActiveDesc: 'Enjoy the full app, free.',
+      bannerUrgentTitle: 'Only {{count}} day left on your trial',
+      bannerUrgentTitle_plural: 'Only {{count}} days left on your trial',
+      bannerUrgentDesc: 'Tap to choose a plan before it ends.',
+    },
   },
 
   notifications: {

@@ -21,6 +21,14 @@ import { useNavigation } from '@react-navigation/native';
 import { PLANS, SubscriptionPlan } from '@shared/api/subscriptionApi';
 import * as Haptics from 'expo-haptics';
 import i18n from 'i18next';
+import {
+  startTrial,
+  hasTrialStarted,
+  isTrialActive,
+  isTrialExpired,
+  trialDaysLeft,
+  TRIAL_DURATION_DAYS,
+} from '../utils/trial';
 
 const PRIVACY_URL = 'https://kur0sava.github.io/diapet/assets/privacy-policy.html';
 const TERMS_URL = 'https://kur0sava.github.io/diapet/assets/terms-of-service.html';
@@ -72,6 +80,23 @@ export default function PaywallScreen() {
   const { openPayment, checkAfterPayment, refreshStatus, isLoading } = useSubscriptionStore();
   const [selectedPlan, setSelectedPlan] = useState<SubscriptionPlan>('yearly');
   const [waitingForPayment, setWaitingForPayment] = useState(false);
+  const [trialStartedTick, setTrialStartedTick] = useState(0);
+
+  const trialStarted = hasTrialStarted();
+  const trialActive = isTrialActive();
+  const trialExpired = isTrialExpired();
+  const daysLeft = trialDaysLeft();
+
+  const handleStartTrial = () => {
+    if (trialStarted) return;
+    startTrial();
+    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
+    setTrialStartedTick(t => t + 1);
+  };
+
+  // trialStartedTick forces re-render so that after tapping the CTA
+  // the block switches to the active countdown state without remounting the screen.
+  void trialStartedTick;
 
   // After user returns from browser, check payment status
   useEffect(() => {
@@ -145,6 +170,67 @@ export default function PaywallScreen() {
           </Text>
           <Text style={styles.heroSubtitle}>{t('subscription.subtitle')}</Text>
         </LinearGradient>
+
+        {/* Trial status block */}
+        {trialActive && (
+          <View style={[styles.trialCard, { backgroundColor: theme.colors.success + '15' }]}>
+            <Icon name="gift" size={22} color={theme.colors.success} />
+            <View style={{ flex: 1 }}>
+              <Text
+                style={[
+                  styles.trialCardTitle,
+                  { color: theme.colors.success, fontFamily: theme.fonts.bold },
+                ]}
+              >
+                {t('subscription.trial.activeTitle')}
+              </Text>
+              <Text style={[styles.trialCardDesc, { color: theme.colors.textSecondary }]}>
+                {t('subscription.trial.activeDesc', { count: daysLeft })}
+              </Text>
+            </View>
+          </View>
+        )}
+        {!trialStarted && (
+          <TouchableOpacity
+            activeOpacity={0.85}
+            onPress={handleStartTrial}
+            style={[styles.trialCard, { backgroundColor: theme.colors.primaryLight }]}
+          >
+            <Icon name="gift" size={22} color={theme.colors.primary} />
+            <View style={{ flex: 1 }}>
+              <Text
+                style={[
+                  styles.trialCardTitle,
+                  { color: theme.colors.primary, fontFamily: theme.fonts.bold },
+                ]}
+              >
+                {t('subscription.trial.ctaTitle', { days: TRIAL_DURATION_DAYS })}
+              </Text>
+              <Text style={[styles.trialCardDesc, { color: theme.colors.textSecondary }]}>
+                {t('subscription.trial.ctaDesc')}
+              </Text>
+            </View>
+            <Icon name="chevron-forward" size={18} color={theme.colors.primary} />
+          </TouchableOpacity>
+        )}
+        {trialExpired && (
+          <View style={[styles.trialCard, { backgroundColor: theme.colors.warning + '15' }]}>
+            <Icon name="time" size={22} color={theme.colors.warning} />
+            <View style={{ flex: 1 }}>
+              <Text
+                style={[
+                  styles.trialCardTitle,
+                  { color: theme.colors.warning, fontFamily: theme.fonts.bold },
+                ]}
+              >
+                {t('subscription.trial.expiredTitle')}
+              </Text>
+              <Text style={[styles.trialCardDesc, { color: theme.colors.textSecondary }]}>
+                {t('subscription.trial.expiredDesc')}
+              </Text>
+            </View>
+          </View>
+        )}
 
         {/* Primary features — 4 killer items */}
         <View style={styles.features}>
@@ -374,6 +460,17 @@ const styles = StyleSheet.create({
   featureText: { flex: 1 },
   featureTitle: { fontSize: 15 },
   featureDesc: { fontSize: 12, marginTop: 2 },
+  trialCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    marginHorizontal: 20,
+    marginTop: 16,
+    padding: 14,
+    borderRadius: 14,
+  },
+  trialCardTitle: { fontSize: 15 },
+  trialCardDesc: { fontSize: 12, marginTop: 2, lineHeight: 16 },
   secondaryStrip: { paddingHorizontal: 20, paddingBottom: 8, gap: 6 },
   secondaryLabel: { fontSize: 11, textTransform: 'uppercase', letterSpacing: 0.5 },
   secondaryRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 12 },
