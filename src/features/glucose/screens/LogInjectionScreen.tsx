@@ -100,15 +100,19 @@ export default function LogInjectionScreen() {
 
   const proceedWithDoseChecks = useCallback(
     (doseNum: number) => {
-      const thresholds = getInsulinThresholds(activePet?.species ?? 'cat', activePet?.weightKg);
+      const species = activePet?.species ?? 'cat';
+      const thresholds = getInsulinThresholds(species, activePet?.weightKg);
       if (doseNum > thresholds.absoluteMax) {
-        Alert.alert(t('glucose.doseAbsoluteLimit'), t('glucose.doseAbsoluteLimitDesc'));
+        Alert.alert(
+          t('glucose.doseAbsoluteLimit'),
+          t('glucose.doseAbsoluteLimitDesc', { context: species })
+        );
         return;
       }
       if (doseNum > thresholds.danger) {
         Alert.alert(
           t('glucose.veryHighDoseWarning'),
-          t('glucose.veryHighDoseWarningDesc', { dose: doseNum }),
+          t('glucose.veryHighDoseWarningDesc', { dose: doseNum, context: species }),
           [
             { text: t('common.cancel'), style: 'cancel' },
             { text: t('common.confirm'), style: 'destructive', onPress: () => doSaveInjection() },
@@ -119,7 +123,7 @@ export default function LogInjectionScreen() {
       if (doseNum > thresholds.warning) {
         Alert.alert(
           t('glucose.highDoseWarning'),
-          t('glucose.highDoseWarningDesc', { dose: doseNum }),
+          t('glucose.highDoseWarningDesc', { dose: doseNum, context: species }),
           [
             { text: t('common.cancel'), style: 'cancel' },
             { text: t('common.confirm'), onPress: () => doSaveInjection() },

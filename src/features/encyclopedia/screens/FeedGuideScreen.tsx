@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { useTheme } from '@shared/theme';
 import { Icon } from '@shared/components/ui/Icon';
 import { DIABETIC_NUTRITION_GUIDELINES, type Region } from '../data/diabeticFoods';
+import { usePetStore } from '@shared/stores/petStore';
 
 const REGIONS: { key: Region; emoji: string }[] = [
   { key: 'RU', emoji: '🇷🇺' },
@@ -22,6 +23,10 @@ export default function FeedGuideScreen() {
   const { theme } = useTheme();
   const lang = i18n.language === 'ru' ? 'ru' : 'en';
   const tips = DIABETIC_NUTRITION_GUIDELINES.feedingTips[lang];
+  const species = usePetStore(s => s.activePet?.species ?? 'cat');
+  // Natural feeding guide is cat-only (taurine, protein ratios). Hide for dogs
+  // to avoid species-wrong advice; will be re-enabled when dog natural guide lands.
+  const showNaturalFood = species !== 'dog';
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.background }]}>
@@ -119,28 +124,32 @@ export default function FeedGuideScreen() {
           <Icon name="chevron-forward" size={20} color={theme.colors.textTertiary} />
         </TouchableOpacity>
 
-        {/* Natural Food */}
-        <TouchableOpacity
-          style={[
-            styles.sectionCard,
-            { backgroundColor: theme.colors.surface, ...theme.shadows.sm },
-          ]}
-          onPress={() => navigation.navigate('FeedGuideNatural')}
-          activeOpacity={0.7}
-        >
-          <View style={[styles.sectionCardIcon, { backgroundColor: theme.colors.success + '15' }]}>
-            <Text style={{ fontSize: 24 }}>🥩</Text>
-          </View>
-          <View style={styles.sectionCardContent}>
-            <Text style={[styles.sectionCardTitle, { color: theme.colors.text }]}>
-              {t('feedGuide.naturalFood')}
-            </Text>
-            <Text style={[styles.sectionCardDesc, { color: theme.colors.textSecondary }]}>
-              {t('feedGuide.naturalFoodDesc')}
-            </Text>
-          </View>
-          <Icon name="chevron-forward" size={20} color={theme.colors.textTertiary} />
-        </TouchableOpacity>
+        {/* Natural Food — cat-only for now */}
+        {showNaturalFood && (
+          <TouchableOpacity
+            style={[
+              styles.sectionCard,
+              { backgroundColor: theme.colors.surface, ...theme.shadows.sm },
+            ]}
+            onPress={() => navigation.navigate('FeedGuideNatural')}
+            activeOpacity={0.7}
+          >
+            <View
+              style={[styles.sectionCardIcon, { backgroundColor: theme.colors.success + '15' }]}
+            >
+              <Text style={{ fontSize: 24 }}>🥩</Text>
+            </View>
+            <View style={styles.sectionCardContent}>
+              <Text style={[styles.sectionCardTitle, { color: theme.colors.text }]}>
+                {t('feedGuide.naturalFood')}
+              </Text>
+              <Text style={[styles.sectionCardDesc, { color: theme.colors.textSecondary }]}>
+                {t('feedGuide.naturalFoodDesc')}
+              </Text>
+            </View>
+            <Icon name="chevron-forward" size={20} color={theme.colors.textTertiary} />
+          </TouchableOpacity>
+        )}
 
         {/* Feeding Tips */}
         <Text style={[styles.sectionTitle, { color: theme.colors.text, marginTop: 24 }]}>

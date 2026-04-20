@@ -441,6 +441,87 @@ interface SpeciesConfig {
 
 ---
 
+## ПОСТ-РЕВЬЮ H1–H5 (чистки перед релизной веткой)
+
+> Источник: код-ревью серии `5e3dbae^..cd9455b` от 2026-04-16.
+> Блокирует: релизную ветку и старт ЭТАПа 15 Phase 1 (п.4 — до вынесения градиента в тему).
+
+### 1. Мёртвые i18n-ключи `navigation.glucose`
+- [ ] Удалить ключ `navigation.glucose` из `src/shared/i18n/locales/en.ts:513`
+- [ ] Удалить ключ `navigation.glucose` из `src/shared/i18n/locales/ru.ts:513`
+- [ ] `grep -r "navigation.glucose"` → 0 совпадений
+- **Почему:** после H2 вкладка удалена, ключ не используется; мёртвые переводы гниют молча.
+
+### 2. Двойная регистрация `AiAssistantScreen`
+- [ ] Проверить `src/features/pets/screens/MoreMenuScreen.tsx` — остался ли пункт «AI-ассистент» в меню More
+- [ ] Если остался: заменить `navigate('AiAssistant')` на `navigate('AiTab')` через root-навигатор; удалить `name="AiAssistant"` из `MainNavigator.tsx:284-285`
+- [ ] Если убран: всё равно удалить мёртвую регистрацию в MoreStack
+- **Почему:** сейчас `AiAssistantScreen` зарегистрирован и как `MoreTab > AiAssistant` (строка 285), и как `AiTab` (строка 351) — это два независимых дерева состояния React Navigation. История чата и контекст могут расходиться в зависимости от точки входа.
+- **Как проверить:** на устройстве — открыть чат через AiTab, написать сообщение, вернуться, открыть через More → история должна совпасть. Если нет — бага подтверждена.
+
+### 3. Тройная регистрация `FeedCalculator`
+- [ ] Прочитать `src/features/feedCalculator/screens/FeedCalculatorScreen.tsx` — использует ли локальный `useState` для веса/корма
+- [ ] Если локальный state: вынести в store (`feedCalculatorStore` через zustand) ИЛИ оставить stateless (расчёт на лету, без запоминания ввода)
+- [ ] Задокументировать решение в коде комментарием на экране
+- **Почему:** экран зарегистрирован в `HomeStack` (строка 143), `EncyclopediaStack` (228) и `MoreStack` (274). При локальном state пользователь, открывший калькулятор из FeedGuide, и снова из MoreMenu, увидит разный ввод — это баг.
+
+### 4. Discoverability-регрессия AI Prediction
+- [ ] В `src/features/analyzer/screens/AnalyzerDashboardScreen.tsx:118` — убрать условие `hasEnoughData &&` или сделать альтернативный рендер
+- [ ] Если данных <7 дней: показывать выключенный тизер («Ведите дневник 7 дней, чтобы открыть AI-прогноз») с замком
+- [ ] При тапе на выключенный тизер — тост/модалка с объяснением, НЕ переход на Paywall (это уведёт пользователя с пустой статистики)
+- [ ] Добавить i18n-ключи: `analyzer.aiPredictionLockedTitle`, `analyzer.aiPredictionLockedDesc`
+- **Почему:** H1 убрал всегда-видимую AI-карточку с Dashboard; H3 поставил CTA в Analyzer, но под условие `hasEnoughData`. Новый пользователь с <7 дней данных теперь НЕ ВИДИТ AI Prediction нигде — не может даже узнать о фиче. Это потеря монетизации и UX-регрессия.
+
+### 5. Захардкоженный градиент AI CTA (блокирует ЭТАП 15)
+- [ ] Добавить `aiGradient: [string, string]` в `src/shared/theme/colors.ts` для обеих тем (light/dark)
+- [ ] В `speciesConfig` добавить `ui.aiGradient` — для кошек `['#8B5CF6', '#6D28D9']`, для собак подобрать градиент в янтарной гамме (`#E67E22` → `#B3590E` или согласовать с пользователем)
+- [ ] Заменить хардкод в `AnalyzerDashboardScreen.tsx:121` на `theme.colors.aiGradient` или `speciesConfig.ui.aiGradient`
+- [ ] Проверить другие места с хардкодом `#8B5CF6`/`#6D28D9` в `src/features/` — вынести все в тему
+- **Почему:** ЭТАП 15 вводит species-тему (cat синий/фиолетовый vs. dog янтарный). Хардкод не адаптируется — на профилях собак фиолетовый CTA будет визуально конфликтовать с янтарным брендингом. **Этот пункт делать ДО Phase 1 ЭТАПа 15**, иначе придётся править заново.
+
+### 6. Prettier pre-commit hook (опционально, предотвращает будущий шум)
+- [ ] Проверить наличие `.prettierrc` и `husky`/`lint-staged`
+- [ ] Если нет — добавить `lint-staged` с `prettier --write` на `*.{ts,tsx}` при коммите
+- **Почему:** ~40% диффа H5 — это prettier-переформатирование `FeedGuideScreen.tsx`, маскирующее реальное изменение (добавление карточки Calculator). Формат на pre-commit держит будущие фичевые диффы чистыми.
+
+### 7. Smoke-тест навигации (рекомендация)
+- [ ] Ручная проверка на устройстве:
+  - [ ] deep-link `diapet://glucose` → открывает GlucoseList в HomeStack
+  - [ ] deep-link `diapet://ai` → открывает AiTab
+  - [ ] AiTab — нет кнопки «назад» в header
+  - [ ] MoreMenu → AiAssistant (если останется) — есть кнопка «назад»
+  - [ ] Analyzer CTA при `isPro === false` → открывает Paywall
+  - [ ] Analyzer CTA при `isPro === true` → открывает AdvancedAnalytics
+
+### Порядок выполнения
+1. Пункт 5 (градиент) — ПЕРЕД Phase 1 ЭТАПа 15, блокирует.
+2. Пункты 1, 2, 3 — одним коммитом «chore(h-cleanup): nav/i18n dead code» перед релизом.
+3. Пункт 4 — отдельным коммитом «feat(analyzer): teaser for AI Prediction without data».
+4. Пункты 6, 7 — когда удобно, не блокируют.
+
+---
+
+## СПЕЦИЕС-АУДИТ ПОСЛЕ ЭТАПА 15 (2026-04-20)
+
+> Ручной аудит после того, как ЭТАП 15 фазы 1-8 были помечены done.
+> Обнаружено 5 классов регрессий — species-aware логика покрыла числовые пороги, но оставила хардкод в текстах и контенте. Все исправлены в одной серии.
+
+### Исправлено (F1–F5)
+
+- **F1. Dose-warning тексты species-aware** — `locales/{ru,en}.ts` получили `_dog`-варианты для `highDoseWarningDesc`, `veryHighDoseWarningDesc`, `doseAbsoluteLimitDesc`. В `LogGlucoseScreen.tsx` и `LogInjectionScreen.tsx` вызовы `t()` передают `context: species`. Владелец собаки больше не видит «dangerously high dose for a cat» на своей 15 МЕ дозе.
+- **F2. AI default disclaimer нейтрализован** — `predictionApiClient.ts:86` и `en.ts:defaultDisclaimer` заменили `your cat's treatment plan` → `your pet's`. RU-версия уже была нейтральной.
+- **F3. Natural Food card скрыта для собак** — `FeedGuideScreen.tsx` теперь проверяет species; карточка рендерится только для cat/other. `NATURAL_FEEDING_GUIDE` полностью кошачий (таурин, протеиновые нормы), собачий контент появится отдельной задачей.
+- **F4. 7 i18n-строк нейтрализовано** (`cat/feline` → `pet/питомец`): encyclopedia subtitle, feedGuide disclaimer, whereToBuyDesc, feedCalculator badDesc, subscription aiAssistantDesc, hints aiAssistantDesc, aiPlaceholder.
+- **F5. Убраны кошачьи дефолты** в `computeGlucoseStats` (`predictionDataCollector.ts`) — 4.0/12.0 были фолбэком "default: cat", заменены на required params. Единственный caller уже передавал `speciesConfig.glucose.targetLow/High`.
+
+### Проверка
+
+- `npx tsc --noEmit` — 0 ошибок
+- `npm test` — 48/48 зелёных
+- Ручная проверка на устройстве: TODO перед релизом v2.5.0
+
+---
+
 ## ОТЛОЖЕННЫЕ ЭТАПЫ (после собак)
 
 | Этап | Описание | Зависимость |
@@ -467,6 +548,8 @@ interface SpeciesConfig {
 
 | Дата | Версия | Что |
 |------|--------|-----|
+| 2026-04-20 | v2.4.3 | Species-аудит F1–F5 — нейтрализация cat-хардкода в текстах |
+| 2026-04-15 | v2.4.3 | ЭТАП 15 фазы 1–8 multi-animal code complete + H1–H6 + H9 |
 | 2026-04-13 | v2.4.3 | План ЭТАП 15 (multi-animal) создан и утверждён |
 | 2026-04-10 | v2.4.3 | Сборки EAS, загрузка в Google Play + RuStore |
 | 2026-04-06 | v2.4.3 | Privacy policy, Terms, google-services.json |

@@ -57,8 +57,8 @@ function stdDev(nums: number[]): number {
 
 function computeGlucoseStats(
   all: GlucoseReading[],
-  targetLow = 4.0,
-  targetHigh = 12.0
+  targetLow: number,
+  targetHigh: number
 ): GlucoseStats {
   const last7 = filterByDays(all, r => r.recordedAt, 7);
   const last30 = filterByDays(all, r => r.recordedAt, 30);
@@ -66,7 +66,6 @@ function computeGlucoseStats(
   const vals7 = last7.map(r => r.valueMmol);
   const vals30 = last30.map(r => r.valueMmol);
 
-  // Species-aware target range (default: cat 4-12 mmol/L)
   const inRange = (v: number) => v >= targetLow && v <= targetHigh;
   const inRangePct = (vals: number[]) =>
     vals.length > 0 ? Math.round((vals.filter(inRange).length / vals.length) * 100) : null;

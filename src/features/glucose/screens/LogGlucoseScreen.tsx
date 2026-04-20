@@ -268,13 +268,16 @@ export default function LogGlucoseScreen() {
     }
     const doseThresholds = getInsulinThresholds(activePet.species, activePet.weightKg);
     if (doseNum > doseThresholds.absoluteMax) {
-      Alert.alert(t('glucose.doseAbsoluteLimit'), t('glucose.doseAbsoluteLimitDesc'));
+      Alert.alert(
+        t('glucose.doseAbsoluteLimit'),
+        t('glucose.doseAbsoluteLimitDesc', { context: activePet.species })
+      );
       return;
     }
     if (doseNum > doseThresholds.danger) {
       Alert.alert(
         t('glucose.veryHighDoseWarning'),
-        t('glucose.veryHighDoseWarningDesc', { dose: doseNum }),
+        t('glucose.veryHighDoseWarningDesc', { dose: doseNum, context: activePet.species }),
         [
           { text: t('common.cancel'), style: 'cancel' },
           { text: t('common.confirm'), style: 'destructive', onPress: () => doSave() },
@@ -285,7 +288,7 @@ export default function LogGlucoseScreen() {
     if (doseNum > doseThresholds.warning) {
       Alert.alert(
         t('glucose.highDoseWarning'),
-        t('glucose.highDoseWarningDesc', { dose: doseNum }),
+        t('glucose.highDoseWarningDesc', { dose: doseNum, context: activePet.species }),
         [
           { text: t('common.cancel'), style: 'cancel' },
           { text: t('common.confirm'), onPress: () => doSave() },
