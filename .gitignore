@@ -33,3 +33,6 @@ Thumbs.db
 # Build
 *.tsbuildinfo
 *.log
+
+# Temp / debug dumps
+_tmp_*
