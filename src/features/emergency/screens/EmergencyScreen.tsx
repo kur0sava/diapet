@@ -1,7 +1,13 @@
 import React, { useState, useRef } from 'react';
 import {
-  View, Text, StyleSheet, ScrollView,
-  TouchableOpacity, Linking, Alert, StatusBar,
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  TouchableOpacity,
+  Linking,
+  Alert,
+  StatusBar,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Icon } from '@shared/components/ui/Icon';
@@ -9,7 +15,8 @@ import { useRootNavigation } from '@navigation/hooks';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '@shared/theme';
 import { Card } from '@shared/components/ui';
-import { storage } from '@storage/mmkv/storage';
+import { storage, StorageKeys, vetNameKey, vetPhoneKey } from '@storage/mmkv/storage';
+import { usePetStore } from '@shared/stores/petStore';
 import * as Haptics from 'expo-haptics';
 
 type EmergencyType = 'hypoglycemia' | 'hyperglycemia';
@@ -21,8 +28,16 @@ export default function EmergencyScreen() {
   const [activeTab, setActiveTab] = useState<EmergencyType>('hypoglycemia');
   const callingRef = useRef(false);
 
-  const vetPhone = storage.getString('vetPhone');
-  const vetName = storage.getString('vetName');
+  // Per-pet vet contact. Falls back to legacy globals so a user who lands here
+  // before App.tsx migration runs (e.g. mid-launch hot path) still sees a
+  // contact rather than the "tap to add vet" placeholder.
+  const activePetId = usePetStore(s => s.activePet?.id);
+  const vetPhone =
+    (activePetId ? storage.getString(vetPhoneKey(activePetId)) : undefined) ??
+    storage.getString(StorageKeys.VET_PHONE);
+  const vetName =
+    (activePetId ? storage.getString(vetNameKey(activePetId)) : undefined) ??
+    storage.getString(StorageKeys.VET_NAME);
 
   const callVet = () => {
     if (callingRef.current) return;
@@ -31,20 +46,27 @@ export default function EmergencyScreen() {
       // Предлагаем только звонок 112, добавить ветеринара можно после.
       Alert.alert(t('emergency.noVetContact'), t('emergency.addVetContact'), [
         { text: t('common.cancel'), style: 'cancel' },
-        { text: t('emergency.call112'), onPress: () => Linking.openURL('tel:112').catch(() => Alert.alert(t('emergency.callFailed'), t('emergency.callFailedDesc'))) },
+        {
+          text: t('emergency.call112'),
+          onPress: () =>
+            Linking.openURL('tel:112').catch(() =>
+              Alert.alert(t('emergency.callFailed'), t('emergency.callFailedDesc'))
+            ),
+        },
       ]);
       return;
     }
     callingRef.current = true;
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
-    Linking.openURL(`tel:${vetPhone.replace(/[^\d+\-() ]/g, '')}`)
-      .catch(() => {
-        Alert.alert(t('emergency.callFailed'), t('emergency.callFailedDesc'));
-      });
-    setTimeout(() => { callingRef.current = false; }, 2000);
+    Linking.openURL(`tel:${vetPhone.replace(/[^\d+\-() ]/g, '')}`).catch(() => {
+      Alert.alert(t('emergency.callFailed'), t('emergency.callFailedDesc'));
+    });
+    setTimeout(() => {
+      callingRef.current = false;
+    }, 2000);
   };
 
-  const asArray = (v: unknown): string[] => Array.isArray(v) ? v : [];
+  const asArray = (v: unknown): string[] => (Array.isArray(v) ? v : []);
   const hypoSigns = asArray(t('emergency.hypoSigns', { returnObjects: true }));
   const hypoSteps = asArray(t('emergency.hypoSteps', { returnObjects: true }));
   const hyperSigns = asArray(t('emergency.hyperSigns', { returnObjects: true }));
@@ -75,7 +97,10 @@ export default function EmergencyScreen() {
 
       {/* UX-011: Call Vet Button at TOP — most critical action */}
       <TouchableOpacity
-        style={[styles.callButton, { marginHorizontal: 16, marginBottom: 12, backgroundColor: theme.colors.surface }]}
+        style={[
+          styles.callButton,
+          { marginHorizontal: 16, marginBottom: 12, backgroundColor: theme.colors.surface },
+        ]}
         onPress={callVet}
         activeOpacity={0.85}
       >
@@ -84,12 +109,20 @@ export default function EmergencyScreen() {
             <Icon name="call" size={28} color={theme.colors.danger} />
           </View>
           <View style={{ flex: 1 }}>
-            <Text style={[styles.callButtonTitle, { color: theme.colors.danger }]}>{t('emergency.callVet')}</Text>
-            {vetName && <Text style={[styles.callButtonSub, { color: theme.colors.text }]}>{vetName}</Text>}
+            <Text style={[styles.callButtonTitle, { color: theme.colors.danger }]}>
+              {t('emergency.callVet')}
+            </Text>
+            {vetName && (
+              <Text style={[styles.callButtonSub, { color: theme.colors.text }]}>{vetName}</Text>
+            )}
             {vetPhone ? (
-              <Text style={[styles.callButtonPhone, { color: theme.colors.primary }]}>{vetPhone}</Text>
+              <Text style={[styles.callButtonPhone, { color: theme.colors.primary }]}>
+                {vetPhone}
+              </Text>
             ) : (
-              <Text style={[styles.callButtonNoVet, { color: theme.colors.textTertiary }]}>{t('emergency.tapToAddVet')}</Text>
+              <Text style={[styles.callButtonNoVet, { color: theme.colors.textTertiary }]}>
+                {t('emergency.tapToAddVet')}
+              </Text>
             )}
           </View>
           <Icon name="chevron-forward" size={20} color={theme.colors.danger} />
@@ -101,24 +134,38 @@ export default function EmergencyScreen() {
         <TouchableOpacity
           style={[
             styles.tab,
-            { backgroundColor: activeTab === 'hypoglycemia' ? 'rgba(255,255,255,0.25)' : 'transparent' },
+            {
+              backgroundColor:
+                activeTab === 'hypoglycemia' ? 'rgba(255,255,255,0.25)' : 'transparent',
+            },
           ]}
           onPress={() => setActiveTab('hypoglycemia')}
         >
           <Icon name="trending-down" size={16} color="#fff" style={{ marginRight: 4 }} />
-          <Text style={[styles.tabText, { fontWeight: activeTab === 'hypoglycemia' ? '700' : '400' }]} numberOfLines={1} adjustsFontSizeToFit>
+          <Text
+            style={[styles.tabText, { fontWeight: activeTab === 'hypoglycemia' ? '700' : '400' }]}
+            numberOfLines={1}
+            adjustsFontSizeToFit
+          >
             {t('emergency.hypoglycemia')}
           </Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={[
             styles.tab,
-            { backgroundColor: activeTab === 'hyperglycemia' ? 'rgba(255,255,255,0.25)' : 'transparent' },
+            {
+              backgroundColor:
+                activeTab === 'hyperglycemia' ? 'rgba(255,255,255,0.25)' : 'transparent',
+            },
           ]}
           onPress={() => setActiveTab('hyperglycemia')}
         >
           <Icon name="trending-up" size={16} color="#fff" style={{ marginRight: 4 }} />
-          <Text style={[styles.tabText, { fontWeight: activeTab === 'hyperglycemia' ? '700' : '400' }]} numberOfLines={1} adjustsFontSizeToFit>
+          <Text
+            style={[styles.tabText, { fontWeight: activeTab === 'hyperglycemia' ? '700' : '400' }]}
+            numberOfLines={1}
+            adjustsFontSizeToFit
+          >
             {t('emergency.hyperglycemia')}
           </Text>
         </TouchableOpacity>
@@ -133,7 +180,9 @@ export default function EmergencyScreen() {
         <Card style={[styles.card, { backgroundColor: cardBg }]}>
           <View style={styles.cardTitleRow}>
             <Icon name="alert-circle" size={20} color={theme.colors.danger} />
-            <Text style={[styles.cardTitle, { color: theme.colors.danger }]}>{t('emergency.signs')}</Text>
+            <Text style={[styles.cardTitle, { color: theme.colors.danger }]}>
+              {t('emergency.signs')}
+            </Text>
           </View>
           {signs.map((sign, i) => (
             <View key={`sign-${i}`} style={styles.listItem}>
@@ -160,9 +209,7 @@ export default function EmergencyScreen() {
         </Card>
 
         {/* Disclaimer */}
-        <Text style={styles.disclaimer}>
-          {t('emergency.disclaimer')}
-        </Text>
+        <Text style={styles.disclaimer}>{t('emergency.disclaimer')}</Text>
       </ScrollView>
     </SafeAreaView>
   );
@@ -198,7 +245,14 @@ const styles = StyleSheet.create({
     padding: 4,
     gap: 4,
   },
-  tab: { flex: 1, paddingVertical: 10, borderRadius: 8, alignItems: 'center', flexDirection: 'row', justifyContent: 'center' },
+  tab: {
+    flex: 1,
+    paddingVertical: 10,
+    borderRadius: 8,
+    alignItems: 'center',
+    flexDirection: 'row',
+    justifyContent: 'center',
+  },
   tabText: { color: '#fff', fontSize: 13 },
   scroll: { flex: 1 },
   scrollContent: { paddingHorizontal: 16, paddingBottom: 40, gap: 16 },

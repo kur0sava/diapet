@@ -78,7 +78,8 @@ export default function SettingsScreen() {
                   storage.delete(StorageKeys.HINTS_PUSH_SHOWN_IDS);
                   storage.delete(StorageKeys.HINTS_PUSH_LAST_SCHEDULED);
                   storage.delete('hintsMissedCheckDate');
-                  // Clean up AI chat history, daily limits, and prediction cache for all pets
+                  // Clean up AI chat history, daily limits, prediction cache, and
+                  // per-pet vet contacts for all pets
                   const allKeys = storage.getAllKeys();
                   for (const key of allKeys) {
                     if (
@@ -87,7 +88,9 @@ export default function SettingsScreen() {
                       key.startsWith('predictionCache_') ||
                       key.startsWith('predictionLastRequest_') ||
                       key.startsWith('remissionCache_') ||
-                      key.startsWith('remissionLastRequest_')
+                      key.startsWith('remissionLastRequest_') ||
+                      key.startsWith('vetName_') ||
+                      key.startsWith('vetPhone_')
                     ) {
                       storage.delete(key);
                     }

@@ -19,7 +19,7 @@ import { useMissedInjection } from '@features/hints/hooks/useMissedInjection';
 import { scheduleHintPushNotifications } from '@features/hints/utils/hintScheduler';
 import { restoreScheduleNotifications } from '@shared/hooks/useNotifications';
 import { usePetStore } from '@shared/stores/petStore';
-import { initStorage, storage, StorageKeys } from '@storage/mmkv/storage';
+import { initStorage, storage, StorageKeys, vetNameKey, vetPhoneKey } from '@storage/mmkv/storage';
 import { petRepository } from '@storage/database';
 import i18n, { restoreLanguage } from '@shared/i18n';
 import '@shared/i18n';
@@ -121,6 +121,30 @@ export default function App() {
           } catch {
             /* best-effort recovery */
           }
+        }
+        // v2.5.1: migrate legacy global vet contact to per-pet keys.
+        // Pre-2.5.1 single-pet installs stored vetName/vetPhone globally; with
+        // dog support arriving and multi-pet plausible, attribute the legacy
+        // values to the active pet, then drop the globals so subsequent edits
+        // can't fight migration.
+        try {
+          const legacyName = storage.getString(StorageKeys.VET_NAME);
+          const legacyPhone = storage.getString(StorageKeys.VET_PHONE);
+          if (legacyName !== undefined || legacyPhone !== undefined) {
+            const activePetId = storage.getString(StorageKeys.ACTIVE_PET_ID);
+            if (activePetId) {
+              if (legacyName !== undefined && !storage.contains(vetNameKey(activePetId))) {
+                storage.set(vetNameKey(activePetId), legacyName);
+              }
+              if (legacyPhone !== undefined && !storage.contains(vetPhoneKey(activePetId))) {
+                storage.set(vetPhoneKey(activePetId), legacyPhone);
+              }
+              storage.delete(StorageKeys.VET_NAME);
+              storage.delete(StorageKeys.VET_PHONE);
+            }
+          }
+        } catch {
+          /* best-effort: stale legacy keys harmless until next launch */
         }
         // Init device ID + check subscription status via Supabase
         getDeviceId();

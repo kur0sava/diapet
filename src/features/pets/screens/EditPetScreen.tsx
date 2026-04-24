@@ -21,7 +21,7 @@ import { queryKeys } from '@shared/utils/queryKeys';
 import { MAX_SCHEDULE_TIMES } from '@storage/domain/types';
 import { getSpeciesConfig } from '@shared/config/speciesConfig';
 import { Icon } from '@shared/components/ui/Icon';
-import { storage, StorageKeys } from '@storage/mmkv/storage';
+import { storage, StorageKeys, vetNameKey, vetPhoneKey } from '@storage/mmkv/storage';
 import { useUnsavedChangesGuard } from '@shared/hooks/useUnsavedChangesGuard';
 import { useNotifications } from '@shared/hooks/useNotifications';
 
@@ -55,8 +55,8 @@ export default function EditPetScreen() {
   useEffect(() => {
     if (!activePet) return;
     let cancelled = false;
-    setVetName(storage.getString('vetName') ?? '');
-    setVetPhone(storage.getString('vetPhone') ?? '');
+    setVetName(storage.getString(vetNameKey(activePet.id)) ?? '');
+    setVetPhone(storage.getString(vetPhoneKey(activePet.id)) ?? '');
     Promise.all([
       scheduleRepository.getInjectionTimes(activePet.id),
       scheduleRepository.getFeedingTimes(activePet.id),
@@ -116,14 +116,14 @@ export default function EditPetScreen() {
         insulinType: insulinType || undefined,
       });
       if (vetName) {
-        storage.set('vetName', vetName);
+        storage.set(vetNameKey(activePet.id), vetName);
       } else {
-        storage.delete('vetName');
+        storage.delete(vetNameKey(activePet.id));
       }
       if (vetPhone) {
-        storage.set('vetPhone', vetPhone);
+        storage.set(vetPhoneKey(activePet.id), vetPhone);
       } else {
-        storage.delete('vetPhone');
+        storage.delete(vetPhoneKey(activePet.id));
       }
       // UX-017: Wrap schedule updates in transaction to prevent partial writes
       const db = await getDatabase();

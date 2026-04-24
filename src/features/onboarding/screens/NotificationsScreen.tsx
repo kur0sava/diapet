@@ -8,7 +8,7 @@ import { useTranslation } from 'react-i18next';
 import { useTheme } from '@shared/theme';
 import { Button } from '@shared/components/ui';
 import { Icon } from '@shared/components/ui/Icon';
-import { storage, StorageKeys } from '@storage/mmkv/storage';
+import { storage, StorageKeys, vetNameKey, vetPhoneKey } from '@storage/mmkv/storage';
 import { petRepository, scheduleRepository } from '@storage/database';
 import { usePetStore } from '@shared/stores/petStore';
 import { useNotifications } from '@shared/hooks/useNotifications';
@@ -61,8 +61,8 @@ export default function NotificationsScreen() {
     // Step 2: commit point — after these writes, ONBOARDING_COMPLETE is true
     // and we will NEVER re-run onboarding for this install. Everything below
     // must tolerate failure without leaving onboarding in a half-done state.
-    if (vetName) storage.set(StorageKeys.VET_NAME, vetName);
-    if (vetPhone) storage.set(StorageKeys.VET_PHONE, vetPhone);
+    if (vetName) storage.set(vetNameKey(pet.id), vetName);
+    if (vetPhone) storage.set(vetPhoneKey(pet.id), vetPhone);
     storage.set(StorageKeys.ACTIVE_PET_ID, pet.id);
     storage.set(StorageKeys.ACTIVE_SPECIES, pet.species);
     storage.set(StorageKeys.NOTIFICATIONS_ENABLED, false);

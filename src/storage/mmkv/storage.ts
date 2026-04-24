@@ -111,6 +111,11 @@ export const StorageKeys = {
   ONBOARDING_COMPLETE: 'onboardingComplete',
   ACTIVE_PET_ID: 'activePetId',
   NOTIFICATIONS_ENABLED: 'notificationsEnabled',
+  /** Legacy global vet contact keys. Per-pet keys are `vetName_<petId>` / `vetPhone_<petId>`
+   * (use {@link vetNameKey} / {@link vetPhoneKey}). These globals are kept only so the
+   * one-shot migration in App.tsx can find pre-2.5.1 values and attribute them to the
+   * active pet, and so cloudBackup can read legacy backups. New writes must use the
+   * per-pet helpers. */
   VET_NAME: 'vetName',
   VET_PHONE: 'vetPhone',
   ACTIVE_SPECIES: 'activeSpecies',
@@ -141,3 +146,13 @@ export const StorageKeys = {
   FIRST_STEPS_COMPLETED_AT: 'firstStepsCompletedAt',
   TRIAL_STARTED_AT: 'trialStartedAt',
 } as const;
+
+/** Per-pet vet contact key. See {@link StorageKeys.VET_NAME} for legacy migration. */
+export function vetNameKey(petId: string): string {
+  return `vetName_${petId}`;
+}
+
+/** Per-pet vet contact key. See {@link StorageKeys.VET_PHONE} for legacy migration. */
+export function vetPhoneKey(petId: string): string {
+  return `vetPhone_${petId}`;
+}

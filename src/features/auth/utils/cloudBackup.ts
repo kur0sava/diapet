@@ -27,17 +27,26 @@ const TABLES = [
 /** Firestore document size limit (1 MB minus safety margin). */
 const FIRESTORE_MAX_BYTES = 950_000;
 
-/** MMKV keys to include in cloud backup (user preferences that should survive device change). */
+/** MMKV keys to include in cloud backup (user preferences that should survive device change).
+ * Vet contact is per-pet (`vetName_<petId>` / `vetPhone_<petId>`) and added via prefix scan. */
 const BACKUP_MMKV_KEYS = [
   StorageKeys.GLUCOSE_UNIT,
   StorageKeys.LANGUAGE,
   StorageKeys.COLOR_SCHEME,
+  // Legacy globals retained for backward compatibility with backups created before v2.5.1.
   StorageKeys.VET_NAME,
   StorageKeys.VET_PHONE,
   StorageKeys.EXPENSE_BUDGET_MONTHLY,
   StorageKeys.NOTIFICATIONS_ENABLED,
   StorageKeys.HINTS_DISABLED,
 ] as const;
+
+/** Prefixes for dynamic per-pet keys included in backup. Must match {@link vetNameKey} / {@link vetPhoneKey}. */
+const DYNAMIC_BACKUP_PREFIXES = ['vetName_', 'vetPhone_'] as const;
+
+function isDynamicBackupKey(key: string): boolean {
+  return DYNAMIC_BACKUP_PREFIXES.some(p => key.startsWith(p));
+}
 
 interface BackupData {
   version: number;
@@ -74,23 +83,27 @@ export async function backupToCloud(uid: string): Promise<void> {
     tables[table] = rows;
   }
 
-  // BL-10: Include user preferences from MMKV
+  // BL-10: Include user preferences from MMKV (fixed keys + per-pet vet keys)
   const settings: Record<string, string | number | boolean> = {};
-  for (const key of BACKUP_MMKV_KEYS) {
+  const readKey = (key: string) => {
     const str = storage.getString(key);
     if (str !== undefined) {
       settings[key] = str;
-      continue;
+      return;
     }
     const num = storage.getNumber(key);
     if (num !== undefined) {
       settings[key] = num;
-      continue;
+      return;
     }
     const bool = storage.getBoolean(key);
     if (bool !== undefined) {
       settings[key] = bool;
     }
+  };
+  for (const key of BACKUP_MMKV_KEYS) readKey(key);
+  for (const key of storage.getAllKeys()) {
+    if (isDynamicBackupKey(key)) readKey(key);
   }
 
   const backup: BackupData = {
@@ -168,11 +181,11 @@ export async function restoreFromCloud(uid: string): Promise<boolean> {
     }
   });
 
-  // BL-10: Restore user preferences to MMKV
-  const allowedKeys = new Set<string>(BACKUP_MMKV_KEYS);
+  // BL-10: Restore user preferences to MMKV (fixed keys + per-pet vet keys)
+  const allowedFixedKeys = new Set<string>(BACKUP_MMKV_KEYS);
   if (backup.settings) {
     for (const [key, value] of Object.entries(backup.settings)) {
-      if (!allowedKeys.has(key)) continue;
+      if (!allowedFixedKeys.has(key) && !isDynamicBackupKey(key)) continue;
       if (typeof value === 'string') storage.set(key, value);
       else if (typeof value === 'number') storage.set(key, value);
       else if (typeof value === 'boolean') storage.set(key, value);
