@@ -161,7 +161,20 @@ const MIGRATIONS: Migration[] = [
   {
     version: 9,
     name: 'ensure_pets_species_default_cat',
-    up: [`UPDATE pets SET species = 'cat' WHERE species IS NULL OR species = ''`],
+    up: [],
+    afterSql: async (db: SQLiteDatabase) => {
+      // Installs that existed before ЭТАП 15 have a pets table with no species
+      // column (schema.ts added it via CREATE TABLE, which doesn't re-run on
+      // existing tables). Add the column first, then apply the safety-net UPDATE.
+      const cols = await db.getAllAsync<{ name: string }>('PRAGMA table_info(pets)');
+      const hasSpecies = cols.some(c => c.name === 'species');
+      if (!hasSpecies) {
+        // SQLite rejects NOT NULL without a constant default when adding to a
+        // non-empty table — 'cat' is a constant so this is safe.
+        await db.execAsync(`ALTER TABLE pets ADD COLUMN species TEXT NOT NULL DEFAULT 'cat'`);
+      }
+      await db.runAsync(`UPDATE pets SET species = 'cat' WHERE species IS NULL OR species = ''`);
+    },
   },
 ];
 

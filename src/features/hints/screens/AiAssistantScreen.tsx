@@ -26,21 +26,21 @@ import { glucoseRepository, injectionRepository, scheduleRepository } from '@sto
 import { buildAiSystemPrompt, AiPetContext } from '../data/aiSystemPrompt';
 import { sendChatMessage, ChatMessage } from '../utils/aiClient';
 import { differenceInDays } from 'date-fns';
-import { parseDateOnly } from '@shared/utils/dateUtils';
+import { parseDateOnly, todayLocal } from '@shared/utils/dateUtils';
 
 const MAX_HISTORY = 50;
 const MAX_API_CONTEXT = 15;
 const DAILY_MESSAGE_LIMIT = 20;
 
 function getDailyChatCount(): number {
-  const today = new Date().toISOString().slice(0, 10);
+  const today = todayLocal();
   const storedDate = storage.getString(StorageKeys.AI_CHAT_DAILY_DATE);
   if (storedDate !== today) return 0;
   return storage.getNumber(StorageKeys.AI_CHAT_DAILY_COUNT) ?? 0;
 }
 
 function incrementDailyChatCount(): void {
-  const today = new Date().toISOString().slice(0, 10);
+  const today = todayLocal();
   const storedDate = storage.getString(StorageKeys.AI_CHAT_DAILY_DATE);
   if (storedDate !== today) {
     storage.set(StorageKeys.AI_CHAT_DAILY_DATE, today);

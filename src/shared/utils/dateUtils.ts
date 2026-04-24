@@ -1,4 +1,12 @@
-import { format, formatDistanceToNow, parseISO, isToday, isYesterday, differenceInMinutes, differenceInHours } from 'date-fns';
+import {
+  format,
+  formatDistanceToNow,
+  parseISO,
+  isToday,
+  isYesterday,
+  differenceInMinutes,
+  differenceInHours,
+} from 'date-fns';
 import { ru as ruLocale } from 'date-fns/locale';
 import i18n from '@shared/i18n';
 
@@ -15,6 +23,24 @@ export function parseDateOnly(dateStr: string): Date {
     return new Date(`${dateStr}T12:00:00`);
   }
   return new Date(dateStr);
+}
+
+/**
+ * Format a Date as YYYY-MM-DD in the LOCAL timezone.
+ * Using `.toISOString().slice(0, 10)` would return the UTC date, shifting by
+ * one day for users east of Greenwich in the late-evening hours or users west
+ * of Greenwich in the early-morning hours.
+ */
+export function toDateOnly(date: Date): string {
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, '0');
+  const d = String(date.getDate()).padStart(2, '0');
+  return `${y}-${m}-${d}`;
+}
+
+/** Today's date as YYYY-MM-DD in the device's local timezone. */
+export function todayLocal(): string {
+  return toDateOnly(new Date());
 }
 
 export function formatDate(dateStr: string): string {

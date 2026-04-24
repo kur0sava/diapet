@@ -17,7 +17,7 @@ import type { PetSpecies } from '@storage/domain/types';
 import { getSpeciesConfig } from '@shared/config/speciesConfig';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { storage, StorageKeys } from '@storage/mmkv/storage';
-import { parseDateOnly } from '@shared/utils/dateUtils';
+import { parseDateOnly, toDateOnly } from '@shared/utils/dateUtils';
 
 export default function PetInfoScreen() {
   const navigation = useOnboardingNavigation();
@@ -98,7 +98,9 @@ export default function PetInfoScreen() {
         weightKg: weightKg ? parseFloat(weightKg.replace(',', '.')) : undefined,
         birthYear: age ? new Date().getFullYear() - parseInt(age) : undefined,
         diabetesType,
-        diagnosisDate: diagnosisDate?.toISOString().split('T')[0],
+        // toDateOnly: preserve the LOCAL date user picked (toISOString would
+        // shift to UTC and flip the day for users east of Greenwich late at night)
+        diagnosisDate: diagnosisDate ? toDateOnly(diagnosisDate) : undefined,
       },
     });
   };

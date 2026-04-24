@@ -4,6 +4,7 @@
  */
 import { storage } from '@storage/mmkv/storage';
 import { GlucoseReading } from '@storage/domain/types';
+import { todayLocal } from '@shared/utils/dateUtils';
 import { TrendResult } from './trendEngine';
 import { RiskScoreResult } from './riskScoreCalculator';
 import { DetectedPattern } from './patternDetector';
@@ -57,18 +58,23 @@ function getTodayCount(): AlertsShownToday {
     const raw = storage.getString('analyzer_alerts_today');
     if (raw) {
       const parsed = JSON.parse(raw) as AlertsShownToday;
-      if (parsed.date === new Date().toISOString().slice(0, 10)) return parsed;
+      if (parsed.date === todayLocal()) return parsed;
     }
-  } catch { /* corrupt storage — reset */ }
-  return { date: new Date().toISOString().slice(0, 10), count: 0 };
+  } catch {
+    /* corrupt storage — reset */
+  }
+  return { date: todayLocal(), count: 0 };
 }
 
 function incrementTodayCount(): void {
   const today = getTodayCount();
-  storage.set('analyzer_alerts_today', JSON.stringify({
-    date: new Date().toISOString().slice(0, 10),
-    count: today.count + 1,
-  }));
+  storage.set(
+    'analyzer_alerts_today',
+    JSON.stringify({
+      date: todayLocal(),
+      count: today.count + 1,
+    })
+  );
 }
 
 /**
@@ -104,7 +110,7 @@ export function generateSmartAlerts(
   riskScore: RiskScoreResult,
   patterns: DetectedPattern[],
   readings: GlucoseReading[],
-  now = new Date(),
+  now = new Date()
 ): SmartAlert | null {
   // Priority-ordered alert candidates
   const candidates: SmartAlert[] = [];
@@ -115,7 +121,8 @@ export function generateSmartAlerts(
       type: 'glucose_low_streak',
       titleRu: 'Низкий уровень глюкозы',
       titleEn: 'Low glucose level',
-      bodyRu: 'Глюкоза 3 дня подряд ниже 6 ммоль/л — возможно, доза высока. Обсудите с ветеринаром.',
+      bodyRu:
+        'Глюкоза 3 дня подряд ниже 6 ммоль/л — возможно, доза высока. Обсудите с ветеринаром.',
       bodyEn: 'Glucose below 6 mmol/L for 3 days — dose may be too high. Discuss with your vet.',
       priority: 'high',
     });

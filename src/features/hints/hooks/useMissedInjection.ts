@@ -5,6 +5,7 @@ import { storage, StorageKeys } from '@storage/mmkv/storage';
 import { injectionRepository } from '@storage/database';
 import { usePetStore } from '@shared/stores/petStore';
 import { differenceInHours } from 'date-fns';
+import { todayLocal } from '@shared/utils/dateUtils';
 
 const MISSED_CHECK_DATE_KEY = 'hintsMissedCheckDate';
 
@@ -22,7 +23,7 @@ export function useMissedInjection() {
     if (!stage) return;
 
     // Don't check more than once per day
-    const today = new Date().toISOString().slice(0, 10);
+    const today = todayLocal();
     const lastMissedCheck = storage.getString(MISSED_CHECK_DATE_KEY);
     if (lastMissedCheck === today) return;
 
