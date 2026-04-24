@@ -30,10 +30,10 @@ export const usePetStore = create<PetStore>((set, get) => ({
       // Persist auto-selected pet ID (or clear stale one)
       if (activePet) {
         storage.set(StorageKeys.ACTIVE_PET_ID, activePet.id);
-        storage.set('activeSpecies', activePet.species);
+        storage.set(StorageKeys.ACTIVE_SPECIES, activePet.species);
       } else {
         storage.delete(StorageKeys.ACTIVE_PET_ID);
-        storage.delete('activeSpecies');
+        storage.delete(StorageKeys.ACTIVE_SPECIES);
       }
       set({ pets, activePet, isLoading: false });
     } catch (error) {
@@ -44,7 +44,7 @@ export const usePetStore = create<PetStore>((set, get) => ({
 
   setActivePet: (pet: Pet) => {
     storage.set(StorageKeys.ACTIVE_PET_ID, pet.id);
-    storage.set('activeSpecies', pet.species);
+    storage.set(StorageKeys.ACTIVE_SPECIES, pet.species);
     set({ activePet: pet });
   },
 

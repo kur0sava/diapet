@@ -113,6 +113,7 @@ export const StorageKeys = {
   NOTIFICATIONS_ENABLED: 'notificationsEnabled',
   VET_NAME: 'vetName',
   VET_PHONE: 'vetPhone',
+  ACTIVE_SPECIES: 'activeSpecies',
   LAST_BACKUP: 'lastBackup',
   BOOKMARKED_ARTICLES: 'bookmarkedArticles',
   SUBSCRIPTION_CACHED_PRO: 'subscriptionCachedPro',

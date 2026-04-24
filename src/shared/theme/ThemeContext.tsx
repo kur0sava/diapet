@@ -3,9 +3,10 @@ import { useColorScheme } from 'react-native';
 import { Colors } from './colors';
 import { FontFamily, FontWeight, FontSize, LineHeight } from './typography';
 import { Spacing, BorderRadius, Shadow } from './spacing';
-import { storage } from '@storage/mmkv/storage';
+import { storage, StorageKeys } from '@storage/mmkv/storage';
 import type { PetSpecies } from '@storage/domain/types';
 import { getSpeciesConfig } from '@shared/config/speciesConfig';
+import { usePetStore } from '@shared/stores/petStore';
 
 export type ColorScheme = 'light' | 'dark' | 'system';
 
@@ -137,9 +138,15 @@ export function ThemeProvider({
 
   const isDark = colorScheme === 'system' ? systemScheme === 'dark' : colorScheme === 'dark';
 
-  // Species from prop (onboarding) or from MMKV cache (fast, avoids store dependency)
+  // Subscribe to active pet's species so the theme updates reactively when the
+  // user switches pets. Fall back to MMKV cache (fast path, used on cold start
+  // before petStore has finished loadPets) and to 'cat' as final default.
+  const activePetSpecies = usePetStore(s => s.activePet?.species);
   const species =
-    speciesProp ?? (storage.getString('activeSpecies') as PetSpecies | undefined) ?? 'cat';
+    speciesProp ??
+    activePetSpecies ??
+    (storage.getString(StorageKeys.ACTIVE_SPECIES) as PetSpecies | undefined) ??
+    'cat';
 
   const theme = useMemo(() => buildTheme(isDark, species), [isDark, species]);
 

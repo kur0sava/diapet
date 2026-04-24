@@ -9,10 +9,13 @@ export function useSubscription() {
   const trialStarted = hasTrialStarted();
   const trialExpired = isTrialExpired();
 
-  // Bypass paywall only in dev when backend is not configured.
-  // In production builds, missing credentials must NOT grant Pro.
-  const devBypass = __DEV__ && !isBackendConfigured();
-  const effectivePro = isPaidPro || trialActive || devBypass;
+  // While the payment backend is not configured, the UI explicitly shows a
+  // "Coming Soon — all features unlocked" state (PaywallScreen, SubscriptionScreen).
+  // To keep gating consistent with that promise, grant Pro access whenever
+  // isBackendConfigured() is false — in both __DEV__ and production builds.
+  // Once Supabase + Prodamus are wired in ETAP 13, this branch becomes a no-op.
+  const backendBypass = !isBackendConfigured();
+  const effectivePro = isPaidPro || trialActive || backendBypass;
 
   return {
     isPro: effectivePro,

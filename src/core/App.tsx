@@ -20,6 +20,7 @@ import { scheduleHintPushNotifications } from '@features/hints/utils/hintSchedul
 import { restoreScheduleNotifications } from '@shared/hooks/useNotifications';
 import { usePetStore } from '@shared/stores/petStore';
 import { initStorage, storage, StorageKeys } from '@storage/mmkv/storage';
+import { petRepository } from '@storage/database';
 import i18n, { restoreLanguage } from '@shared/i18n';
 import '@shared/i18n';
 import {
@@ -109,6 +110,17 @@ export default function App() {
           !storage.getString(StorageKeys.HINTS_REGISTRATION_DATE)
         ) {
           storage.set(StorageKeys.HINTS_REGISTRATION_DATE, new Date().toISOString());
+        }
+        // Recovery: if onboarding was never completed but pets exist in DB,
+        // the previous install crashed mid-onboarding. Purge orphaned pets so
+        // the re-run of onboarding doesn't leave duplicates behind.
+        if (!storage.getBoolean(StorageKeys.ONBOARDING_COMPLETE)) {
+          try {
+            const existing = await petRepository.findActive();
+            for (const p of existing) await petRepository.delete(p.id);
+          } catch {
+            /* best-effort recovery */
+          }
         }
         // Init device ID + check subscription status via Supabase
         getDeviceId();

@@ -26,9 +26,11 @@ export default function NotificationsScreen() {
 
   const handleFinish = async (enableNotifications: boolean) => {
     setLoading(true);
+    // Step 1: persist pet + schedules. If any DB op fails, roll back the pet
+    // so the next onboarding attempt doesn't leave an orphan row.
+    let pet: Awaited<ReturnType<typeof petRepository.create>>;
     try {
-      // Create pet
-      const pet = await petRepository.create({
+      pet = await petRepository.create({
         name: petData.name,
         gender: petData.gender,
         weightKg: petData.weightKg,
@@ -37,21 +39,42 @@ export default function NotificationsScreen() {
         diagnosisDate: petData.diagnosisDate,
         species: petData.species,
       });
-
-      // Save schedules
-      for (const time of injectionTimes ?? []) {
-        await scheduleRepository.addInjectionTime(pet.id, time);
+      try {
+        for (const time of injectionTimes ?? []) {
+          await scheduleRepository.addInjectionTime(pet.id, time);
+        }
+        for (const time of feedingTimes ?? []) {
+          await scheduleRepository.addFeedingTime(pet.id, time);
+        }
+      } catch (scheduleErr) {
+        // Rollback: orphaned pet would be picked up on next cold start AND the
+        // user would redo onboarding, producing duplicate pets. Delete now.
+        await petRepository.delete(pet.id).catch(() => {});
+        throw scheduleErr;
       }
-      for (const time of feedingTimes ?? []) {
-        await scheduleRepository.addFeedingTime(pet.id, time);
-      }
+    } catch {
+      Alert.alert(t('common.error'), t('onboarding.savingError'));
+      setLoading(false);
+      return;
+    }
 
-      // Save vet contact
-      if (vetName) storage.set('vetName', vetName);
-      if (vetPhone) storage.set('vetPhone', vetPhone);
+    // Step 2: commit point — after these writes, ONBOARDING_COMPLETE is true
+    // and we will NEVER re-run onboarding for this install. Everything below
+    // must tolerate failure without leaving onboarding in a half-done state.
+    if (vetName) storage.set(StorageKeys.VET_NAME, vetName);
+    if (vetPhone) storage.set(StorageKeys.VET_PHONE, vetPhone);
+    storage.set(StorageKeys.ACTIVE_PET_ID, pet.id);
+    storage.set(StorageKeys.ACTIVE_SPECIES, pet.species);
+    storage.set(StorageKeys.NOTIFICATIONS_ENABLED, false);
+    storage.set(StorageKeys.HINTS_REGISTRATION_DATE, new Date().toISOString());
+    storage.set(StorageKeys.ONBOARDING_COMPLETE, true);
+    storage.delete(StorageKeys.ONBOARDING_DRAFT);
 
-      // Notifications — set flag AFTER OS permission check to avoid mismatch
-      if (enableNotifications) {
+    // Step 3: best-effort side effects. Notification permission / OS scheduling
+    // can throw (denied, expo push quota, malformed time). Failing here must
+    // NOT abort onboarding — user can re-enable notifications in Settings.
+    if (enableNotifications) {
+      try {
         const granted = await requestPermissions();
         storage.set(StorageKeys.NOTIFICATIONS_ENABLED, granted);
         if (granted) {
@@ -62,27 +85,19 @@ export default function NotificationsScreen() {
             await scheduleFeedingReminder(time, pet.name);
           }
         }
-      } else {
-        storage.set(StorageKeys.NOTIFICATIONS_ENABLED, false);
+      } catch {
+        // Silent — user can toggle notifications in Settings later.
       }
-
-      // Mark onboarding complete & clear draft
-      storage.set(StorageKeys.ACTIVE_PET_ID, pet.id);
-      storage.set(StorageKeys.ONBOARDING_COMPLETE, true);
-      storage.delete(StorageKeys.ONBOARDING_DRAFT);
-      // Start hints registration date from onboarding completion
-      storage.set(StorageKeys.HINTS_REGISTRATION_DATE, new Date().toISOString());
-
-      // Load the newly created pet into the store so screens can access it
-      await usePetStore.getState().loadPets();
-
-      // Navigate to celebration screen (H9 First Win — moment B)
-      navigation.navigate('Success', { petName: pet.name });
-    } catch {
-      Alert.alert(t('common.error'), t('onboarding.savingError'));
-    } finally {
-      setLoading(false);
     }
+
+    try {
+      await usePetStore.getState().loadPets();
+    } catch {
+      // petStore hydration failure is recoverable on next screen mount.
+    }
+
+    setLoading(false);
+    navigation.navigate('Success', { petName: pet.name });
   };
 
   return (

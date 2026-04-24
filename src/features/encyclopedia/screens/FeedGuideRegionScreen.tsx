@@ -1,7 +1,5 @@
 import React, { useMemo, useState, useCallback } from 'react';
-import {
-  View, Text, StyleSheet, SectionList, TouchableOpacity,
-} from 'react-native';
+import { View, Text, StyleSheet, SectionList, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRoute } from '@react-navigation/native';
 import { useEncyclopediaNavigation } from '@navigation/hooks';
@@ -11,11 +9,17 @@ import { useTheme } from '@shared/theme';
 import { Icon } from '@shared/components/ui/Icon';
 import type { IoniconName } from '@shared/components/ui';
 import {
-  getPrescriptionFoods, getOtcFoods, getFoodsByCarbs,
-  getFoodVerdict, VALID_REGIONS, type Region, type DiabeticCatFood,
+  getPrescriptionFoods,
+  getOtcFoods,
+  getFoodsByCarbs,
+  getFoodVerdict,
+  VALID_REGIONS,
+  type Region,
+  type DiabeticCatFood,
 } from '../data/diabeticFoods';
 import { getStoresForRegion } from '../data/regionStores';
 import type { StoreEntry } from '../types';
+import { usePetStore } from '@shared/stores/petStore';
 
 type FilterType = 'all' | 'wet' | 'dry';
 
@@ -38,44 +42,66 @@ export default function FeedGuideRegionScreen() {
   const { t, i18n } = useTranslation();
   const { theme } = useTheme();
   const rawRegion = route.params.region;
-  const region: Region = (VALID_REGIONS as readonly string[]).includes(rawRegion) ? rawRegion as Region : 'GLOBAL';
+  const region: Region = (VALID_REGIONS as readonly string[]).includes(rawRegion)
+    ? (rawRegion as Region)
+    : 'GLOBAL';
   const isRu = i18n.language === 'ru';
+  // Use active pet's species to choose the correct food dataset. Cat foods
+  // and dog foods have different primary metrics (cat=carbs, dog=fat+fiber),
+  // so the wrong list is not just confusing but clinically unsafe.
+  const activeSpecies = usePetStore(s => s.activePet?.species);
+  const foodSpecies: 'cat' | 'dog' = activeSpecies === 'dog' ? 'dog' : 'cat';
 
   const [filter, setFilter] = useState<FilterType>('all');
   const [sortByCarbs, setSortByCarbs] = useState(false);
 
   const regionStoreInfo = useMemo(() => getStoresForRegion(region), [region]);
 
-  const filterFoods = useCallback((foods: DiabeticCatFood[]) => {
-    let result = foods;
-    if (filter !== 'all') {
-      result = result.filter(f => f.type === filter || f.type === 'both');
-    }
-    if (sortByCarbs) {
-      result = getFoodsByCarbs(result);
-    }
-    return result;
-  }, [filter, sortByCarbs]);
+  const filterFoods = useCallback(
+    (foods: DiabeticCatFood[]) => {
+      let result = foods;
+      if (filter !== 'all') {
+        result = result.filter(f => f.type === filter || f.type === 'both');
+      }
+      if (sortByCarbs) {
+        result = getFoodsByCarbs(result);
+      }
+      return result;
+    },
+    [filter, sortByCarbs]
+  );
 
   const prescriptionFoods = useMemo(
-    () => filterFoods(getPrescriptionFoods(region)),
-    [region, filterFoods],
+    () => filterFoods(getPrescriptionFoods(region, foodSpecies)),
+    [region, foodSpecies, filterFoods]
   );
   const otcFoods = useMemo(
-    () => filterFoods(getOtcFoods(region)),
-    [region, filterFoods],
+    () => filterFoods(getOtcFoods(region, foodSpecies)),
+    [region, foodSpecies, filterFoods]
   );
 
   const sections = useMemo(() => {
     const s = [];
     if (regionStoreInfo && regionStoreInfo.stores.length > 0) {
-      s.push({ key: 'stores', title: t('feedGuide.storesIn'), data: [{ type: 'stores' as const }] });
+      s.push({
+        key: 'stores',
+        title: t('feedGuide.storesIn'),
+        data: [{ type: 'stores' as const }],
+      });
     }
     if (prescriptionFoods.length > 0) {
-      s.push({ key: 'prescription', title: t('feedGuide.prescriptionFoods'), data: prescriptionFoods.map(f => ({ type: 'food' as const, food: f })) });
+      s.push({
+        key: 'prescription',
+        title: t('feedGuide.prescriptionFoods'),
+        data: prescriptionFoods.map(f => ({ type: 'food' as const, food: f })),
+      });
     }
     if (otcFoods.length > 0) {
-      s.push({ key: 'otc', title: t('feedGuide.otcFoods'), data: otcFoods.map(f => ({ type: 'food' as const, food: f })) });
+      s.push({
+        key: 'otc',
+        title: t('feedGuide.otcFoods'),
+        data: otcFoods.map(f => ({ type: 'food' as const, food: f })),
+      });
     }
     if (prescriptionFoods.length === 0 && otcFoods.length === 0) {
       s.push({ key: 'empty', title: '', data: [{ type: 'empty' as const }] });
@@ -84,8 +110,15 @@ export default function FeedGuideRegionScreen() {
   }, [regionStoreInfo, prescriptionFoods, otcFoods, t]);
 
   const renderStoreChip = (store: StoreEntry) => (
-    <View key={store.id} style={[styles.storeChip, { backgroundColor: theme.colors.surfaceSecondary }]}>
-      <Icon name={STORE_TYPE_ICONS[store.type] ?? 'storefront-outline'} size={16} color={theme.colors.primary} />
+    <View
+      key={store.id}
+      style={[styles.storeChip, { backgroundColor: theme.colors.surfaceSecondary }]}
+    >
+      <Icon
+        name={STORE_TYPE_ICONS[store.type] ?? 'storefront-outline'}
+        size={16}
+        color={theme.colors.primary}
+      />
       <Text style={[styles.storeName, { color: theme.colors.text }]}>
         {isRu && store.nameRu ? store.nameRu : store.name}
       </Text>
@@ -98,23 +131,40 @@ export default function FeedGuideRegionScreen() {
   );
 
   const renderFoodCard = (food: DiabeticCatFood) => {
-    const verdict = food.carbsDM != null ? getFoodVerdict(food.carbsDM) : null;
+    // Verdict signal differs by species:
+    //   cat → driven by carbs DM%
+    //   dog → driven by fat DM% (pancreatitis risk) + fiber DM% (glycemic control)
+    const verdict =
+      food.carbsDM != null
+        ? getFoodVerdict(food.carbsDM, foodSpecies, food.fatDM, food.fiberDM)
+        : null;
     const verdictColor = verdict ? VERDICT_COLORS[verdict] : theme.colors.textTertiary;
     const buyList = food.whereToBuy?.[region] ?? [];
 
     return (
-      <View style={[styles.foodCard, { backgroundColor: theme.colors.surface, ...theme.shadows.sm }]}>
+      <View
+        style={[styles.foodCard, { backgroundColor: theme.colors.surface, ...theme.shadows.sm }]}
+      >
         <View style={styles.foodHeader}>
           <View style={styles.foodInfo}>
-            <Text style={[styles.foodBrand, { color: theme.colors.textSecondary }]}>{food.brand}</Text>
+            <Text style={[styles.foodBrand, { color: theme.colors.textSecondary }]}>
+              {food.brand}
+            </Text>
             <Text style={[styles.foodProduct, { color: theme.colors.text }]}>
               {isRu && food.nameRu ? food.nameRu : food.product}
             </Text>
           </View>
           {food.carbsDM != null && (
-            <View style={[styles.carbsBadge, { backgroundColor: verdictColor + '20', borderColor: verdictColor }]}>
+            <View
+              style={[
+                styles.carbsBadge,
+                { backgroundColor: verdictColor + '20', borderColor: verdictColor },
+              ]}
+            >
               <Text style={[styles.carbsValue, { color: verdictColor }]}>{food.carbsDM}%</Text>
-              <Text style={[styles.carbsLabel, { color: verdictColor }]}>{t('feedGuide.carbsDM')}</Text>
+              <Text style={[styles.carbsLabel, { color: verdictColor }]}>
+                {t('feedGuide.carbsDM')}
+              </Text>
             </View>
           )}
         </View>
@@ -130,9 +180,26 @@ export default function FeedGuideRegionScreen() {
               {t('feedGuide.fatDM')}: {food.fatDM}%
             </Text>
           )}
-          <View style={[styles.typeBadge, { backgroundColor: food.type === 'wet' ? theme.colors.primary + '15' : theme.colors.warning + '15' }]}>
-            <Text style={{ fontSize: 11, color: food.type === 'wet' ? theme.colors.primary : theme.colors.warning }}>
-              {food.type === 'wet' ? t('feedGuide.wet') : food.type === 'dry' ? t('feedGuide.dry') : t('feedGuide.all')}
+          <View
+            style={[
+              styles.typeBadge,
+              {
+                backgroundColor:
+                  food.type === 'wet' ? theme.colors.primary + '15' : theme.colors.warning + '15',
+              },
+            ]}
+          >
+            <Text
+              style={{
+                fontSize: 11,
+                color: food.type === 'wet' ? theme.colors.primary : theme.colors.warning,
+              }}
+            >
+              {food.type === 'wet'
+                ? t('feedGuide.wet')
+                : food.type === 'dry'
+                  ? t('feedGuide.dry')
+                  : t('feedGuide.all')}
             </Text>
           </View>
         </View>
@@ -147,7 +214,9 @@ export default function FeedGuideRegionScreen() {
         )}
 
         {food.notes && (
-          <Text style={[styles.foodNotes, { color: theme.colors.textSecondary }]}>{food.notes}</Text>
+          <Text style={[styles.foodNotes, { color: theme.colors.textSecondary }]}>
+            {food.notes}
+          </Text>
         )}
 
         {buyList.length > 0 && (
@@ -160,7 +229,9 @@ export default function FeedGuideRegionScreen() {
         )}
 
         {food.priceHint && (
-          <Text style={[styles.priceHint, { color: theme.colors.textTertiary }]}>{food.priceHint}</Text>
+          <Text style={[styles.priceHint, { color: theme.colors.textTertiary }]}>
+            {food.priceHint}
+          </Text>
         )}
       </View>
     );
@@ -169,9 +240,7 @@ export default function FeedGuideRegionScreen() {
   const renderItem = ({ item }: { item: { type: string; food?: DiabeticCatFood } }) => {
     if (item.type === 'stores' && regionStoreInfo) {
       return (
-        <View style={styles.storesContainer}>
-          {regionStoreInfo.stores.map(renderStoreChip)}
-        </View>
+        <View style={styles.storesContainer}>{regionStoreInfo.stores.map(renderStoreChip)}</View>
       );
     }
     if (item.type === 'food' && item.food) {
@@ -206,24 +275,46 @@ export default function FeedGuideRegionScreen() {
             key={f}
             style={[
               styles.filterChip,
-              { backgroundColor: filter === f ? theme.colors.primary : theme.colors.surface, borderColor: filter === f ? theme.colors.primary : theme.colors.border },
+              {
+                backgroundColor: filter === f ? theme.colors.primary : theme.colors.surface,
+                borderColor: filter === f ? theme.colors.primary : theme.colors.border,
+              },
             ]}
             onPress={() => setFilter(f)}
           >
-            <Text style={{ color: filter === f ? '#fff' : theme.colors.text, fontSize: 13, fontWeight: '500' }}>
-              {f === 'all' ? t('feedGuide.all') : f === 'wet' ? t('feedGuide.wet') : t('feedGuide.dry')}
+            <Text
+              style={{
+                color: filter === f ? '#fff' : theme.colors.text,
+                fontSize: 13,
+                fontWeight: '500',
+              }}
+            >
+              {f === 'all'
+                ? t('feedGuide.all')
+                : f === 'wet'
+                  ? t('feedGuide.wet')
+                  : t('feedGuide.dry')}
             </Text>
           </TouchableOpacity>
         ))}
         <TouchableOpacity
           style={[
             styles.filterChip,
-            { backgroundColor: sortByCarbs ? theme.colors.primary : theme.colors.surface, borderColor: sortByCarbs ? theme.colors.primary : theme.colors.border },
+            {
+              backgroundColor: sortByCarbs ? theme.colors.primary : theme.colors.surface,
+              borderColor: sortByCarbs ? theme.colors.primary : theme.colors.border,
+            },
           ]}
           onPress={() => setSortByCarbs(!sortByCarbs)}
         >
           <Icon name="arrow-up" size={14} color={sortByCarbs ? '#fff' : theme.colors.text} />
-          <Text style={{ color: sortByCarbs ? '#fff' : theme.colors.text, fontSize: 13, fontWeight: '500' }}>
+          <Text
+            style={{
+              color: sortByCarbs ? '#fff' : theme.colors.text,
+              fontSize: 13,
+              fontWeight: '500',
+            }}
+          >
             {t('feedGuide.sortByCarbs')}
           </Text>
         </TouchableOpacity>
@@ -231,10 +322,17 @@ export default function FeedGuideRegionScreen() {
 
       <SectionList
         sections={sections}
-        keyExtractor={(item, index) => item.type === 'food' && item.food ? item.food.id : `s-${index}`}
+        keyExtractor={(item, index) =>
+          item.type === 'food' && item.food ? item.food.id : `s-${index}`
+        }
         renderItem={renderItem}
         renderSectionHeader={({ section }) => (
-          <Text style={[styles.sectionHeader, { color: theme.colors.text, backgroundColor: theme.colors.background }]}>
+          <Text
+            style={[
+              styles.sectionHeader,
+              { color: theme.colors.text, backgroundColor: theme.colors.background },
+            ]}
+          >
             {section.title}
           </Text>
         )}
@@ -253,15 +351,43 @@ export default function FeedGuideRegionScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
-  header: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 16, paddingTop: 8, paddingBottom: 12, gap: 12 },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    paddingTop: 8,
+    paddingBottom: 12,
+    gap: 12,
+  },
   backButton: { padding: 4, minHeight: 44, minWidth: 44, justifyContent: 'center' },
   title: { fontSize: 22, fontWeight: '800', flex: 1 },
-  filterRow: { flexDirection: 'row', flexWrap: 'wrap', paddingHorizontal: 16, gap: 8, paddingBottom: 8 },
-  filterChip: { flexDirection: 'row', alignItems: 'center', gap: 4, paddingHorizontal: 12, paddingVertical: 7, borderRadius: 20, borderWidth: 1 },
+  filterRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    paddingHorizontal: 16,
+    gap: 8,
+    paddingBottom: 8,
+  },
+  filterChip: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    paddingHorizontal: 12,
+    paddingVertical: 7,
+    borderRadius: 20,
+    borderWidth: 1,
+  },
   list: { padding: 16, paddingBottom: 100 },
   sectionHeader: { fontSize: 17, fontWeight: '700', paddingVertical: 8 },
   storesContainer: { gap: 8, marginBottom: 8 },
-  storeChip: { flexDirection: 'row', alignItems: 'center', gap: 10, paddingHorizontal: 14, paddingVertical: 10, borderRadius: 12 },
+  storeChip: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+    paddingHorizontal: 14,
+    paddingVertical: 10,
+    borderRadius: 12,
+  },
   storeName: { flex: 1, fontSize: 14, fontWeight: '600' },
   storeTypeBadge: { paddingHorizontal: 8, paddingVertical: 3, borderRadius: 8 },
   storeTypeText: { fontSize: 11, fontWeight: '500' },
@@ -270,7 +396,13 @@ const styles = StyleSheet.create({
   foodInfo: { flex: 1, marginRight: 10 },
   foodBrand: { fontSize: 12, fontWeight: '500' },
   foodProduct: { fontSize: 15, fontWeight: '700', marginTop: 2 },
-  carbsBadge: { alignItems: 'center', paddingHorizontal: 10, paddingVertical: 6, borderRadius: 10, borderWidth: 1 },
+  carbsBadge: {
+    alignItems: 'center',
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: 10,
+    borderWidth: 1,
+  },
   carbsValue: { fontSize: 16, fontWeight: '800' },
   carbsLabel: { fontSize: 9, fontWeight: '500', marginTop: 1 },
   macroRow: { flexDirection: 'row', alignItems: 'center', gap: 12, flexWrap: 'wrap' },

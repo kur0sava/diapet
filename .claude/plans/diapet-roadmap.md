@@ -1,16 +1,33 @@
 # DiaPet — Roadmap v3.0: Мульти-animal
 
-> Обновлён: 2026-04-13
+> Обновлён: 2026-04-24
 > Основной план разработки
 
 ---
 
 ## ТЕКУЩИЙ СТАТУС
 
-**Ветка**: master | **Версия**: 2.4.3 (versionCode 15)
-**Google Play**: v2.4.3 опубликован
-**RuStore**: v2.4.3 опубликован
+**Ветка**: master | **Версия в сторах**: 2.4.3 (versionCode 15)
+**Версия в коде**: 2.5.0 (versionCode 16) — готова к EAS build
+**Google Play**: v2.4.3 опубликован (v2.5.0 ожидает билд)
+**RuStore**: v2.4.3 опубликован (v2.5.0 ожидает билд)
 **GitHub**: https://github.com/kur0sava/diapet — актуален
+
+### v2.5.0 — что вошло (сверх v2.4.3)
+- ЭТАП 15 полностью (мульти-animal, собаки)
+- H1–H7, H9 business-audit
+- Codex review batch 1 (theme reactivity, paywall gating, food DB split, Hill's w/d reclass, FeedGuide species-aware)
+- Codex review batch 2 critical:
+  - Bug #1 atomic onboarding (pet-rollback + orphan cleanup в App.tsx init)
+  - Bug #6 `ACTIVE_SPECIES` MMKV cleared on reset + константа в StorageKeys
+
+### v2.5.1 backlog (Codex batch 2 deferred)
+- Bug #2 смешанные валюты в food list
+- Bug #3 `toISOString` UTC shift (existing)
+- Bug #4 курсорная пагинация glucose
+- Bug #5 идемпотентность миграции symptoms v8→v9
+- Bug #7 vet contact global → per-pet
+- H8 (hint packs 60/90/180 дней), H10 (Google Auth в онбординге)
 
 ---
 

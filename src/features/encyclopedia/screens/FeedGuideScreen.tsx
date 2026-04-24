@@ -5,7 +5,11 @@ import { useEncyclopediaNavigation } from '@navigation/hooks';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '@shared/theme';
 import { Icon } from '@shared/components/ui/Icon';
-import { DIABETIC_NUTRITION_GUIDELINES, type Region } from '../data/diabeticFoods';
+import {
+  DIABETIC_NUTRITION_GUIDELINES_CAT,
+  DIABETIC_NUTRITION_GUIDELINES_DOG,
+  type Region,
+} from '../data/diabeticFoods';
 import { usePetStore } from '@shared/stores/petStore';
 
 const REGIONS: { key: Region; emoji: string }[] = [
@@ -22,8 +26,13 @@ export default function FeedGuideScreen() {
   const { t, i18n } = useTranslation();
   const { theme } = useTheme();
   const lang = i18n.language === 'ru' ? 'ru' : 'en';
-  const tips = DIABETIC_NUTRITION_GUIDELINES.feedingTips[lang];
   const species = usePetStore(s => s.activePet?.species ?? 'cat');
+  // Feeding tips differ by species: cats → low-carb; dogs → high-fiber + low-fat
+  // (pancreatitis risk). Using cat tips for a dog user would give wrong advice.
+  const tips =
+    species === 'dog'
+      ? DIABETIC_NUTRITION_GUIDELINES_DOG.feedingTips[lang]
+      : DIABETIC_NUTRITION_GUIDELINES_CAT.feedingTips[lang];
   // Natural feeding guide is cat-only (taurine, protein ratios). Hide for dogs
   // to avoid species-wrong advice; will be re-enabled when dog natural guide lands.
   const showNaturalFood = species !== 'dog';

@@ -70,7 +70,7 @@ export interface DiabeticCatFood {
 // Nutritional guidelines
 // ────────────────────────────────────────────────────
 
-export const DIABETIC_NUTRITION_GUIDELINES = {
+export const DIABETIC_NUTRITION_GUIDELINES_CAT = {
   carbsMaxPercent: 15, // MH003: aligned with calculator (was 12, causing conflict)
   carbsIdealPercent: 7,
   proteinMinPercent: 40,
@@ -100,8 +100,58 @@ export const DIABETIC_NUTRITION_GUIDELINES = {
   },
 };
 
+/**
+ * Nutritional targets for diabetic DOGS (AAHA 2018, ACVIM, Fleeman 2019).
+ * Key differences from cat:
+ *   - HIGH fiber is a primary goal (slows glucose absorption, improves TIR)
+ *   - LOW/MODERATE fat — fat >25% DM raises pancreatitis risk, a major
+ *     trigger of insulin resistance in diabetic dogs
+ *   - MODERATE complex carbs (whole grains, legumes, beet pulp) are
+ *     encouraged, not minimized like for cats
+ *   - Protein: moderate (25–30% DM), not max
+ *   - Remission is NOT a realistic goal in canine IDDM (unlike 50–90% in cats)
+ */
+export const DIABETIC_NUTRITION_GUIDELINES_DOG = {
+  carbsMaxPercent: 50, // typical dog diabetic diet: 40–55% DM complex carbs
+  carbsIdealPercent: 45,
+  proteinMinPercent: 20, // AAHA 2018: ≥20% DM protein
+  fatMaxPercent: 25, // pancreatitis threshold — critical for dogs
+  fatIdealPercent: 12,
+  fiberMinPercent: 10, // insoluble+soluble fiber, >10% DM improves glycemic control
+  fiberIdealPercent: 15,
+  sugarMaxPercent: 1,
+  feedingTips: {
+    ru: [
+      'Кормить 2 раза в день СТРОГО по расписанию — обе порции одинакового размера',
+      'Инъекция инсулина сразу после еды (убедись, что съедено >50%)',
+      'Клетчатка (≥10% DM) обязательна — замедляет всплеск глюкозы',
+      'ВАЖНО: низкий жир (<25% DM) — высокий жир повышает риск панкреатита',
+      'Умеренные сложные углеводы (овёс, ячмень, свекольный жом) предпочтительны',
+      'Не менять корм резко — переход 7–10 дней',
+      'Контроль веса: ожирение ухудшает инсулинорезистентность',
+      'Избегать сырой жирной пищи, остатков со стола, лакомств с сахаром',
+    ],
+    en: [
+      'Feed twice daily on a STRICT schedule — equal portions',
+      'Give insulin right after meal (confirm >50% eaten first)',
+      'Fiber (≥10% DM) is mandatory — slows glucose absorption',
+      'CRITICAL: low fat (<25% DM) — high fat triggers pancreatitis',
+      'Moderate complex carbs (oats, barley, beet pulp) are preferred',
+      'Transition gradually over 7–10 days when changing food',
+      'Weight control: obesity worsens insulin resistance',
+      'Avoid fatty raw scraps, table food, sugary treats',
+    ],
+  },
+};
+
+/**
+ * Backwards-compat: existing code reads DIABETIC_NUTRITION_GUIDELINES as the
+ * cat default. Kept as alias so we can migrate call sites incrementally.
+ */
+export const DIABETIC_NUTRITION_GUIDELINES = DIABETIC_NUTRITION_GUIDELINES_CAT;
+
 // ────────────────────────────────────────────────────
-// Prescription / Veterinary diets
+// Prescription / Veterinary diets — CATS
 // ────────────────────────────────────────────────────
 
 export const PRESCRIPTION_FOODS: DiabeticCatFood[] = [
@@ -180,13 +230,18 @@ export const PRESCRIPTION_FOODS: DiabeticCatFood[] = [
     notes:
       'Высокобелковый, низкоуглеводный. Один из лучших по составу для диабета. Наличие в РФ может варьироваться.',
   },
+  // Hill's w/d Feline reclassified from 'prescription' (diabetic) to 'veterinary':
+  // at 34% DM carbs it does not meet the feline diabetic diet criterion
+  // (<=15% DM). It is a weight-management diet used as adjunct when obesity
+  // and mild DM coexist, but should NOT sit in the primary diabetic-food list.
   {
     id: 'hills-wd-dry',
     brand: "Hill's",
-    product: 'Prescription Diet w/d Multi-Benefit (Dry)',
-    nameRu: 'Хиллс w/d сухой',
+    product:
+      'Prescription Diet w/d Multi-Benefit (Dry) — weight management, not diabetic-first-line',
+    nameRu: 'Хиллс w/d сухой — для контроля веса, НЕ первый выбор при диабете',
     type: 'dry',
-    category: 'prescription',
+    category: 'veterinary',
     proteinDM: 38,
     fatDM: 10,
     carbsDM: 34,
@@ -201,8 +256,9 @@ export const PRESCRIPTION_FOODS: DiabeticCatFood[] = [
       DE: [],
     },
     prescriptionRequired: true,
+    species: 'cat',
     notes:
-      '⚠️ Углеводы 34% — выше рекомендуемого для диабета (<12%). Менее подходит чем m/d. Чаще назначают при ожирении + диабет.',
+      "⚠️ Углеводы 34% DM — существенно выше порога для кошачьего диабета (<15% DM). НЕ рекомендуется как первая линия при сахарном диабете у кошек. Может назначаться ветеринаром при коморбидных ожирении + мягкой гипергликемии, когда контроль веса приоритетнее. Для диабета предпочтительны Purina DM, Hill's m/d, Royal Canin Diabetic или Farmina Diabetic.",
   },
 
   // ── Purina ──
@@ -690,14 +746,329 @@ export const OTC_LOW_CARB_FOODS: DiabeticCatFood[] = [
 ];
 
 // ────────────────────────────────────────────────────
+// Prescription diets — DOGS
+// ────────────────────────────────────────────────────
+// Sources: AAHA 2018 Diabetes Guidelines, manufacturer product pages
+// (royalcanin.com, hillspet.com, purina.com, farmina.com, virbac.com, brit-petfood.com).
+// Nutrient values converted to DM basis from "as-fed" labels where necessary.
+
+export const PRESCRIPTION_DOG_FOODS: DiabeticCatFood[] = [
+  // ── Royal Canin ──
+  {
+    id: 'rc-glycobalance-canine-dry',
+    brand: 'Royal Canin',
+    product: 'Veterinary Diet Glycobalance Canine (Dry)',
+    nameRu: 'Роял Канин Гликобаланс для собак (сухой)',
+    type: 'dry',
+    category: 'prescription',
+    proteinDM: 27,
+    fatDM: 13,
+    carbsDM: 44,
+    fiberDM: 8,
+    kcalPerKg: 3544,
+    regions: ['RU', 'EU', 'UK', 'US', 'GLOBAL'],
+    whereToBuy: {
+      RU: ['royalcanin.ru', '4lapy.ru', 'markvet.ru', 'ZooZavr'],
+      EU: ['zooplus.de', 'vet clinics'],
+      UK: ['royalcanin.com/uk', 'viovet.co.uk', 'vet clinics'],
+      US: ['royalcanin.com/us', 'chewy.com', 'vet clinics'],
+      GLOBAL: [],
+      DE: [],
+    },
+    priceHint: 'RU: 2500-3500₽/2кг, 6000-8000₽/7.5кг',
+    prescriptionRequired: true,
+    species: 'dog',
+    notes:
+      'Ранее назывался Diabetic Canine. Низкий гликемический индекс, умеренный белок, оптимизированное волокно. Один из самых назначаемых Rx для собак-диабетиков в РФ и мире.',
+  },
+
+  // ── Hill's ──
+  {
+    id: 'hills-wd-canine-dry',
+    brand: "Hill's",
+    product: 'Prescription Diet w/d Canine (Dry)',
+    nameRu: 'Хиллс w/d для собак (сухой)',
+    type: 'dry',
+    category: 'prescription',
+    proteinDM: 19,
+    fatDM: 10,
+    carbsDM: 50,
+    fiberDM: 17,
+    kcalPerKg: 3010,
+    regions: ['RU', 'EU', 'UK', 'US', 'GLOBAL'],
+    whereToBuy: {
+      RU: ['4lapy.ru', 'ZooMag', 'markvet.ru', 'vet clinics'],
+      EU: ['zooplus.de', 'vet clinics'],
+      UK: ['petsathome.com', 'viovet.co.uk'],
+      US: ['chewy.com', 'petco.com'],
+      GLOBAL: [],
+      DE: [],
+    },
+    priceHint: 'RU: 2500-3800₽/4кг, 5000-7500₽/12кг',
+    prescriptionRequired: true,
+    species: 'dog',
+    notes:
+      'Высокое содержание клетчатки (17% DM) — замедляет всплеск глюкозы после еды. Низкий жир (10% DM) = низкий риск панкреатита. AAHA 2018 — терапия первой линии.',
+  },
+  {
+    id: 'hills-wd-canine-wet',
+    brand: "Hill's",
+    product: 'Prescription Diet w/d Canine (Wet)',
+    nameRu: 'Хиллс w/d для собак (влажный)',
+    type: 'wet',
+    category: 'prescription',
+    proteinDM: 21,
+    fatDM: 11,
+    carbsDM: 48,
+    fiberDM: 14,
+    regions: ['RU', 'EU', 'UK', 'US'],
+    whereToBuy: {
+      RU: ['4lapy.ru', 'markvet.ru'],
+      EU: ['zooplus.de'],
+      UK: ['petsathome.com'],
+      US: ['chewy.com'],
+      GLOBAL: [],
+      DE: [],
+    },
+    priceHint: 'RU: 250-350₽/банка 370г',
+    prescriptionRequired: true,
+    species: 'dog',
+    notes:
+      'Влажная версия w/d. Удобна при плохом аппетите или для увеличения потребления воды у собак с сопутствующими заболеваниями.',
+  },
+
+  // ── Purina ──
+  {
+    id: 'purina-dco-dry',
+    brand: 'Purina Pro Plan',
+    product: 'Veterinary Diets DCO Dual Fiber Canine (Dry)',
+    nameRu: 'Пурина DCO для собак (сухой)',
+    type: 'dry',
+    category: 'prescription',
+    proteinDM: 24,
+    fatDM: 12,
+    carbsDM: 49,
+    fiberDM: 14,
+    kcalPerKg: 3460,
+    regions: ['EU', 'UK', 'US', 'GLOBAL'],
+    whereToBuy: {
+      EU: ['zooplus.de', 'vet clinics'],
+      UK: ['purina.co.uk', 'viovet.co.uk'],
+      US: ['proplanvetdirect.com', 'chewy.com'],
+      RU: [],
+      GLOBAL: [],
+      DE: [],
+    },
+    prescriptionRequired: true,
+    species: 'dog',
+    notes:
+      "Двойное волокно (растворимое + нерастворимое) для улучшения контроля глюкозы и сытости. В РФ стабильно не поставляется — альтернатива Royal Canin Glycobalance или Hill's w/d.",
+  },
+
+  // ── Farmina ──
+  {
+    id: 'farmina-diabetic-canine-dry',
+    brand: 'Farmina',
+    product: 'Vet Life Canine Diabetic (Dry)',
+    nameRu: 'Фармина Вет Лайф Диабетик для собак (сухой)',
+    type: 'dry',
+    category: 'prescription',
+    proteinDM: 32,
+    fatDM: 10,
+    carbsDM: 42,
+    fiberDM: 4,
+    kcalPerKg: 3390,
+    regions: ['RU', 'EU', 'UK', 'GLOBAL'],
+    whereToBuy: {
+      RU: ['4lapy.ru', 'Ozon', 'holistic-shop.ru', 'petdog.ru'],
+      EU: ['zooplus.de', 'farmina.com'],
+      UK: ['farmina.com'],
+      US: [],
+      GLOBAL: [],
+      DE: [],
+    },
+    priceHint: 'RU: 1500-2200₽/2кг, 4500-6500₽/12кг',
+    prescriptionRequired: true,
+    species: 'dog',
+    notes:
+      "Источник углеводов — горох + овёс (низкий ГИ). Выше белок (32% DM) и ниже клетчатка (4%) чем Hill's/RC — подходит собакам с чувствительным ЖКТ, но менее выражен fiber-эффект.",
+  },
+
+  // ── Virbac ──
+  {
+    id: 'virbac-hpm-weight-diabetes',
+    brand: 'Virbac',
+    product: 'Veterinary HPM Weight Loss & Diabetes W1 Canine (Dry)',
+    nameRu: 'Вирбак HPM W1 для собак',
+    type: 'dry',
+    category: 'prescription',
+    proteinDM: 45,
+    fatDM: 10,
+    carbsDM: 27,
+    fiberDM: 13,
+    regions: ['EU', 'UK'],
+    whereToBuy: {
+      EU: ['zooplus.de', 'vet clinics'],
+      UK: ['virbac.co.uk', 'vet clinics'],
+    },
+    prescriptionRequired: true,
+    species: 'dog',
+    notes:
+      'Французский Rx. Высокий белок + низкие углеводы (редкое сочетание для собачьих диабетических диет). Хорош при коморбидном ожирении. В РФ не ввозится стабильно.',
+  },
+
+  // ── Brit ──
+  {
+    id: 'brit-vd-diabetes',
+    brand: 'Brit',
+    product: 'Veterinary Diet Dog Diabetes (Dry)',
+    nameRu: 'Брит Ветеринари Диабет для собак',
+    type: 'dry',
+    category: 'prescription',
+    proteinDM: 25,
+    fatDM: 12,
+    carbsDM: 45,
+    fiberDM: 8,
+    regions: ['RU', 'EU'],
+    whereToBuy: {
+      RU: ['4lapy.ru', 'Ozon', 'Wildberries', 'petshop.ru'],
+      EU: ['zooplus.de', 'brit-petfood.com'],
+    },
+    priceHint: 'RU: 1200-1800₽/2кг, 3500-5000₽/12кг',
+    prescriptionRequired: false,
+    species: 'dog',
+    notes:
+      "Чешский бренд. Доступен в РФ без рецепта (хотя производитель позиционирует как Rx). Более бюджетная альтернатива Hill's/RC.",
+  },
+];
+
+// ────────────────────────────────────────────────────
+// OTC options for diabetic DOGS
+// ────────────────────────────────────────────────────
+// Note: true OTC diabetic diets for dogs are rare. These are adult
+// weight-management / high-fiber products used with explicit vet approval
+// when Rx options are unavailable or cost-prohibitive.
+
+export const OTC_DOG_FOODS: DiabeticCatFood[] = [
+  {
+    id: 'rc-satiety-canine',
+    brand: 'Royal Canin',
+    product: 'Veterinary Diet Satiety Weight Management Canine (Dry)',
+    nameRu: 'Роял Канин Сатиети для собак',
+    type: 'dry',
+    category: 'veterinary',
+    proteinDM: 33,
+    fatDM: 10,
+    carbsDM: 40,
+    fiberDM: 16,
+    regions: ['RU', 'EU', 'UK', 'US', 'GLOBAL'],
+    whereToBuy: {
+      RU: ['royalcanin.ru', '4lapy.ru', 'markvet.ru'],
+      EU: ['zooplus.de'],
+      UK: ['royalcanin.com/uk'],
+      US: ['chewy.com'],
+      GLOBAL: [],
+      DE: [],
+    },
+    priceHint: 'RU: 2200-3200₽/1.5кг, 6500-9000₽/12кг',
+    prescriptionRequired: false,
+    species: 'dog',
+    notes:
+      'Не помечен как "диабетический", но профиль (низкий жир 10%, волокно 16%) близок к Rx для диабета. Используется, когда Glycobalance недоступен. Обсуди с ветеринаром.',
+  },
+  {
+    id: 'hills-science-plan-perfect-weight',
+    brand: "Hill's",
+    product: 'Science Plan Perfect Weight Canine Adult (Dry)',
+    nameRu: 'Хиллс Perfect Weight для собак',
+    type: 'dry',
+    category: 'otc_low_carb',
+    proteinDM: 29,
+    fatDM: 10,
+    carbsDM: 46,
+    fiberDM: 13,
+    regions: ['RU', 'EU', 'UK', 'US'],
+    whereToBuy: {
+      RU: ['4lapy.ru', 'Ozon'],
+      EU: ['zooplus.de'],
+      UK: ['petsathome.com'],
+      US: ['chewy.com'],
+    },
+    priceHint: 'RU: 1800-2800₽/2кг',
+    prescriptionRequired: false,
+    species: 'dog',
+    notes:
+      'OTC без рецепта. Профиль ближе к диабетическим Rx, чем стандартный adult-корм. При лёгкой гипергликемии + ожирении — приемлемая опция при согласовании с врачом.',
+  },
+  {
+    id: 'purina-pro-plan-overweight',
+    brand: 'Purina Pro Plan',
+    product: 'Adult Light / OPTIWEIGHT (Dry)',
+    nameRu: 'Пурина Про План для собак с избыточным весом',
+    type: 'dry',
+    category: 'otc_low_carb',
+    proteinDM: 33,
+    fatDM: 10,
+    carbsDM: 48,
+    fiberDM: 9,
+    regions: ['RU', 'EU', 'UK', 'US'],
+    whereToBuy: {
+      RU: ['shop.purina.ru', '4lapy.ru', 'Ozon', 'Wildberries'],
+      EU: ['zooplus.de'],
+      UK: ['purina.co.uk'],
+      US: ['proplan.com'],
+    },
+    priceHint: 'RU: 900-1400₽/1.5кг, 3500-5000₽/14кг',
+    prescriptionRequired: false,
+    species: 'dog',
+    notes:
+      '⚠ Клетчатка 9% DM — на границе (≥10% DM желательно). Бюджетный OTC вариант, но НЕ замена рецептурной диабетической диете. Только при одобрении ветеринаром.',
+  },
+  {
+    id: 'acana-light-fit',
+    brand: 'Acana',
+    product: 'Light & Fit Recipe (Dry)',
+    nameRu: 'Акана Light & Fit',
+    type: 'dry',
+    category: 'otc_low_carb',
+    proteinDM: 34,
+    fatDM: 12,
+    carbsDM: 38,
+    fiberDM: 9,
+    regions: ['RU', 'EU', 'UK', 'US'],
+    whereToBuy: {
+      RU: ['4lapy.ru', 'Ozon', 'holistic-shop.ru'],
+      EU: ['zooplus.de'],
+      UK: ['acana.com'],
+      US: ['chewy.com'],
+    },
+    priceHint: 'RU: 2500-3500₽/2кг, 6500-9000₽/11.4кг',
+    prescriptionRequired: false,
+    species: 'dog',
+    notes:
+      'Канадский холистик. Беззерновой, с мясом. Углеводы из бобовых — ниже ГИ, чем у кукурузы/пшеницы. При отсутствии Rx — одна из лучших OTC опций для собак.',
+  },
+];
+
+// ────────────────────────────────────────────────────
 // Helpers
 // ────────────────────────────────────────────────────
 
-export const ALL_FOODS = [...PRESCRIPTION_FOODS, ...OTC_LOW_CARB_FOODS];
+export const ALL_CAT_FOODS = [...PRESCRIPTION_FOODS, ...OTC_LOW_CARB_FOODS];
+export const ALL_DOG_FOODS = [...PRESCRIPTION_DOG_FOODS, ...OTC_DOG_FOODS];
+export const ALL_FOODS = [...ALL_CAT_FOODS, ...ALL_DOG_FOODS];
+
+type FoodSpecies = 'cat' | 'dog';
+
+/** Records without explicit species default to 'cat' for backwards compat. */
+function foodSpecies(food: DiabeticCatFood): FoodSpecies {
+  return food.species === 'dog' ? 'dog' : 'cat';
+}
 
 /** Get foods available in a specific region */
-export function getFoodsByRegion(region: Region): DiabeticCatFood[] {
-  return ALL_FOODS.filter(f => f.regions.includes(region) || f.regions.includes('GLOBAL'));
+export function getFoodsByRegion(region: Region, species: FoodSpecies = 'cat'): DiabeticCatFood[] {
+  const source = species === 'dog' ? ALL_DOG_FOODS : ALL_CAT_FOODS;
+  return source.filter(f => f.regions.includes(region) || f.regions.includes('GLOBAL'));
 }
 
 /** Get foods sorted by carbs (lowest first) */
@@ -705,22 +1076,55 @@ export function getFoodsByCarbs(foods: DiabeticCatFood[]): DiabeticCatFood[] {
   return [...foods].sort((a, b) => (a.carbsDM ?? 100) - (b.carbsDM ?? 100));
 }
 
-/** Get prescription foods only */
-export function getPrescriptionFoods(region?: Region): DiabeticCatFood[] {
-  const foods = PRESCRIPTION_FOODS;
-  return region ? foods.filter(f => f.regions.includes(region)) : foods;
+/** Get prescription foods only — species-aware */
+export function getPrescriptionFoods(
+  region?: Region,
+  species: FoodSpecies = 'cat'
+): DiabeticCatFood[] {
+  const source = species === 'dog' ? PRESCRIPTION_DOG_FOODS : PRESCRIPTION_FOODS;
+  // Filter: only true diabetic-first-line prescriptions (category='prescription').
+  // Weight-management 'veterinary' entries (e.g. Hill's w/d Feline) are shown
+  // in the OTC-adjacent list, not as primary diabetic Rx.
+  const filtered = source.filter(f => f.category === 'prescription' && foodSpecies(f) === species);
+  return region ? filtered.filter(f => f.regions.includes(region)) : filtered;
 }
 
-/** Get OTC low-carb foods */
-export function getOtcFoods(region?: Region): DiabeticCatFood[] {
-  const foods = OTC_LOW_CARB_FOODS;
-  return region ? foods.filter(f => f.regions.includes(region)) : foods;
+/** Get OTC low-carb (cat) / high-fiber (dog) foods — species-aware */
+export function getOtcFoods(region?: Region, species: FoodSpecies = 'cat'): DiabeticCatFood[] {
+  const source = species === 'dog' ? OTC_DOG_FOODS : OTC_LOW_CARB_FOODS;
+  const filtered = source.filter(f => foodSpecies(f) === species);
+  return region ? filtered.filter(f => f.regions.includes(region)) : filtered;
 }
 
-/** Evaluate food suitability based on carbs DM% */
-export function getFoodVerdict(carbsDM: number): 'good' | 'acceptable' | 'bad' {
-  if (carbsDM <= DIABETIC_NUTRITION_GUIDELINES.carbsIdealPercent) return 'good';
-  if (carbsDM <= DIABETIC_NUTRITION_GUIDELINES.carbsMaxPercent) return 'acceptable';
+/**
+ * Evaluate food suitability based on macros.
+ *
+ * For cats: driven by carbs DM% (lower = better, <7% good, <15% acceptable).
+ * For dogs: driven by fat DM% + fiber DM% (low fat to avoid pancreatitis,
+ * high fiber for glycemic control); carbs are less important and moderate
+ * is expected.
+ */
+export function getFoodVerdict(
+  carbsDM: number,
+  species: FoodSpecies = 'cat',
+  fatDM?: number,
+  fiberDM?: number
+): 'good' | 'acceptable' | 'bad' {
+  if (species === 'dog') {
+    const fatOk = fatDM == null || fatDM <= DIABETIC_NUTRITION_GUIDELINES_DOG.fatMaxPercent;
+    const fatIdeal =
+      fatDM != null && fatDM <= DIABETIC_NUTRITION_GUIDELINES_DOG.fatIdealPercent + 2;
+    const fiberOk = fiberDM == null || fiberDM >= DIABETIC_NUTRITION_GUIDELINES_DOG.fiberMinPercent;
+    const fiberIdeal =
+      fiberDM != null && fiberDM >= DIABETIC_NUTRITION_GUIDELINES_DOG.fiberIdealPercent;
+    if (!fatOk) return 'bad'; // pancreatitis risk trumps everything
+    if (fatIdeal && fiberIdeal) return 'good';
+    if (fiberOk) return 'acceptable';
+    return 'bad';
+  }
+  // cat (default)
+  if (carbsDM <= DIABETIC_NUTRITION_GUIDELINES_CAT.carbsIdealPercent) return 'good';
+  if (carbsDM <= DIABETIC_NUTRITION_GUIDELINES_CAT.carbsMaxPercent) return 'acceptable';
   return 'bad';
 }
 

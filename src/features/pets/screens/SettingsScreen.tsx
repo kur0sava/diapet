@@ -57,6 +57,11 @@ export default function SettingsScreen() {
                   storage.delete(StorageKeys.NOTIFICATIONS_ENABLED);
                   storage.delete(StorageKeys.VET_NAME);
                   storage.delete(StorageKeys.VET_PHONE);
+                  // Must clear ACTIVE_SPECIES — ThemeContext falls back to this MMKV
+                  // key when petStore is empty (e.g. on cold start after reset). If
+                  // it lingers, a user who resets from 'dog' then re-onboards as 'cat'
+                  // would briefly see the dog (amber) theme before onboarding picks.
+                  storage.delete(StorageKeys.ACTIVE_SPECIES);
                   storage.delete(StorageKeys.LAST_BACKUP);
                   storage.delete(StorageKeys.BOOKMARKED_ARTICLES);
                   storage.delete(StorageKeys.SUBSCRIPTION_CACHED_PRO);

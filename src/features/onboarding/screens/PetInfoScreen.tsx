@@ -55,7 +55,7 @@ export default function PetInfoScreen() {
   const handleSpeciesSelect = (s: PetSpecies) => {
     setSpecies(s);
     // Immediately switch theme colors via MMKV cache
-    storage.set('activeSpecies', s);
+    storage.set(StorageKeys.ACTIVE_SPECIES, s);
   };
 
   const validate = () => {
