@@ -2,6 +2,7 @@ import { getDatabase } from '../database';
 import { Expense, CreateExpenseDTO } from '@storage/domain/types';
 import { lastDayOfMonth, format } from 'date-fns';
 import uuid from 'react-native-uuid';
+import { todayLocal } from '@shared/utils/dateUtils';
 
 interface ExpenseRow {
   id: string;
@@ -34,7 +35,7 @@ export const expenseRepository = {
         dto.amount,
         dto.currency ?? 'RUB',
         dto.description ?? null,
-        dto.date ?? now.split('T')[0],
+        dto.date ?? todayLocal(),
         now,
         now,
       ]
