@@ -1,6 +1,6 @@
 # DiaPet — Roadmap v3.0: Мульти-animal
 
-> Обновлён: 2026-04-24
+> Обновлён: 2026-04-25
 > Основной план разработки
 
 ---
@@ -8,10 +8,15 @@
 ## ТЕКУЩИЙ СТАТУС
 
 **Ветка**: master | **Версия в сторах**: 2.4.3 (versionCode 15)
-**Версия в коде**: 2.5.0 (versionCode 16) — готова к EAS build
-**Google Play**: v2.4.3 опубликован (v2.5.0 ожидает билд)
-**RuStore**: v2.4.3 опубликован (v2.5.0 ожидает билд)
-**GitHub**: https://github.com/kur0sava/diapet — актуален
+**Версия в коде**: 2.5.0 (versionCode 17) — AAB+APK собраны, ждут upload в консоли
+**Google Play**: v2.4.3 опубликован
+**RuStore**: v2.4.3 опубликован
+**GitHub**: https://github.com/kur0sava/diapet — актуален (HEAD `ebccfd7`)
+
+### EAS-артефакты v2.5.0 (versionCode 17, коммит `f718f96`)
+- AAB (Google Play): https://expo.dev/artifacts/eas/6KbJh75E8LB7sy1QMRaLR5.aab
+- APK (RuStore): https://expo.dev/artifacts/eas/sjzhHt8BSDzqk5y2on4KxC.apk
+- ⚠️ versionCode 16 артефакты (`a4d1fa75` AAB / `edabf442` APK) НЕ выгружать — у них сломана v9 миграция (брикает апгрейд с 2.4.3).
 
 ### v2.5.0 — что вошло (сверх v2.4.3)
 - ЭТАП 15 полностью (мульти-animal, собаки)
@@ -19,15 +24,20 @@
 - Codex review batch 1 (theme reactivity, paywall gating, food DB split, Hill's w/d reclass, FeedGuide species-aware)
 - Codex review batch 2 critical:
   - Bug #1 atomic onboarding (pet-rollback + orphan cleanup в App.tsx init)
+  - Bug #3 UTC date shift (`todayLocal()`/`toDateOnly()` + замена `toISOString().slice(0,10)` в smartAlerts/useMissedInjection/AiAssistantScreen/PetInfoScreen)
+  - Bug #5 миграция v9 (PRAGMA + ALTER TABLE guard перед UPDATE pets.species — иначе апгрейды с 2.4.3 брикало)
   - Bug #6 `ACTIVE_SPECIES` MMKV cleared on reset + константа в StorageKeys
 
-### v2.5.1 backlog (Codex batch 2 deferred)
-- Bug #2 смешанные валюты в food list
-- Bug #3 `toISOString` UTC shift (existing)
-- Bug #4 курсорная пагинация glucose
-- Bug #5 идемпотентность миграции symptoms v8→v9
-- Bug #7 vet contact global → per-pet
-- H8 (hint packs 60/90/180 дней), H10 (Google Auth в онбординге)
+### v2.5.1 — на master, не в стора́х
+- Регрессионный тест миграций (`13bc502`) — ловит UPDATE по non-baseline колонке без guard
+- Bug #3 добивка: `expenseRepository.create` default-дата → `todayLocal()` (`70e6ed6`)
+- Bug #7 per-pet vet contact (`fed6ee8`) — `vetNameKey(petId)`/`vetPhoneKey(petId)` + миграция legacy глобалов в App.tsx + cloudBackup prefix-scan
+- Bug #2 RU price hints показываются только на RU-region screen (`ebccfd7`)
+
+### v2.5.1 — что осталось
+- Bug #4 курсорная пагинация — **уже на месте** (`glucoseRepository.findByPetId/findByPetIdFiltered` курсор-пагинированы с прошлых релизов; `findAllByPetId` остался только для PDF/анализатора/прогноза, где нужна вся история). Codex memo стейл.
+- H8 (hint packs 60/90/180 дней)
+- H10 (Google Auth в онбординге)
 
 ---
 
