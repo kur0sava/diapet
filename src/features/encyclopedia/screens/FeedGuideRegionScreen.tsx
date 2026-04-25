@@ -228,7 +228,7 @@ export default function FeedGuideRegionScreen() {
           </View>
         )}
 
-        {food.priceHint && (
+        {food.priceHint && region === 'RU' && (
           <Text style={[styles.priceHint, { color: theme.colors.textTertiary }]}>
             {food.priceHint}
           </Text>
