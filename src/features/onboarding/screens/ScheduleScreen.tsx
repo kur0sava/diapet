@@ -10,6 +10,37 @@ import { Button } from '@shared/components/ui';
 import { Icon } from '@shared/components/ui/Icon';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { MAX_SCHEDULE_TIMES } from '@storage/domain/types';
+import { storage, StorageKeys } from '@storage/mmkv/storage';
+
+// UX-C4 (audit): persist schedule into ONBOARDING_DRAFT so a user who
+// configured 5 custom times and then got pulled away (call, OOM kill)
+// doesn't lose their work. Lazy-init from MMKV on mount.
+function readDraftTimes(): { injectionTimes?: string[]; feedingTimes?: string[] } {
+  const raw = storage.getString(StorageKeys.ONBOARDING_DRAFT);
+  if (!raw) return {};
+  try {
+    const parsed = JSON.parse(raw);
+    return {
+      injectionTimes: Array.isArray(parsed?.injectionTimes) ? parsed.injectionTimes : undefined,
+      feedingTimes: Array.isArray(parsed?.feedingTimes) ? parsed.feedingTimes : undefined,
+    };
+  } catch {
+    return {};
+  }
+}
+
+function mergeDraft(patch: Record<string, unknown>): void {
+  const raw = storage.getString(StorageKeys.ONBOARDING_DRAFT);
+  let current: Record<string, unknown> = {};
+  if (raw) {
+    try {
+      current = JSON.parse(raw);
+    } catch {
+      /* corrupt — overwrite */
+    }
+  }
+  storage.set(StorageKeys.ONBOARDING_DRAFT, JSON.stringify({ ...current, ...patch }));
+}
 
 export default function ScheduleScreen() {
   const navigation = useOnboardingNavigation();
@@ -18,8 +49,13 @@ export default function ScheduleScreen() {
   const { theme } = useTheme();
   const petData = route.params?.petData ?? {};
 
-  const [injectionTimes, setInjectionTimes] = useState<string[]>(['08:00', '20:00']);
-  const [feedingTimes, setFeedingTimes] = useState<string[]>(['08:00', '20:00']);
+  const draft = readDraftTimes();
+  const [injectionTimes, setInjectionTimes] = useState<string[]>(
+    draft.injectionTimes ?? ['08:00', '20:00']
+  );
+  const [feedingTimes, setFeedingTimes] = useState<string[]>(
+    draft.feedingTimes ?? ['08:00', '20:00']
+  );
   const [showPicker, setShowPicker] = useState<{
     type: 'injection' | 'feeding';
     index: number;
@@ -65,6 +101,7 @@ export default function ScheduleScreen() {
   };
 
   const handleContinue = () => {
+    mergeDraft({ injectionTimes, feedingTimes });
     navigation.navigate('VetContact', {
       petData,
       injectionTimes,

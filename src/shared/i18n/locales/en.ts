@@ -827,6 +827,10 @@ export const en = {
       activeDesc_plural: '{{count}} days left — then continue with a plan below.',
       expiredTitle: 'Your free trial has ended',
       expiredDesc: 'Subscribe to keep unlimited pets, AI and PDF export.',
+      confirmTitle: 'Start {{days}}-day free trial?',
+      confirmBody:
+        "You'll get {{days}} days of full Pro access. The trial starts now and can't be paused — start it when you're ready to use Pro features daily.",
+      confirmCta: 'Start trial',
       bannerActiveTitle: 'Pro trial — {{count}} day left',
       bannerActiveTitle_plural: 'Pro trial — {{count}} days left',
       bannerActiveDesc: 'Enjoy the full app, free.',
