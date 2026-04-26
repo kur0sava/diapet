@@ -51,6 +51,21 @@ describe('migration upgrade paths', () => {
       }
     }
   });
+
+  it('migration versions are dense and start at 1', () => {
+    // Audit §7.1 hardening: runMigrations skips by version-greater-than-current,
+    // so a missing version (e.g. someone deletes v5) silently breaks upgraders
+    // already on v4 — they jump straight to v6. Catch the gap at test time.
+    const versions = extractMigrationVersions(migrationsSource);
+    expect(versions[0]).toBe(1);
+    for (let i = 1; i < versions.length; i++) {
+      if (versions[i] !== versions[i - 1] + 1) {
+        throw new Error(
+          `Migration version sequence has a gap: v${versions[i - 1]} → v${versions[i]}. Versions must be dense.`
+        );
+      }
+    }
+  });
 });
 
 /**

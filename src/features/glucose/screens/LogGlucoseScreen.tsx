@@ -376,14 +376,18 @@ export default function LogGlucoseScreen() {
                   ]}
                   onPress={() => {
                     if (u === unit) return;
-                    // UX-001: Convert value when switching units
+                    // UX-001: Convert value when switching units.
+                    // UX-L4 (audit): only convert when the result rounds to
+                    // a usable value — switching mmol → mg/dL with 0.001
+                    // mmol would give "0", a forbidden state. Leave the
+                    // input cleared in that case so the user re-types.
                     const num = parseFloat(value.replace(',', '.'));
                     if (!isNaN(num) && num > 0) {
                       const converted =
                         u === 'mg/dL'
                           ? (num * MGDL_PER_MMOLL).toFixed(0)
                           : (num / MGDL_PER_MMOLL).toFixed(1);
-                      setValue(converted);
+                      setValue(parseFloat(converted) > 0 ? converted : '');
                     }
                     setUnit(u);
                     storage.set(StorageKeys.GLUCOSE_UNIT, u);

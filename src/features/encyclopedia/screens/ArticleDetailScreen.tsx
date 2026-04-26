@@ -226,7 +226,18 @@ export default function ArticleDetailScreen() {
         <Text style={[styles.headerTitle, { color: theme.colors.text }]} numberOfLines={1}>
           {t('encyclopedia.title')}
         </Text>
-        <TouchableOpacity onPress={toggleBookmark} style={styles.bookmarkButton}>
+        <TouchableOpacity
+          onPress={toggleBookmark}
+          style={styles.bookmarkButton}
+          accessibilityRole="button"
+          accessibilityLabel={
+            isBookmarked
+              ? t('encyclopedia.removeBookmark', { defaultValue: 'Remove bookmark' })
+              : t('encyclopedia.addBookmark', { defaultValue: 'Add bookmark' })
+          }
+          accessibilityState={{ selected: isBookmarked }}
+          hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
+        >
           <Icon
             name={isBookmarked ? 'star' : 'star-outline'}
             size={24}

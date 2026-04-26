@@ -104,7 +104,7 @@ export default function AddSymptomScreen() {
   const pickPhoto = useCallback(async () => {
     const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (!permission.granted) {
-      Alert.alert(t('symptoms.noGalleryAccess'));
+      Alert.alert(t('common.error'), t('symptoms.noGalleryAccess'));
       return;
     }
     const result = await ImagePicker.launchImageLibraryAsync({
@@ -132,7 +132,7 @@ export default function AddSymptomScreen() {
   const takePhoto = useCallback(async () => {
     const permission = await ImagePicker.requestCameraPermissionsAsync();
     if (!permission.granted) {
-      Alert.alert(t('symptoms.noCameraAccess'));
+      Alert.alert(t('common.error'), t('symptoms.noCameraAccess'));
       return;
     }
     const result = await ImagePicker.launchCameraAsync({ quality: 0.6, exif: false });
@@ -148,7 +148,7 @@ export default function AddSymptomScreen() {
   const handleSave = useCallback(async () => {
     if (savingRef.current || !activePet) return;
     if (selectedTypes.length === 0) {
-      Alert.alert(t('symptoms.selectAtLeastOne'));
+      Alert.alert(t('common.error'), t('symptoms.selectAtLeastOne'));
       return;
     }
     savingRef.current = true;
