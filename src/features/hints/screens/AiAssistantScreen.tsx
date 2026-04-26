@@ -20,11 +20,10 @@ import { useNavigation } from '@react-navigation/native';
 import { useRootNavigation } from '@navigation/hooks';
 import { useSubscription } from '@features/subscription/hooks/useSubscription';
 import { usePetStore } from '@shared/stores/petStore';
-import { isBackendConfigured } from '@shared/stores/subscriptionStore';
 import { storage, StorageKeys, storageUtils } from '@storage/mmkv/storage';
 import { glucoseRepository, injectionRepository, scheduleRepository } from '@storage/database';
 import { buildAiSystemPrompt, AiPetContext } from '../data/aiSystemPrompt';
-import { sendChatMessage, ChatMessage } from '../utils/aiClient';
+import { sendChatMessage, ChatMessage, isAiConfigured } from '../utils/aiClient';
 import { differenceInDays } from 'date-fns';
 import { parseDateOnly, todayLocal } from '@shared/utils/dateUtils';
 
@@ -315,7 +314,12 @@ export default function AiAssistantScreen() {
       </LinearGradient>
 
       {/* Body */}
-      {!isBackendConfigured() ? (
+      {/*
+       * AI Assistant uses the Anthropic API directly via aiClient — payment-backend
+       * configuration (Supabase) is unrelated. Show ComingSoonGate only when the
+       * Anthropic key isn't bundled (dev/local-without-key scenarios).
+       */}
+      {!isAiConfigured() ? (
         <ComingSoonGate theme={theme} t={t} />
       ) : !isPro ? (
         <ProGate theme={theme} t={t} onUpgrade={() => rootNavigation.navigate('Paywall')} />
