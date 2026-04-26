@@ -58,6 +58,9 @@ export default function LogFeedingScreen() {
   const highCarbsThreshold = getSpeciesConfig(activePet?.species ?? 'cat').nutrition
     .highCarbsThreshold;
   const queryClient = useQueryClient();
+  // UX-C2 (audit): pin pet at mount — feeding misattribution still distorts
+  // analytics for the wrong pet.
+  const petIdRef = useRef<string | undefined>(activePet?.id);
 
   const [foodType, setFoodType] = useState<string>('dry');
   const [amount, setAmount] = useState('');
@@ -117,8 +120,13 @@ export default function LogFeedingScreen() {
 
   const handleSave = useCallback(async () => {
     if (savingRef.current) return;
-    if (!activePet) {
+    const targetPetId = petIdRef.current;
+    if (!targetPetId) {
       Alert.alert(t('common.error'), t('glucose.petNotFound'));
+      return;
+    }
+    if (usePetStore.getState().activePet?.id !== targetPetId) {
+      Alert.alert(t('common.error'), t('feeding.petChangedDuringEntry'));
       return;
     }
 
@@ -157,7 +165,7 @@ export default function LogFeedingScreen() {
     setLoading(true);
     try {
       await feedingRepository.create({
-        petId: activePet.id,
+        petId: targetPetId,
         foodType: foodType || undefined,
         amountGrams: amount ? parseFloat(amount.replace(',', '.')) : undefined,
         notes: notes || undefined,

@@ -81,14 +81,20 @@ export default function EditPetScreen() {
   const handleSave = async () => {
     if (savingRef.current || !activePet) return;
     if (!name.trim()) {
-      Alert.alert(t('pets.enterName'));
+      Alert.alert(t('common.error'), t('pets.enterName'));
       return;
     }
-    // Validate weight: if provided, must be positive
-    if (weightKg) {
-      const parsedWeight = parseFloat(weightKg.replace(',', '.'));
+    // Validate weight: if provided (non-empty AND non-zero), must be positive.
+    // BUG-M005 (audit): "0" / "0.0" was rejected silently — instead treat
+    // it as "no weight provided" and clear the field, so the user isn't
+    // blocked by a value they typed but don't want.
+    const weightTrimmed = weightKg.trim();
+    if (weightTrimmed) {
+      const parsedWeight = parseFloat(weightTrimmed.replace(',', '.'));
       const maxWeight = getSpeciesConfig(activePet.species).validation.maxWeightKg;
-      if (isNaN(parsedWeight) || parsedWeight <= 0 || parsedWeight > maxWeight) {
+      if (parsedWeight === 0) {
+        // treat as cleared
+      } else if (isNaN(parsedWeight) || parsedWeight < 0 || parsedWeight > maxWeight) {
         Alert.alert(t('common.error'), t('pets.invalidWeight'));
         return;
       }
@@ -110,9 +116,10 @@ export default function EditPetScreen() {
     savingRef.current = true;
     setLoading(true);
     try {
+      const parsedWeight = weightTrimmed ? parseFloat(weightTrimmed.replace(',', '.')) : NaN;
       await petRepository.update(activePet.id, {
         name: name.trim(),
-        weightKg: weightKg ? parseFloat(weightKg.replace(',', '.')) : undefined,
+        weightKg: parsedWeight > 0 ? parsedWeight : undefined,
         insulinType: insulinType || undefined,
       });
       if (vetName) {

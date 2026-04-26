@@ -211,6 +211,8 @@ export const en = {
     chartOutOfRange: 'Out of range',
     saveError: 'Failed to save data',
     petNotFound: 'Pet not found',
+    petChangedDuringEntry:
+      'The active pet changed while you were entering data. Please verify and save again.',
     invalidValue: 'Enter a valid glucose value',
     highDoseWarning: 'Unusually high dose',
     highDoseWarningDesc:
@@ -251,6 +253,8 @@ export const en = {
     doseError: 'Enter insulin dose',
     typeError: 'Specify insulin type',
     saveError: 'Failed to save',
+    petChangedDuringEntry:
+      'The active pet changed while you were entering the dose. Please verify and save again.',
     notesPlaceholder: 'Optional...',
     commonInsulins: [
       'Protaphane',
@@ -293,6 +297,8 @@ export const en = {
     catNatural: 'Natural',
     saveError: 'Failed to save data',
     amountError: 'Enter a valid amount (greater than 0)',
+    petChangedDuringEntry:
+      'The active pet changed while you were entering data. Please verify and save again.',
     history: 'Feeding History',
     noHistory: 'No feedings recorded yet',
     amountChart: 'Amounts (last 14 days)',

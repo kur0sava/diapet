@@ -18,6 +18,7 @@ import { useAuthStore } from '../stores/authStore';
 import { backupToCloud, restoreFromCloud, hasCloudBackup } from '../utils/cloudBackup';
 import { usePetStore } from '@shared/stores/petStore';
 import { useQueryClient } from '@tanstack/react-query';
+import { formatFullDateTime } from '@shared/utils/dateUtils';
 
 export default function AccountScreen() {
   const { t } = useTranslation();
@@ -105,13 +106,11 @@ export default function AccountScreen() {
     ]);
   };
 
-  const formatBackupDate = (iso: string) => {
-    try {
-      return new Date(iso).toLocaleString();
-    } catch {
-      return iso;
-    }
-  };
+  // BUG-M009 (audit): toLocaleString() honors the device locale, not the
+  // app's i18n language. A RU user with EN-locale device saw American date
+  // format. Use the app's date helper so the format follows the in-app
+  // language switch.
+  const formatBackupDate = (iso: string) => formatFullDateTime(iso);
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.background }]}>

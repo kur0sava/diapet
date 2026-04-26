@@ -32,6 +32,15 @@ export default function NotificationsScreen() {
 
   const handleFinish = async (enableNotifications: boolean) => {
     if (savingRef.current) return;
+    // BUG-M003 (audit): if route.params is missing (deep-link / state restore
+    // edge case), petData is undefined and `petData.name` would throw inside
+    // the try block, producing a generic "savingError" Alert with no path
+    // forward. Recover by routing back to PetInfo so the user can re-enter.
+    if (!petData) {
+      Alert.alert(t('common.error'), t('onboarding.savingError'));
+      navigation.navigate('PetInfo');
+      return;
+    }
     savingRef.current = true;
     setLoading(true);
     // Step 1: persist pet + schedules. If any DB op fails, roll back the pet
