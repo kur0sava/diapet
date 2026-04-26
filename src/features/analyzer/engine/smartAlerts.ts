@@ -5,6 +5,7 @@
 import { storage } from '@storage/mmkv/storage';
 import { GlucoseReading } from '@storage/domain/types';
 import { todayLocal } from '@shared/utils/dateUtils';
+import type { SpeciesConfig } from '@shared/config/speciesConfig';
 import { TrendResult } from './trendEngine';
 import { RiskScoreResult } from './riskScoreCalculator';
 import { DetectedPattern } from './patternDetector';
@@ -110,20 +111,28 @@ export function generateSmartAlerts(
   riskScore: RiskScoreResult,
   patterns: DetectedPattern[],
   readings: GlucoseReading[],
-  now = new Date()
+  now = new Date(),
+  config?: SpeciesConfig
 ): SmartAlert | null {
   // Priority-ordered alert candidates
   const candidates: SmartAlert[] = [];
 
-  // Glucose low streak — 3+ days under 6 mmol/L
-  if (trends.movingAverage3d !== null && trends.movingAverage3d < 6 && trends.totalReadings >= 5) {
+  // Species-aware low-streak threshold: trips just below the lower target,
+  // not arbitrarily 6 mmol/L. Cat target 4-9 → trips at <4.0; dog target
+  // 4.4-8 → trips at <4.4. Hardcoded 6 produced false-positive "dose too
+  // high" alerts at well-controlled dog values (avg ~5 mmol/L).
+  const lowStreakThreshold = config?.glucose.targetLow ?? 4.0;
+  if (
+    trends.movingAverage3d !== null &&
+    trends.movingAverage3d < lowStreakThreshold &&
+    trends.totalReadings >= 5
+  ) {
     candidates.push({
       type: 'glucose_low_streak',
       titleRu: 'Низкий уровень глюкозы',
       titleEn: 'Low glucose level',
-      bodyRu:
-        'Глюкоза 3 дня подряд ниже 6 ммоль/л — возможно, доза высока. Обсудите с ветеринаром.',
-      bodyEn: 'Glucose below 6 mmol/L for 3 days — dose may be too high. Discuss with your vet.',
+      bodyRu: `Средняя глюкоза за 3 дня ниже ${lowStreakThreshold} ммоль/л — возможно, доза высока. Обсудите с ветеринаром.`,
+      bodyEn: `3-day glucose average below ${lowStreakThreshold} mmol/L — dose may be too high. Discuss with your vet.`,
       priority: 'high',
     });
   }

@@ -4,6 +4,7 @@
  */
 import { GlucoseReading, InjectionLog, FeedingLog, SymptomEntry } from '@storage/domain/types';
 import type { SpeciesConfig } from '@shared/config/speciesConfig';
+import { toDateOnly } from '@shared/utils/dateUtils';
 import { analyzeTrends, type TrendResult } from './trendEngine';
 
 export type RiskLevel = 'excellent' | 'good' | 'attention' | 'danger';
@@ -123,10 +124,13 @@ function scoreFeedingRegularity(feedings: FeedingLog[]): FactorScore {
     score = 50;
     detail = 'Insufficient feeding data';
   } else {
-    // Group by date, count feedings per day
+    // Group by date, count feedings per day. Use local-timezone date —
+    // f.fedAt is a UTC ISO string and slice(0,10) would shift evening
+    // feedings east of UTC into the next day, splitting one day across
+    // two buckets and inflating stddev (false "irregular" score).
     const byDay = new Map<string, number>();
     feedings.forEach(f => {
-      const day = f.fedAt.slice(0, 10);
+      const day = toDateOnly(new Date(f.fedAt));
       byDay.set(day, (byDay.get(day) ?? 0) + 1);
     });
 

@@ -25,7 +25,7 @@ import { glucoseRepository, injectionRepository, scheduleRepository } from '@sto
 import { buildAiSystemPrompt, AiPetContext } from '../data/aiSystemPrompt';
 import { sendChatMessage, ChatMessage, isAiConfigured } from '../utils/aiClient';
 import { differenceInDays } from 'date-fns';
-import { parseDateOnly, todayLocal } from '@shared/utils/dateUtils';
+import { parseDateOnly, todayLocal, toDateOnly } from '@shared/utils/dateUtils';
 
 const MAX_HISTORY = 50;
 const MAX_API_CONTEXT = 15;
@@ -103,7 +103,10 @@ export default function AiAssistantScreen() {
       const lastGlucoseReadings = glucoseResult.data.map(r => ({
         value: r.valueMmol,
         unit: 'mmol/L',
-        date: r.recordedAt.slice(0, 10),
+        // Local date — slice(0,10) on the UTC ISO would give the wrong
+        // calendar day for users east/west of UTC near midnight, which
+        // confuses Claude when it reasons about "today" / "yesterday".
+        date: toDateOnly(new Date(r.recordedAt)),
       }));
 
       const daysSinceDiagnosis = activePet.diagnosisDate
