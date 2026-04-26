@@ -143,7 +143,12 @@ export default function MoreMenuScreen() {
               <Icon name="paw" size={28} color="#fff" />
             </View>
             <View style={styles.petInfo}>
-              <Text style={[styles.petName, { fontFamily: theme.fonts.bold }]}>
+              <Text
+                style={[styles.petName, { fontFamily: theme.fonts.bold }]}
+                numberOfLines={1}
+                adjustsFontSizeToFit
+                minimumFontScale={0.7}
+              >
                 {activePet.name}
               </Text>
               <Text style={styles.petDetails} numberOfLines={2}>

@@ -1,5 +1,13 @@
 import React from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity, Alert, ActivityIndicator } from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  FlatList,
+  TouchableOpacity,
+  Alert,
+  ActivityIndicator,
+} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Icon } from '@shared/components/ui/Icon';
 import { useSymptomsNavigation } from '@navigation/hooks';
@@ -21,19 +29,14 @@ export default function SymptomsListScreen() {
   const activePet = usePetStore(s => s.activePet);
   const queryClient = useQueryClient();
 
-  const {
-    data,
-    hasNextPage,
-    fetchNextPage,
-    isFetchingNextPage,
-  } = useInfiniteQuery({
+  const { data, hasNextPage, fetchNextPage, isFetchingNextPage } = useInfiniteQuery({
     queryKey: queryKeys.symptoms.list(activePet?.id ?? ''),
     queryFn: ({ pageParam }) =>
       activePet
         ? symptomRepository.findByPetId(activePet.id, 50, pageParam)
         : Promise.resolve({ data: [], nextCursor: null }),
     initialPageParam: undefined as string | undefined,
-    getNextPageParam: (lastPage) => lastPage.nextCursor ?? undefined,
+    getNextPageParam: lastPage => lastPage.nextCursor ?? undefined,
     enabled: !!activePet?.id,
   });
 
@@ -58,14 +61,18 @@ export default function SymptomsListScreen() {
       : '';
     Alert.alert(t('symptoms.deleteConfirm'), info || undefined, [
       { text: t('common.cancel'), style: 'cancel' },
-      { text: t('common.delete'), style: 'destructive', onPress: async () => {
-        try {
-          await symptomRepository.delete(id);
-          queryClient.invalidateQueries({ queryKey: queryKeys.symptoms.all });
-        } catch {
-          Alert.alert(t('common.error'));
-        }
-      }},
+      {
+        text: t('common.delete'),
+        style: 'destructive',
+        onPress: async () => {
+          try {
+            await symptomRepository.delete(id);
+            queryClient.invalidateQueries({ queryKey: queryKeys.symptoms.all });
+          } catch {
+            Alert.alert(t('common.error'));
+          }
+        },
+      },
     ]);
   };
 
@@ -80,7 +87,13 @@ export default function SymptomsListScreen() {
           <View style={styles.cardHeader}>
             <View style={styles.iconsRow}>
               {item.symptomTypes.slice(0, 4).map(type => (
-                <Icon key={type} name={SYMPTOM_ICONS[type]} size={18} color={theme.colors.textSecondary} style={{ marginRight: 4 }} />
+                <Icon
+                  key={type}
+                  name={SYMPTOM_ICONS[type]}
+                  size={18}
+                  color={theme.colors.textSecondary}
+                  style={{ marginRight: 4 }}
+                />
               ))}
               {item.symptomTypes.length > 4 && (
                 <Text style={[styles.moreCount, { color: theme.colors.textSecondary }]}>
@@ -88,18 +101,42 @@ export default function SymptomsListScreen() {
                 </Text>
               )}
             </View>
-            <View style={[styles.severityBadge, { backgroundColor: `${severityColors[item.severity]}20` }]}>
-              <Text style={[styles.severityText, { color: severityColors[item.severity], fontFamily: theme.fonts.bold }]}>
+            <View
+              style={[
+                styles.severityBadge,
+                { backgroundColor: `${severityColors[item.severity]}20` },
+              ]}
+            >
+              <Text
+                style={[
+                  styles.severityText,
+                  { color: severityColors[item.severity], fontFamily: theme.fonts.bold },
+                ]}
+              >
                 {severityLabels[item.severity]}
               </Text>
             </View>
           </View>
-          <Text style={[styles.symptomsText, { color: theme.colors.text, fontFamily: theme.fonts.bold }]} numberOfLines={2}>
+          <Text
+            style={[
+              styles.symptomsText,
+              { color: theme.colors.text, fontFamily: theme.fonts.bold },
+            ]}
+            numberOfLines={2}
+          >
             {item.symptomTypes.map(s => t(`symptoms.types.${s}`)).join(', ')}
           </Text>
-          <Text style={[styles.date, { color: theme.colors.textSecondary }]}>{formatDateTime(item.recordedAt)}</Text>
-          {item.notes && <Text style={[styles.notes, { color: theme.colors.textTertiary }]} numberOfLines={2}>{item.notes}</Text>}
-          <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+          <Text style={[styles.date, { color: theme.colors.textSecondary }]}>
+            {formatDateTime(item.recordedAt)}
+          </Text>
+          {item.notes && (
+            <Text style={[styles.notes, { color: theme.colors.textTertiary }]} numberOfLines={2}>
+              {item.notes}
+            </Text>
+          )}
+          <View
+            style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}
+          >
             {item.photoUris.length > 0 ? (
               <View style={styles.photosRow}>
                 <Icon name="camera-outline" size={15} color={theme.colors.primary} />
@@ -107,8 +144,13 @@ export default function SymptomsListScreen() {
                   {item.photoUris.length} {t('symptoms.photos')}
                 </Text>
               </View>
-            ) : <View />}
-            <TouchableOpacity onPress={() => handleDelete(item.id)} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
+            ) : (
+              <View />
+            )}
+            <TouchableOpacity
+              onPress={() => handleDelete(item.id)}
+              hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
+            >
               <Icon name="trash-outline" size={18} color={theme.colors.danger} />
             </TouchableOpacity>
           </View>
@@ -129,15 +171,25 @@ export default function SymptomsListScreen() {
         ListHeaderComponent={
           <>
             <TouchableOpacity
-              style={[styles.assessmentBanner, { backgroundColor: theme.colors.surface, ...theme.shadows.sm }]}
+              style={[
+                styles.assessmentBanner,
+                { backgroundColor: theme.colors.surface, ...theme.shadows.sm },
+              ]}
               onPress={() => navigation.navigate('Assessment')}
               activeOpacity={0.8}
             >
-              <View style={[styles.assessmentIcon, { backgroundColor: `${theme.colors.success}20` }]}>
+              <View
+                style={[styles.assessmentIcon, { backgroundColor: `${theme.colors.success}20` }]}
+              >
                 <Icon name="fitness-outline" size={22} color={theme.colors.success} />
               </View>
               <View style={{ flex: 1 }}>
-                <Text style={[styles.assessmentTitle, { color: theme.colors.text, fontFamily: theme.fonts.semibold }]}>
+                <Text
+                  style={[
+                    styles.assessmentTitle,
+                    { color: theme.colors.text, fontFamily: theme.fonts.semibold },
+                  ]}
+                >
                   {t('symptoms.takeAssessment')}
                 </Text>
                 <Text style={[styles.assessmentSub, { color: theme.colors.textSecondary }]}>
@@ -147,13 +199,19 @@ export default function SymptomsListScreen() {
               <Icon name="chevron-forward" size={18} color={theme.colors.textTertiary} />
             </TouchableOpacity>
             {symptoms.length > 0 && (
-              <Text style={[styles.hintText, { color: theme.colors.textTertiary }]}>{t('common.longPressToDelete')}</Text>
+              <Text style={[styles.hintText, { color: theme.colors.textTertiary }]}>
+                {t('common.longPressToDelete')}
+              </Text>
             )}
           </>
         }
         ListFooterComponent={
           isFetchingNextPage ? (
-            <ActivityIndicator style={styles.loadingFooter} size="small" color={theme.colors.primary} />
+            <ActivityIndicator
+              style={styles.loadingFooter}
+              size="small"
+              color={theme.colors.primary}
+            />
           ) : null
         }
         ListEmptyComponent={
@@ -192,11 +250,38 @@ const styles = StyleSheet.create({
   notes: { fontSize: 13 },
   photosRow: { flexDirection: 'row', alignItems: 'center', gap: 4 },
   photos: { fontSize: 13, fontWeight: '500' },
-  assessmentBanner: { flexDirection: 'row', alignItems: 'center', gap: 12, padding: 14, borderRadius: 16, marginBottom: 12 },
-  assessmentIcon: { width: 40, height: 40, borderRadius: 20, alignItems: 'center', justifyContent: 'center' },
+  assessmentBanner: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    padding: 14,
+    borderRadius: 16,
+    marginBottom: 12,
+  },
+  assessmentIcon: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   assessmentTitle: { fontSize: 14 },
   assessmentSub: { fontSize: 12, marginTop: 2 },
-  fab: { position: 'absolute', bottom: 24, right: 20, width: 56, height: 56, borderRadius: 28, alignItems: 'center', justifyContent: 'center', elevation: 6, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.2, shadowRadius: 4 },
+  fab: {
+    position: 'absolute',
+    bottom: 24,
+    right: 20,
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    alignItems: 'center',
+    justifyContent: 'center',
+    elevation: 6,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+  },
   loadingFooter: { paddingVertical: 16 },
   hintText: { fontSize: 12, textAlign: 'center', marginBottom: 8 },
 });
