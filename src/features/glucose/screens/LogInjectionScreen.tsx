@@ -94,7 +94,6 @@ export default function LogInjectionScreen() {
       setLoading(false);
     }
   }, [
-    activePet,
     dose,
     insulinType,
     notes,

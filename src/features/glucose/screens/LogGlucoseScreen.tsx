@@ -248,7 +248,6 @@ export default function LogGlucoseScreen() {
       setLoading(false);
     }
   }, [
-    activePet,
     numValue,
     unit,
     mealRelation,

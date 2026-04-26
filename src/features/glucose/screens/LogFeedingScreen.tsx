@@ -193,7 +193,6 @@ export default function LogFeedingScreen() {
       setLoading(false);
     }
   }, [
-    activePet,
     foodType,
     amount,
     notes,
