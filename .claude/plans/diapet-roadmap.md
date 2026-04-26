@@ -1,43 +1,59 @@
 # DiaPet — Roadmap v3.0: Мульти-animal
 
-> Обновлён: 2026-04-25
+> Обновлён: 2026-04-26
 > Основной план разработки
 
 ---
 
 ## ТЕКУЩИЙ СТАТУС
 
-**Ветка**: master | **Версия в сторах**: 2.4.3 (versionCode 15)
-**Версия в коде**: 2.5.0 (versionCode 17) — AAB+APK собраны, ждут upload в консоли
+**Ветка**: `v2.5.1/audit-fixes` (10 коммитов поверх master, готова к merge)
+**Версия в сторах**: 2.4.3 (versionCode 15)
+**Версия в коде**: 2.5.0 (versionCode 17) — НЕ бампим (в стораx 2.4.3, прыгать через 2.5.1 нет смысла)
 **Google Play**: v2.4.3 опубликован
 **RuStore**: v2.4.3 опубликован
-**GitHub**: https://github.com/kur0sava/diapet — актуален (HEAD `ebccfd7`)
+**GitHub**: https://github.com/kur0sava/diapet
 
-### EAS-артефакты v2.5.0 (versionCode 17, коммит `f718f96`)
-- AAB (Google Play): https://expo.dev/artifacts/eas/6KbJh75E8LB7sy1QMRaLR5.aab
-- APK (RuStore): https://expo.dev/artifacts/eas/sjzhHt8BSDzqk5y2on4KxC.apk
-- ⚠️ versionCode 16 артефакты (`a4d1fa75` AAB / `edabf442` APK) НЕ выгружать — у них сломана v9 миграция (брикает апгрейд с 2.4.3).
+### Старые EAS-артефакты v2.5.0 (commit `f718f96`) — НЕ ВЫГРУЖАТЬ
+- AAB: https://expo.dev/artifacts/eas/6KbJh75E8LB7sy1QMRaLR5.aab
+- APK: https://expo.dev/artifacts/eas/sjzhHt8BSDzqk5y2on4KxC.apk
+- Устарели на 14 коммитов (4 v2.5.1 batch + 10 audit-fixes). Будут заменены свежей сборкой.
+- ⚠️ versionCode 16 (`a4d1fa75` / `edabf442`) НЕ выгружать никогда — broken v9 migration.
 
-### v2.5.0 — что вошло (сверх v2.4.3)
-- ЭТАП 15 полностью (мульти-animal, собаки)
-- H1–H7, H9 business-audit
-- Codex review batch 1 (theme reactivity, paywall gating, food DB split, Hill's w/d reclass, FeedGuide species-aware)
-- Codex review batch 2 critical:
-  - Bug #1 atomic onboarding (pet-rollback + orphan cleanup в App.tsx init)
-  - Bug #3 UTC date shift (`todayLocal()`/`toDateOnly()` + замена `toISOString().slice(0,10)` в smartAlerts/useMissedInjection/AiAssistantScreen/PetInfoScreen)
-  - Bug #5 миграция v9 (PRAGMA + ALTER TABLE guard перед UPDATE pets.species — иначе апгрейды с 2.4.3 брикало)
-  - Bug #6 `ACTIVE_SPECIES` MMKV cleared on reset + константа в StorageKeys
+### v2.5.0 — что вошло (полный список — см. `project_v250_release.md` в memory)
+- ЭТАП 15 (multi-animal: собаки) + H1-H7, H9 business-audit
+- Codex review batch 1+2 (theme/paywall/food DB/Bug #1/#3/#5/#6)
+- v2.5.1 batch (Bug #2/#7 + expense + regression test) — теперь часть v2.5.0
+- **Большой аудит-цикл (10 коммитов на `v2.5.1/audit-fixes`)** — закрыто 8 BLOCKER + 9 HIGH + 16 MEDIUM + 6 LOW:
+  - **Batch 1** `4e5007f` — B1 AI gate, B2 Caninsulin storage, B8 fructosamine, H6 Sonnet 4.6, M5 expense date
+  - **Batch 2** `d02708a` — B3 species-aware alerts, B6 RU notes leak, H3-H5/H7 UTC + vet keys + safetyGuard
+  - **Batch 3** `c2bb5ff` — B5 Emergency, B7+H9 trial atomic, B4 cloudBackup, App.tsx orphan recovery, UX-C3/M6/M1/H3
+  - **Batch 4** `b7b865c` — H1+H2 multi-pet notifications + race guard, AI errors transient, H8 trial bypass, permission denial
+  - **Batch 5** `36b7c04` — M4 FeedCalculator JSX, dog-hypo conversion ≈, ketone testing
+  - **Batch 6** `5addf82` — hitSlop a11y x7, MoreMenu pet name overflow
+  - **Batch 7** `4b4f6c8` — UX-C2 petIdRef в Log* screens (medical safety), M003/M005/M008/M009
+  - **Batch 8** `0f10bbf` — UX-C4 onboarding draft (Schedule/Vet), trial confirm, subscribe Haptics
+  - **Batch 9** `eb6b0b2` — a11y bookmark, alert titles, dense-version test
+- **Multi-pet UI feature** `b77bdb7` — AddPet wizard (3 step) + PetPickerSheet + canAddPet gate (закрыт UX-C1)
 
-### v2.5.1 — на master, не в стора́х
-- Регрессионный тест миграций (`13bc502`) — ловит UPDATE по non-baseline колонке без guard
-- Bug #3 добивка: `expenseRepository.create` default-дата → `todayLocal()` (`70e6ed6`)
-- Bug #7 per-pet vet contact (`fed6ee8`) — `vetNameKey(petId)`/`vetPhoneKey(petId)` + миграция legacy глобалов в App.tsx + cloudBackup prefix-scan
-- Bug #2 RU price hints показываются только на RU-region screen (`ebccfd7`)
-
-### v2.5.1 — что осталось
-- Bug #4 курсорная пагинация — **уже на месте** (`glucoseRepository.findByPetId/findByPetIdFiltered` курсор-пагинированы с прошлых релизов; `findAllByPetId` остался только для PDF/анализатора/прогноза, где нужна вся история). Codex memo стейл.
+### Что ОСТАЁТСЯ (v2.6 / future)
 - H8 (hint packs 60/90/180 дней)
 - H10 (Google Auth в онбординге)
+- Per-pet hint state (`HINTS_INJECTION_COUNT_<petId>` etc.) — global counters делятся между петами
+- AddPet draft persistence (если убит на step 2, всё теряется)
+- backendBypass kill-switch / cutover plan для ЭТАП 13
+- Multi-pet удаление через UI (пока через PetProfile/EditPet)
+- ЭТАП 13A-D Monetization (Prodamus + Supabase + AdMob) — нужны creds
+- ЭТАП 14 Bluetooth/widgets
+
+### Перед EAS rebuild — финальный чек-лист
+- [x] TSC чисто (`npx tsc --noEmit`)
+- [x] jest 51/51
+- [ ] Lint clean (eslint hooks уже прогоняются в pre-commit, но прогнать на всю кодбазу)
+- [ ] git status чистый, leftover файлов нет
+- [ ] Merge `v2.5.1/audit-fixes` → master
+- [ ] EAS production AAB
+- [ ] EAS rustore APK
 
 ---
 
