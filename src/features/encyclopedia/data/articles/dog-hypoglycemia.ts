@@ -15,7 +15,7 @@ export const dogHypoglycemia: Article = {
 
 ## Что это?
 
-Гипогликемия — это опасное падение уровня глюкозы в крови ниже нормы. У собак это обычно глюкоза **ниже 3.3 ммоль/л (60 мг/дл)**, а экстренная ситуация — **ниже 2.2 ммоль/л (40 мг/дл)**.
+Гипогликемия — это опасное падение уровня глюкозы в крови ниже нормы. У собак это обычно глюкоза **ниже 3.3 ммоль/л (≈60 мг/дл)**, а экстренная ситуация — **ниже 2.2 ммоль/л (≈40 мг/дл)**.
 
 ## Причины
 
@@ -79,7 +79,7 @@ export const dogHypoglycemia: Article = {
 
 ## What is it?
 
-Hypoglycemia is a dangerous drop in blood glucose below normal levels. In dogs, this is usually glucose **below 3.3 mmol/L (60 mg/dL)**, and an emergency is **below 2.2 mmol/L (40 mg/dL)**.
+Hypoglycemia is a dangerous drop in blood glucose below normal levels. In dogs, this is usually glucose **below 3.3 mmol/L (≈60 mg/dL)**, and an emergency is **below 2.2 mmol/L (≈40 mg/dL)**.
 
 ## Causes
 
