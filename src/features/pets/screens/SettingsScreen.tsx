@@ -18,11 +18,14 @@ import { CommonActions } from '@react-navigation/native';
 export default function SettingsScreen() {
   const navigation = useMoreNavigation();
   const rootNavigation = useRootNavigation();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { theme, colorScheme, setColorScheme } = useTheme();
   const queryClient = useQueryClient();
 
-  const currentLanguage = storage.getString(StorageKeys.LANGUAGE) ?? 'ru';
+  // UX-M6 (audit): subscribe to i18n.language so the active-language pill
+  // updates immediately when the user taps the other language. Reading from
+  // MMKV at mount only would leave both pills inactive after a switch.
+  const currentLanguage = i18n.language?.startsWith('ru') ? 'ru' : 'en';
   const [glucoseUnit, setGlucoseUnit] = useState(
     () => storage.getString(StorageKeys.GLUCOSE_UNIT) ?? 'mmol/L'
   );
@@ -71,6 +74,16 @@ export default function SettingsScreen() {
                   storage.delete(StorageKeys.ONBOARDING_DRAFT);
                   // Clean up hints-related keys so hints system resets properly
                   storage.delete(StorageKeys.HINTS_REGISTRATION_DATE);
+                  // UX-C3 (audit): trial start timestamp must be wiped or
+                  // re-onboarding hits the idempotent guard in startTrial()
+                  // and the user appears to have an already-expired trial
+                  // (or 0 days left if the install is more than a week old).
+                  storage.delete(StorageKeys.TRIAL_STARTED_AT);
+                  // Sweep onboarding-side counters too — first-steps badges
+                  // and expense budget are anchored to the previous account.
+                  storage.delete(StorageKeys.FIRST_STEPS_DISMISSED);
+                  storage.delete(StorageKeys.FIRST_STEPS_COMPLETED_AT);
+                  storage.delete(StorageKeys.EXPENSE_BUDGET_MONTHLY);
                   storage.delete(StorageKeys.HINTS_SHOWN_IDS);
                   storage.delete(StorageKeys.HINTS_INJECTION_COUNT);
                   storage.delete(StorageKeys.HINTS_LAST_APP_OPEN_DATE);

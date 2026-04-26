@@ -11,24 +11,33 @@ import { Icon } from '@shared/components/ui/Icon';
 import type { IoniconName } from '@shared/components/ui';
 import * as Haptics from 'expo-haptics';
 import { startTrial } from '@features/subscription/utils/trial';
+import { isAiConfigured } from '@features/hints/utils/aiClient';
 
-const PROMISES: { icon: IoniconName; titleKey: string; descKey: string }[] = [
-  {
-    icon: 'chatbubble-ellipses',
-    titleKey: 'onboarding.success.aiTitle',
-    descKey: 'onboarding.success.aiDesc',
-  },
-  {
-    icon: 'analytics',
-    titleKey: 'onboarding.success.analyzerTitle',
-    descKey: 'onboarding.success.analyzerDesc',
-  },
-  {
-    icon: 'notifications',
-    titleKey: 'onboarding.success.remindersTitle',
-    descKey: 'onboarding.success.remindersDesc',
-  },
-];
+type Promise = { icon: IoniconName; titleKey: string; descKey: string };
+
+const ANALYZER_PROMISE: Promise = {
+  icon: 'analytics',
+  titleKey: 'onboarding.success.analyzerTitle',
+  descKey: 'onboarding.success.analyzerDesc',
+};
+const REMINDERS_PROMISE: Promise = {
+  icon: 'notifications',
+  titleKey: 'onboarding.success.remindersTitle',
+  descKey: 'onboarding.success.remindersDesc',
+};
+const AI_PROMISE: Promise = {
+  icon: 'chatbubble-ellipses',
+  titleKey: 'onboarding.success.aiTitle',
+  descKey: 'onboarding.success.aiDesc',
+};
+
+// UX-M1 (audit): only promise the AI Assistant if the Anthropic API key is
+// bundled. Otherwise the user finishes onboarding expecting an AI tab that
+// can't render. The check is build-time-static; computed once outside the
+// component is fine.
+const PROMISES: Promise[] = isAiConfigured()
+  ? [AI_PROMISE, ANALYZER_PROMISE, REMINDERS_PROMISE]
+  : [ANALYZER_PROMISE, REMINDERS_PROMISE];
 
 export default function SuccessScreen() {
   const route = useRoute<RouteProp<OnboardingStackParamList, 'Success'>>();

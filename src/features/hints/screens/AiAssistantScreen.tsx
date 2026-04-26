@@ -83,10 +83,13 @@ export default function AiAssistantScreen() {
       setMessages(saved);
     }
 
-    // Build system prompt asynchronously using pet context
+    // Build system prompt asynchronously using pet context.
+    // UX-H3 (audit): re-run on i18n.language change so the prompt language
+    // tracks the active UI language; otherwise the user switches RU↔EN and
+    // the next AI reply still arrives in the previous language.
     buildSystemPromptAsync();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [activePet?.id]);
+  }, [activePet?.id, i18n.language]);
 
   const buildSystemPromptAsync = useCallback(async () => {
     if (!activePet) return;
