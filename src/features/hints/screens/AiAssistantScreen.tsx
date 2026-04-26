@@ -76,11 +76,16 @@ export default function AiAssistantScreen() {
   useEffect(() => {
     if (!activePet) return;
 
-    // Load persisted history
+    // Load persisted history. Filter out any error bubbles stored by the
+    // pre-fix version so we don't feed them back into the API context.
     const saved = storageUtils.getObject<ChatMessage[]>(historyKey!);
     if (saved && Array.isArray(saved)) {
-      messagesRef.current = saved;
-      setMessages(saved);
+      const cleaned = saved.filter(m => !m.content.startsWith('⚠️'));
+      messagesRef.current = cleaned;
+      setMessages(cleaned);
+      if (cleaned.length !== saved.length) {
+        storageUtils.setObject(historyKey!, cleaned);
+      }
     }
 
     // Build system prompt asynchronously using pet context.
@@ -175,13 +180,18 @@ export default function AiAssistantScreen() {
     [persistMessages]
   );
 
-  const appendErrorMessage = useCallback(
-    (text: string) => {
-      const errorMsg: ChatMessage = { role: 'assistant', content: `\u26a0\ufe0f ${text}` };
-      updateMessages(prev => [...prev, errorMsg]);
-    },
-    [updateMessages]
-  );
+  // UX-H2 (audit): error messages must be transient \u2014 they should NOT be
+  // persisted to MMKV history nor sent back to the API on next request,
+  // otherwise (a) the chat fills with "Couldn't connect" bubbles forever
+  // and (b) the AI tries to react to its own fake messages on retry.
+  //
+  // We display error bubbles in the rendered `messages` state only. The
+  // `messagesRef` (which feeds the next API request) and `persistMessages`
+  // (which writes to MMKV) are deliberately bypassed.
+  const appendErrorMessage = useCallback((text: string) => {
+    const errorMsg: ChatMessage = { role: 'assistant', content: `\u26a0\ufe0f ${text}` };
+    setMessages(prev => [...prev, errorMsg]);
+  }, []);
 
   const [remaining, setRemaining] = useState(getRemainingMessages());
 

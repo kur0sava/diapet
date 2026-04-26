@@ -80,6 +80,10 @@ export const en = {
     skip: 'Skip',
     stepOf: '{{current}} of {{total}}',
     savingError: 'Failed to save data. Please try again.',
+    permissionDeniedTitle: 'Notifications off',
+    permissionDeniedBody:
+      "Without notification permission, injection and feeding reminders won't reach you. Open system settings to enable?",
+    openSettings: 'Open settings',
     success: {
       title: 'All set! {{name}} is protected by DiaPet',
       subtitle: "Here's what we'll do together to help your pet:",

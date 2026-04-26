@@ -1,5 +1,5 @@
 import React, { useRef, useState } from 'react';
-import { View, Text, StyleSheet, Alert, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, Alert, Linking, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRoute, RouteProp } from '@react-navigation/native';
 import { useOnboardingNavigation } from '@navigation/hooks';
@@ -95,6 +95,7 @@ export default function NotificationsScreen() {
     // Step 3: best-effort side effects. Notification permission / OS scheduling
     // can throw (denied, expo push quota, malformed time). Failing here must
     // NOT abort onboarding — user can re-enable notifications in Settings.
+    let permissionDenied = false;
     if (enableNotifications) {
       try {
         const granted = await requestPermissions();
@@ -106,6 +107,8 @@ export default function NotificationsScreen() {
           for (const time of feedingTimes ?? []) {
             await scheduleFeedingReminder(time, pet.name);
           }
+        } else {
+          permissionDenied = true;
         }
       } catch {
         // Silent — user can toggle notifications in Settings later.
@@ -119,6 +122,23 @@ export default function NotificationsScreen() {
     }
 
     setLoading(false);
+    savingRef.current = false;
+
+    // UX-H1 (audit): if the user tapped "Allow" but the OS-level permission
+    // dialog returned denied, surface that explicitly so they don't reach
+    // the success screen thinking reminders are armed when they aren't.
+    if (permissionDenied) {
+      Alert.alert(
+        t('onboarding.permissionDeniedTitle'),
+        t('onboarding.permissionDeniedBody'),
+        [
+          { text: t('common.skip'), style: 'cancel' },
+          { text: t('onboarding.openSettings'), onPress: () => Linking.openSettings() },
+        ],
+        { cancelable: true }
+      );
+    }
+
     navigation.navigate('Success', { petName: pet.name });
   };
 

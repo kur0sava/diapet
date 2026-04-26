@@ -213,7 +213,11 @@ export default function PaywallScreen() {
             <Icon name="chevron-forward" size={18} color={theme.colors.primary} />
           </TouchableOpacity>
         )}
-        {trialExpired && (
+        {/* UX-H8 (audit): "trial expired" badge would terrify a user who is
+            currently Pro via backendBypass. Hide it entirely when payments
+            aren't wired up — the Coming Soon block below already explains
+            the actual state ("all features unlocked"). */}
+        {trialExpired && isBackendConfigured() && (
           <View style={[styles.trialCard, { backgroundColor: theme.colors.warning + '15' }]}>
             <Icon name="time" size={22} color={theme.colors.warning} />
             <View style={{ flex: 1 }}>
