@@ -489,6 +489,11 @@ export const en = {
   pets: {
     title: 'Pet Profile',
     editPet: 'Edit profile',
+    addPet: 'Add pet',
+    addPetInfo: 'New pet',
+    switchPet: 'Switch pet',
+    addPetGated:
+      'Adding a second pet is a Pro feature. Subscribe to manage multiple pets at the same time.',
     name: 'Name',
     species: 'Species',
     age: 'Age',

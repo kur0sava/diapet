@@ -27,6 +27,9 @@ import { useAnalyzer } from '@features/analyzer/hooks/useAnalyzer';
 import { RiskScoreWidget } from '@features/analyzer/components/RiskScoreWidget';
 import { TrendIndicator } from '@features/analyzer/components/TrendIndicator';
 import { SmartInsightCard } from '@features/analyzer/components/SmartInsightCard';
+import { PetPickerSheet } from '@features/pets/components/PetPickerSheet';
+import { Alert } from 'react-native';
+import type { Pet } from '@storage/domain/types';
 
 interface GlucoseReading {
   valueMmol: number;
@@ -76,8 +79,38 @@ export default function DashboardScreen() {
   const { t } = useTranslation();
   const { theme } = useTheme();
   const activePet = usePetStore(s => s.activePet);
+  const pets = usePetStore(s => s.pets);
+  const setActivePet = usePetStore(s => s.setActivePet);
   const speciesRanges = getSpeciesConfig(activePet?.species ?? 'cat').glucose.ranges;
-  const { isPro, isPaidPro, isTrialActive, trialDaysLeft } = useSubscription();
+  const { isPro, isPaidPro, isTrialActive, trialDaysLeft, canAddPet } = useSubscription();
+  const [pickerVisible, setPickerVisible] = useState(false);
+  const hasMultiplePets = pets.length > 1;
+  // Plain functions: React Compiler memoizes them. Manual useCallback would
+  // require deps that include setPickerVisible (a setter), which is stable
+  // but the compiler's preserve-manual-memoization rule rejects the mismatch.
+  const handleSelectPet = (pet: Pet) => {
+    setActivePet(pet);
+    setPickerVisible(false);
+  };
+  const handleOpenPicker = () => {
+    if (hasMultiplePets) {
+      setPickerVisible(true);
+    }
+  };
+  const handleAddPetFromPicker = () => {
+    setPickerVisible(false);
+    if (!canAddPet(pets.length)) {
+      Alert.alert(t('subscription.title'), t('pets.addPetGated'), [
+        { text: t('common.cancel'), style: 'cancel' },
+        { text: t('subscription.upgrade'), onPress: () => rootNavigation.navigate('Paywall') },
+      ]);
+      return;
+    }
+    rootNavigation.navigate('Main', {
+      screen: 'MoreTab',
+      params: { screen: 'AddPet' },
+    });
+  };
   const showTrialBanner = isTrialActive && !isPaidPro;
   const trialUrgent = showTrialBanner && trialDaysLeft <= TRIAL_REMINDER_DAYS;
   const petId = activePet?.id ?? '';
@@ -259,7 +292,18 @@ export default function DashboardScreen() {
         >
           <SafeAreaView edges={['top']} style={styles.heroContent}>
             <View style={styles.heroTop}>
-              <View style={styles.heroLeft}>
+              <TouchableOpacity
+                style={styles.heroLeft}
+                onPress={handleOpenPicker}
+                activeOpacity={hasMultiplePets ? 0.7 : 1}
+                disabled={!hasMultiplePets}
+                accessibilityRole={hasMultiplePets ? 'button' : 'none'}
+                accessibilityLabel={
+                  hasMultiplePets
+                    ? t('pets.switchPet', { defaultValue: 'Switch pet' })
+                    : (activePet?.name ?? 'DiaPet')
+                }
+              >
                 <View style={styles.petAvatar}>
                   <Icon name="paw" size={20} color="#FFFFFF" />
                 </View>
@@ -267,16 +311,21 @@ export default function DashboardScreen() {
                   <Text style={[styles.greeting, { fontFamily: theme.fonts.medium }]}>
                     {t('dashboard.title')}
                   </Text>
-                  <Text
-                    style={[styles.petName, { fontFamily: theme.fonts.bold }]}
-                    numberOfLines={1}
-                    adjustsFontSizeToFit
-                    minimumFontScale={0.6}
-                  >
-                    {activePet?.name ?? 'DiaPet'}
-                  </Text>
+                  <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+                    <Text
+                      style={[styles.petName, { fontFamily: theme.fonts.bold, flexShrink: 1 }]}
+                      numberOfLines={1}
+                      adjustsFontSizeToFit
+                      minimumFontScale={0.6}
+                    >
+                      {activePet?.name ?? 'DiaPet'}
+                    </Text>
+                    {hasMultiplePets && (
+                      <Icon name="chevron-down" size={18} color="rgba(255,255,255,0.85)" />
+                    )}
+                  </View>
                 </View>
-              </View>
+              </TouchableOpacity>
               <TouchableOpacity
                 onPress={() => rootNavigation.navigate('Emergency')}
                 style={[styles.sosButton, { backgroundColor: theme.colors.danger }]}
@@ -646,6 +695,14 @@ export default function DashboardScreen() {
         {/* H1: History Links row removed — Last Injection card already links to InjectionList;
             Feeding history available from Daily Diary / QuickAction */}
       </ScrollView>
+      <PetPickerSheet
+        visible={pickerVisible}
+        pets={pets}
+        activePetId={activePet?.id}
+        onSelect={handleSelectPet}
+        onAddPet={handleAddPetFromPicker}
+        onClose={() => setPickerVisible(false)}
+      />
     </SafeAreaView>
   );
 }

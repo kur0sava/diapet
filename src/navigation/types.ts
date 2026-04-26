@@ -74,6 +74,7 @@ export type MoreStackParamList = {
   MoreMenu: undefined;
   PetProfile: undefined;
   EditPet: undefined;
+  AddPet: undefined;
   Expenses: undefined;
   AddExpense: { editId?: string };
   Settings: undefined;
