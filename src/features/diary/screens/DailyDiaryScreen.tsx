@@ -260,7 +260,7 @@ export default function DailyDiaryScreen() {
         <TouchableOpacity
           onPress={() => navigation.goBack()}
           style={styles.backBtn}
-          hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+          hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
         >
           <Icon name="chevron-back" size={24} color={theme.colors.text} />
         </TouchableOpacity>
@@ -284,7 +284,7 @@ export default function DailyDiaryScreen() {
           onPress={goToPrevDay}
           disabled={!canGoPrev}
           style={[styles.dateNavBtn, !canGoPrev && styles.dateNavBtnDisabled]}
-          hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+          hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
         >
           <Icon
             name="chevron-back"
@@ -315,7 +315,7 @@ export default function DailyDiaryScreen() {
           onPress={goToNextDay}
           style={[styles.dateNavBtn, isToday(currentDate) && styles.dateNavBtnDisabled]}
           disabled={isToday(currentDate)}
-          hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+          hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
         >
           <Icon
             name="chevron-forward"

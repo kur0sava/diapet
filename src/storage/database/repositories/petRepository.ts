@@ -112,6 +112,12 @@ export const petRepository = {
         `remissionCache_${id}`,
         `remissionLastRequest_${id}`,
         `aiChatHistory_${id}`,
+        // v2.5.1: per-pet vet contact (commit fed6ee8) — must clean up here
+        // too, otherwise MMKV leaks one entry per deleted pet forever and
+        // EmergencyScreen could surface a stale contact if a future UUID
+        // ever collides.
+        `vetName_${id}`,
+        `vetPhone_${id}`,
       ];
       for (const key of petPrefixes) {
         mmkv.delete(key);

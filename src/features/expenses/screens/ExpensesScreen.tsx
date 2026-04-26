@@ -226,7 +226,7 @@ export default function ExpensesScreen() {
           </Text>
           <TouchableOpacity
             onPress={() => handleDelete(item.id)}
-            hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+            hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
           >
             <Icon name="trash-outline" size={18} color={theme.colors.danger} />
           </TouchableOpacity>

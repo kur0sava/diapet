@@ -40,6 +40,9 @@ export default function LogInjectionScreen() {
   const { theme } = useTheme();
   const activePet = usePetStore(s => s.activePet);
   const queryClient = useQueryClient();
+  // UX-C2 (audit): pin pet at mount — see LogGlucoseScreen for rationale.
+  // Misattributed insulin doses are dangerous in multi-pet households.
+  const petIdRef = useRef<string | undefined>(activePet?.id);
 
   const [dose, setDose] = useState('');
   const [insulinType, setInsulinType] = useState(activePet?.insulinType ?? '');
@@ -62,12 +65,17 @@ export default function LogInjectionScreen() {
   );
 
   const doSaveInjection = useCallback(async () => {
-    if (!activePet || savingRef.current) return;
+    const targetPetId = petIdRef.current;
+    if (!targetPetId || savingRef.current) return;
+    if (usePetStore.getState().activePet?.id !== targetPetId) {
+      Alert.alert(t('common.error'), t('injection.petChangedDuringEntry'));
+      return;
+    }
     savingRef.current = true;
     setLoading(true);
     try {
       await injectionRepository.create({
-        petId: activePet.id,
+        petId: targetPetId,
         insulinType: insulinType.trim(),
         doseUnits: parseFloat(dose.replace(',', '.')),
         notes: notes || undefined,
@@ -86,7 +94,6 @@ export default function LogInjectionScreen() {
       setLoading(false);
     }
   }, [
-    activePet,
     dose,
     insulinType,
     notes,

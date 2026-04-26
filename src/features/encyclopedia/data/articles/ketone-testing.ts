@@ -20,7 +20,7 @@ export const ketoneTesting: Article = {
 **Обязательно:**
 - Глюкоза выше 20 ммоль/л (360 мг/дл) дважды подряд
 - Кошка не ест более 24 часов
-- Рвота + вялость + высокий сахар
+- **Рвота + вялость при любом повышении глюкозы выше нормы — проверяйте немедленно** (по ISFM 2023, не ждите достижения 20 ммоль/л)
 - Запах ацетона изо рта
 - Только что диагностирован диабет (до начала инсулинотерапии)
 
@@ -78,7 +78,7 @@ Ketones are an alarm signal. When the body can't use glucose (no insulin), it st
 **Always check if:**
 - Glucose above 20 mmol/L (360 mg/dL) twice in a row
 - Cat hasn't eaten for more than 24 hours
-- Vomiting + lethargy + high blood sugar
+- **Vomiting + lethargy at any above-normal glucose — check immediately** (per ISFM 2023, do not wait for 20 mmol/L)
 - Acetone smell from breath
 - Diabetes just diagnosed (before starting insulin)
 
@@ -133,8 +133,14 @@ Ketones are an alarm signal. When the body can't use glucose (no insulin), it st
   order: 12,
   relatedArticleIds: ['dka', 'glucose_monitoring', 'first-days'],
   references: [
-    { ru: 'O\'Brien MA — Diabetic Ketoacidosis in Cats, Veterinary Clinics 2010', en: "O'Brien MA — Diabetic Ketoacidosis in Cats, Veterinary Clinics 2010" },
-    { ru: 'ISFM Guidelines on Diabetes Mellitus in Cats, 2023', en: 'ISFM Guidelines on Diabetes Mellitus in Cats, 2023' },
+    {
+      ru: "O'Brien MA — Diabetic Ketoacidosis in Cats, Veterinary Clinics 2010",
+      en: "O'Brien MA — Diabetic Ketoacidosis in Cats, Veterinary Clinics 2010",
+    },
+    {
+      ru: 'ISFM Guidelines on Diabetes Mellitus in Cats, 2023',
+      en: 'ISFM Guidelines on Diabetes Mellitus in Cats, 2023',
+    },
   ],
   tags: [
     { ru: 'кетоны', en: 'ketones' },

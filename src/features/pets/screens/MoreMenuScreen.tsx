@@ -1,5 +1,13 @@
-import React from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, StatusBar } from 'react-native';
+import React, { useState } from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  TouchableOpacity,
+  StatusBar,
+  Alert,
+} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useMoreNavigation, useRootNavigation } from '@navigation/hooks';
@@ -14,6 +22,8 @@ import { isAiConfigured } from '@features/hints/utils/aiClient';
 import { ProBadge } from '@features/subscription/components/ProBadge';
 import Constants from 'expo-constants';
 import { useAuthStore } from '@features/auth/stores/authStore';
+import { PetPickerSheet } from '../components/PetPickerSheet';
+import type { Pet } from '@storage/domain/types';
 
 export default function MoreMenuScreen() {
   const navigation = useMoreNavigation();
@@ -21,7 +31,37 @@ export default function MoreMenuScreen() {
   const { t } = useTranslation();
   const { theme } = useTheme();
   const activePet = usePetStore(s => s.activePet);
-  const { isPro, canAccessAdvanced } = useSubscription();
+  const pets = usePetStore(s => s.pets);
+  const setActivePet = usePetStore(s => s.setActivePet);
+  const { isPro, canAccessAdvanced, canAddPet } = useSubscription();
+  const [pickerVisible, setPickerVisible] = useState(false);
+
+  const hasMultiplePets = pets.length > 1;
+
+  const handleAddPet = () => {
+    setPickerVisible(false);
+    if (!canAddPet(pets.length)) {
+      Alert.alert(t('subscription.title'), t('pets.addPetGated'), [
+        { text: t('common.cancel'), style: 'cancel' },
+        { text: t('subscription.upgrade'), onPress: () => rootNavigation.navigate('Paywall') },
+      ]);
+      return;
+    }
+    navigation.navigate('AddPet');
+  };
+
+  const handleSelectPet = (pet: Pet) => {
+    setActivePet(pet);
+    setPickerVisible(false);
+  };
+
+  const handlePetCardPress = () => {
+    if (hasMultiplePets) {
+      setPickerVisible(true);
+    } else {
+      navigation.navigate('PetProfile');
+    }
+  };
 
   const authUser = useAuthStore(s => s.user);
   type MenuScreen =
@@ -132,7 +172,19 @@ export default function MoreMenuScreen() {
     <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.background }]}>
       <StatusBar barStyle={theme.isDark ? 'light-content' : 'dark-content'} />
       {activePet && (
-        <TouchableOpacity onPress={() => navigation.navigate('PetProfile')} activeOpacity={0.9}>
+        <TouchableOpacity
+          onPress={handlePetCardPress}
+          activeOpacity={0.9}
+          accessibilityRole="button"
+          accessibilityLabel={
+            hasMultiplePets ? t('pets.switchPet', { defaultValue: 'Switch pet' }) : t('pets.title')
+          }
+          accessibilityHint={
+            hasMultiplePets
+              ? `${pets.length} pets — ${t('pets.switchPet', { defaultValue: 'tap to switch' })}`
+              : undefined
+          }
+        >
           <LinearGradient
             colors={theme.gradients.primary}
             start={{ x: 0, y: 0 }}
@@ -143,9 +195,21 @@ export default function MoreMenuScreen() {
               <Icon name="paw" size={28} color="#fff" />
             </View>
             <View style={styles.petInfo}>
-              <Text style={[styles.petName, { fontFamily: theme.fonts.bold }]}>
-                {activePet.name}
-              </Text>
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+                <Text
+                  style={[styles.petName, { fontFamily: theme.fonts.bold, flexShrink: 1 }]}
+                  numberOfLines={1}
+                  adjustsFontSizeToFit
+                  minimumFontScale={0.7}
+                >
+                  {activePet.name}
+                </Text>
+                {hasMultiplePets && (
+                  <View style={styles.countBadge}>
+                    <Text style={styles.countBadgeText}>{pets.length}</Text>
+                  </View>
+                )}
+              </View>
               <Text style={styles.petDetails} numberOfLines={2}>
                 {activePet.species === 'cat'
                   ? t('pets.cat')
@@ -158,10 +222,22 @@ export default function MoreMenuScreen() {
                   : ''}
               </Text>
             </View>
-            <Icon name="chevron-forward" size={20} color="rgba(255,255,255,0.7)" />
+            <Icon
+              name={hasMultiplePets ? 'chevron-down' : 'chevron-forward'}
+              size={20}
+              color="rgba(255,255,255,0.7)"
+            />
           </LinearGradient>
         </TouchableOpacity>
       )}
+      <PetPickerSheet
+        visible={pickerVisible}
+        pets={pets}
+        activePetId={activePet?.id}
+        onSelect={handleSelectPet}
+        onAddPet={handleAddPet}
+        onClose={() => setPickerVisible(false)}
+      />
       <ScrollView contentContainerStyle={styles.scroll}>
         <Text
           style={[
@@ -291,4 +367,14 @@ const styles = StyleSheet.create({
   emergencyText: { color: '#fff', fontSize: 16 },
   version: { textAlign: 'center', fontSize: 12, marginTop: 32, marginBottom: 20 },
   upgradePill: { paddingHorizontal: 8, paddingVertical: 2, borderRadius: 8 },
+  countBadge: {
+    backgroundColor: 'rgba(255,255,255,0.25)',
+    minWidth: 22,
+    height: 22,
+    borderRadius: 11,
+    paddingHorizontal: 6,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  countBadgeText: { color: '#fff', fontSize: 12, fontWeight: '700' },
 });

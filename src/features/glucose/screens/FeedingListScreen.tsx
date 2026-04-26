@@ -1,5 +1,13 @@
 import React, { useMemo } from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity, Alert, ActivityIndicator } from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  FlatList,
+  TouchableOpacity,
+  Alert,
+  ActivityIndicator,
+} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Icon } from '@shared/components/ui/Icon';
 import { useHomeNavigation } from '@navigation/hooks';
@@ -31,19 +39,14 @@ export default function FeedingListScreen() {
   const activePet = usePetStore(s => s.activePet);
   const queryClient = useQueryClient();
 
-  const {
-    data,
-    hasNextPage,
-    fetchNextPage,
-    isFetchingNextPage,
-  } = useInfiniteQuery({
+  const { data, hasNextPage, fetchNextPage, isFetchingNextPage } = useInfiniteQuery({
     queryKey: queryKeys.feedings.list(activePet?.id ?? ''),
     queryFn: ({ pageParam }) =>
       activePet
         ? feedingRepository.findByPetId(activePet.id, 50, pageParam)
         : Promise.resolve({ data: [], nextCursor: null }),
     initialPageParam: undefined as string | undefined,
-    getNextPageParam: (lastPage) => lastPage.nextCursor ?? undefined,
+    getNextPageParam: lastPage => lastPage.nextCursor ?? undefined,
     enabled: !!activePet?.id,
   });
 
@@ -77,15 +80,19 @@ export default function FeedingListScreen() {
       : '';
     Alert.alert(t('feeding.deleteConfirm'), info || undefined, [
       { text: t('common.cancel'), style: 'cancel' },
-      { text: t('common.delete'), style: 'destructive', onPress: async () => {
-        try {
-          await feedingRepository.delete(id);
-          queryClient.invalidateQueries({ queryKey: queryKeys.feedings.all });
-          queryClient.invalidateQueries({ queryKey: queryKeys.diary.all });
-        } catch {
-          Alert.alert(t('common.error'));
-        }
-      }},
+      {
+        text: t('common.delete'),
+        style: 'destructive',
+        onPress: async () => {
+          try {
+            await feedingRepository.delete(id);
+            queryClient.invalidateQueries({ queryKey: queryKeys.feedings.all });
+            queryClient.invalidateQueries({ queryKey: queryKeys.diary.all });
+          } catch {
+            Alert.alert(t('common.error'));
+          }
+        },
+      },
     ]);
   };
 
@@ -102,7 +109,12 @@ export default function FeedingListScreen() {
                   size={18}
                   color={theme.colors.success}
                 />
-                <Text style={[styles.foodType, { color: theme.colors.text, fontFamily: theme.fonts.bold }]}>
+                <Text
+                  style={[
+                    styles.foodType,
+                    { color: theme.colors.text, fontFamily: theme.fonts.bold },
+                  ]}
+                >
                   {foodLabel(item.foodType)}
                 </Text>
               </View>
@@ -120,7 +132,11 @@ export default function FeedingListScreen() {
                 {item.notes}
               </Text>
             )}
-            <TouchableOpacity onPress={() => handleDelete(item.id)} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }} style={{ alignSelf: 'flex-start' }}>
+            <TouchableOpacity
+              onPress={() => handleDelete(item.id)}
+              hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
+              style={{ alignSelf: 'flex-start' }}
+            >
               <Icon name="trash-outline" size={18} color={theme.colors.danger} />
             </TouchableOpacity>
           </View>
@@ -132,10 +148,21 @@ export default function FeedingListScreen() {
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.background }]}>
       <View style={[styles.navHeader, { borderBottomColor: theme.colors.border }]}>
-        <TouchableOpacity onPress={() => navigation.goBack()} style={{ minHeight: 44, minWidth: 44, justifyContent: 'center' }}>
-          <Text style={{ color: theme.colors.primary }}>{'← '}{t('common.back')}</Text>
+        <TouchableOpacity
+          onPress={() => navigation.goBack()}
+          style={{ minHeight: 44, minWidth: 44, justifyContent: 'center' }}
+        >
+          <Text style={{ color: theme.colors.primary }}>
+            {'← '}
+            {t('common.back')}
+          </Text>
         </TouchableOpacity>
-        <Text numberOfLines={1} style={[styles.headerTitle, { color: theme.colors.text, fontFamily: theme.fonts.bold }]}>{t('feeding.history')}</Text>
+        <Text
+          numberOfLines={1}
+          style={[styles.headerTitle, { color: theme.colors.text, fontFamily: theme.fonts.bold }]}
+        >
+          {t('feeding.history')}
+        </Text>
         <View style={{ width: 60 }} />
       </View>
 
@@ -149,17 +176,17 @@ export default function FeedingListScreen() {
         ListHeaderComponent={
           chartData.length > 0 ? (
             <Card style={styles.chartCard}>
-              <SimpleBarChart
-                data={chartData}
-                title={t('feeding.amountChart')}
-                unit="g"
-              />
+              <SimpleBarChart data={chartData} title={t('feeding.amountChart')} unit="g" />
             </Card>
           ) : null
         }
         ListFooterComponent={
           isFetchingNextPage ? (
-            <ActivityIndicator style={styles.loadingFooter} size="small" color={theme.colors.primary} />
+            <ActivityIndicator
+              style={styles.loadingFooter}
+              size="small"
+              color={theme.colors.primary}
+            />
           ) : null
         }
         ListEmptyComponent={
@@ -175,10 +202,7 @@ export default function FeedingListScreen() {
       />
 
       {/* FAB */}
-      <TouchableOpacity
-        onPress={() => navigation.navigate('LogFeeding')}
-        activeOpacity={0.8}
-      >
+      <TouchableOpacity onPress={() => navigation.navigate('LogFeeding')} activeOpacity={0.8}>
         <LinearGradient
           colors={theme.gradients.primary}
           start={{ x: 0, y: 0 }}
@@ -194,7 +218,14 @@ export default function FeedingListScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
-  navHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', padding: 16, borderBottomWidth: 0.5, gap: 8 },
+  navHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    padding: 16,
+    borderBottomWidth: 0.5,
+    gap: 8,
+  },
   headerTitle: { fontSize: 17, fontWeight: '600', flex: 1, textAlign: 'center' },
   list: { padding: 16, gap: 8, paddingBottom: 100 },
   chartCard: { marginBottom: 8 },
@@ -207,5 +238,14 @@ const styles = StyleSheet.create({
   time: { fontSize: 12, marginTop: 4 },
   notes: { fontSize: 12, marginTop: 4 },
   loadingFooter: { paddingVertical: 16 },
-  fab: { position: 'absolute', bottom: 24, right: 20, width: 56, height: 56, borderRadius: 28, alignItems: 'center', justifyContent: 'center' },
+  fab: {
+    position: 'absolute',
+    bottom: 24,
+    right: 20,
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
 });

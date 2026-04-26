@@ -35,7 +35,7 @@ export const expenseRepository = {
         dto.amount,
         dto.currency ?? 'RUB',
         dto.description ?? null,
-        dto.date ?? todayLocal(),
+        dto.date || todayLocal(),
         now,
         now,
       ]

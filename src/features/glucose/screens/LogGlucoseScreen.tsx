@@ -82,6 +82,14 @@ export default function LogGlucoseScreen() {
   const queryClient = useQueryClient();
   const editId = route.params?.editId;
 
+  // UX-C2 (audit): pin the pet id at mount. Once a multi-pet picker exists,
+  // setActivePet could fire from a notification deep-link or another screen
+  // mid-input — without this snapshot the save would attribute a glucose
+  // reading to whichever pet was active at submit time, not at entry time.
+  // Medical-safety preventive: a glucose reading filed under the wrong pet
+  // skews their analytics and could mask a hypo trend.
+  const petIdRef = useRef<string | undefined>(activePet?.id);
+
   const savedUnit = (storage.getString(StorageKeys.GLUCOSE_UNIT) ?? 'mmol/L') as GlucoseUnit;
 
   const [value, setValue] = useState('');
@@ -187,13 +195,20 @@ export default function LogGlucoseScreen() {
 
   // M011: doSave defined first so handleSave can include it in deps (stale closure fix)
   const doSave = useCallback(async () => {
-    if (!activePet || savingRef.current) return;
+    const targetPetId = petIdRef.current;
+    if (!targetPetId || savingRef.current) return;
+    // UX-C2 (audit): if the active pet changed mid-input, refuse to save
+    // and warn — better to abort than to file the entry under the wrong pet.
+    if (usePetStore.getState().activePet?.id !== targetPetId) {
+      Alert.alert(t('common.error'), t('glucose.petChangedDuringEntry'));
+      return;
+    }
     savingRef.current = true;
     setLoading(true);
     try {
       if (editId) {
         await glucoseRepository.update(editId, {
-          petId: activePet.id,
+          petId: targetPetId,
           value: numValue,
           unit,
           mealRelation,
@@ -205,7 +220,7 @@ export default function LogGlucoseScreen() {
         });
       } else {
         await glucoseRepository.create({
-          petId: activePet.id,
+          petId: targetPetId,
           value: numValue,
           unit,
           mealRelation,
@@ -217,7 +232,7 @@ export default function LogGlucoseScreen() {
       }
       await queryClient.invalidateQueries({ queryKey: queryKeys.glucose.all });
       await queryClient.invalidateQueries({ queryKey: queryKeys.diary.all });
-      if (activePet) clearPredictionCache(activePet.id);
+      clearPredictionCache(targetPetId);
       // Disable guard for the navigation we're about to trigger
       disableGuard();
       syncInitialValues();
@@ -233,7 +248,6 @@ export default function LogGlucoseScreen() {
       setLoading(false);
     }
   }, [
-    activePet,
     numValue,
     unit,
     mealRelation,
@@ -361,14 +375,18 @@ export default function LogGlucoseScreen() {
                   ]}
                   onPress={() => {
                     if (u === unit) return;
-                    // UX-001: Convert value when switching units
+                    // UX-001: Convert value when switching units.
+                    // UX-L4 (audit): only convert when the result rounds to
+                    // a usable value — switching mmol → mg/dL with 0.001
+                    // mmol would give "0", a forbidden state. Leave the
+                    // input cleared in that case so the user re-types.
                     const num = parseFloat(value.replace(',', '.'));
                     if (!isNaN(num) && num > 0) {
                       const converted =
                         u === 'mg/dL'
                           ? (num * MGDL_PER_MMOLL).toFixed(0)
                           : (num / MGDL_PER_MMOLL).toFixed(1);
-                      setValue(converted);
+                      setValue(parseFloat(converted) > 0 ? converted : '');
                     }
                     setUnit(u);
                     storage.set(StorageKeys.GLUCOSE_UNIT, u);

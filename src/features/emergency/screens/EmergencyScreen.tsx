@@ -15,7 +15,7 @@ import { useRootNavigation } from '@navigation/hooks';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '@shared/theme';
 import { Card } from '@shared/components/ui';
-import { storage, StorageKeys, vetNameKey, vetPhoneKey } from '@storage/mmkv/storage';
+import { storage, vetNameKey, vetPhoneKey } from '@storage/mmkv/storage';
 import { usePetStore } from '@shared/stores/petStore';
 import * as Haptics from 'expo-haptics';
 
@@ -28,16 +28,16 @@ export default function EmergencyScreen() {
   const [activeTab, setActiveTab] = useState<EmergencyType>('hypoglycemia');
   const callingRef = useRef(false);
 
-  // Per-pet vet contact. Falls back to legacy globals so a user who lands here
-  // before App.tsx migration runs (e.g. mid-launch hot path) still sees a
-  // contact rather than the "tap to add vet" placeholder.
+  // Per-pet vet contact. App.tsx runs the legacy → per-pet migration before
+  // first paint (gated on `ready`), so the legacy global keys are guaranteed
+  // empty by the time this screen mounts. The previously-existing
+  // `?? storage.getString(StorageKeys.VET_PHONE)` fallback only ever fired
+  // for ~milliseconds after first install; for multi-pet users it actively
+  // *masked* the missing-vet state on the second pet by surfacing the wrong
+  // global value. Drop it.
   const activePetId = usePetStore(s => s.activePet?.id);
-  const vetPhone =
-    (activePetId ? storage.getString(vetPhoneKey(activePetId)) : undefined) ??
-    storage.getString(StorageKeys.VET_PHONE);
-  const vetName =
-    (activePetId ? storage.getString(vetNameKey(activePetId)) : undefined) ??
-    storage.getString(StorageKeys.VET_NAME);
+  const vetPhone = activePetId ? storage.getString(vetPhoneKey(activePetId)) : undefined;
+  const vetName = activePetId ? storage.getString(vetNameKey(activePetId)) : undefined;
 
   const callVet = () => {
     if (callingRef.current) return;

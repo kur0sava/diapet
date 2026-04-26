@@ -125,8 +125,8 @@ export function useAnalyzer() {
 
   const smartAlert = useMemo(() => {
     if (!trends || !riskScore) return null;
-    return generateSmartAlerts(trends, riskScore, patterns, readings, now);
-  }, [trends, riskScore, patterns, readings, now]);
+    return generateSmartAlerts(trends, riskScore, patterns, readings, now, speciesConfig);
+  }, [trends, riskScore, patterns, readings, now, speciesConfig]);
 
   // Side-effect: mark alert as fired OUTSIDE of useMemo
   useEffect(() => {

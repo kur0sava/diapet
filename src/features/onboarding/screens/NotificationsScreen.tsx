@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, Alert, TouchableOpacity } from 'react-native';
+import React, { useRef, useState } from 'react';
+import { View, Text, StyleSheet, Alert, Linking, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRoute, RouteProp } from '@react-navigation/native';
 import { useOnboardingNavigation } from '@navigation/hooks';
@@ -12,6 +12,7 @@ import { storage, StorageKeys, vetNameKey, vetPhoneKey } from '@storage/mmkv/sto
 import { petRepository, scheduleRepository } from '@storage/database';
 import { usePetStore } from '@shared/stores/petStore';
 import { useNotifications } from '@shared/hooks/useNotifications';
+import { startTrial } from '@features/subscription/utils/trial';
 
 export default function NotificationsScreen() {
   const navigation = useOnboardingNavigation();
@@ -21,10 +22,26 @@ export default function NotificationsScreen() {
   const { requestPermissions, scheduleInjectionReminder, scheduleFeedingReminder } =
     useNotifications();
   const [loading, setLoading] = useState(false);
+  // UX-H4 (audit): synchronous double-submit guard. setState is async, so a
+  // user double-tapping Allow + Skip before React re-renders `disabled` could
+  // run handleFinish twice in parallel and produce two pet rows. Ref check is
+  // synchronous and pre-empts the second call before any DB write.
+  const savingRef = useRef(false);
 
   const { petData, injectionTimes, feedingTimes, vetName, vetPhone } = route.params ?? {};
 
   const handleFinish = async (enableNotifications: boolean) => {
+    if (savingRef.current) return;
+    // BUG-M003 (audit): if route.params is missing (deep-link / state restore
+    // edge case), petData is undefined and `petData.name` would throw inside
+    // the try block, producing a generic "savingError" Alert with no path
+    // forward. Recover by routing back to PetInfo so the user can re-enter.
+    if (!petData) {
+      Alert.alert(t('common.error'), t('onboarding.savingError'));
+      navigation.navigate('PetInfo');
+      return;
+    }
+    savingRef.current = true;
     setLoading(true);
     // Step 1: persist pet + schedules. If any DB op fails, roll back the pet
     // so the next onboarding attempt doesn't leave an orphan row.
@@ -55,24 +72,39 @@ export default function NotificationsScreen() {
     } catch {
       Alert.alert(t('common.error'), t('onboarding.savingError'));
       setLoading(false);
+      savingRef.current = false;
       return;
     }
 
     // Step 2: commit point — after these writes, ONBOARDING_COMPLETE is true
     // and we will NEVER re-run onboarding for this install. Everything below
     // must tolerate failure without leaving onboarding in a half-done state.
+    //
+    // Order matters: ONBOARDING_COMPLETE must be the LAST write so that any
+    // process kill mid-Step-2 leaves ONBOARDING_COMPLETE=false → App.tsx
+    // orphan-pet cleanup removes the partial pet on next launch and the user
+    // re-runs onboarding cleanly. The earlier per-pet writes (vet contact,
+    // ACTIVE_PET_ID, ACTIVE_SPECIES) are then either inside the orphan
+    // cleanup's MMKV scrub or harmless dead pointers cleared on re-onboard.
     if (vetName) storage.set(vetNameKey(pet.id), vetName);
     if (vetPhone) storage.set(vetPhoneKey(pet.id), vetPhone);
-    storage.set(StorageKeys.ACTIVE_PET_ID, pet.id);
     storage.set(StorageKeys.ACTIVE_SPECIES, pet.species);
     storage.set(StorageKeys.NOTIFICATIONS_ENABLED, false);
     storage.set(StorageKeys.HINTS_REGISTRATION_DATE, new Date().toISOString());
+    storage.set(StorageKeys.ACTIVE_PET_ID, pet.id);
+    // H7: trial must auto-start at the onboarding commit, not when the user
+    // taps the Success-screen CTA. If the user closes the app on Success
+    // without tapping, the trial would never begin and post-Prodamus they'd
+    // appear as "trial never started" on first paid lookup.
+    // startTrial is idempotent — safe to call again from SuccessScreen.
+    startTrial();
     storage.set(StorageKeys.ONBOARDING_COMPLETE, true);
     storage.delete(StorageKeys.ONBOARDING_DRAFT);
 
     // Step 3: best-effort side effects. Notification permission / OS scheduling
     // can throw (denied, expo push quota, malformed time). Failing here must
     // NOT abort onboarding — user can re-enable notifications in Settings.
+    let permissionDenied = false;
     if (enableNotifications) {
       try {
         const granted = await requestPermissions();
@@ -84,6 +116,8 @@ export default function NotificationsScreen() {
           for (const time of feedingTimes ?? []) {
             await scheduleFeedingReminder(time, pet.name);
           }
+        } else {
+          permissionDenied = true;
         }
       } catch {
         // Silent — user can toggle notifications in Settings later.
@@ -97,6 +131,23 @@ export default function NotificationsScreen() {
     }
 
     setLoading(false);
+    savingRef.current = false;
+
+    // UX-H1 (audit): if the user tapped "Allow" but the OS-level permission
+    // dialog returned denied, surface that explicitly so they don't reach
+    // the success screen thinking reminders are armed when they aren't.
+    if (permissionDenied) {
+      Alert.alert(
+        t('onboarding.permissionDeniedTitle'),
+        t('onboarding.permissionDeniedBody'),
+        [
+          { text: t('common.skip'), style: 'cancel' },
+          { text: t('onboarding.openSettings'), onPress: () => Linking.openSettings() },
+        ],
+        { cancelable: true }
+      );
+    }
+
     navigation.navigate('Success', { petName: pet.name });
   };
 

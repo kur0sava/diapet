@@ -10,16 +10,40 @@ import { DetectedPattern } from './patternDetector';
 const DEFAULT_EMERGENCY_LOW = 2.8; // mmol/L — hypoglycemia emergency
 const DEFAULT_EMERGENCY_HIGH = 30; // mmol/L — severe hyperglycemia
 
-/** Forbidden phrases that must never appear in user-facing text */
+/**
+ * Forbidden phrases that must never appear in user-facing text.
+ * Covers numerical dose claims plus the qualitative "raise/lower the dose"
+ * forms in both languages — when a future LLM-generated answer slips one of
+ * these in we replace with a vet-disclaimer instead of letting the user act.
+ */
 const FORBIDDEN_PATTERNS = [
+  // RU — increase dose / give more insulin
   /увеличь(те)?\s+(дозу|инсулин)/i,
+  /повыс(ь|ьте|ить)\s+(дозу|инсулин)/i,
+  /подними(те)?\s+(дозу|инсулин)/i,
+  /добавь(те)?\s+(дозу|инсулин|ед)/i,
+  // RU — decrease dose
   /уменьши(те)?\s+(дозу|инсулин)/i,
-  /increase\s+(the\s+)?dose/i,
-  /decrease\s+(the\s+)?dose/i,
-  /inject\s+\d+/i,
+  /сниз(ь|ьте|ить)\s+(дозу|инсулин)/i,
+  /понизь(те)?\s+(дозу|инсулин)/i,
+  /убери(те)?\s+\d+\s*(ед|unit)/i,
+  // RU — explicit numeric dose recommendations
   /колите?\s+\d+/i,
+  /введите\s+\d+\s*(ед|unit)/i,
+  /дайте\s+\d+\s*(ед|unit)/i,
   /рекоменд(ую|уем)\s+\d+\s*(ед|unit)/i,
-  /recommend\s+\d+\s*unit/i,
+  // EN — increase / decrease / give more
+  /increase\s+(the\s+)?dose/i,
+  /raise\s+(the\s+)?dose/i,
+  /decrease\s+(the\s+)?dose/i,
+  /lower\s+(the\s+)?dose/i,
+  /reduce\s+(the\s+)?dose/i,
+  /give\s+(more|less)\s+insulin/i,
+  // EN — explicit numeric dose
+  /inject\s+\d+/i,
+  /give\s+\d+\s*(unit|iu)/i,
+  /administer\s+\d+\s*(unit|iu)/i,
+  /recommend\s+\d+\s*(unit|iu)/i,
 ];
 
 export interface EmergencyAlert {

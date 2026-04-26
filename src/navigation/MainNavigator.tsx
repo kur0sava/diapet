@@ -31,6 +31,7 @@ import FeedGuideNaturalScreen from '@features/encyclopedia/screens/FeedGuideNatu
 import MoreMenuScreen from '@features/pets/screens/MoreMenuScreen';
 import PetProfileScreen from '@features/pets/screens/PetProfileScreen';
 import EditPetScreen from '@features/pets/screens/EditPetScreen';
+import AddPetScreen from '@features/pets/screens/AddPetScreen';
 import ExpensesScreen from '@features/expenses/screens/ExpensesScreen';
 import AddExpenseScreen from '@features/expenses/screens/AddExpenseScreen';
 import SettingsScreen from '@features/pets/screens/SettingsScreen';
@@ -255,6 +256,7 @@ function MoreStackNavigator() {
         options={{ headerShown: false }}
       />
       <MoreStack.Screen name="EditPet" component={EditPetScreen} options={{ headerShown: false }} />
+      <MoreStack.Screen name="AddPet" component={AddPetScreen} options={{ headerShown: false }} />
       <MoreStack.Screen
         name="Expenses"
         component={ExpensesScreen}

@@ -203,11 +203,17 @@ export default function FeedCalculatorScreen() {
                   </Text>
                 </View>
               </View>
-              {result.fiberOk !== undefined && (
-                <View style={styles.macroRow}>
-                  <Text style={[styles.macroLabel, { color: theme.colors.textSecondary }]}>
-                    {t('feedCalculator.fiberDM')}
-                  </Text>
+            </View>
+
+            {/* UX-M4 (audit): fiber row was previously nested INSIDE the fat
+                row — broke layout on large fonts and rendered fiber as a
+                child of fat. Now lifted out to its own macroRow sibling. */}
+            {result.fiberOk !== undefined && (
+              <View style={styles.macroRow}>
+                <Text style={[styles.macroLabel, { color: theme.colors.text }]}>
+                  {t('feedCalculator.fiberDM')}
+                </Text>
+                <View style={styles.macroValue}>
                   <Text style={[styles.macroNumber, { color: theme.colors.text }]}>
                     {result.fiberDM.toFixed(1)}%
                   </Text>
@@ -226,8 +232,8 @@ export default function FeedCalculatorScreen() {
                     </Text>
                   </View>
                 </View>
-              )}
-            </View>
+              </View>
+            )}
           </Card>
         )}
 

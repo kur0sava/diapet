@@ -80,6 +80,10 @@ export const en = {
     skip: 'Skip',
     stepOf: '{{current}} of {{total}}',
     savingError: 'Failed to save data. Please try again.',
+    permissionDeniedTitle: 'Notifications off',
+    permissionDeniedBody:
+      "Without notification permission, injection and feeding reminders won't reach you. Open system settings to enable?",
+    openSettings: 'Open settings',
     success: {
       title: 'All set! {{name}} is protected by DiaPet',
       subtitle: "Here's what we'll do together to help your pet:",
@@ -207,6 +211,8 @@ export const en = {
     chartOutOfRange: 'Out of range',
     saveError: 'Failed to save data',
     petNotFound: 'Pet not found',
+    petChangedDuringEntry:
+      'The active pet changed while you were entering data. Please verify and save again.',
     invalidValue: 'Enter a valid glucose value',
     highDoseWarning: 'Unusually high dose',
     highDoseWarningDesc:
@@ -247,6 +253,8 @@ export const en = {
     doseError: 'Enter insulin dose',
     typeError: 'Specify insulin type',
     saveError: 'Failed to save',
+    petChangedDuringEntry:
+      'The active pet changed while you were entering the dose. Please verify and save again.',
     notesPlaceholder: 'Optional...',
     commonInsulins: [
       'Protaphane',
@@ -289,6 +297,8 @@ export const en = {
     catNatural: 'Natural',
     saveError: 'Failed to save data',
     amountError: 'Enter a valid amount (greater than 0)',
+    petChangedDuringEntry:
+      'The active pet changed while you were entering data. Please verify and save again.',
     history: 'Feeding History',
     noHistory: 'No feedings recorded yet',
     amountChart: 'Amounts (last 14 days)',
@@ -479,6 +489,11 @@ export const en = {
   pets: {
     title: 'Pet Profile',
     editPet: 'Edit profile',
+    addPet: 'Add pet',
+    addPetInfo: 'New pet',
+    switchPet: 'Switch pet',
+    addPetGated:
+      'Adding a second pet is a Pro feature. Subscribe to manage multiple pets at the same time.',
     name: 'Name',
     species: 'Species',
     age: 'Age',
@@ -817,6 +832,10 @@ export const en = {
       activeDesc_plural: '{{count}} days left — then continue with a plan below.',
       expiredTitle: 'Your free trial has ended',
       expiredDesc: 'Subscribe to keep unlimited pets, AI and PDF export.',
+      confirmTitle: 'Start {{days}}-day free trial?',
+      confirmBody:
+        "You'll get {{days}} days of full Pro access. The trial starts now and can't be paused — start it when you're ready to use Pro features daily.",
+      confirmCta: 'Start trial',
       bannerActiveTitle: 'Pro trial — {{count}} day left',
       bannerActiveTitle_plural: 'Pro trial — {{count}} days left',
       bannerActiveDesc: 'Enjoy the full app, free.',

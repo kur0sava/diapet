@@ -44,8 +44,22 @@ const BACKUP_MMKV_KEYS = [
 /** Prefixes for dynamic per-pet keys included in backup. Must match {@link vetNameKey} / {@link vetPhoneKey}. */
 const DYNAMIC_BACKUP_PREFIXES = ['vetName_', 'vetPhone_'] as const;
 
+/**
+ * UUID v4 / v5 shape used by react-native-uuid for pet ids — `8-4-4-4-12` hex.
+ * We accept any hex variant (case-insensitive) to leave room for the library
+ * upgrading versioning. Anything else in the petId slot is rejected so a
+ * tampered backup can't write arbitrary keys (e.g. `vetName_../../`).
+ */
+const PET_ID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
 function isDynamicBackupKey(key: string): boolean {
-  return DYNAMIC_BACKUP_PREFIXES.some(p => key.startsWith(p));
+  for (const prefix of DYNAMIC_BACKUP_PREFIXES) {
+    if (key.startsWith(prefix)) {
+      const petId = key.slice(prefix.length);
+      return PET_ID_RE.test(petId);
+    }
+  }
+  return false;
 }
 
 interface BackupData {
@@ -181,16 +195,46 @@ export async function restoreFromCloud(uid: string): Promise<boolean> {
     }
   });
 
-  // BL-10: Restore user preferences to MMKV (fixed keys + per-pet vet keys)
+  // BL-10: Restore user preferences to MMKV (fixed keys + per-pet vet keys).
+  //
+  // Audit BUG-C002 hardening: collect the set of pet ids actually restored
+  // so we only re-apply per-pet keys whose owner exists. This keeps the
+  // MMKV scoped state consistent with the SQL state after a cross-device
+  // restore (where backup pet ids may not match local pre-existing ones).
+  const restoredPetIds = new Set<string>(
+    ((backup.tables.pets ?? []) as Array<{ id?: unknown }>)
+      .map(p => (typeof p.id === 'string' ? p.id : ''))
+      .filter(id => id && PET_ID_RE.test(id))
+  );
   const allowedFixedKeys = new Set<string>(BACKUP_MMKV_KEYS);
   if (backup.settings) {
     for (const [key, value] of Object.entries(backup.settings)) {
-      if (!allowedFixedKeys.has(key) && !isDynamicBackupKey(key)) continue;
-      if (typeof value === 'string') storage.set(key, value);
-      else if (typeof value === 'number') storage.set(key, value);
-      else if (typeof value === 'boolean') storage.set(key, value);
+      if (allowedFixedKeys.has(key)) {
+        if (typeof value === 'string') storage.set(key, value);
+        else if (typeof value === 'number') storage.set(key, value);
+        else if (typeof value === 'boolean') storage.set(key, value);
+        continue;
+      }
+      if (isDynamicBackupKey(key)) {
+        const petId = key.split('_').slice(1).join('_');
+        if (!restoredPetIds.has(petId)) continue; // skip orphan
+        if (typeof value === 'string') storage.set(key, value);
+      }
     }
   }
+
+  // Scrub stale per-pet keys that were on this device before the restore but
+  // belong to pets that aren't in the backup — otherwise they'd shadow the
+  // restored state forever. Same for ACTIVE_PET_ID: clear it so the caller's
+  // petStore.loadPets() picks the first restored pet rather than chasing a
+  // dangling pointer.
+  for (const key of storage.getAllKeys()) {
+    if (!isDynamicBackupKey(key)) continue;
+    const petId = key.split('_').slice(1).join('_');
+    if (!restoredPetIds.has(petId)) storage.delete(key);
+  }
+  storage.delete(StorageKeys.ACTIVE_PET_ID);
+  storage.delete(StorageKeys.ACTIVE_SPECIES);
 
   return true;
 }

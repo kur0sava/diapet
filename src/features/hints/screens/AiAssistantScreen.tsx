@@ -20,13 +20,12 @@ import { useNavigation } from '@react-navigation/native';
 import { useRootNavigation } from '@navigation/hooks';
 import { useSubscription } from '@features/subscription/hooks/useSubscription';
 import { usePetStore } from '@shared/stores/petStore';
-import { isBackendConfigured } from '@shared/stores/subscriptionStore';
 import { storage, StorageKeys, storageUtils } from '@storage/mmkv/storage';
 import { glucoseRepository, injectionRepository, scheduleRepository } from '@storage/database';
 import { buildAiSystemPrompt, AiPetContext } from '../data/aiSystemPrompt';
-import { sendChatMessage, ChatMessage } from '../utils/aiClient';
+import { sendChatMessage, ChatMessage, isAiConfigured } from '../utils/aiClient';
 import { differenceInDays } from 'date-fns';
-import { parseDateOnly, todayLocal } from '@shared/utils/dateUtils';
+import { parseDateOnly, todayLocal, toDateOnly } from '@shared/utils/dateUtils';
 
 const MAX_HISTORY = 50;
 const MAX_API_CONTEXT = 15;
@@ -77,17 +76,25 @@ export default function AiAssistantScreen() {
   useEffect(() => {
     if (!activePet) return;
 
-    // Load persisted history
+    // Load persisted history. Filter out any error bubbles stored by the
+    // pre-fix version so we don't feed them back into the API context.
     const saved = storageUtils.getObject<ChatMessage[]>(historyKey!);
     if (saved && Array.isArray(saved)) {
-      messagesRef.current = saved;
-      setMessages(saved);
+      const cleaned = saved.filter(m => !m.content.startsWith('⚠️'));
+      messagesRef.current = cleaned;
+      setMessages(cleaned);
+      if (cleaned.length !== saved.length) {
+        storageUtils.setObject(historyKey!, cleaned);
+      }
     }
 
-    // Build system prompt asynchronously using pet context
+    // Build system prompt asynchronously using pet context.
+    // UX-H3 (audit): re-run on i18n.language change so the prompt language
+    // tracks the active UI language; otherwise the user switches RU↔EN and
+    // the next AI reply still arrives in the previous language.
     buildSystemPromptAsync();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [activePet?.id]);
+  }, [activePet?.id, i18n.language]);
 
   const buildSystemPromptAsync = useCallback(async () => {
     if (!activePet) return;
@@ -104,7 +111,10 @@ export default function AiAssistantScreen() {
       const lastGlucoseReadings = glucoseResult.data.map(r => ({
         value: r.valueMmol,
         unit: 'mmol/L',
-        date: r.recordedAt.slice(0, 10),
+        // Local date — slice(0,10) on the UTC ISO would give the wrong
+        // calendar day for users east/west of UTC near midnight, which
+        // confuses Claude when it reasons about "today" / "yesterday".
+        date: toDateOnly(new Date(r.recordedAt)),
       }));
 
       const daysSinceDiagnosis = activePet.diagnosisDate
@@ -170,13 +180,18 @@ export default function AiAssistantScreen() {
     [persistMessages]
   );
 
-  const appendErrorMessage = useCallback(
-    (text: string) => {
-      const errorMsg: ChatMessage = { role: 'assistant', content: `\u26a0\ufe0f ${text}` };
-      updateMessages(prev => [...prev, errorMsg]);
-    },
-    [updateMessages]
-  );
+  // UX-H2 (audit): error messages must be transient \u2014 they should NOT be
+  // persisted to MMKV history nor sent back to the API on next request,
+  // otherwise (a) the chat fills with "Couldn't connect" bubbles forever
+  // and (b) the AI tries to react to its own fake messages on retry.
+  //
+  // We display error bubbles in the rendered `messages` state only. The
+  // `messagesRef` (which feeds the next API request) and `persistMessages`
+  // (which writes to MMKV) are deliberately bypassed.
+  const appendErrorMessage = useCallback((text: string) => {
+    const errorMsg: ChatMessage = { role: 'assistant', content: `\u26a0\ufe0f ${text}` };
+    setMessages(prev => [...prev, errorMsg]);
+  }, []);
 
   const [remaining, setRemaining] = useState(getRemainingMessages());
 
@@ -298,7 +313,7 @@ export default function AiAssistantScreen() {
           <TouchableOpacity
             onPress={() => navigation.goBack()}
             style={styles.backButton}
-            hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+            hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
           >
             <Icon name="chevron-back" size={24} color="#fff" />
           </TouchableOpacity>
@@ -315,7 +330,12 @@ export default function AiAssistantScreen() {
       </LinearGradient>
 
       {/* Body */}
-      {!isBackendConfigured() ? (
+      {/*
+       * AI Assistant uses the Anthropic API directly via aiClient — payment-backend
+       * configuration (Supabase) is unrelated. Show ComingSoonGate only when the
+       * Anthropic key isn't bundled (dev/local-without-key scenarios).
+       */}
+      {!isAiConfigured() ? (
         <ComingSoonGate theme={theme} t={t} />
       ) : !isPro ? (
         <ProGate theme={theme} t={t} onUpgrade={() => rootNavigation.navigate('Paywall')} />

@@ -89,9 +89,31 @@ export default function PaywallScreen() {
 
   const handleStartTrial = () => {
     if (trialStarted) return;
-    startTrial();
-    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
-    setTrialStartedTick(t => t + 1);
+    // UX-M11 (audit): confirm before consuming a one-shot 7-day window. A
+    // curious tap currently burns the trial silently; users who want to use
+    // Pro features later in the week find them locked. Keep the option to
+    // bypass via accept; cancel is a clean no-op.
+    Alert.alert(
+      t('subscription.trial.confirmTitle', {
+        days: TRIAL_DURATION_DAYS,
+        defaultValue: `Start ${TRIAL_DURATION_DAYS}-day free trial?`,
+      }),
+      t('subscription.trial.confirmBody', {
+        days: TRIAL_DURATION_DAYS,
+        defaultValue: `You'll get ${TRIAL_DURATION_DAYS} days of full Pro access. The trial starts now and can't be paused.`,
+      }),
+      [
+        { text: t('common.cancel'), style: 'cancel' },
+        {
+          text: t('subscription.trial.confirmCta', { defaultValue: 'Start trial' }),
+          onPress: () => {
+            startTrial();
+            Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
+            setTrialStartedTick(t => t + 1);
+          },
+        },
+      ]
+    );
   };
 
   // trialStartedTick forces re-render so that after tapping the CTA
@@ -120,6 +142,10 @@ export default function PaywallScreen() {
       Alert.alert(t('common.error'), t('subscription.notAvailable'));
       return;
     }
+    // UX-M12 (audit): confirm tap with a haptic so the user feels the button
+    // accepted before the browser opens (~500ms gap on slow devices). Without
+    // this, users tap a second time and end up with two browser tabs.
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).catch(() => {});
     setWaitingForPayment(true);
     openPayment(selectedPlan);
   };
@@ -213,7 +239,11 @@ export default function PaywallScreen() {
             <Icon name="chevron-forward" size={18} color={theme.colors.primary} />
           </TouchableOpacity>
         )}
-        {trialExpired && (
+        {/* UX-H8 (audit): "trial expired" badge would terrify a user who is
+            currently Pro via backendBypass. Hide it entirely when payments
+            aren't wired up — the Coming Soon block below already explains
+            the actual state ("all features unlocked"). */}
+        {trialExpired && isBackendConfigured() && (
           <View style={[styles.trialCard, { backgroundColor: theme.colors.warning + '15' }]}>
             <Icon name="time" size={22} color={theme.colors.warning} />
             <View style={{ flex: 1 }}>

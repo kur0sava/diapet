@@ -30,10 +30,10 @@ export const fructosamine: Article = {
 | Значение (мкмоль/л) | Что это значит |
 |---|---|
 | 170-340 | Норма для здоровой кошки |
-| 340-400 | Хороший контроль диабета — вы молодец! |
-| 400-500 | Нормально, но есть куда стремиться |
-| Выше 500 | Контроль недостаточный — нужна коррекция |
-| Выше 600 | Серьёзная ситуация — высокий риск осложнений |
+| 340-450 | Хороший контроль диабета — вы молодец! |
+| 450-550 | Субоптимально — есть куда стремиться, обсудите с ветеринаром |
+| Выше 550 | Контроль недостаточный — нужна коррекция терапии |
+| Выше 700 | Серьёзная ситуация — высокий риск осложнений |
 
 ### Когда цифры могут обмануть
 
@@ -53,7 +53,7 @@ export const fructosamine: Article = {
 
 ### Фруктозамин и ремиссия
 
-Когда кошка входит в ремиссию, фруктозамин возвращается в норму (170-340 мкмоль/л). А если у кошки в ремиссии фруктозамин начинает расти выше 400 — это может быть ранний сигнал, что диабет возвращается. Часто это видно ещё до появления симптомов!
+Когда кошка входит в ремиссию, фруктозамин возвращается в норму (170-340 мкмоль/л). А если у кошки в ремиссии фруктозамин начинает расти выше 450 — это может быть ранний сигнал, что диабет возвращается. Часто это видно ещё до появления симптомов!
 
 > Продолжайте проверять фруктозамин каждые 3-6 месяцев даже в ремиссии. Это маленький анализ крови, который даёт большое спокойствие.`,
     en: `## Fructosamine: Long-Term Diabetes Control
@@ -75,10 +75,10 @@ Great question! In cats, red blood cells only live about 70 days (compared to 12
 | Value (umol/L) | What It Means |
 |---|---|
 | 170-340 | Normal for a healthy cat |
-| 340-400 | Good diabetic control — nice work! |
-| 400-500 | Okay, but there's room for improvement |
-| Above 500 | Control is lacking — adjustment needed |
-| Above 600 | Serious situation — high risk of complications |
+| 340-450 | Good diabetic control — nice work! |
+| 450-550 | Suboptimal — room for improvement, discuss with your vet |
+| Above 550 | Control is lacking — therapy adjustment needed |
+| Above 700 | Serious situation — high risk of complications |
 
 ### When the Numbers Can Be Misleading
 
@@ -98,7 +98,7 @@ That's why your vet always looks at fructosamine alongside other data — home m
 
 ### Fructosamine and Remission
 
-When a cat goes into remission, fructosamine returns to the healthy range (170-340 umol/L). And if fructosamine starts climbing above 400 in a cat that's in remission — it could be an early warning that diabetes is returning. Often this shows up before any symptoms do!
+When a cat goes into remission, fructosamine returns to the healthy range (170-340 umol/L). And if fructosamine starts climbing above 450 in a cat that's in remission — it could be an early warning that diabetes is returning. Often this shows up before any symptoms do!
 
 > Keep checking fructosamine every 3-6 months even during remission. It's a small blood test that gives great peace of mind.`,
   },
@@ -107,8 +107,14 @@ When a cat goes into remission, fructosamine returns to the healthy range (170-3
   order: 2,
   relatedArticleIds: ['glucose_monitoring', 'flexible-monitoring', 'stress-hyperglycemia'],
   references: [
-    { ru: 'Reusch CE et al — Fructosamine in cats with diabetes mellitus, JVIM 1993', en: 'Reusch CE et al — Fructosamine in cats with diabetes mellitus, JVIM 1993' },
-    { ru: 'ISFM Guidelines on Diabetes Mellitus in Cats, 2023', en: 'ISFM Guidelines on Diabetes Mellitus in Cats, 2023' },
+    {
+      ru: 'Reusch CE et al — Fructosamine in cats with diabetes mellitus, JVIM 1993',
+      en: 'Reusch CE et al — Fructosamine in cats with diabetes mellitus, JVIM 1993',
+    },
+    {
+      ru: 'ISFM Guidelines on Diabetes Mellitus in Cats, 2023',
+      en: 'ISFM Guidelines on Diabetes Mellitus in Cats, 2023',
+    },
   ],
   tags: [
     { ru: 'фруктозамин', en: 'fructosamine' },

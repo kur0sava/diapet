@@ -213,7 +213,7 @@ export default function FeedGuideRegionScreen() {
           </View>
         )}
 
-        {food.notes && (
+        {food.notes && isRu && (
           <Text style={[styles.foodNotes, { color: theme.colors.textSecondary }]}>
             {food.notes}
           </Text>

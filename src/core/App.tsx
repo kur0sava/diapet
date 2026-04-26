@@ -113,13 +113,28 @@ export default function App() {
         }
         // Recovery: if onboarding was never completed but pets exist in DB,
         // the previous install crashed mid-onboarding. Purge orphaned pets so
-        // the re-run of onboarding doesn't leave duplicates behind.
+        // the re-run of onboarding doesn't leave duplicates behind. Also
+        // wipe MMKV pointers/per-pet keys so the next launch's ThemeContext
+        // doesn't briefly render the dead pet's species color before the
+        // re-onboarded pet is created (audit BUG-H002).
         if (!storage.getBoolean(StorageKeys.ONBOARDING_COMPLETE)) {
           try {
             const existing = await petRepository.findActive();
             for (const p of existing) await petRepository.delete(p.id);
           } catch {
             /* best-effort recovery */
+          }
+          storage.delete(StorageKeys.ACTIVE_PET_ID);
+          storage.delete(StorageKeys.ACTIVE_SPECIES);
+          storage.delete(StorageKeys.NOTIFICATIONS_ENABLED);
+          // Sweep stranded per-pet vet keys whose petId is no longer in DB.
+          // petRepository.delete already nukes them for known pet ids, but
+          // an interrupted handleFinish may have written one before the pet
+          // row was even committed.
+          for (const key of storage.getAllKeys()) {
+            if (key.startsWith('vetName_') || key.startsWith('vetPhone_')) {
+              storage.delete(key);
+            }
           }
         }
         // v2.5.1: migrate legacy global vet contact to per-pet keys.
