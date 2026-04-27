@@ -110,6 +110,13 @@
             font-size: 1.1em;
         }
 
+        h4 {
+            color: #555;
+            margin-top: 14px;
+            margin-bottom: 8px;
+            font-size: 1.0em;
+        }
+
         p {
             margin-bottom: 15px;
             text-align: justify;
@@ -134,6 +141,18 @@
 
         .highlight strong {
             color: #667eea;
+        }
+
+        .third-party {
+            background: #fff7e6;
+            padding: 16px 20px;
+            border-left: 4px solid #ffa726;
+            margin: 14px 0;
+            border-radius: 6px;
+        }
+
+        .third-party strong {
+            color: #b26a00;
         }
 
         footer {
@@ -206,208 +225,234 @@
     <div class="container">
         <header>
             <h1>Privacy Policy</h1>
-            <p>DiaPet — Feline Diabetes Management</p>
+            <p>DiaPet — Cat & Dog Diabetes Management</p>
         </header>
 
         <div class="content">
             <!-- ENGLISH VERSION -->
             <div class="language-section active" data-lang="en">
                 <h2>Privacy Policy for DiaPet</h2>
-                <p><strong>Last Updated:</strong> February 2026</p>
+                <p><strong>Last Updated:</strong> April 2026</p>
 
                 <h3>1. Introduction</h3>
-                <p>DiaPet is a mobile application designed to help cat owners manage their pet's diabetes. We are committed to protecting your privacy and ensuring you have a positive experience with our app.</p>
+                <p>DiaPet is a mobile application that helps cat and dog owners manage their pet's diabetes — track glucose, insulin, feeding, symptoms, expenses, and access educational content. This policy explains what data DiaPet handles, where it is stored, and which third-party services may receive it.</p>
 
                 <div class="highlight">
-                    <strong>Key Privacy Principle:</strong> DiaPet stores all data locally on your device only. We do not collect, store, or share any of your data with external servers or third parties.
+                    <strong>Local-first design:</strong> All your pet's medical data (glucose readings, symptoms, photos, schedules) is stored only on your device, in an encrypted database. It never leaves your device unless you explicitly opt in to a feature that requires it (Cloud Backup, AI Assistant, AI Prediction).
                 </div>
 
-                <h3>2. What Data We Store</h3>
-                <p>DiaPet allows you to store and manage the following information on your device:</p>
+                <h3>2. What Data DiaPet Stores Locally on Your Device</h3>
                 <ul>
-                    <li><strong>Pet Information:</strong> Your cat's name, breed, age, weight, and medical history</li>
-                    <li><strong>Glucose Readings:</strong> Blood glucose measurements and measurement times</li>
-                    <li><strong>Medication Records:</strong> Insulin doses, injection times, and medication schedules</li>
-                    <li><strong>Symptom Logs:</strong> Recorded symptoms and their severity</li>
-                    <li><strong>Symptom Photos:</strong> Photos attached to symptom records (stored on your device)</li>
-                    <li><strong>Feeding Records:</strong> Food type, feeding time, and portion size</li>
-                    <li><strong>Expense Tracking:</strong> Veterinary and medication costs</li>
-                    <li><strong>Reminder Settings:</strong> Your custom medication and feeding reminder preferences</li>
+                    <li><strong>Pet Profile:</strong> name, species (cat or dog), breed, age, weight, gender, diabetes type and diagnosis date</li>
+                    <li><strong>Glucose Readings:</strong> measured values, time, meal relation, optional notes</li>
+                    <li><strong>Insulin Records:</strong> dose, insulin type, time</li>
+                    <li><strong>Feeding Records:</strong> food type, time, portion size</li>
+                    <li><strong>Symptom Logs:</strong> recorded symptoms, severity, optional photos</li>
+                    <li><strong>Expense Tracking:</strong> veterinary and medication costs, optional monthly budget</li>
+                    <li><strong>Vet Contact:</strong> name and phone of your veterinarian (per pet)</li>
+                    <li><strong>Reminder Settings:</strong> injection / feeding schedules, notification preferences</li>
+                    <li><strong>App Preferences:</strong> language, theme, glucose units, bookmarks</li>
                 </ul>
+                <p>This data is stored in an SQLite database encrypted with a per-device key held in your operating system's secure keystore (Android Keystore / iOS Keychain). The app's MMKV preferences store is encrypted with the same key.</p>
 
-                <p><strong>All of this data is stored exclusively on your device.</strong> Nothing is sent to our servers, the cloud, or any third-party services.</p>
-
-                <h3>3. Permissions & Data Access</h3>
-
-                <h4>Camera & Photo Library</h4>
-                <p>DiaPet may request access to your device's camera and photo library to allow you to attach photos to symptom records. This feature helps you document your pet's condition visually.</p>
-                <ul>
-                    <li><strong>Why We Need It:</strong> To enable you to capture or select photos from your device</li>
-                    <li><strong>How We Use It:</strong> Photos are stored locally within the app, attached to symptom entries</li>
-                    <li><strong>Data Storage:</strong> All photos remain on your device; they are never uploaded or shared</li>
-                </ul>
+                <h3>3. Permissions Requested</h3>
+                <h4>Camera and Photo Library</h4>
+                <p>Used so you can attach photos to symptom records. Photos remain on your device and are never uploaded by DiaPet.</p>
 
                 <h4>Notifications</h4>
-                <p>DiaPet uses local notifications to remind you about medication doses and feeding schedules.</p>
+                <p>Used to deliver local reminders for injections, feedings, and educational hints. Reminders are scheduled by your operating system; their content is not sent to any external server.</p>
+
+                <h4>Storage</h4>
+                <p>Used to save photos and exported PDF reports.</p>
+
+                <h3>4. Third-Party Services and What They Receive</h3>
+                <p>Some optional features rely on third-party services. We list each below with the exact data sent and the conditions under which the call happens.</p>
+
+                <div class="third-party">
+                    <strong>Google Firebase Analytics</strong>
+                    <p style="margin-top:8px">Used to measure how many people install DiaPet and which features are used, so we can improve the app. Provided by Google LLC.</p>
+                    <p><strong>What is sent:</strong> anonymous usage events such as <em>app_open</em>, <em>onboarding_complete</em>, <em>pet_added</em> (with species: cat / dog), <em>glucose_added</em> (meal relation only — never the value), <em>encyclopedia_article_opened</em> (article ID and category). Plus standard Firebase device data: anonymous Firebase install ID, device model, OS version, app version, country (derived from IP, not exact location), language.</p>
+                    <p><strong>What is NOT sent:</strong> pet names, glucose values, insulin doses, symptom text, photos, vet contacts, expense amounts, or any other identifying data.</p>
+                    <p><strong>Opt-out:</strong> Will be exposed as a toggle in Settings in a future release. You can also block analytics at the OS level via Google Play Services settings.</p>
+                </div>
+
+                <div class="third-party">
+                    <strong>Google Sign-In + Firebase Authentication + Cloud Firestore</strong>
+                    <p style="margin-top:8px">Used <em>only if you choose to sign in</em> with your Google account to enable optional Cloud Backup. Provided by Google LLC.</p>
+                    <p><strong>What is sent:</strong> your Google account email and display name (to identify your backup), and a copy of your DiaPet database when you trigger a backup or restore. Backups are stored in your own account namespace in Firestore.</p>
+                    <p><strong>What is NOT sent if you do not sign in:</strong> nothing. Cloud Backup is opt-in.</p>
+                </div>
+
+                <div class="third-party">
+                    <strong>Anthropic Claude API (via Supabase Edge Function)</strong>
+                    <p style="margin-top:8px">Used <em>only if you use AI Assistant or AI Prediction features</em>. AI features may not be enabled in every release. Provider: Anthropic PBC. Hosted relay: Supabase Inc.</p>
+                    <p><strong>What is sent:</strong> your typed question (AI Assistant) and a numerical summary of recent glucose / insulin / feeding history of the active pet (AI Prediction), plus species, age, weight, and diabetes type to ground the response. The pet's name is included so the assistant can address it.</p>
+                    <p><strong>What is NOT sent:</strong> photos, vet contacts, expense data, your account email.</p>
+                    <p><strong>Retention:</strong> Anthropic processes the request and returns a response. We do not store the conversation on our servers. Anthropic may retain logs per its own policy at <a href="https://www.anthropic.com/privacy">anthropic.com/privacy</a>.</p>
+                    <p><strong>Opt-out:</strong> Do not open AI Assistant or AI Prediction screens. No background AI calls are made.</p>
+                </div>
+
+                <div class="third-party">
+                    <strong>Subscription / Payment Provider</strong>
+                    <p style="margin-top:8px">When paid subscriptions are enabled (not in the current release), payment will be handled by an external provider redirecting you to its checkout page in your browser. We will update this policy with the provider's name and the exact data flow before any paid feature ships.</p>
+                </div>
+
+                <h3>5. What DiaPet Does NOT Do</h3>
                 <ul>
-                    <li><strong>Why We Need It:</strong> To send timely reminders for your pet's care</li>
-                    <li><strong>How They Work:</strong> All reminders are generated and processed locally on your device</li>
-                    <li><strong>Data Storage:</strong> Notification data is not stored on external servers</li>
+                    <li>We do not sell your data to advertisers or data brokers.</li>
+                    <li>We do not show third-party ads in this version.</li>
+                    <li>We do not track you across other apps or websites.</li>
+                    <li>We do not use cross-device tracking.</li>
+                    <li>We do not require an account to use the core medical features.</li>
                 </ul>
 
-                <h3>4. No Data Collection or Tracking</h3>
-                <p>DiaPet does <strong>not</strong>:</p>
+                <h3>6. Data Retention and Deletion</h3>
                 <ul>
-                    <li>Collect analytics or usage data</li>
-                    <li>Track your behavior or interactions within the app</li>
-                    <li>Use cookies or tracking technologies</li>
-                    <li>Share data with advertising networks or marketing partners</li>
-                    <li>Sell or monetize your personal data</li>
-                    <li>Require an internet connection for core functionality</li>
+                    <li><strong>Local data:</strong> remains on your device until you delete it (in the app's Settings → Delete All Data, or by uninstalling DiaPet).</li>
+                    <li><strong>Cloud Backup (Firestore):</strong> remains in your Google account until you delete it from the app's Cloud Backup screen or sign out.</li>
+                    <li><strong>Analytics events (Firebase):</strong> retained per Google's default Firebase Analytics retention (currently up to 14 months for event-level data).</li>
+                    <li><strong>AI requests (Anthropic):</strong> per Anthropic's own retention policy.</li>
                 </ul>
 
-                <h3>5. Data Deletion</h3>
-                <p>Your data is completely private and remains on your device. To permanently delete all your data:</p>
-                <ul>
-                    <li><strong>Option 1:</strong> Use the app's data export/deletion feature if available</li>
-                    <li><strong>Option 2:</strong> Uninstall the app from your device — all associated data will be removed</li>
-                    <li><strong>Option 3:</strong> Clear the app's cache and data through your device settings</li>
-                </ul>
-                <p>Once deleted, we have no ability to recover or access your data, as it was never stored on our servers.</p>
+                <h3>7. Children's Privacy</h3>
+                <p>DiaPet is not directed to children under 13. The app is intended for adults caring for a diabetic pet.</p>
 
-                <h3>6. Children's Privacy</h3>
-                <p>DiaPet is not directed to children under 13. However, parents and guardians may use DiaPet to manage their cat's health. If you are a parent or guardian and believe your child has accessed DiaPet without permission, please contact us immediately.</p>
+                <h3>8. Data Security</h3>
+                <p>Local data is encrypted with a key stored in the device's hardware-backed keystore. Network calls to Supabase, Firebase, and Anthropic are made over HTTPS. No security measure is perfect; please keep your operating system updated and use a device lock.</p>
 
-                <h3>7. No Account or Authentication</h3>
-                <p>DiaPet requires <strong>no user account, login, or registration</strong>. You can use the app immediately upon installation without providing any personal information.</p>
+                <h3>9. Your Rights</h3>
+                <p>Depending on your jurisdiction (GDPR, CCPA, etc.), you may have the right to access, correct, or delete data held about you. Because most data lives only on your device, you can exercise these rights immediately by editing or deleting records in the app, or by uninstalling the app. For data held by third parties listed in section 4, exercise your rights through their own privacy controls or contact us and we will help.</p>
 
-                <h3>8. Third-Party Services</h3>
-                <p>DiaPet does not integrate with third-party analytics, cloud services, or data brokers. Your data is never shared with external parties.</p>
+                <h3>10. International Transfers</h3>
+                <p>Firebase, Supabase, and Anthropic process data on servers that may be located outside your country. By using AI, Cloud Backup, or analytics features, you consent to such international processing.</p>
 
-                <h3>9. Data Security</h3>
-                <p>Since all your data is stored locally on your device, the security of your data depends on your device's built-in security features:</p>
-                <ul>
-                    <li>Keep your device updated with the latest OS patches</li>
-                    <li>Use a strong device lock code or biometric authentication</li>
-                    <li>Avoid jailbreaking or rooting your device</li>
-                </ul>
+                <h3>11. Changes to This Policy</h3>
+                <p>We may update this policy when we add or remove features. The "Last Updated" date at the top reflects the latest change. Continued use of DiaPet after a change means you accept the updated policy.</p>
 
-                <h3>10. Changes to This Privacy Policy</h3>
-                <p>We may update this privacy policy occasionally. Changes will be reflected in the app and on this page with an updated "Last Updated" date. Your continued use of DiaPet indicates acceptance of any changes.</p>
-
-                <h3>11. Contact Us</h3>
-                <p>If you have questions or concerns about this privacy policy or DiaPet's data practices, please contact us:</p>
+                <h3>12. Contact</h3>
                 <div class="contact-info">
                     <strong>Email:</strong> <a href="mailto:giwoder@gmail.com">giwoder@gmail.com</a><br>
                     <strong>Developer:</strong> DiaPet Team
                 </div>
 
-                <h3>12. Summary</h3>
-                <p>Your privacy matters to us. DiaPet is designed to keep your pet's health data private, secure, and completely under your control on your device. We do not collect, track, share, or monetize any information. Your data is yours alone.</p>
-
+                <h3>13. Summary</h3>
+                <p>Your pet's medical data lives on your device and stays there. A small set of optional features (analytics, cloud backup, AI) involve third parties — each is described above with the exact data sent and the conditions under which it happens. We do not sell your data, do not show ads in this version, and do not track you across other apps.</p>
             </div>
 
             <!-- RUSSIAN VERSION -->
             <div class="language-section" data-lang="ru">
                 <h2>Политика конфиденциальности DiaPet</h2>
-                <p><strong>Последнее обновление:</strong> Февраль 2026</p>
+                <p><strong>Последнее обновление:</strong> Апрель 2026</p>
 
                 <h3>1. Введение</h3>
-                <p>DiaPet — это мобильное приложение, разработанное для помощи владельцам кошек в управлении диабетом их питомцев. Мы обязуемся защищать вашу конфиденциальность и обеспечивать позитивный опыт использования приложения.</p>
+                <p>DiaPet — это мобильное приложение, которое помогает владельцам кошек и собак вести диабет питомца: фиксировать глюкозу, инсулин, кормления, симптомы, расходы и читать обучающие материалы. Эта политика описывает, какие данные обрабатывает приложение, где они хранятся и с какими сторонними сервисами они могут передаваться.</p>
 
                 <div class="highlight">
-                    <strong>Основной принцип конфиденциальности:</strong> DiaPet хранит все данные исключительно локально на вашем устройстве. Мы не собираем, не храним и не передаем ваши данные внешним серверам или третьим лицам.
+                    <strong>Локально по умолчанию:</strong> все медицинские данные питомца (замеры глюкозы, симптомы, фото, расписания) хранятся только на вашем устройстве, в зашифрованной базе данных. Они не покидают устройство, пока вы сами не воспользуетесь функцией, которая этого требует (облачная резервная копия, AI-ассистент, AI-прогноз).
                 </div>
 
-                <h3>2. Какие данные мы храним</h3>
-                <p>DiaPet позволяет вам сохранять и управлять следующей информацией на вашем устройстве:</p>
+                <h3>2. Какие данные DiaPet хранит локально на вашем устройстве</h3>
                 <ul>
-                    <li><strong>Информация о питомце:</strong> имя, порода, возраст, вес и история болезни вашей кошки</li>
-                    <li><strong>Измерения глюкозы:</strong> уровни глюкозы в крови и время измерения</li>
-                    <li><strong>Запись о лекарствах:</strong> дозы инсулина, время инъекций и расписание лекарств</li>
-                    <li><strong>Журнал симптомов:</strong> записанные симптомы и их тяжесть</li>
-                    <li><strong>Фотографии симптомов:</strong> фотографии, прикрепленные к записям о симптомах (хранятся на вашем устройстве)</li>
-                    <li><strong>Записи о кормлении:</strong> тип корма, время кормления и размер порции</li>
-                    <li><strong>Отслеживание расходов:</strong> ветеринарные и лекарственные расходы</li>
-                    <li><strong>Параметры напоминаний:</strong> ваши пользовательские напоминания о лекарствах и кормлении</li>
+                    <li><strong>Профиль питомца:</strong> имя, вид (кошка или собака), порода, возраст, вес, пол, тип диабета и дата постановки диагноза</li>
+                    <li><strong>Замеры глюкозы:</strong> значения, время, отношение к еде, заметки</li>
+                    <li><strong>Записи об инсулине:</strong> доза, тип инсулина, время</li>
+                    <li><strong>Записи о кормлении:</strong> вид корма, время, размер порции</li>
+                    <li><strong>Журнал симптомов:</strong> симптомы, тяжесть, опционально фотографии</li>
+                    <li><strong>Учёт расходов:</strong> ветеринарные и лекарственные траты, опционально месячный бюджет</li>
+                    <li><strong>Контакты ветеринара:</strong> имя и телефон врача (для каждого питомца)</li>
+                    <li><strong>Расписание уведомлений:</strong> время инъекций / кормлений и настройки напоминаний</li>
+                    <li><strong>Настройки приложения:</strong> язык, тема, единицы глюкозы, закладки</li>
                 </ul>
+                <p>База данных SQLite шифруется ключом, который выдаётся каждому устройству и хранится в системном безопасном хранилище (Android Keystore / iOS Keychain). Хранилище настроек MMKV шифруется тем же ключом.</p>
 
-                <p><strong>Все эти данные хранятся исключительно на вашем устройстве.</strong> Ничто не отправляется на наши серверы, в облако или третьим сторонам.</p>
-
-                <h3>3. Разрешения и доступ к данным</h3>
-
-                <h4>Камера и галерея фотографий</h4>
-                <p>DiaPet может запросить доступ к камере вашего устройства и галерее фотографий, чтобы вы могли прикреплять фотографии к записям о симптомах. Эта функция помогает вам визуально документировать состояние вашего питомца.</p>
-                <ul>
-                    <li><strong>Зачем нам это нужно:</strong> для того, чтобы вы могли делать фотографии или выбирать их со своего устройства</li>
-                    <li><strong>Как мы это используем:</strong> фотографии хранятся локально в приложении, прикреплены к записям о симптомах</li>
-                    <li><strong>Хранение данных:</strong> все фотографии остаются на вашем устройстве; они никогда не загружаются и не передаются</li>
-                </ul>
+                <h3>3. Запрашиваемые разрешения</h3>
+                <h4>Камера и галерея</h4>
+                <p>Нужны, чтобы вы могли прикреплять фотографии к записям симптомов. Фото остаются на устройстве, DiaPet их никуда не загружает.</p>
 
                 <h4>Уведомления</h4>
-                <p>DiaPet использует локальные уведомления для напоминания о приеме лекарств и расписании кормления.</p>
+                <p>Нужны для локальных напоминаний об инъекциях, кормлениях и обучающих подсказках. Напоминания планирует операционная система; их содержимое не передаётся на внешние серверы.</p>
+
+                <h4>Хранилище</h4>
+                <p>Нужно для сохранения фотографий и экспорта PDF-отчётов.</p>
+
+                <h3>4. Сторонние сервисы и какие данные они получают</h3>
+                <p>Часть необязательных функций использует сторонние сервисы. Ниже подробно описано, какие данные и при каких условиях передаются каждому.</p>
+
+                <div class="third-party">
+                    <strong>Google Firebase Analytics</strong>
+                    <p style="margin-top:8px">Нужен, чтобы понимать, сколько людей установило DiaPet и какими функциями пользуется — это помогает улучшать приложение. Провайдер — Google LLC.</p>
+                    <p><strong>Что передаётся:</strong> анонимные события использования: <em>app_open</em>, <em>onboarding_complete</em>, <em>pet_added</em> (с указанием вида: кошка / собака), <em>glucose_added</em> (только отношение к еде, без значения), <em>encyclopedia_article_opened</em> (ID статьи и категория). Плюс стандартные данные Firebase: анонимный install ID, модель устройства, версия ОС, версия приложения, страна (определяется по IP, не точная геолокация), язык.</p>
+                    <p><strong>Что НЕ передаётся:</strong> имя питомца, значения глюкозы, дозы инсулина, текст симптомов, фотографии, контакты ветеринара, суммы расходов и любые другие идентифицирующие данные.</p>
+                    <p><strong>Отказ:</strong> в одном из ближайших обновлений в настройках появится переключатель отключения аналитики. Также можно заблокировать аналитику на уровне операционной системы через настройки Google Play Services.</p>
+                </div>
+
+                <div class="third-party">
+                    <strong>Google Sign-In + Firebase Authentication + Cloud Firestore</strong>
+                    <p style="margin-top:8px">Используются, <em>только если вы решили войти</em> через Google-аккаунт, чтобы включить облачную резервную копию. Провайдер — Google LLC.</p>
+                    <p><strong>Что передаётся:</strong> email и имя вашего Google-аккаунта (чтобы привязать резервную копию), а также копия базы данных DiaPet, когда вы запускаете создание копии или восстановление. Резервные копии лежат в вашем собственном пространстве в Firestore.</p>
+                    <p><strong>Что НЕ передаётся, если вы не входите:</strong> ничего. Облачная копия — это опциональная функция.</p>
+                </div>
+
+                <div class="third-party">
+                    <strong>Anthropic Claude API (через Supabase Edge Function)</strong>
+                    <p style="margin-top:8px">Используются, <em>только если вы пользуетесь AI-ассистентом или AI-прогнозом</em>. Эти функции могут быть отключены в текущем релизе. Провайдер модели — Anthropic PBC. Серверный прокси — Supabase Inc.</p>
+                    <p><strong>Что передаётся:</strong> ваш текстовый вопрос (AI-ассистент) и числовая сводка по последней истории глюкозы / инсулина / кормления активного питомца (AI-прогноз), а также вид, возраст, вес и тип диабета — чтобы ответ был релевантным. Имя питомца передаётся, чтобы ассистент мог обратиться к нему по имени.</p>
+                    <p><strong>Что НЕ передаётся:</strong> фотографии, контакты ветеринара, данные о расходах, email вашего аккаунта.</p>
+                    <p><strong>Хранение:</strong> Anthropic обрабатывает запрос и возвращает ответ. Мы не сохраняем разговор на своих серверах. Anthropic может вести собственные логи в соответствии со своей политикой: <a href="https://www.anthropic.com/privacy">anthropic.com/privacy</a>.</p>
+                    <p><strong>Отказ:</strong> не открывайте экраны AI-ассистента и AI-прогноза. Никаких фоновых AI-запросов приложение не делает.</p>
+                </div>
+
+                <div class="third-party">
+                    <strong>Платёжный провайдер для подписок</strong>
+                    <p style="margin-top:8px">Когда платные подписки будут включены (в текущем релизе они не активны), оплата будет проходить через внешнего провайдера, который откроет страницу оплаты в браузере. Перед запуском любой платной функции мы обновим эту политику и явно укажем имя провайдера и состав передаваемых данных.</p>
+                </div>
+
+                <h3>5. Чего DiaPet НЕ делает</h3>
                 <ul>
-                    <li><strong>Зачем нам это нужно:</strong> для отправки своевременных напоминаний по уходу за вашим питомцем</li>
-                    <li><strong>Как они работают:</strong> все напоминания генерируются и обрабатываются локально на вашем устройстве</li>
-                    <li><strong>Хранение данных:</strong> данные уведомлений не хранятся на внешних серверах</li>
+                    <li>Мы не продаём ваши данные рекламным сетям и брокерам данных.</li>
+                    <li>В этой версии мы не показываем сторонней рекламы.</li>
+                    <li>Мы не отслеживаем вас в других приложениях и на сайтах.</li>
+                    <li>Мы не делаем кросс-устройственного отслеживания.</li>
+                    <li>Мы не требуем регистрации, чтобы пользоваться основными медицинскими функциями.</li>
                 </ul>
 
-                <h3>4. Отсутствие сбора данных или отслеживания</h3>
-                <p>DiaPet <strong>НЕ</strong>:</p>
+                <h3>6. Хранение и удаление данных</h3>
                 <ul>
-                    <li>Собирает аналитику или данные об использовании</li>
-                    <li>Отслеживает ваше поведение или взаимодействия в приложении</li>
-                    <li>Использует cookies или технологии отслеживания</li>
-                    <li>Передает данные рекламным сетям или маркетинговым партнерам</li>
-                    <li>Продает или монетизирует ваши личные данные</li>
-                    <li>Требует подключения к Интернету для основного функционала</li>
+                    <li><strong>Локальные данные:</strong> остаются на устройстве, пока вы сами их не удалите (Настройки → Удалить все данные, либо удаление приложения).</li>
+                    <li><strong>Облачная копия (Firestore):</strong> остаётся в вашем Google-аккаунте, пока вы не удалите её из экрана резервной копии или не выйдете из аккаунта.</li>
+                    <li><strong>События аналитики (Firebase):</strong> хранятся согласно стандартной политике Firebase Analytics (на момент публикации до 14 месяцев для событий уровня сессии).</li>
+                    <li><strong>AI-запросы (Anthropic):</strong> по политике Anthropic.</li>
                 </ul>
 
-                <h3>5. Удаление данных</h3>
-                <p>Ваши данные полностью приватны и остаются на вашем устройстве. Чтобы навсегда удалить все ваши данные:</p>
-                <ul>
-                    <li><strong>Способ 1:</strong> используйте функцию экспорта/удаления данных приложения, если она доступна</li>
-                    <li><strong>Способ 2:</strong> удалите приложение со своего устройства — все связанные данные будут удалены</li>
-                    <li><strong>Способ 3:</strong> очистите кэш и данные приложения через параметры устройства</li>
-                </ul>
-                <p>После удаления мы не имеем возможности восстановить или получить доступ к вашим данным, так как они никогда не хранились на наших серверах.</p>
+                <h3>7. Конфиденциальность детей</h3>
+                <p>DiaPet не предназначен для детей младше 13 лет. Приложение рассчитано на взрослых владельцев питомцев с диабетом.</p>
 
-                <h3>6. Конфиденциальность детей</h3>
-                <p>DiaPet не ориентирован на детей младше 13 лет. Однако родители и опекуны могут использовать DiaPet для управления здоровьем своей кошки. Если вы родитель или опекун и считаете, что ваш ребенок получил доступ к DiaPet без разрешения, немедленно свяжитесь с нами.</p>
+                <h3>8. Безопасность данных</h3>
+                <p>Локальные данные шифруются ключом, который хранится в аппаратно-защищённом хранилище устройства. Все сетевые запросы к Supabase, Firebase и Anthropic идут по HTTPS. Идеальной безопасности не существует — пожалуйста, держите ОС обновлённой и используйте блокировку устройства.</p>
 
-                <h3>7. Отсутствие учетной записи или аутентификации</h3>
-                <p>DiaPet <strong>не требует</strong> учетную запись пользователя, вход или регистрацию. Вы можете использовать приложение сразу после установки, не предоставляя никакую личную информацию.</p>
+                <h3>9. Ваши права</h3>
+                <p>В зависимости от страны (GDPR, ФЗ-152 и т.п.) у вас могут быть права на доступ, исправление и удаление данных. Поскольку большая часть данных хранится только на вашем устройстве, эти права вы реализуете напрямую: редактируете или удаляете записи в приложении, либо удаляете приложение целиком. По данным, переданным сторонним сервисам из раздела 4, обращайтесь к их собственным механизмам управления приватностью или свяжитесь с нами — мы поможем.</p>
 
-                <h3>8. Сторонние сервисы</h3>
-                <p>DiaPet не интегрируется со сторонней аналитикой, облачными сервисами или броkers данных. Ваши данные никогда не передаются третьим сторонам.</p>
+                <h3>10. Международная передача данных</h3>
+                <p>Серверы Firebase, Supabase и Anthropic могут находиться за пределами вашей страны. Используя облачную резервную копию, AI-функции или аналитику, вы соглашаетесь на такую международную передачу.</p>
 
-                <h3>9. Безопасность данных</h3>
-                <p>Так как все ваши данные хранятся локально на вашем устройстве, безопасность ваших данных зависит от встроенных функций безопасности вашего устройства:</p>
-                <ul>
-                    <li>Держите ваше устройство в актуальном состоянии с последними исправлениями ОС</li>
-                    <li>Используйте надежный код блокировки устройства или биометрическую аутентификацию</li>
-                    <li>Избегайте джейлбрейка или рутирования вашего устройства</li>
-                </ul>
+                <h3>11. Изменения в политике</h3>
+                <p>Мы обновляем эту политику при добавлении или удалении функций. Дата «Последнее обновление» в начале страницы отражает последнее изменение. Продолжая пользоваться DiaPet после обновления, вы принимаете новую редакцию.</p>
 
-                <h3>10. Изменения в политике конфиденциальности</h3>
-                <p>Мы можем периодически обновлять эту политику конфиденциальности. Изменения будут отражены в приложении и на этой странице с обновленной датой "Последнее обновление". Ваше продолжение использования DiaPet указывает на согласие с любыми изменениями.</p>
-
-                <h3>11. Свяжитесь с нами</h3>
-                <p>Если у вас есть вопросы или проблемы относительно этой политики конфиденциальности или практики работы с данными DiaPet, пожалуйста, свяжитесь с нами:</p>
+                <h3>12. Контакты</h3>
                 <div class="contact-info">
                     <strong>Электронная почта:</strong> <a href="mailto:giwoder@gmail.com">giwoder@gmail.com</a><br>
                     <strong>Разработчик:</strong> DiaPet Team
                 </div>
 
-                <h3>12. Резюме</h3>
-                <p>Ваша конфиденциальность важна для нас. DiaPet разработан для того, чтобы держать данные о здоровье вашего питомца конфиденциальными, защищенными и полностью под вашим контролем на вашем устройстве. Мы не собираем, не отслеживаем, не передаем и не монетизируем никакую информацию. Ваши данные принадлежат только вам.</p>
-
+                <h3>13. Резюме</h3>
+                <p>Медицинские данные вашего питомца хранятся на вашем устройстве и остаются там. Несколько необязательных функций (аналитика, облачная копия, AI) задействуют сторонние сервисы — для каждого выше явно указано, что и при каких условиях передаётся. Мы не продаём ваши данные, в этой версии не показываем рекламу и не следим за вами в других приложениях.</p>
             </div>
         </div>
 
         <footer>
             <p><strong>DiaPet Privacy Policy</strong> — Protecting Your Pet's Health Data</p>
-            <p>Last Updated: February 2026 | Version 1.0</p>
+            <p>Last Updated: April 2026 | Version 2.0</p>
             <p>For questions, contact: <a href="mailto:giwoder@gmail.com">giwoder@gmail.com</a></p>
         </footer>
     </div>
