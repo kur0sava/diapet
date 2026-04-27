@@ -39,6 +39,8 @@ import { useSubscriptionStore } from '@shared/stores/subscriptionStore';
 import { getDeviceId } from '@shared/utils/deviceId';
 import { configureGoogleSignIn } from '@features/auth/utils/googleAuth';
 import { useAuthStore } from '@features/auth/stores/authStore';
+import { initAnalytics, setUserProperty } from '@shared/analytics/analytics';
+import { getPremiumMode } from '@shared/config/runtimeConfig';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -167,6 +169,9 @@ export default function App() {
         // Configure Google Sign-In and restore session
         configureGoogleSignIn();
         useAuthStore.getState().restoreSession();
+        // Analytics — respects opt-out flag, auto-tracks app_open / first_open
+        initAnalytics().catch(() => {});
+        setUserProperty('premium_mode', getPremiumMode());
         setReady(true);
       })
       .catch(err => {

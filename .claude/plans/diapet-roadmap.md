@@ -50,7 +50,7 @@
 - AddPet draft persistence (если убит на step 2, всё теряется)
 - backendBypass kill-switch / cutover plan для ЭТАП 13
 - Multi-pet удаление через UI (пока через PetProfile/EditPet)
-- ЭТАП 13A-D Monetization (Prodamus + Supabase + AdMob) — нужны creds
+- ЭТАП 13A-D Monetization (Payment provider TBD + Supabase + AdMob) — нужны creds; Prodamus отклонён как несовместимый с Google Play
 - ЭТАП 14 Bluetooth/widgets
 
 ### Перед EAS rebuild — финальный чек-лист (обновлён 2026-04-27)
@@ -624,7 +624,7 @@ interface SpeciesConfig {
 
 | Этап | Описание | Зависимость |
 |------|----------|-------------|
-| 13A | Подписки (Prodamus + Supabase) | Мерчант Prodamus + Supabase проект |
+| 13A | Подписки (Stripe/Tinkoff/YooKassa + Supabase) | Выбор провайдера + Supabase проект |
 | 13B | AdMob | Google AdMob app + ad units |
 | 13C | AI proxy (Supabase Edge Function) | Supabase проект |
 | 13D | Cloud backup через Supabase | Supabase проект |

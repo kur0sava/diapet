@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useRef, useMemo } from 'react';
+import React, { useEffect, useState, useCallback, useRef, useMemo } from 'react';
 import {
   View,
   Text,
@@ -18,6 +18,7 @@ import { articles } from '../data/articles';
 import { BilingualText } from '../types';
 import { storageUtils, StorageKeys } from '@storage/mmkv/storage';
 import { usePetStore } from '@shared/stores/petStore';
+import { logEvent } from '@shared/analytics/analytics';
 
 const useLang = () => {
   const { i18n } = useTranslation();
@@ -40,6 +41,15 @@ export default function ArticleDetailScreen() {
   const species = usePetStore(s => s.activePet?.species ?? 'cat');
 
   const article = articles.find(a => a.id === route.params.articleId);
+
+  useEffect(() => {
+    if (article) {
+      logEvent('encyclopedia_article_opened', {
+        article_id: article.id,
+        category: article.category,
+      });
+    }
+  }, [article]);
 
   // Bookmark state
   const getBookmarks = (): string[] =>

@@ -27,7 +27,7 @@ export default {
       premiumMode: process.env.PREMIUM_MODE || 'hidden',
       supabaseUrl: process.env.SUPABASE_URL || '',
       supabaseAnonKey: process.env.SUPABASE_ANON_KEY || '',
-      prodamusShopUrl: process.env.PRODAMUS_SHOP_URL || '',
+      paymentProviderUrl: process.env.PAYMENT_PROVIDER_URL || '',
     },
   },
 };

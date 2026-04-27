@@ -807,10 +807,7 @@ export const ru = {
     historyLimited: 'Показаны записи за 30 дней. Перейдите на Pro для полной истории.',
     expiresAt: 'Продление {{date}}',
     purchaseError: 'Ошибка покупки. Попробуйте снова.',
-    autoRenewDisclosure:
-      'Бесплатный период 7 дней, далее {{price}}. Автопродление до отмены. Отменить можно в Google Play.',
-    prodamusDisclosure:
-      'Подписка продлевается автоматически до отмены. Отменить можно в личном кабинете.',
+    autoRenewDisclosure: 'Бесплатный период 7 дней, далее {{price}}. Автопродление до отмены.',
     checkStatus: 'Проверить статус подписки',
     purchaseSuccess: 'Подписка активирована! Добро пожаловать в DiaPet Pro.',
     noActiveSubscription:

@@ -18,6 +18,7 @@ import { Icon } from '@shared/components/ui/Icon';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { petRepository, scheduleRepository } from '@storage/database';
 import { usePetStore } from '@shared/stores/petStore';
+import { logEvent } from '@shared/analytics/analytics';
 import { storage, StorageKeys, vetNameKey, vetPhoneKey } from '@storage/mmkv/storage';
 import { getSpeciesConfig } from '@shared/config/speciesConfig';
 import type { PetSpecies } from '@storage/domain/types';
@@ -197,6 +198,7 @@ export default function AddPetScreen() {
     // Make this pet active so the dashboard immediately reflects the addition.
     storage.set(StorageKeys.ACTIVE_PET_ID, pet.id);
     storage.set(StorageKeys.ACTIVE_SPECIES, pet.species);
+    logEvent('pet_added', { species: pet.species, source: 'add_pet_screen' });
 
     // Best-effort: register notifications if previously enabled. We deliberately
     // don't prompt for permission again — the user already opted in (or out)

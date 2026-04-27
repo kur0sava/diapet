@@ -13,6 +13,7 @@ import { petRepository, scheduleRepository } from '@storage/database';
 import { usePetStore } from '@shared/stores/petStore';
 import { useNotifications } from '@shared/hooks/useNotifications';
 import { startTrial } from '@features/subscription/utils/trial';
+import { logEvent } from '@shared/analytics/analytics';
 
 export default function NotificationsScreen() {
   const navigation = useOnboardingNavigation();
@@ -94,12 +95,17 @@ export default function NotificationsScreen() {
     storage.set(StorageKeys.ACTIVE_PET_ID, pet.id);
     // H7: trial must auto-start at the onboarding commit, not when the user
     // taps the Success-screen CTA. If the user closes the app on Success
-    // without tapping, the trial would never begin and post-Prodamus they'd
-    // appear as "trial never started" on first paid lookup.
+    // without tapping, the trial would never begin and once billing is wired
+    // they'd appear as "trial never started" on first paid lookup.
     // startTrial is idempotent — safe to call again from SuccessScreen.
     startTrial();
     storage.set(StorageKeys.ONBOARDING_COMPLETE, true);
     storage.delete(StorageKeys.ONBOARDING_DRAFT);
+    logEvent('pet_added', { species: pet.species, source: 'onboarding' });
+    logEvent('onboarding_complete', {
+      species: pet.species,
+      notifications_enabled: enableNotifications,
+    });
 
     // Step 3: best-effort side effects. Notification permission / OS scheduling
     // can throw (denied, expo push quota, malformed time). Failing here must

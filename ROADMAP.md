@@ -29,7 +29,7 @@
 [####################] v2.7 Encyclopedia   ✅ DONE (ЭТАП 10, 22 статьи)
 [####################] v2.8 Audit Fixes    ✅ DONE (10 багов, 19 файлов)
 [####################] v2.9 UX + DevOps    ✅ DONE (F3-F13 + CI + husky + Firebase)
-[____________________] v3.0 Backend        🔜 (Prodamus + Supabase + Firebase)
+[____________________] v3.0 Backend        🔜 (Payment provider TBD + Supabase + Firebase)
 [____________________] v4.0 AI/Smart       🔜
 ```
 
@@ -555,20 +555,22 @@
 
 ## ЭТАП 13: v3.0 Backend + Монетизация + Облако
 
-> Подключение реального бэкенда. Supabase + Prodamus + AdMob.
-> **СТАТУС**: Ждёт внешние credentials. Клиентский код готов в bypass-режиме.
+> Подключение реального бэкенда. Supabase + Payment provider (TBD) + AdMob.
+> **СТАТУС**: Клиентский код provider-agnostic, ждёт выбора провайдера и Supabase creds.
+> **Prodamus отброшен** в v2.5.0 — несовместим с правилами Google Play. Кандидаты: Stripe, Tinkoff Касса, YooKassa. Решение откладывается.
 
-### Фаза 13A — Supabase + Prodamus (подписки)
+### Фаза 13A — Supabase + Payment provider (подписки)
 
-**Архитектура**: Prodamus → webhook → Supabase Edge Function → PostgreSQL
-**Клиентский код готов**: deviceId, subscriptionApi, subscriptionStore, PaywallScreen, bypass mode
+**Архитектура**: Provider checkout → webhook → Supabase Edge Function → PostgreSQL
+**Клиентский код готов**: deviceId, subscriptionApi (`openPaymentPage` stub), subscriptionStore, PaywallScreen, PREMIUM_MODE flag
 
-- [ ] E1: Зарегать Prodamus (самозанятость) → магазин → 2 товара (monthly/yearly)
+- [ ] E1: Выбрать payment provider (Stripe / Tinkoff / YooKassa) → магазин → 2 товара (monthly/yearly)
 - [ ] E2: Supabase проект → subscriptions table + RLS policies
 - [ ] E3: Edge Function: `check-subscription` (GET по device_id)
-- [ ] E4: Edge Function: `prodamus-webhook` (POST, верификация подписи)
-- [ ] E5: Заполнить .env: SUPABASE_URL, SUPABASE_ANON_KEY, PRODAMUS_SHOP_URL
-- [ ] E6: Тест полного флоу: оплата → webhook → проверка статуса
+- [ ] E4: Edge Function: `payment-webhook` (POST, верификация подписи провайдера)
+- [ ] E5: Заполнить .env: SUPABASE_URL, SUPABASE_ANON_KEY, PAYMENT_PROVIDER_URL
+- [ ] E6: Реализовать тело `openPaymentPage` в `subscriptionApi.ts` под выбранного провайдера
+- [ ] E7: Тест полного флоу: оплата → webhook → проверка статуса
 - [ ] E7: Снять "Coming Soon" с PaywallScreen
 
 ### Фаза 13B — AdMob (реклама)

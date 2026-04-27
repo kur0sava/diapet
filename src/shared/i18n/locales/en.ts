@@ -807,10 +807,7 @@ export const en = {
     historyLimited: 'Showing last 30 days. Upgrade to Pro for full history.',
     expiresAt: 'Renews {{date}}',
     purchaseError: 'Purchase failed. Please try again.',
-    autoRenewDisclosure:
-      'Free 7-day trial, then {{price}}. Auto-renews until cancelled. Cancel anytime via Google Play.',
-    prodamusDisclosure:
-      'Subscription auto-renews until cancelled. You can cancel anytime from your account.',
+    autoRenewDisclosure: 'Free 7-day trial, then {{price}}. Auto-renews until cancelled.',
     checkStatus: 'Check subscription status',
     purchaseSuccess: 'Subscription activated! Welcome to DiaPet Pro.',
     noActiveSubscription:

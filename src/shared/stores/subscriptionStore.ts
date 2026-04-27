@@ -1,6 +1,9 @@
 /**
- * Subscription store — Prodamus + Supabase backend.
- * Replaces RevenueCat with web-based payment flow.
+ * Subscription store — Pro state cache + Supabase status check + payment hook.
+ *
+ * Payment provider is unconfigured in v2.5.0 (Prodamus dropped). The
+ * `openPayment` action is provider-agnostic: it calls openPaymentPage which
+ * is a stub until a provider is wired (see subscriptionApi.ts).
  */
 import { create } from 'zustand';
 import { storage, StorageKeys } from '@storage/mmkv/storage';
@@ -26,7 +29,11 @@ interface SubscriptionStore {
   refreshStatus: () => Promise<void>;
 }
 
-function getCachedStatus(): { isPro: boolean; expiresAt: string | null; plan: SubscriptionPlan | null } {
+function getCachedStatus(): {
+  isPro: boolean;
+  expiresAt: string | null;
+  plan: SubscriptionPlan | null;
+} {
   try {
     const cachedAt = storage.getNumber(CACHE_TIMESTAMP_KEY) ?? 0;
     if (Date.now() - cachedAt > CACHE_TTL_MS) {
@@ -41,7 +48,11 @@ function getCachedStatus(): { isPro: boolean; expiresAt: string | null; plan: Su
   }
 }
 
-function setCachedStatus(isPro: boolean, expiresAt: string | null, plan: SubscriptionPlan | null): void {
+function setCachedStatus(
+  isPro: boolean,
+  expiresAt: string | null,
+  plan: SubscriptionPlan | null
+): void {
   storage.set(StorageKeys.SUBSCRIPTION_CACHED_PRO, isPro);
   storage.set(CACHE_TIMESTAMP_KEY, Date.now());
   if (expiresAt) {
@@ -58,62 +69,74 @@ function setCachedStatus(isPro: boolean, expiresAt: string | null, plan: Subscri
 
 // Lazy init: getCachedStatus() called inside create() callback,
 // which Zustand invokes on first store access — not at module import time.
-export const useSubscriptionStore = create<SubscriptionStore>((set) => {
+export const useSubscriptionStore = create<SubscriptionStore>(set => {
   const cached = getCachedStatus();
   return {
-  isPro: cached.isPro,
-  isLoading: false,
-  expiresAt: cached.expiresAt,
-  plan: cached.plan,
+    isPro: cached.isPro,
+    isLoading: false,
+    expiresAt: cached.expiresAt,
+    plan: cached.plan,
 
-  loadStatus: async () => {
-    if (!isBackendConfigured()) {
-      set({ isLoading: false });
-      return;
-    }
-    set({ isLoading: true });
-    try {
-      const status = await checkSubscription();
-      setCachedStatus(status.isPro, status.expiresAt, status.plan);
-      set({ isPro: status.isPro, expiresAt: status.expiresAt, plan: status.plan, isLoading: false });
-    } catch (e) {
-      console.error('Failed to check subscription:', e);
-      const fallback = getCachedStatus();
-      set({ isPro: fallback.isPro, expiresAt: fallback.expiresAt, plan: fallback.plan, isLoading: false });
-    }
-  },
+    loadStatus: async () => {
+      if (!isBackendConfigured()) {
+        set({ isLoading: false });
+        return;
+      }
+      set({ isLoading: true });
+      try {
+        const status = await checkSubscription();
+        setCachedStatus(status.isPro, status.expiresAt, status.plan);
+        set({
+          isPro: status.isPro,
+          expiresAt: status.expiresAt,
+          plan: status.plan,
+          isLoading: false,
+        });
+      } catch (e) {
+        console.error('Failed to check subscription:', e);
+        const fallback = getCachedStatus();
+        set({
+          isPro: fallback.isPro,
+          expiresAt: fallback.expiresAt,
+          plan: fallback.plan,
+          isLoading: false,
+        });
+      }
+    },
 
-  openPayment: (plan: SubscriptionPlan) => {
-    openPaymentPage(plan);
-  },
+    openPayment: (plan: SubscriptionPlan) => {
+      openPaymentPage(plan);
+    },
 
-  checkAfterPayment: async () => {
-    set({ isLoading: true });
-    try {
-      const status = await pollSubscriptionAfterPayment();
-      setCachedStatus(status.isPro, status.expiresAt, status.plan);
-      set({ isPro: status.isPro, expiresAt: status.expiresAt, plan: status.plan, isLoading: false });
-      return status.isPro;
-    } catch {
-      set({ isLoading: false });
-      return false;
-    }
-  },
+    checkAfterPayment: async () => {
+      set({ isLoading: true });
+      try {
+        const status = await pollSubscriptionAfterPayment();
+        setCachedStatus(status.isPro, status.expiresAt, status.plan);
+        set({
+          isPro: status.isPro,
+          expiresAt: status.expiresAt,
+          plan: status.plan,
+          isLoading: false,
+        });
+        return status.isPro;
+      } catch {
+        set({ isLoading: false });
+        return false;
+      }
+    },
 
-  refreshStatus: async () => {
-    if (!isBackendConfigured()) return;
-    try {
-      const status = await checkSubscription();
-      setCachedStatus(status.isPro, status.expiresAt, status.plan);
-      set({ isPro: status.isPro, expiresAt: status.expiresAt, plan: status.plan });
-    } catch {
-      // silent
-    }
-  },
-};});
+    refreshStatus: async () => {
+      if (!isBackendConfigured()) return;
+      try {
+        const status = await checkSubscription();
+        setCachedStatus(status.isPro, status.expiresAt, status.plan);
+        set({ isPro: status.isPro, expiresAt: status.expiresAt, plan: status.plan });
+      } catch {
+        // silent
+      }
+    },
+  };
+});
 
-/**
- * Returns true if the backend (Supabase) is configured.
- * When not configured, useSubscription grants all features (dev/bypass mode).
- */
 export { isBackendConfigured } from '@shared/api/subscriptionApi';

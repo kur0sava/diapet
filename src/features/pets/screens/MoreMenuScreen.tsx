@@ -112,7 +112,7 @@ export default function MoreMenuScreen() {
   const aiReady = isAiFeatureVisible() && isAiConfigured();
 
   const menuItems: MenuItem[] = [
-    // Show subscription only when backend is configured (Supabase + Prodamus)
+    // Show subscription only when backend (Supabase) is configured and monetization is on
     ...(isMonetizationEnabled && backendReady
       ? [
           {

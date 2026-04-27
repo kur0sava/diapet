@@ -18,7 +18,7 @@ import { useTheme } from '@shared/theme';
 import { useTranslation } from 'react-i18next';
 import { useSubscriptionStore, isBackendConfigured } from '@shared/stores/subscriptionStore';
 import { useNavigation } from '@react-navigation/native';
-import { PLANS, SubscriptionPlan } from '@shared/api/subscriptionApi';
+import { PLANS, SubscriptionPlan, isPaymentProviderConfigured } from '@shared/api/subscriptionApi';
 import * as Haptics from 'expo-haptics';
 import i18n from 'i18next';
 import {
@@ -33,11 +33,6 @@ import {
 const PRIVACY_URL = 'https://kur0sava.github.io/diapet/assets/privacy-policy.html';
 const TERMS_URL = 'https://kur0sava.github.io/diapet/assets/terms-of-service.html';
 
-// Top-4 killer features — primary conversion drivers.
-// "No Ads" removed until ads are actually integrated (ETAP 13B).
-// PDF export / feed calculator / extended history remain Pro, but are
-// shown as a secondary "also included" strip to avoid cognitive overload
-// (Apple/RevenueCat research: 3–5 primary features convert best).
 const FEATURES: { icon: IoniconName; titleKey: string; descKey: string }[] = [
   {
     icon: 'chatbubble-ellipses',
@@ -86,13 +81,11 @@ export default function PaywallScreen() {
   const trialActive = isTrialActive();
   const trialExpired = isTrialExpired();
   const daysLeft = trialDaysLeft();
+  const providerReady = isPaymentProviderConfigured();
+  const showRealCheckout = isBackendConfigured() && providerReady;
 
   const handleStartTrial = () => {
     if (trialStarted) return;
-    // UX-M11 (audit): confirm before consuming a one-shot 7-day window. A
-    // curious tap currently burns the trial silently; users who want to use
-    // Pro features later in the week find them locked. Keep the option to
-    // bypass via accept; cancel is a clean no-op.
     Alert.alert(
       t('subscription.trial.confirmTitle', {
         days: TRIAL_DURATION_DAYS,
@@ -116,11 +109,8 @@ export default function PaywallScreen() {
     );
   };
 
-  // trialStartedTick forces re-render so that after tapping the CTA
-  // the block switches to the active countdown state without remounting the screen.
   void trialStartedTick;
 
-  // After user returns from browser, check payment status
   useEffect(() => {
     if (!waitingForPayment) return;
     const sub = AppState.addEventListener('change', async state => {
@@ -138,13 +128,10 @@ export default function PaywallScreen() {
   }, [waitingForPayment, checkAfterPayment, navigation, t]);
 
   const handlePurchase = () => {
-    if (!isBackendConfigured()) {
-      Alert.alert(t('common.error'), t('subscription.notAvailable'));
+    if (!showRealCheckout) {
+      Alert.alert(t('common.info'), t('subscription.notAvailable'));
       return;
     }
-    // UX-M12 (audit): confirm tap with a haptic so the user feels the button
-    // accepted before the browser opens (~500ms gap on slow devices). Without
-    // this, users tap a second time and end up with two browser tabs.
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).catch(() => {});
     setWaitingForPayment(true);
     openPayment(selectedPlan);
@@ -165,12 +152,10 @@ export default function PaywallScreen() {
   const monthlyPrice = getPriceDisplay('monthly');
   const yearlyPrice = getPriceDisplay('yearly');
   const selectedPrice = selectedPlan === 'yearly' ? yearlyPrice : monthlyPrice;
-
   const subscribeBtnText = `${t('subscription.subscribe')} — ${selectedPrice}`;
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.background }]}>
-      {/* Close button */}
       <TouchableOpacity
         style={[styles.closeBtn, { top: insets.top + 8 }]}
         onPress={() => navigation.goBack()}
@@ -179,7 +164,6 @@ export default function PaywallScreen() {
       </TouchableOpacity>
 
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scroll}>
-        {/* Hero */}
         <LinearGradient
           colors={
             [...(theme.isDark ? theme.gradients.headerRichDark : theme.gradients.headerRich)] as [
@@ -197,7 +181,6 @@ export default function PaywallScreen() {
           <Text style={styles.heroSubtitle}>{t('subscription.subtitle')}</Text>
         </LinearGradient>
 
-        {/* Trial status block */}
         {trialActive && (
           <View style={[styles.trialCard, { backgroundColor: theme.colors.success + '15' }]}>
             <Icon name="gift" size={22} color={theme.colors.success} />
@@ -239,11 +222,9 @@ export default function PaywallScreen() {
             <Icon name="chevron-forward" size={18} color={theme.colors.primary} />
           </TouchableOpacity>
         )}
-        {/* UX-H8 (audit): "trial expired" badge would terrify a user who is
-            currently Pro via backendBypass. Hide it entirely when payments
-            aren't wired up — the Coming Soon block below already explains
-            the actual state ("all features unlocked"). */}
-        {trialExpired && isBackendConfigured() && (
+        {/* "Trial expired" badge would terrify a free-Pro user. Show only when
+            real checkout is wired and the trial window has actually closed. */}
+        {trialExpired && showRealCheckout && (
           <View style={[styles.trialCard, { backgroundColor: theme.colors.warning + '15' }]}>
             <Icon name="time" size={22} color={theme.colors.warning} />
             <View style={{ flex: 1 }}>
@@ -262,7 +243,6 @@ export default function PaywallScreen() {
           </View>
         )}
 
-        {/* Primary features — 4 killer items */}
         <View style={styles.features}>
           {FEATURES.map((f, i) => (
             <View key={i} style={styles.featureRow}>
@@ -287,7 +267,6 @@ export default function PaywallScreen() {
           ))}
         </View>
 
-        {/* Secondary — "and more" strip */}
         <View style={styles.secondaryStrip}>
           <Text style={[styles.secondaryLabel, { color: theme.colors.textTertiary }]}>
             {t('subscription.alsoIncluded')}
@@ -304,8 +283,7 @@ export default function PaywallScreen() {
           </View>
         </View>
 
-        {/* Coming Soon / Plan selection */}
-        {!isBackendConfigured() ? (
+        {!showRealCheckout ? (
           <View style={styles.comingSoonBlock}>
             <View style={[styles.comingSoonBadge, { backgroundColor: theme.colors.primary }]}>
               <Icon name="time-outline" size={16} color="#fff" />
@@ -331,7 +309,6 @@ export default function PaywallScreen() {
         ) : (
           <>
             <View style={styles.plans}>
-              {/* Yearly */}
               <TouchableOpacity
                 style={[
                   styles.planCard,
@@ -369,7 +346,6 @@ export default function PaywallScreen() {
                 </Text>
               </TouchableOpacity>
 
-              {/* Monthly */}
               <TouchableOpacity
                 style={[
                   styles.planCard,
@@ -401,7 +377,6 @@ export default function PaywallScreen() {
               </TouchableOpacity>
             </View>
 
-            {/* Subscribe button */}
             <TouchableOpacity
               style={[styles.subscribeBtn, { opacity: isLoading || waitingForPayment ? 0.7 : 1 }]}
               onPress={handlePurchase}
@@ -423,12 +398,10 @@ export default function PaywallScreen() {
               </LinearGradient>
             </TouchableOpacity>
 
-            {/* Disclosure */}
             <Text style={[styles.autoRenewText, { color: theme.colors.textTertiary }]}>
-              {t('subscription.prodamusDisclosure')}
+              {t('subscription.autoRenewDisclosure', { price: selectedPrice })}
             </Text>
 
-            {/* Check subscription status */}
             <TouchableOpacity
               onPress={handleRefresh}
               disabled={isLoading}
@@ -441,7 +414,6 @@ export default function PaywallScreen() {
           </>
         )}
 
-        {/* Legal */}
         <View style={styles.legal}>
           <View style={styles.legalRow}>
             <TouchableOpacity onPress={() => Linking.openURL(TERMS_URL).catch(() => {})}>

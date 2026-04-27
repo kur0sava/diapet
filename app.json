@@ -32,7 +32,6 @@
       },
       "package": "com.diapet.app",
       "versionCode": 17,
-      "resizeableActivity": true,
       "permissions": [
         "android.permission.CAMERA",
         "android.permission.READ_MEDIA_IMAGES",
@@ -61,7 +60,8 @@
       "expo-splash-screen",
       "expo-secure-store",
       "@react-native-community/datetimepicker",
-      "@react-native-google-signin/google-signin"
+      "@react-native-google-signin/google-signin",
+      "@react-native-firebase/app"
     ],
     "extra": {
       "eas": {

@@ -39,6 +39,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useUnsavedChangesGuard } from '@shared/hooks/useUnsavedChangesGuard';
 import { useHintTrigger } from '@features/hints/hooks/useHintTrigger';
 import { clearPredictionCache } from '@features/prediction/data/predictionStorage';
+import { logEvent } from '@shared/analytics/analytics';
 import type { IoniconName } from '@shared/components/ui';
 
 const MEAL_OPTIONS: {
@@ -239,6 +240,7 @@ export default function LogGlucoseScreen() {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       if (!editId) {
         triggerAfterAction('glucose');
+        logEvent('glucose_added', { meal_relation: mealRelation, has_insulin: !!insulinDose });
       }
       navigation.goBack();
     } catch {
