@@ -1,18 +1,25 @@
 # DiaPet — Roadmap v3.0: Мульти-animal
 
-> Обновлён: 2026-04-26
+> Обновлён: 2026-04-27
 > Основной план разработки
 
 ---
 
 ## ТЕКУЩИЙ СТАТУС
 
-**Ветка**: `v2.5.1/audit-fixes` (10 коммитов поверх master, готова к merge)
+**HEAD master**: `5500ea9 feat(security): move Anthropic API to Supabase edge proxy + premium mode flag`
+**origin/master**: 14 коммитов позади локального master (требуется push)
 **Версия в сторах**: 2.4.3 (versionCode 15)
-**Версия в коде**: 2.5.0 (versionCode 17) — НЕ бампим (в стораx 2.4.3, прыгать через 2.5.1 нет смысла)
+**Версия в коде**: 2.5.0 (versionCode 17) — НЕ бампим
 **Google Play**: v2.4.3 опубликован
 **RuStore**: v2.4.3 опубликован
 **GitHub**: https://github.com/kur0sava/diapet
+
+### Архитектурный сдвиг (commit 5500ea9, 2026-04-27)
+- Anthropic API ключ выпилен из клиента — закрыт security-долг ЭТАП 13C client-side.
+- Введён `supabase/functions/ai-proxy/index.ts` (auth + rate-limit + verify_jwt).
+- `backendBypass` → `PREMIUM_MODE` env-флаг (hidden/unlocked/billing).
+- См. `memory/project_premium_mode.md`.
 
 ### Старые EAS-артефакты v2.5.0 (commit `f718f96`) — НЕ ВЫГРУЖАТЬ
 - AAB: https://expo.dev/artifacts/eas/6KbJh75E8LB7sy1QMRaLR5.aab
@@ -46,14 +53,25 @@
 - ЭТАП 13A-D Monetization (Prodamus + Supabase + AdMob) — нужны creds
 - ЭТАП 14 Bluetooth/widgets
 
-### Перед EAS rebuild — финальный чек-лист
+### Перед EAS rebuild — финальный чек-лист (обновлён 2026-04-27)
 - [x] TSC чисто (`npx tsc --noEmit`)
 - [x] jest 51/51
-- [ ] Lint clean (eslint hooks уже прогоняются в pre-commit, но прогнать на всю кодбазу)
-- [ ] git status чистый, leftover файлов нет
-- [ ] Merge `v2.5.1/audit-fixes` → master
-- [ ] EAS production AAB
-- [ ] EAS rustore APK
+- [x] Anthropic ключ убран из клиента (commit 5500ea9)
+- [x] Большой аудит-цикл смёржен в master (commit 5c34147)
+- [x] Edge Function реализован + захарден (auth + rate-limit + verify_jwt)
+- [ ] **Решить `PREMIUM_MODE`**: рекомендация — `unlocked` (Soft Launch). Поставить в `.env`.
+- [ ] **Задеплоить Edge Function в Supabase** (если `PREMIUM_MODE != hidden` и AI нужен):
+  - `npx supabase login`
+  - `npx supabase link --project-ref <ref>`
+  - `npx supabase secrets set ANTHROPIC_API_KEY=sk-ant-...`
+  - `npx supabase functions deploy ai-proxy`
+- [ ] Заполнить `.env`: `AI_PROXY_URL`, `SUPABASE_URL`, `SUPABASE_ANON_KEY`
+- [ ] **Удалить `ANTHROPIC_API_KEY` из локального `.env`** (он больше не нужен в клиенте)
+- [ ] `git push origin master` (14 коммитов локально)
+- [ ] `eas build --platform android --profile production --non-interactive`
+- [ ] `eas build --platform android --profile rustore --non-interactive`
+- [ ] Upload AAB → Google Play Console (production track)
+- [ ] Upload APK → RuStore Console
 
 ---
 
