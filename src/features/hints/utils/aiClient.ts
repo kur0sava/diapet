@@ -1,13 +1,14 @@
-import Constants from 'expo-constants';
+import {
+  getAiProxyUrl,
+  getSupabaseAnonKey,
+  isAiProxyConfigured,
+} from '@shared/config/runtimeConfig';
 
 export interface ChatMessage {
   role: 'user' | 'assistant';
   content: string;
 }
 
-const API_URL = 'https://api.anthropic.com/v1/messages';
-
-// Model constants
 export const MODEL_HAIKU = 'claude-haiku-4-5-20251001';
 export const MODEL_SONNET = 'claude-sonnet-4-6';
 
@@ -17,10 +18,8 @@ export interface AiClientOptions {
   model?: string;
 }
 
-/** Check if Anthropic API key is configured (non-empty and not placeholder). */
 export function isAiConfigured(): boolean {
-  const apiKey = Constants.expoConfig?.extra?.anthropicApiKey as string | undefined;
-  return !!apiKey && apiKey !== 'YOUR_ANTHROPIC_API_KEY';
+  return isAiProxyConfigured();
 }
 
 export async function sendChatMessage(
@@ -28,9 +27,9 @@ export async function sendChatMessage(
   messages: ChatMessage[],
   options?: AiClientOptions
 ): Promise<string> {
-  const apiKey = Constants.expoConfig?.extra?.anthropicApiKey as string | undefined;
-  if (!apiKey || apiKey === 'YOUR_ANTHROPIC_API_KEY') {
-    throw new Error('Anthropic API key not configured');
+  const proxyUrl = getAiProxyUrl();
+  if (!proxyUrl) {
+    throw new Error('AI proxy URL not configured');
   }
 
   const maxTokens = options?.maxTokens ?? 1024;
@@ -41,18 +40,29 @@ export async function sendChatMessage(
   const timeout = setTimeout(() => controller.abort(), timeoutMs);
 
   try {
-    const response = await fetch(API_URL, {
+    const anonKey = getSupabaseAnonKey();
+    const headers: Record<string, string> = {
+      'Content-Type': 'application/json',
+    };
+    if (anonKey) {
+      headers['Authorization'] = `Bearer ${anonKey}`;
+      headers['apikey'] = anonKey;
+    }
+
+    const response = await fetch(proxyUrl, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': apiKey,
-        'anthropic-version': '2023-06-01',
-      },
+      headers,
       body: JSON.stringify({
-        model,
-        max_tokens: maxTokens,
-        system: systemPrompt,
-        messages: messages.map(m => ({ role: m.role, content: m.content })),
+        systemPrompt,
+        messages: messages.map(message => ({
+          role: message.role,
+          content: message.content,
+        })),
+        options: {
+          maxTokens,
+          timeoutMs,
+          model,
+        },
       }),
       signal: controller.signal,
     });
@@ -62,8 +72,8 @@ export async function sendChatMessage(
       throw new Error(`API error ${response.status}: ${error}`);
     }
 
-    const data = (await response.json()) as { content?: Array<{ text?: string }> };
-    return data.content?.[0]?.text ?? '';
+    const data = (await response.json()) as { text?: string };
+    return data.text ?? '';
   } finally {
     clearTimeout(timeout);
   }

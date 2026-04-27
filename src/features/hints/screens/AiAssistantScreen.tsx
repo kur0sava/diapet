@@ -59,7 +59,7 @@ export default function AiAssistantScreen() {
   const rootNavigation = useRootNavigation();
   const { t, i18n } = useTranslation();
   const { theme } = useTheme();
-  const { isPro } = useSubscription();
+  const { canAccessAdvanced, isMonetizationEnabled } = useSubscription();
   const activePet = usePetStore(s => s.activePet);
 
   const [messages, setMessages] = useState<ChatMessage[]>([]);
@@ -194,6 +194,7 @@ export default function AiAssistantScreen() {
   }, []);
 
   const [remaining, setRemaining] = useState(getRemainingMessages());
+  const hasAiAccess = canAccessAdvanced();
 
   const handleSend = useCallback(async () => {
     const text = inputText.trim();
@@ -223,13 +224,14 @@ export default function AiAssistantScreen() {
 
     lastSentRef.current = Date.now();
     const userMsg: ChatMessage = { role: 'user', content: text };
+    const nextHistory = [...messagesRef.current, userMsg];
     setInputText('');
-    updateMessages(prev => [...prev, userMsg]);
+    updateMessages(() => nextHistory);
     setIsLoading(true);
 
     try {
       // MED-11: Send only last N messages to API to save tokens
-      const history = messagesRef.current.slice(-MAX_API_CONTEXT);
+      const history = nextHistory.slice(-MAX_API_CONTEXT);
       const response = await sendChatMessage(systemPrompt, history);
       incrementDailyChatCount();
       setRemaining(getRemainingMessages());
@@ -238,10 +240,13 @@ export default function AiAssistantScreen() {
       updateMessages(prev => [...prev, assistantMsg]);
     } catch (e) {
       const err = e as Error;
-      if (err.message.includes('API key not configured')) {
+      if (
+        err.message.includes('AI proxy URL not configured') ||
+        err.message.includes('ANTHROPIC_API_KEY is not configured')
+      ) {
         appendErrorMessage(
           i18n.language?.startsWith('en')
-            ? 'API key not configured. Please contact support.'
+            ? 'AI service is not configured. Please contact support.'
             : 'API ключ не настроен. Обратитесь в поддержку.'
         );
       } else {
@@ -337,8 +342,12 @@ export default function AiAssistantScreen() {
        */}
       {!isAiConfigured() ? (
         <ComingSoonGate theme={theme} t={t} />
-      ) : !isPro ? (
-        <ProGate theme={theme} t={t} onUpgrade={() => rootNavigation.navigate('Paywall')} />
+      ) : !hasAiAccess ? (
+        !isMonetizationEnabled ? (
+          <ComingSoonGate theme={theme} t={t} />
+        ) : (
+          <ProGate theme={theme} t={t} onUpgrade={() => rootNavigation.navigate('Paywall')} />
+        )
       ) : (
         <KeyboardAvoidingView
           style={{ flex: 1 }}
@@ -519,7 +528,7 @@ function ComingSoonGate({ theme, t }: ComingSoonGateProps) {
               { color: theme.colors.success, fontFamily: theme.fonts.semibold },
             ]}
           >
-            {t('subscription.allFeaturesUnlocked')}
+            {t('subscription.comingSoon')}
           </Text>
         </View>
       </View>

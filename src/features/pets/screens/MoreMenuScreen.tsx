@@ -22,6 +22,7 @@ import { isAiConfigured } from '@features/hints/utils/aiClient';
 import { ProBadge } from '@features/subscription/components/ProBadge';
 import Constants from 'expo-constants';
 import { useAuthStore } from '@features/auth/stores/authStore';
+import { isAiFeatureVisible } from '@shared/config/runtimeConfig';
 import { PetPickerSheet } from '../components/PetPickerSheet';
 import type { Pet } from '@storage/domain/types';
 
@@ -33,7 +34,7 @@ export default function MoreMenuScreen() {
   const activePet = usePetStore(s => s.activePet);
   const pets = usePetStore(s => s.pets);
   const setActivePet = usePetStore(s => s.setActivePet);
-  const { isPro, canAccessAdvanced, canAddPet } = useSubscription();
+  const { isPro, canAccessAdvanced, canAddPet, isMonetizationEnabled } = useSubscription();
   const [pickerVisible, setPickerVisible] = useState(false);
 
   const hasMultiplePets = pets.length > 1;
@@ -41,10 +42,14 @@ export default function MoreMenuScreen() {
   const handleAddPet = () => {
     setPickerVisible(false);
     if (!canAddPet(pets.length)) {
-      Alert.alert(t('subscription.title'), t('pets.addPetGated'), [
-        { text: t('common.cancel'), style: 'cancel' },
-        { text: t('subscription.upgrade'), onPress: () => rootNavigation.navigate('Paywall') },
-      ]);
+      if (isMonetizationEnabled) {
+        Alert.alert(t('subscription.title'), t('pets.addPetGated'), [
+          { text: t('common.cancel'), style: 'cancel' },
+          { text: t('subscription.upgrade'), onPress: () => rootNavigation.navigate('Paywall') },
+        ]);
+      } else {
+        Alert.alert(t('common.info'), t('subscription.notAvailable'));
+      }
       return;
     }
     navigation.navigate('AddPet');
@@ -95,16 +100,20 @@ export default function MoreMenuScreen() {
         navigation.navigate(screen as MoreScreen);
       }
     } else {
-      rootNavigation.navigate('Paywall');
+      if (isMonetizationEnabled) {
+        rootNavigation.navigate('Paywall');
+      } else {
+        Alert.alert(t('common.info'), t('subscription.notAvailable'));
+      }
     }
   };
 
   const backendReady = isBackendConfigured();
-  const aiReady = isAiConfigured();
+  const aiReady = isAiFeatureVisible() && isAiConfigured();
 
   const menuItems: MenuItem[] = [
     // Show subscription only when backend is configured (Supabase + Prodamus)
-    ...(backendReady
+    ...(isMonetizationEnabled && backendReady
       ? [
           {
             iconName: 'star-outline' as IoniconName,

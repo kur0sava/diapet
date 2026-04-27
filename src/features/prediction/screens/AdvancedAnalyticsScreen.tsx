@@ -26,7 +26,8 @@ import { glucoseRepository } from '@storage/database';
 import { Card } from '@shared/components/ui';
 import { useSubscription } from '@features/subscription/hooks/useSubscription';
 import { useRootNavigation } from '@navigation/hooks';
-import { isBackendConfigured } from '@shared/stores/subscriptionStore';
+import { isAiFeatureVisible } from '@shared/config/runtimeConfig';
+import { isAiConfigured } from '@features/hints/utils/aiClient';
 
 import { usePrediction } from '../hooks/usePrediction';
 import { timeUntilNextPrediction } from '../data/predictionStorage';
@@ -42,17 +43,19 @@ export default function AdvancedAnalyticsScreen() {
   const { theme } = useTheme();
   const activePet = usePetStore(s => s.activePet);
   const petId = activePet?.id;
-  const { canAccessAdvanced } = useSubscription();
+  const { canAccessAdvanced, isMonetizationEnabled } = useSubscription();
   const hasAccess = canAccessAdvanced();
+  const aiVisible = isAiFeatureVisible();
+  const aiReady = isAiConfigured();
 
   // Pro-gate: redirect free users to paywall (run once on mount)
   useEffect(() => {
-    if (!hasAccess) {
+    if (aiVisible && aiReady && !hasAccess && isMonetizationEnabled) {
       rootNav.navigate('Paywall');
       if (navigation.canGoBack()) navigation.goBack();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [aiVisible, aiReady, hasAccess, isMonetizationEnabled]);
 
   const { prediction, isLoading, error, canRequestNew, nextAvailableIn, requestNewPrediction } =
     usePrediction();
@@ -95,9 +98,63 @@ export default function AdvancedAnalyticsScreen() {
     };
   }, [nextAvailableIn, petId]);
 
-  const backendReady = isBackendConfigured();
+  const backendReady = true;
   const hasPrediction = prediction && prediction.status !== 'error';
   const isInsufficientData = prediction?.status === 'insufficient_data';
+
+  if (!aiVisible || !aiReady) {
+    return (
+      <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.background }]}>
+        <View>
+          <View style={[styles.navHeader, { borderBottomColor: theme.colors.border }]}>
+            <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backBtn}>
+              <Text style={{ color: theme.colors.primary, fontSize: 16 }}>
+                {'\u2190 '}
+                {t('common.back')}
+              </Text>
+            </TouchableOpacity>
+            <Text
+              style={[
+                styles.headerTitle,
+                { color: theme.colors.text, fontFamily: theme.fonts.bold },
+              ]}
+            >
+              {t('prediction.title')}
+            </Text>
+            <View style={{ width: 60 }} />
+          </View>
+          <LinearGradient
+            colors={[...theme.gradients.primary] as [string, string]}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 0 }}
+            style={{ height: 3 }}
+          />
+        </View>
+
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={styles.scrollContent}
+        >
+          <Card style={styles.comingSoonCard}>
+            <View style={[styles.comingSoonIcon, { backgroundColor: `${theme.colors.primary}15` }]}>
+              <Icon name="sparkles" size={40} color={theme.colors.primary} />
+            </View>
+            <Text
+              style={[
+                styles.comingSoonTitle,
+                { color: theme.colors.text, fontFamily: theme.fonts.bold },
+              ]}
+            >
+              {t('prediction.comingSoonTitle')}
+            </Text>
+            <Text style={[styles.comingSoonDesc, { color: theme.colors.textSecondary }]}>
+              {t('subscription.notAvailable')}
+            </Text>
+          </Card>
+        </ScrollView>
+      </SafeAreaView>
+    );
+  }
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.background }]}>

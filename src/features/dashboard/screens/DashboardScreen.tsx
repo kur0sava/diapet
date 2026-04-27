@@ -82,7 +82,8 @@ export default function DashboardScreen() {
   const pets = usePetStore(s => s.pets);
   const setActivePet = usePetStore(s => s.setActivePet);
   const speciesRanges = getSpeciesConfig(activePet?.species ?? 'cat').glucose.ranges;
-  const { isPro, isPaidPro, isTrialActive, trialDaysLeft, canAddPet } = useSubscription();
+  const { isPro, isPaidPro, isTrialActive, trialDaysLeft, canAddPet, isMonetizationEnabled } =
+    useSubscription();
   const [pickerVisible, setPickerVisible] = useState(false);
   const hasMultiplePets = pets.length > 1;
   // Plain functions: React Compiler memoizes them. Manual useCallback would
@@ -100,10 +101,14 @@ export default function DashboardScreen() {
   const handleAddPetFromPicker = () => {
     setPickerVisible(false);
     if (!canAddPet(pets.length)) {
-      Alert.alert(t('subscription.title'), t('pets.addPetGated'), [
-        { text: t('common.cancel'), style: 'cancel' },
-        { text: t('subscription.upgrade'), onPress: () => rootNavigation.navigate('Paywall') },
-      ]);
+      if (isMonetizationEnabled) {
+        Alert.alert(t('subscription.title'), t('pets.addPetGated'), [
+          { text: t('common.cancel'), style: 'cancel' },
+          { text: t('subscription.upgrade'), onPress: () => rootNavigation.navigate('Paywall') },
+        ]);
+      } else {
+        Alert.alert(t('common.info'), t('subscription.notAvailable'));
+      }
       return;
     }
     rootNavigation.navigate('Main', {
@@ -111,7 +116,7 @@ export default function DashboardScreen() {
       params: { screen: 'AddPet' },
     });
   };
-  const showTrialBanner = isTrialActive && !isPaidPro;
+  const showTrialBanner = isMonetizationEnabled && isTrialActive && !isPaidPro;
   const trialUrgent = showTrialBanner && trialDaysLeft <= TRIAL_REMINDER_DAYS;
   const petId = activePet?.id ?? '';
   // H004: respect the user's glucose unit preference
@@ -663,7 +668,7 @@ export default function DashboardScreen() {
         )}
 
         {/* Upgrade prompt for free users */}
-        {!isPro && (
+        {isMonetizationEnabled && !isPro && (
           <TouchableOpacity
             style={[
               styles.upgradeCard,

@@ -65,7 +65,7 @@ export default function DailyDiaryScreen() {
   const activePet = usePetStore(s => s.activePet);
   const petId = activePet?.id ?? '';
   const rootNav = useRootNavigation();
-  const { canAccessUnlimitedHistory } = useSubscription();
+  const { canAccessUnlimitedHistory, isMonetizationEnabled } = useSubscription();
   const historyLimited = !canAccessUnlimitedHistory();
 
   const glucoseUnit = (storage.getString(StorageKeys.GLUCOSE_UNIT) ?? 'mmol/L') as GlucoseUnit;
@@ -98,12 +98,14 @@ export default function DailyDiaryScreen() {
     if (historyLimited) {
       const minDate = subDays(new Date(), 30);
       if (startOfDay(subDays(currentDate, 1)) < startOfDay(minDate)) {
-        rootNav.navigate('Paywall');
+        if (isMonetizationEnabled) {
+          rootNav.navigate('Paywall');
+        }
         return;
       }
     }
     setCurrentDate(d => subDays(d, 1));
-  }, [historyLimited, currentDate, rootNav]);
+  }, [historyLimited, currentDate, rootNav, isMonetizationEnabled]);
   const goToNextDay = useCallback(() => {
     if (!isToday(currentDate)) {
       setCurrentDate(d => addDays(d, 1));

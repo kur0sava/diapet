@@ -45,6 +45,8 @@ import AiAssistantScreen from '@features/hints/screens/AiAssistantScreen';
 import AdvancedAnalyticsScreen from '@features/prediction/screens/AdvancedAnalyticsScreen';
 import AnalyzerDashboardScreen from '@features/analyzer/screens/AnalyzerDashboardScreen';
 import AccountScreen from '@features/auth/screens/AccountScreen';
+import { isAiFeatureVisible } from '@shared/config/runtimeConfig';
+import { isAiConfigured } from '@features/hints/utils/aiClient';
 
 const Tab = createBottomTabNavigator<MainTabParamList>();
 
@@ -296,6 +298,7 @@ export default function MainNavigator() {
   const { theme } = useTheme();
   const { t } = useTranslation();
   const insets = useSafeAreaInsets();
+  const showAiTab = isAiFeatureVisible() && isAiConfigured();
 
   return (
     <Tab.Navigator
@@ -348,11 +351,13 @@ export default function MainNavigator() {
         component={SymptomsStackNavigator}
         options={{ title: t('navigation.symptoms') }}
       />
-      <Tab.Screen
-        name="AiTab"
-        component={AiAssistantScreen}
-        options={{ title: t('navigation.ai') }}
-      />
+      {showAiTab && (
+        <Tab.Screen
+          name="AiTab"
+          component={AiAssistantScreen}
+          options={{ title: t('navigation.ai') }}
+        />
+      )}
       <Tab.Screen
         name="EncyclopediaTab"
         component={EncyclopediaStackNavigator}

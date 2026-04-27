@@ -125,7 +125,7 @@ export default function GlucoseListScreen() {
   const queryClient = useQueryClient();
   const unit = storage.getString(StorageKeys.GLUCOSE_UNIT) ?? 'mmol/L';
   const [exporting, setExporting] = useState(false);
-  const { canExportPDF, canAccessUnlimitedHistory } = useSubscription();
+  const { canExportPDF, canAccessUnlimitedHistory, isMonetizationEnabled } = useSubscription();
   const rootNav = useRootNavigation();
   const historyLimited = !canAccessUnlimitedHistory();
 
@@ -265,7 +265,11 @@ export default function GlucoseListScreen() {
   const handleExportPdf = useCallback(async () => {
     if (!activePet) return;
     if (!canExportPDF()) {
-      rootNav.navigate('Paywall');
+      if (isMonetizationEnabled) {
+        rootNav.navigate('Paywall');
+      } else {
+        Alert.alert(t('common.info'), t('subscription.notAvailable'));
+      }
       return;
     }
     setExporting(true);
@@ -286,7 +290,7 @@ export default function GlucoseListScreen() {
     } finally {
       setExporting(false);
     }
-  }, [activePet, t, rootNav, canExportPDF]);
+  }, [activePet, t, rootNav, canExportPDF, isMonetizationEnabled]);
 
   const renderReading = useCallback(
     ({ item, index }: { item: GlucoseReading; index: number }) => {
@@ -621,7 +625,7 @@ export default function GlucoseListScreen() {
                 color={theme.colors.primary}
               />
             )}
-            {historyLimited && readings.length > 0 && (
+            {isMonetizationEnabled && historyLimited && readings.length > 0 && (
               <TouchableOpacity
                 style={[
                   styles.historyBanner,
@@ -668,7 +672,7 @@ export default function GlucoseListScreen() {
       />
 
       {/* Export PDF FAB */}
-      {readings.length > 0 && (
+      {readings.length > 0 && (canExportPDF() || isMonetizationEnabled) && (
         <TouchableOpacity
           style={[
             styles.fabExport,

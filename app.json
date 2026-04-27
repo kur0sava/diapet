@@ -40,6 +40,9 @@
         "android.permission.SCHEDULE_EXACT_ALARM",
         "android.permission.POST_NOTIFICATIONS"
       ],
+      "blockedPermissions": [
+        "android.permission.RECORD_AUDIO"
+      ],
       "googleServicesFile": "./google-services.json"
     },
     "web": {
@@ -63,8 +66,7 @@
     "extra": {
       "eas": {
         "projectId": "b4a89637-64fe-470c-94a7-732162d80caa"
-      },
-      "anthropicApiKey": ""
+      }
     },
     "owner": "kurosava"
   }

@@ -1,0 +1,4 @@
+project_id = "diapet"
+
+[functions.ai-proxy]
+verify_jwt = true

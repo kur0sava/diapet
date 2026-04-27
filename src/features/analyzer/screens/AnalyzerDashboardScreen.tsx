@@ -12,6 +12,8 @@ import { useHomeNavigation, useRootNavigation } from '@navigation/hooks';
 import { Card } from '@shared/components/ui';
 import { Icon } from '@shared/components/ui/Icon';
 import { useSubscription } from '@features/subscription/hooks/useSubscription';
+import { isAiFeatureVisible } from '@shared/config/runtimeConfig';
+import { isAiConfigured } from '@features/hints/utils/aiClient';
 import { useAnalyzer } from '../hooks/useAnalyzer';
 import { RiskScoreWidget } from '../components/RiskScoreWidget';
 import { TrendIndicator } from '../components/TrendIndicator';
@@ -45,13 +47,16 @@ export default function AnalyzerDashboardScreen() {
   const { t, i18n } = useTranslation();
   const { theme } = useTheme();
   const { trends, patterns, riskScore, smartAlert, hasEnoughData, readingsCount } = useAnalyzer();
-  const { isPro, canAccessAdvanced } = useSubscription();
+  const { isPro, canAccessAdvanced, isMonetizationEnabled } = useSubscription();
+  const showAiPredictionCta = hasEnoughData && isAiFeatureVisible() && isAiConfigured();
 
   const handleOpenPrediction = () => {
     if (canAccessAdvanced()) {
       homeNavigation.navigate('AdvancedAnalytics');
     } else {
-      rootNavigation.navigate('Paywall');
+      if (isMonetizationEnabled) {
+        rootNavigation.navigate('Paywall');
+      }
     }
   };
 
@@ -116,7 +121,7 @@ export default function AnalyzerDashboardScreen() {
         )}
 
         {/* AI Prediction CTA */}
-        {hasEnoughData && (
+        {showAiPredictionCta && (
           <TouchableOpacity activeOpacity={0.85} onPress={handleOpenPrediction}>
             <LinearGradient
               colors={['#8B5CF6', '#6D28D9']}
