@@ -565,6 +565,10 @@ export const en = {
     hintsSection: 'HINTS',
     showHints: 'Show hints',
     hintsDescription: 'Pop-up hints help during the first 30 days of using the app',
+    privacySection: 'PRIVACY',
+    analyticsToggle: 'Anonymous usage statistics',
+    analyticsDescription:
+      'Helps us understand how DiaPet is used so we can improve it. Sends only anonymous events (e.g. "glucose entry added"); no pet names, no glucose values, no symptoms.',
     dangerZone: 'DANGER ZONE',
     deleteDataConfirm: 'Delete all data?',
     deleteDataWarning: 'This action cannot be undone.',

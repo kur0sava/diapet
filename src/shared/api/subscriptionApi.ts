@@ -24,8 +24,13 @@ export interface SubscriptionStatus {
   expiresAt: string | null;
 }
 
+const SUBSCRIPTION_CHECK_TIMEOUT_MS = 15_000;
+
 /**
  * Check subscription status via Supabase Edge Function.
+ *
+ * H3: bounded by an AbortController timeout so a slow/dead Supabase region
+ * can't hang the JS thread on AppState→active or App.tsx init.
  */
 export async function checkSubscription(): Promise<SubscriptionStatus> {
   if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
@@ -33,31 +38,38 @@ export async function checkSubscription(): Promise<SubscriptionStatus> {
   }
 
   const deviceId = getDeviceId();
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), SUBSCRIPTION_CHECK_TIMEOUT_MS);
 
-  const response = await fetch(
-    `${SUPABASE_URL}/functions/v1/check-subscription?device_id=${encodeURIComponent(deviceId)}`,
-    {
-      headers: {
-        Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
-        'Content-Type': 'application/json',
-      },
+  try {
+    const response = await fetch(
+      `${SUPABASE_URL}/functions/v1/check-subscription?device_id=${encodeURIComponent(deviceId)}`,
+      {
+        headers: {
+          Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
+          'Content-Type': 'application/json',
+        },
+        signal: controller.signal,
+      }
+    );
+
+    if (!response.ok) {
+      const err = new Error(`Subscription check failed: ${response.status}`) as Error & {
+        status: number;
+      };
+      err.status = response.status;
+      throw err;
     }
-  );
 
-  if (!response.ok) {
-    const err = new Error(`Subscription check failed: ${response.status}`) as Error & {
-      status: number;
+    const data = await response.json();
+    return {
+      isPro: data.isPro ?? false,
+      plan: data.plan ?? null,
+      expiresAt: data.expiresAt ?? null,
     };
-    err.status = response.status;
-    throw err;
+  } finally {
+    clearTimeout(timeout);
   }
-
-  const data = await response.json();
-  return {
-    isPro: data.isPro ?? false,
-    plan: data.plan ?? null,
-    expiresAt: data.expiresAt ?? null,
-  };
 }
 
 /**

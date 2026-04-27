@@ -122,14 +122,22 @@ Deno.serve(async (req: Request) => {
     );
   }
 
-  const contentLength = Number(req.headers.get('content-length') ?? '0');
-  if (contentLength > MAX_BODY_BYTES) {
+  // H1: enforce body size on actual bytes received, not on the trusted
+  // content-length header. A caller that omits or lies about content-length
+  // would otherwise stream an unbounded payload to Anthropic on our dollar.
+  let raw: string;
+  try {
+    raw = await req.text();
+  } catch {
+    return jsonResponse(400, { error: 'Failed to read body' });
+  }
+  if (raw.length > MAX_BODY_BYTES) {
     return jsonResponse(413, { error: 'Request body too large' });
   }
 
   let body: RequestBody;
   try {
-    body = (await req.json()) as RequestBody;
+    body = JSON.parse(raw) as RequestBody;
   } catch {
     return jsonResponse(400, { error: 'Invalid JSON body' });
   }
@@ -173,9 +181,16 @@ Deno.serve(async (req: Request) => {
 
     const responseText = await anthropicResponse.text();
     if (!anthropicResponse.ok) {
+      // M4: log full upstream error server-side, but return a generic body to
+      // the client — Anthropic error messages can include internal request
+      // shape and rate-limit quotas that probe usage.
+      console.error(
+        'Anthropic non-2xx',
+        anthropicResponse.status,
+        responseText.slice(0, 2000)
+      );
       return jsonResponse(anthropicResponse.status, {
-        error: 'Anthropic request failed',
-        details: responseText.slice(0, 500),
+        error: 'AI request failed',
       });
     }
 

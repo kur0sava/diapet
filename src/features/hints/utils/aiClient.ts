@@ -33,7 +33,9 @@ export async function sendChatMessage(
   }
 
   const maxTokens = options?.maxTokens ?? 1024;
-  const timeoutMs = options?.timeoutMs ?? 30_000;
+  // M10: keep client timeout >= server's max (55s) so we don't bail mid-call
+  // and waste Anthropic tokens on a request the user already gave up on.
+  const timeoutMs = options?.timeoutMs ?? 60_000;
   const model = options?.model ?? MODEL_HAIKU;
 
   const controller = new AbortController();

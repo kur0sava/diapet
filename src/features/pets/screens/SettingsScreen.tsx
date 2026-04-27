@@ -14,6 +14,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { queryKeys } from '@shared/utils/queryKeys';
 import Constants from 'expo-constants';
 import { CommonActions } from '@react-navigation/native';
+import { isAnalyticsEnabled, setAnalyticsOptOut } from '@shared/analytics/analytics';
 
 export default function SettingsScreen() {
   const navigation = useMoreNavigation();
@@ -32,6 +33,7 @@ export default function SettingsScreen() {
   const [hintsEnabled, setHintsEnabled] = useState(
     () => !storage.getBoolean(StorageKeys.HINTS_DISABLED)
   );
+  const [analyticsEnabled, setAnalyticsEnabled] = useState(() => isAnalyticsEnabled());
 
   const handleDeleteAllData = () => {
     // UX-015: First confirmation with explicit irreversibility warning
@@ -273,6 +275,28 @@ export default function SettingsScreen() {
           </View>
           <Text style={[styles.hintDesc, { color: theme.colors.textTertiary }]}>
             {t('settings.hintsDescription')}
+          </Text>
+        </Card>
+        <Text style={[styles.sectionHeader, { color: theme.colors.textSecondary }]}>
+          {t('settings.privacySection')}
+        </Text>
+        <Card style={styles.card}>
+          <View style={styles.switchRow}>
+            <Text style={[styles.settingLabel, { color: theme.colors.text, flex: 1 }]}>
+              {t('settings.analyticsToggle')}
+            </Text>
+            <Switch
+              value={analyticsEnabled}
+              onValueChange={v => {
+                setAnalyticsEnabled(v);
+                setAnalyticsOptOut(!v).catch(() => {});
+              }}
+              trackColor={{ false: theme.colors.border, true: theme.colors.primary }}
+              thumbColor="#fff"
+            />
+          </View>
+          <Text style={[styles.hintDesc, { color: theme.colors.textTertiary }]}>
+            {t('settings.analyticsDescription')}
           </Text>
         </Card>
         <Text style={[styles.sectionHeader, { color: theme.colors.danger }]}>
