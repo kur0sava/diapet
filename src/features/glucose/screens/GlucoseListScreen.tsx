@@ -20,11 +20,7 @@ import { queryKeys } from '@shared/utils/queryKeys';
 import { glucoseRepository, injectionRepository, symptomRepository } from '@storage/database';
 import { usePetStore } from '@shared/stores/petStore';
 import { GlucoseReading, MealRelation } from '../types';
-import {
-  GlucoseFilter,
-  mmolToMgdl,
-  getGlucoseColorFromRanges,
-} from '@storage/domain/types';
+import { GlucoseFilter, mmolToMgdl, getGlucoseColorFromRanges } from '@storage/domain/types';
 import { getSpeciesConfig } from '@shared/config/speciesConfig';
 import { formatDateTime, formatFullDate, formatFullDateTime } from '@shared/utils/dateUtils';
 import { EmptyState, Card, AnimatedListItem } from '@shared/components/ui';
