@@ -190,8 +190,17 @@ export function generateSmartAlerts(
     }
   }
 
-  // Glucose improving
-  if (trends.direction === 'improving' && trends.movingAverage7d !== null) {
+  // Glucose improving.
+  // SAFETY: "improving" in trendEngine just means the average is falling. If the
+  // 7-day average is already at/below the lower target, a further drop is sliding
+  // toward hypoglycemia, not good control — never surface "keep up the good work"
+  // there (the high-priority low_streak alert may be suppressed by throttling).
+  const improvingFloor = config?.glucose.targetLow ?? 4.0;
+  if (
+    trends.direction === 'improving' &&
+    trends.movingAverage7d !== null &&
+    trends.movingAverage7d >= improvingFloor
+  ) {
     candidates.push({
       type: 'glucose_improving',
       titleRu: 'Глюкоза улучшается',

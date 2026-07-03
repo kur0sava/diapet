@@ -22,7 +22,6 @@ import { usePetStore } from '@shared/stores/petStore';
 import { GlucoseReading, MealRelation } from '../types';
 import {
   GlucoseFilter,
-  GLUCOSE_RANGES,
   mmolToMgdl,
   getGlucoseColorFromRanges,
 } from '@storage/domain/types';
@@ -42,48 +41,34 @@ if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental
 
 type LevelPreset = { key: string; labelKey: string; min?: number; max?: number; color: string };
 
-const LEVEL_PRESETS: LevelPreset[] = [
-  {
-    key: 'severe_low',
-    labelKey: 'glucose.severeLow',
-    max: GLUCOSE_RANGES.severe_low.max,
-    color: GLUCOSE_RANGES.severe_low.color,
-  },
-  {
-    key: 'low',
-    labelKey: 'glucose.low',
-    min: GLUCOSE_RANGES.low.min,
-    max: GLUCOSE_RANGES.low.max,
-    color: GLUCOSE_RANGES.low.color,
-  },
-  {
-    key: 'below_target',
-    labelKey: 'glucose.belowTarget',
-    min: GLUCOSE_RANGES.below_target.min,
-    max: GLUCOSE_RANGES.below_target.max,
-    color: GLUCOSE_RANGES.below_target.color,
-  },
-  {
-    key: 'normal',
-    labelKey: 'glucose.normal',
-    min: GLUCOSE_RANGES.normal.min,
-    max: GLUCOSE_RANGES.normal.max,
-    color: GLUCOSE_RANGES.normal.color,
-  },
-  {
-    key: 'high',
-    labelKey: 'glucose.high',
-    min: GLUCOSE_RANGES.high.min,
-    max: GLUCOSE_RANGES.high.max,
-    color: GLUCOSE_RANGES.high.color,
-  },
-  {
-    key: 'very_high',
-    labelKey: 'glucose.veryHigh',
-    min: GLUCOSE_RANGES.very_high.min,
-    color: GLUCOSE_RANGES.very_high.color,
-  },
-];
+const LEVEL_LABEL_KEYS: Record<string, string> = {
+  severe_low: 'glucose.severeLow',
+  low: 'glucose.low',
+  below_target: 'glucose.belowTarget',
+  normal: 'glucose.normal',
+  high: 'glucose.high',
+  very_high: 'glucose.veryHigh',
+};
+
+// Build filter presets from the ACTIVE species' glucose ranges so the filter
+// chips — their bounds, colours and which readings they match — stay in sync
+// with the species-aware card colouring (getGlucoseColorFromRanges below).
+// Previously these were hardcoded to cat ranges (GLUCOSE_RANGES), so a dog
+// reading of e.g. 8.5 mmol/L showed orange "high" on the card but was matched
+// by the cat "normal" (4-9) filter and excluded by the cat "high" (>9) filter.
+function buildLevelPresets(
+  ranges: readonly { key: string; min?: number; max?: number; color: string }[]
+): LevelPreset[] {
+  return ranges
+    .filter(r => LEVEL_LABEL_KEYS[r.key])
+    .map(r => ({
+      key: r.key,
+      labelKey: LEVEL_LABEL_KEYS[r.key],
+      min: r.min,
+      max: r.max,
+      color: r.color,
+    }));
+}
 
 type MealOption = { value: MealRelation; labelKey: string };
 
@@ -122,6 +107,7 @@ export default function GlucoseListScreen() {
   const { theme } = useTheme();
   const activePet = usePetStore(s => s.activePet);
   const speciesRanges = getSpeciesConfig(activePet?.species ?? 'cat').glucose.ranges;
+  const levelPresets = useMemo(() => buildLevelPresets(speciesRanges), [speciesRanges]);
   const queryClient = useQueryClient();
   const unit = storage.getString(StorageKeys.GLUCOSE_UNIT) ?? 'mmol/L';
   const [exporting, setExporting] = useState(false);
@@ -142,7 +128,7 @@ export default function GlucoseListScreen() {
   const computedFilters = useMemo((): GlucoseFilter => {
     const f = { ...filters };
     if (selectedLevels.length > 0) {
-      const presets = LEVEL_PRESETS.filter(p => selectedLevels.includes(p.key));
+      const presets = levelPresets.filter(p => selectedLevels.includes(p.key));
       f.levelRanges = presets.map(p => ({ min: p.min, max: p.max }));
     }
     // Enforce 30-day history limit for free users
@@ -153,7 +139,7 @@ export default function GlucoseListScreen() {
       }
     }
     return f;
-  }, [filters, selectedLevels, historyLimited]);
+  }, [filters, selectedLevels, historyLimited, levelPresets]);
 
   const hasActiveFilters = isFilterActive(computedFilters);
 
@@ -479,7 +465,7 @@ export default function GlucoseListScreen() {
             {t('glucose.allLevels')}
           </Text>
           <View style={styles.chipRow}>
-            {LEVEL_PRESETS.map(preset => {
+            {levelPresets.map(preset => {
               const selected = selectedLevels.includes(preset.key);
               return (
                 <TouchableOpacity

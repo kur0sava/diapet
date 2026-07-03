@@ -16,12 +16,18 @@
     },
     "preview": {
       "distribution": "internal",
+      "env": {
+        "PREMIUM_MODE": "unlocked"
+      },
       "android": {
         "buildType": "apk"
       },
       "ios": {}
     },
     "production": {
+      "env": {
+        "PREMIUM_MODE": "unlocked"
+      },
       "android": {
         "buildType": "app-bundle"
       },
@@ -30,6 +36,9 @@
       }
     },
     "rustore": {
+      "env": {
+        "PREMIUM_MODE": "unlocked"
+      },
       "android": {
         "buildType": "apk"
       }
