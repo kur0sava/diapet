@@ -14,8 +14,6 @@ import type { GlucosePredictionPoint } from '../data/predictionTypes';
 
 const CHART_HEIGHT = 140;
 const Y_AXIS_WIDTH = 30;
-const NORMAL_MIN = 4.0;
-const NORMAL_MAX = 9.0;
 
 interface Props {
   actualData: GlucoseReading[];
@@ -24,7 +22,8 @@ interface Props {
 }
 
 export function PredictionChart({ actualData, predictions, species }: Props) {
-  const speciesRanges = getSpeciesConfig(species ?? 'cat').glucose.ranges;
+  const glucoseConfig = getSpeciesConfig(species ?? 'cat').glucose;
+  const speciesRanges = glucoseConfig.ranges;
   const { t } = useTranslation();
   const { theme } = useTheme();
   const { width: screenWidth } = useWindowDimensions();
@@ -39,9 +38,11 @@ export function PredictionChart({ actualData, predictions, species }: Props) {
   const confLow = predictions.map(p => p.confidenceLow);
   const confHigh = predictions.map(p => p.confidenceHigh);
   const allValues = [...actualValues, ...predValues, ...confLow, ...confHigh];
+  const normalMin = glucoseConfig.targetLow;
+  const normalMax = glucoseConfig.targetHigh;
 
-  const minVal = allValues.reduce((a, b) => Math.min(a, b), NORMAL_MIN) - 1;
-  const maxVal = allValues.reduce((a, b) => Math.max(a, b), NORMAL_MAX) + 1;
+  const minVal = allValues.reduce((a, b) => Math.min(a, b), normalMin) - 1;
+  const maxVal = allValues.reduce((a, b) => Math.max(a, b), normalMax) + 1;
   const range = maxVal - minVal;
 
   const totalPoints = actualData.length + predictions.length;
@@ -100,8 +101,8 @@ export function PredictionChart({ actualData, predictions, species }: Props) {
   }
 
   // Normal zone
-  const normalMaxY = getY(NORMAL_MAX);
-  const normalMinY = getY(NORMAL_MIN);
+  const normalMaxY = getY(normalMax);
+  const normalMinY = getY(normalMin);
 
   // "Today" divider line
   const todayX = actualData.length > 0 ? getX(actualData.length - 1) : 0;
@@ -144,18 +145,18 @@ export function PredictionChart({ actualData, predictions, species }: Props) {
         <Text
           style={[
             styles.axisLabel,
-            { color: theme.colors.success, position: 'absolute', top: getY(NORMAL_MAX) - 5 },
+            { color: theme.colors.success, position: 'absolute', top: getY(normalMax) - 5 },
           ]}
         >
-          {NORMAL_MAX}
+          {normalMax}
         </Text>
         <Text
           style={[
             styles.axisLabel,
-            { color: theme.colors.success, position: 'absolute', top: getY(NORMAL_MIN) - 5 },
+            { color: theme.colors.success, position: 'absolute', top: getY(normalMin) - 5 },
           ]}
         >
-          {NORMAL_MIN}
+          {normalMin}
         </Text>
         <Text
           style={[

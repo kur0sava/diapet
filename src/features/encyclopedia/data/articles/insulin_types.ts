@@ -38,15 +38,15 @@ export const insulinTypes: Article = {
 
 - **Концентрация:** U-40 (40 единиц на мл) — нужны специальные шприцы U-40!
 - **Начало / Пик / Длительность:** 1-4 ч / 4-8 ч / 8-14 ч
-- **Важно:** единственный инсулин, одобренный FDA именно для кошек (в США)
-- **Хранение:** 28 дней в холодильнике
+- **Важно:** одобрен FDA для кошек в США; для него нужны шприцы U-40
+- **Хранение:** в холодильнике; 10 мл флакон обычно используют в течение 60 дней после первого прокола (20 мл — до 80 дней по американской инструкции)
 
 #### Caninsulin / Vetsulin — ветеринарный
 
 - **Концентрация:** U-40 — нужны шприцы U-40!
 - **Начало / Пик / Длительность:** 1-4 ч / 2-8 ч / 8-16 ч (MSD SPC / Feldman & Nelson)
 - **Где доступен:** зарегистрирован для кошек в ЕС, Австралии, Канаде
-- **Хранение:** строго в холодильнике 2-8°C, 28 дней после вскрытия. Это суспензия — перекатывать флакон перед инъекцией, НЕ трясти
+- **Хранение:** 42 дня после первого использования. Vetsulin в США хранят в холодильнике, а Caninsulin в части стран допускает хранение ниже 25°C после вскрытия. Всегда сверяйтесь с местной инструкцией. Это суспензия — перекатывать флакон перед инъекцией, НЕ трясти
 
 #### Протафан / НПХ (NPH)
 
@@ -74,7 +74,7 @@ export const insulinTypes: Article = {
 | U-40 | 40 единиц | Только шприц U-40 |
 | U-100 | 100 единиц | Только шприц U-100 |
 
-> **Это очень важно:** если вы используете шприц U-100 с инсулином U-40, вы введёте в 2.5 раза больше инсулина, чем нужно. Это смертельно опасно! Всегда уточняйте у ветеринара, какой именно шприц использовать.
+> **Это очень важно:** если набрать инсулин U-40 по шкале шприца U-100, питомец получит примерно в 2.5 раза меньше инсулина, чем требуется. Это опасно из-за выраженной недодозировки и срыва контроля. Всегда уточняйте у ветеринара, какой именно шприц использовать.
 
 ### Как правильно хранить инсулин
 
@@ -111,15 +111,15 @@ Insulin works differently in cats than in humans. The onset, peak, and duration 
 
 - **Concentration:** U-40 (40 units per mL) — requires special U-40 syringes!
 - **Onset / Peak / Duration:** 1-4 h / 4-8 h / 8-14 h
-- **Important:** the only FDA-approved insulin specifically for cats (in the USA)
-- **Storage:** 28 days refrigerated
+- **Important:** FDA-approved for cats in the USA and requires U-40 syringes
+- **Storage:** refrigerated; the common 10 mL vial is usually used within 60 days after first puncture (20 mL — up to 80 days in the US label)
 
 #### Caninsulin / Vetsulin — Veterinary
 
 - **Concentration:** U-40 — requires U-40 syringes!
 - **Onset / Peak / Duration:** 1-4 h / 2-8 h / 8-16 h (MSD SPC / Feldman & Nelson)
 - **Availability:** registered for cats in the EU, Australia, and Canada
-- **Storage:** strictly refrigerated at 2-8°C, 28 days after opening. It's a suspension — roll the vial before injection, do NOT shake
+- **Storage:** 42 days after first use. Vetsulin in the US is kept refrigerated, while some Caninsulin labels allow storage below 25°C after opening. Always follow the local package insert. It's a suspension — roll the vial before injection, do NOT shake
 
 #### Protaphane / NPH
 
@@ -147,7 +147,7 @@ This is critically important, so please remember:
 | U-40 | 40 units | U-40 syringe only |
 | U-100 | 100 units | U-100 syringe only |
 
-> **This is life-or-death important:** using a U-100 syringe with U-40 insulin means giving 2.5 times more insulin than intended. This can be fatal! Always confirm with your vet which syringe to use.
+> **This is critically important:** drawing U-40 insulin using a U-100 syringe scale gives about 2.5 times less insulin than intended. That can seriously destabilize glucose control. Always confirm with your vet which syringe to use.
 
 ### How to Store Insulin Properly
 

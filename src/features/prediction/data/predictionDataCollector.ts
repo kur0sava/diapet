@@ -25,6 +25,7 @@ import { analyzeTrends } from '@features/analyzer/engine/trendEngine';
 import { detectPatterns } from '@features/analyzer/engine/patternDetector';
 import { calculateRiskScore } from '@features/analyzer/engine/riskScoreCalculator';
 import { getSpeciesConfig } from '@shared/config/speciesConfig';
+import { toDateOnly } from '@shared/utils/dateUtils';
 
 // ─── Helpers ───
 
@@ -44,6 +45,11 @@ function filterByDays<T>(items: T[], dateExtractor: (item: T) => string, days: n
 function average(nums: number[]): number | null {
   if (nums.length === 0) return null;
   return nums.reduce((a, b) => a + b, 0) / nums.length;
+}
+
+function getLocalDayKey(iso: string): string {
+  const date = safeParseISO(iso);
+  return date ? toDateOnly(date) : iso.slice(0, 10);
 }
 
 function stdDev(nums: number[]): number {
@@ -133,7 +139,7 @@ function computeFeedingStats(all: FeedingLog[]): FeedingStats {
   // Average feedings per day
   let avgFeedingsPerDay7d: number | null = null;
   if (last7.length > 0) {
-    const days = new Set(last7.map(f => f.fedAt.slice(0, 10)));
+    const days = new Set(last7.map(f => getLocalDayKey(f.fedAt)));
     avgFeedingsPerDay7d = Math.round((last7.length / Math.max(days.size, 1)) * 10) / 10;
   }
 
@@ -145,7 +151,7 @@ function computeFeedingStats(all: FeedingLog[]): FeedingStats {
     for (const f of last7) {
       const d = safeParseISO(f.fedAt);
       if (!d) continue;
-      const dayKey = f.fedAt.slice(0, 10);
+      const dayKey = getLocalDayKey(f.fedAt);
       const hours = byDay.get(dayKey) ?? [];
       hours.push(d.getHours() + d.getMinutes() / 60);
       byDay.set(dayKey, hours);
@@ -190,7 +196,7 @@ function computeFeedingStats(all: FeedingLog[]): FeedingStats {
 }
 
 function computeDataQuality(glucoseReadings: GlucoseReading[]): DataQuality {
-  const dates = glucoseReadings.map(r => r.recordedAt.slice(0, 10));
+  const dates = glucoseReadings.map(r => getLocalDayKey(r.recordedAt));
   const uniqueDays = new Set(dates);
 
   let firstReadingDate: string | null = null;

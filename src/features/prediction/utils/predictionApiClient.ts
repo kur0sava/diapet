@@ -18,7 +18,7 @@ export async function requestPrediction(
   const rawResponse = await sendChatMessage(
     systemPrompt,
     [{ role: 'user', content: 'Analyze the data and provide the prediction JSON.' }],
-    { maxTokens: 2048, timeoutMs: 45_000, model: MODEL_SONNET }
+    { maxTokens: 2048, timeoutMs: 60_000, model: MODEL_SONNET }
   );
 
   return parsePredictionResponse(rawResponse);

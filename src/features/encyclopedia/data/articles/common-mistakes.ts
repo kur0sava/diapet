@@ -68,7 +68,7 @@ export const commonMistakes: Article = {
 
 Инсулин — капризный препарат:
 - Открытый флакон: до 28 дней (для Гларгина) или по инструкции
-- Хранить в холодильнике при 2-8°C (дверца холодильника — идеально)
+- Неоткрытый запас хранить в холодильнике при 2-8°C, лучше на средней полке, а не в дверце
 - Никогда не замораживать!
 - Если инсулин стал мутным — выбросьте, он испорчен
 
@@ -177,7 +177,7 @@ Hypoglycemia is when blood sugar drops too low. Here's what to watch for:
 
 Insulin is a fussy medication:
 - Opened vial: up to 28 days (for Glargine) or per instructions
-- Store in the fridge at 2-8°C (the fridge door works great)
+- Keep unopened stock in the fridge at 2-8°C, ideally on a middle shelf rather than in the door
 - Never freeze!
 - If the insulin looks cloudy — throw it out, it's spoiled
 

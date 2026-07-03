@@ -10,8 +10,6 @@ import Svg, { Path } from 'react-native-svg';
 
 const CHART_HEIGHT = 120;
 const Y_AXIS_WIDTH = 30;
-const NORMAL_MIN = 4.0;
-const NORMAL_MAX = 9.0;
 
 interface DailyPoint {
   date: string; // YYYY-MM-DD
@@ -56,7 +54,8 @@ function aggregateByDay(readings: GlucoseReading[]): DailyPoint[] {
 }
 
 export function GlucoseChart({ data, species }: Props) {
-  const speciesRanges = getSpeciesConfig(species ?? 'cat').glucose.ranges;
+  const glucoseConfig = getSpeciesConfig(species ?? 'cat').glucose;
+  const speciesRanges = glucoseConfig.ranges;
   const { t } = useTranslation();
   const { theme } = useTheme();
   const { width: screenWidth } = useWindowDimensions();
@@ -68,11 +67,12 @@ export function GlucoseChart({ data, species }: Props) {
 
   if (daily.length === 0) return null;
 
-  const allAvgs = daily.map(d => d.avg);
   const allMins = daily.map(d => d.min);
   const allMaxs = daily.map(d => d.max);
-  const minVal = Math.min(Math.min(...allMins), NORMAL_MIN) - 1;
-  const maxVal = Math.max(Math.max(...allMaxs), NORMAL_MAX) + 1;
+  const normalMin = glucoseConfig.targetLow;
+  const normalMax = glucoseConfig.targetHigh;
+  const minVal = Math.min(Math.min(...allMins), normalMin) - 1;
+  const maxVal = Math.max(Math.max(...allMaxs), normalMax) + 1;
   const range = maxVal - minVal;
 
   const getY = (v: number) => CHART_HEIGHT - ((v - minVal) / range) * CHART_HEIGHT;
@@ -88,8 +88,8 @@ export function GlucoseChart({ data, species }: Props) {
     .join(' ');
 
   // Normal zone Y coordinates
-  const normalMaxY = getY(NORMAL_MAX);
-  const normalMinY = getY(NORMAL_MIN);
+  const normalMaxY = getY(normalMax);
+  const normalMinY = getY(normalMin);
 
   // X-axis label indices — show first, middle, last when >7 days
   const xLabelIndices =
@@ -112,18 +112,18 @@ export function GlucoseChart({ data, species }: Props) {
         <Text
           style={[
             styles.axisLabel,
-            { color: theme.colors.success, position: 'absolute', top: getY(NORMAL_MAX) - 5 },
+            { color: theme.colors.success, position: 'absolute', top: getY(normalMax) - 5 },
           ]}
         >
-          {NORMAL_MAX}
+          {normalMax}
         </Text>
         <Text
           style={[
             styles.axisLabel,
-            { color: theme.colors.success, position: 'absolute', top: getY(NORMAL_MIN) - 5 },
+            { color: theme.colors.success, position: 'absolute', top: getY(normalMin) - 5 },
           ]}
         >
-          {NORMAL_MIN}
+          {normalMin}
         </Text>
         <Text
           style={[

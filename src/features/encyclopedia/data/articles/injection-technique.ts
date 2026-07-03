@@ -21,10 +21,10 @@ export const injectionTechnique: Article = {
 
 ### Подготовка: пошагово
 
-**1. Достаньте инсулин из холодильника**
+**1. Если инсулин хранится в холодильнике — достаньте его заранее**
 - ProZinc или Caninsulin — аккуратно покатайте флакон между ладонями 10-20 раз. Не трясите!
 - Гларгин и Детемир — прозрачные, перемешивать не нужно
-- Дайте согреться в руках 1-2 минуты. Холодный инсулин — это больнее
+- Дайте согреться в руках 1-2 минуты. Холодный инсулин может ощущаться болезненнее
 
 **2. Наберите дозу**
 - Протрите пробку флакона спиртовой салфеткой
@@ -81,10 +81,10 @@ Here's the truth: **within a week or two, this will become routine**, no harder 
 
 ### Preparation: Step by Step
 
-**1. Take the insulin out of the fridge**
+**1. If the insulin is refrigerated, take it out ahead of time**
 - ProZinc or Caninsulin — gently roll the vial between your palms 10-20 times. Don't shake!
 - Glargine and Detemir — clear, no mixing needed
-- Let it warm in your hands for 1-2 minutes. Cold insulin stings more
+- Let it warm in your hands for 1-2 minutes. Cold insulin can sting more
 
 **2. Draw the dose**
 - Wipe the vial stopper with an alcohol swab
@@ -137,8 +137,14 @@ Every injection you give is an act of love. Before long, you'll be doing it on a
   order: 2,
   relatedArticleIds: ['first-days', 'insulin_types', 'common-mistakes', 'real-life-management'],
   references: [
-    { ru: 'ISFM Guidelines on Diabetes Mellitus in Cats, 2023', en: 'ISFM Guidelines on Diabetes Mellitus in Cats, 2023' },
-    { ru: 'AAHA Diabetes Management Guidelines for Dogs and Cats, 2018', en: 'AAHA Diabetes Management Guidelines for Dogs and Cats, 2018' },
+    {
+      ru: 'ISFM Guidelines on Diabetes Mellitus in Cats, 2023',
+      en: 'ISFM Guidelines on Diabetes Mellitus in Cats, 2023',
+    },
+    {
+      ru: 'AAHA Diabetes Management Guidelines for Dogs and Cats, 2018',
+      en: 'AAHA Diabetes Management Guidelines for Dogs and Cats, 2018',
+    },
   ],
   tags: [
     { ru: 'инъекции', en: 'injections' },
