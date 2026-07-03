@@ -851,6 +851,11 @@ export const en = {
     injectionBody: "Don't forget to give the insulin injection!",
     feedingTitle: '🍽️ Feeding time for {{petName}}',
     feedingBody: 'Time to feed your pet!',
+    batteryTitle: 'Keep reminders on time',
+    batteryBody:
+      'Some phones stop background apps to save battery, which can silently delay or cancel injection and feeding reminders — especially after a reboot. To keep them reliable, exclude DiaPet from battery optimization.',
+    batteryOpen: 'Open settings',
+    batteryLater: 'Later',
   },
 
   errors: {
@@ -993,6 +998,7 @@ export const en = {
     restoreWarning: 'Current local data will be replaced with the cloud backup',
     restoreSuccess: 'Data restored successfully',
     restoreError: 'Restore error',
+    restoreCorrupt: 'The backup file is damaged and cannot be restored.',
     noBackupFound: 'No backup found',
   },
 };

@@ -11,6 +11,7 @@ import { db } from './firebaseConfig';
 import { doc, setDoc, getDoc } from 'firebase/firestore';
 import { getDatabase } from '@storage/database';
 import { storage, StorageKeys } from '@storage/mmkv/storage';
+import i18n from '@shared/i18n';
 
 const TABLES = [
   'pets',
@@ -152,7 +153,14 @@ export async function restoreFromCloud(uid: string): Promise<boolean> {
   const data = snapshot.data();
   if (!data?.backup) return false;
 
-  const backup: BackupData = JSON.parse(data.backup as string);
+  let backup: BackupData;
+  try {
+    backup = JSON.parse(data.backup as string);
+  } catch {
+    // Corrupt/partial payload — surface a clean message instead of a raw
+    // SyntaxError, and never touch the local DB (parse fails before the tx).
+    throw new Error(i18n.t('auth.restoreCorrupt'));
+  }
   if (!backup.tables) return false;
 
   const sqlDb = await getDatabase();

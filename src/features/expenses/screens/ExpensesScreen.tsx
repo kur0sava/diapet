@@ -84,6 +84,7 @@ export default function ExpensesScreen() {
     const map = new Map<number, number>();
     for (const exp of yearExpenses) {
       const m = parseInt(exp.date.split('-')[1], 10);
+      if (isNaN(m)) continue; // skip malformed date rather than bucket under NaN
       map.set(m, (map.get(m) ?? 0) + exp.amount);
     }
     return Array.from(map.entries())

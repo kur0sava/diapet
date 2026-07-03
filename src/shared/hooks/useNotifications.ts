@@ -1,5 +1,5 @@
 import * as Notifications from 'expo-notifications';
-import { Linking, Platform } from 'react-native';
+import { Alert, Linking, Platform } from 'react-native';
 import i18n from '@shared/i18n';
 
 Notifications.setNotificationHandler({
@@ -45,6 +45,10 @@ export function useNotifications() {
       // On Android 12+, exact alarm permission may not be auto-granted.
       // Without it, notifications use inexact alarms and arrive late.
       await promptExactAlarmIfNeeded();
+
+      // Aggressive OEM battery managers force-stop the app and break the
+      // reminder re-scheduling chain (see promptBatteryOptimizationIfNeeded).
+      await promptBatteryOptimizationIfNeeded();
     }
 
     return finalStatus === 'granted';
@@ -134,6 +138,54 @@ async function promptExactAlarmIfNeeded(): Promise<void> {
     }
   } catch {
     // Permission API shape varies across SDK versions — fail silently
+  }
+}
+
+/**
+ * On many Android OEMs (Xiaomi, Huawei, Samsung, Oppo — very common in RU) the
+ * app process is force-stopped by aggressive battery management. expo-notifications
+ * schedules each DAILY reminder as a one-shot exact alarm that re-schedules the
+ * next day's alarm *from inside the app process* when it fires. Once the OS kills
+ * the process that chain breaks: the user gets one reminder (right after a reboot
+ * / app open), then nothing until the app is opened again and
+ * restoreScheduleNotifications() rebuilds the alarms. Excluding the app from
+ * battery optimization keeps the process alive so re-scheduling survives.
+ *
+ * Shown once (gated by a MMKV flag) so we don't nag on every notification enable.
+ * Non-blocking: never rejects, never holds up the permission flow.
+ */
+async function promptBatteryOptimizationIfNeeded(): Promise<void> {
+  if (Platform.OS !== 'android') return;
+  try {
+    const { storage, StorageKeys } = await import('@storage/mmkv/storage');
+    if (storage.getBoolean(StorageKeys.BATTERY_OPT_PROMPTED)) return;
+    storage.set(StorageKeys.BATTERY_OPT_PROMPTED, true);
+
+    Alert.alert(i18n.t('notifications.batteryTitle'), i18n.t('notifications.batteryBody'), [
+      { text: i18n.t('notifications.batteryLater'), style: 'cancel' },
+      {
+        text: i18n.t('notifications.batteryOpen'),
+        onPress: () => {
+          void openBatteryOptimizationSettings();
+        },
+      },
+    ]);
+  } catch {
+    // Never block the permission flow on this optional guidance
+  }
+}
+
+async function openBatteryOptimizationSettings(): Promise<void> {
+  try {
+    // System list of apps with battery-optimization status; user unrestricts
+    // DiaPet. Works cross-OEM and needs no extra permission.
+    await Linking.sendIntent('android.settings.IGNORE_BATTERY_OPTIMIZATION_SETTINGS');
+  } catch {
+    try {
+      await Linking.openSettings();
+    } catch {
+      // Give up silently — the reminder still works while the app is open
+    }
   }
 }
 

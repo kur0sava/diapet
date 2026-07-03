@@ -35,9 +35,14 @@ export function useHintTrigger() {
 
         // Check achievement: 30 injections logged
         if (newCount >= 30 && !storage.getBoolean(StorageKeys.HINTS_ACHIEVEMENT_SHOWN)) {
-          storage.set(StorageKeys.HINTS_ACHIEVEMENT_SHOWN, true);
-          // Delay achievement to not overlap with hint
-          setTimeout(() => triggerAchievement(), 12000);
+          // Delay achievement to not overlap with hint. Mark it shown only when
+          // it actually fires — if the app is killed within these 12s, the flag
+          // stays unset so the achievement isn't permanently consumed unseen.
+          setTimeout(() => {
+            if (storage.getBoolean(StorageKeys.HINTS_ACHIEVEMENT_SHOWN)) return;
+            storage.set(StorageKeys.HINTS_ACHIEVEMENT_SHOWN, true);
+            triggerAchievement();
+          }, 12000);
         }
       }
     },
