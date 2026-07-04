@@ -15,6 +15,7 @@ export default function FeedCalculatorScreen() {
   const { t } = useTranslation();
   const { theme } = useTheme();
   const activePet = usePetStore(s => s.activePet);
+  const isDog = activePet?.species === 'dog';
   const nutritionConfig = getSpeciesConfig(activePet?.species ?? 'cat').nutrition;
 
   const [protein, setProtein] = useState('');
@@ -239,17 +240,22 @@ export default function FeedCalculatorScreen() {
 
         <Card style={styles.normsCard}>
           <Text style={[styles.normsTitle, { color: theme.colors.textSecondary }]}>
-            {t('feedCalculator.norms')}
+            {t(isDog ? 'feedCalculator.normsDog' : 'feedCalculator.norms')}
           </Text>
           <Text style={[styles.normsText, { color: theme.colors.textTertiary }]}>
-            {t('feedCalculator.normsCarbs')}
+            {t(isDog ? 'feedCalculator.normsDogCarbs' : 'feedCalculator.normsCarbs')}
           </Text>
           <Text style={[styles.normsText, { color: theme.colors.textTertiary }]}>
-            {t('feedCalculator.normsProtein')}
+            {t(isDog ? 'feedCalculator.normsDogProtein' : 'feedCalculator.normsProtein')}
           </Text>
           <Text style={[styles.normsText, { color: theme.colors.textTertiary }]}>
-            {t('feedCalculator.normsFat')}
+            {t(isDog ? 'feedCalculator.normsDogFat' : 'feedCalculator.normsFat')}
           </Text>
+          {isDog && (
+            <Text style={[styles.normsText, { color: theme.colors.textTertiary }]}>
+              {t('feedCalculator.normsDogFiber')}
+            </Text>
+          )}
         </Card>
       </ScrollView>
     </SafeAreaView>

@@ -774,6 +774,11 @@ export const en = {
     normsCarbs: 'Carbs DM: <10% ideal, 10-15% acceptable',
     normsProtein: 'Protein DM: >40% recommended',
     normsFat: 'Fat DM: 20–40% (ISFM)',
+    normsDog: 'Norms for diabetic dogs',
+    normsDogCarbs: 'Carbs DM: <30% good, 30–40% acceptable',
+    normsDogProtein: 'Protein DM: >25% recommended',
+    normsDogFat: 'Fat DM: <25% (higher raises pancreatitis risk)',
+    normsDogFiber: 'Fiber DM: >10% (helps glycemic control)',
     ashZeroWarning: 'Ash = 0 — carbs may be overstated by 5–8%. Check the label.',
   },
 

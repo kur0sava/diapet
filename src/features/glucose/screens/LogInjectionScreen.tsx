@@ -363,7 +363,9 @@ export default function LogInjectionScreen() {
                 if (date) {
                   const merged = new Date(administeredAt);
                   merged.setHours(date.getHours(), date.getMinutes(), date.getSeconds());
-                  setAdministeredAt(merged);
+                  // Guard: don't allow a future time on today's date.
+                  const nowTs = new Date();
+                  setAdministeredAt(merged > nowTs ? nowTs : merged);
                 }
               }}
             />

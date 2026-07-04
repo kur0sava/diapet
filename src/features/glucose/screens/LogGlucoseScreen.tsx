@@ -553,7 +553,10 @@ export default function LogGlucoseScreen() {
                 if (date) {
                   const merged = new Date(recordedAt);
                   merged.setHours(date.getHours(), date.getMinutes(), date.getSeconds());
-                  setRecordedAt(merged);
+                  // Guard: picking a later time on today's date must not produce
+                  // a future timestamp (the date picker already blocks future days).
+                  const nowTs = new Date();
+                  setRecordedAt(merged > nowTs ? nowTs : merged);
                 }
               }}
             />
