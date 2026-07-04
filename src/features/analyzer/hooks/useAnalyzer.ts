@@ -20,6 +20,7 @@ import { calculateRiskScore } from '../engine/riskScoreCalculator';
 import { generateSmartAlerts, markAlertFired } from '../engine/smartAlerts';
 import { sanitizePatterns, checkEmergencyThresholds } from '../engine/safetyGuard';
 import { getSpeciesConfig } from '@shared/config/speciesConfig';
+import type { InjectionLog } from '@storage/domain/types';
 
 export function useAnalyzer() {
   const activePet = usePetStore(s => s.activePet);
@@ -66,6 +67,25 @@ export function useAnalyzer() {
 
   const scheduledInjectionsPerDay = injectionSchedule.length || 2;
 
+  // Insulin logged inline on a glucose reading (LogGlucoseScreen) is not saved
+  // as a separate InjectionLog, so adherence/dose-response/missed-injection
+  // logic would otherwise treat those doses as "never given" — inflating the
+  // risk score and firing false "missed injection" patterns. Merge them in as
+  // synthetic injections for analysis only (no DB write, no UI duplication).
+  const mergedInjections = useMemo<InjectionLog[]>(() => {
+    const fromReadings: InjectionLog[] = readings
+      .filter(r => typeof r.insulinDose === 'number' && r.insulinDose > 0)
+      .map(r => ({
+        id: `glc-${r.id}`,
+        petId,
+        insulinType: r.insulinType ?? '',
+        doseUnits: r.insulinDose as number,
+        administeredAt: r.recordedAt,
+        createdAt: r.recordedAt,
+      }));
+    return fromReadings.length > 0 ? [...injections, ...fromReadings] : injections;
+  }, [injections, readings, petId]);
+
   // Refresh `now` on every screen focus so alerts don't use stale time
   const [now, setNow] = useState(() => new Date());
   useFocusEffect(
@@ -82,9 +102,15 @@ export function useAnalyzer() {
   const rawPatterns = useMemo(
     () =>
       readings.length > 0
-        ? detectPatterns({ readings, injections, feedings, now, config: speciesConfig })
+        ? detectPatterns({
+            readings,
+            injections: mergedInjections,
+            feedings,
+            now,
+            config: speciesConfig,
+          })
         : [],
-    [readings, injections, feedings, now, speciesConfig]
+    [readings, mergedInjections, feedings, now, speciesConfig]
   );
 
   const patterns = useMemo(() => sanitizePatterns(rawPatterns), [rawPatterns]);
@@ -100,7 +126,7 @@ export function useAnalyzer() {
       readings.length > 0
         ? calculateRiskScore({
             readings,
-            injections,
+            injections: mergedInjections,
             feedings,
             symptoms,
             weightKg: activePet?.weightKg,
@@ -112,7 +138,7 @@ export function useAnalyzer() {
         : null,
     [
       readings,
-      injections,
+      mergedInjections,
       feedings,
       symptoms,
       activePet?.weightKg,

@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRoute, RouteProp, useNavigation } from '@react-navigation/native';
+import { useRootNavigation } from '@navigation/hooks';
 import type { HomeStackParamList } from '@navigation/types';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '@shared/theme';
@@ -76,6 +77,7 @@ const MEAL_OPTIONS: {
 
 export default function LogGlucoseScreen() {
   const navigation = useNavigation();
+  const rootNavigation = useRootNavigation();
   const route = useRoute<RouteProp<HomeStackParamList, 'LogGlucose'>>();
   const { t } = useTranslation();
   const { theme } = useTheme();
@@ -242,7 +244,36 @@ export default function LogGlucoseScreen() {
         triggerAfterAction('glucose');
         logEvent('glucose_added', { meal_relation: mealRelation, has_insulin: !!insulinDose });
       }
-      navigation.goBack();
+      // Safety: if the just-logged reading is in an emergency zone, surface it
+      // immediately with a route to the first-aid guide. Previously the danger
+      // was only implied by a coloured badge and never triggered any alert.
+      const enteredMmol = unit === 'mg/dL' ? mgdlToMmol(numValue) : numValue;
+      const gcfg = getSpeciesConfig(activePet?.species ?? 'cat').glucose;
+      const isHypoEmergency = enteredMmol < gcfg.emergencyLow;
+      const isHyperEmergency = enteredMmol > gcfg.emergencyHigh;
+      if (isHypoEmergency || isHyperEmergency) {
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
+        Alert.alert(
+          t(isHypoEmergency ? 'glucose.emergencyHypoTitle' : 'glucose.emergencyHyperTitle'),
+          t(isHypoEmergency ? 'glucose.emergencyHypoBody' : 'glucose.emergencyHyperBody'),
+          [
+            {
+              text: t('glucose.emergencyDismiss'),
+              style: 'cancel',
+              onPress: () => navigation.goBack(),
+            },
+            {
+              text: t('glucose.openEmergency'),
+              onPress: () => {
+                navigation.goBack();
+                rootNavigation.navigate('Emergency');
+              },
+            },
+          ]
+        );
+      } else {
+        navigation.goBack();
+      }
     } catch {
       Alert.alert(t('common.error'), t('glucose.saveError'));
     } finally {
@@ -260,6 +291,8 @@ export default function LogGlucoseScreen() {
     editId,
     queryClient,
     navigation,
+    rootNavigation,
+    activePet,
     t,
     syncInitialValues,
     triggerAfterAction,

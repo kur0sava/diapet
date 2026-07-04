@@ -165,6 +165,7 @@ export default function DashboardScreen() {
     trends: analyzerTrends,
     riskScore,
     smartAlert,
+    emergencyAlerts,
     hasEnoughData: hasAnalyzerData,
   } = useAnalyzer();
 
@@ -288,6 +289,23 @@ export default function DashboardScreen() {
           />
         }
       >
+        {/* Emergency banner — surfaces a dangerous glucose reading from the
+            last 24h with a route to first aid (analyzer emergencyAlerts). */}
+        {emergencyAlerts.length > 0 && (
+          <TouchableOpacity
+            style={[styles.emergencyBanner, { backgroundColor: theme.colors.danger }]}
+            onPress={() => rootNavigation.navigate('Emergency')}
+            accessibilityRole="button"
+            accessibilityLabel={t('glucose.openEmergency')}
+          >
+            <Text style={styles.emergencyBannerTitle}>
+              {emergencyAlerts.some(a => a.type === 'hypoglycemia')
+                ? t('glucose.emergencyHypoTitle')
+                : t('glucose.emergencyHyperTitle')}
+            </Text>
+            <Text style={styles.emergencyBannerTap}>{t('glucose.emergencyBannerTap')}</Text>
+          </TouchableOpacity>
+        )}
         {/* Hero Gradient Header */}
         <LinearGradient
           colors={[...gradientColors] as [string, string, string]}
@@ -715,6 +733,15 @@ export default function DashboardScreen() {
 const styles = StyleSheet.create({
   container: { flex: 1 },
   scrollContent: { paddingBottom: 100 },
+  emergencyBanner: {
+    marginHorizontal: 16,
+    marginTop: 12,
+    padding: 14,
+    borderRadius: 12,
+    gap: 2,
+  },
+  emergencyBannerTitle: { color: '#fff', fontSize: 15, fontWeight: '700' },
+  emergencyBannerTap: { color: '#fff', fontSize: 12, opacity: 0.9 },
   // Hero
   heroGradient: {
     paddingBottom: 20,

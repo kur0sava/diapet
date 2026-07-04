@@ -511,10 +511,25 @@ export function getInsulinThresholds(
 ): { warning: number; danger: number; absoluteMax: number } {
   const config = getSpeciesConfig(species);
 
-  if (!config.insulin.dosePerKg || !weightKg || weightKg <= 0) {
+  if (!config.insulin.dosePerKg) {
+    // Cats: absolute (not per-kg) thresholds from config.
     return {
       warning: config.insulin.warningDose,
       danger: config.insulin.dangerDose,
+      absoluteMax: config.insulin.absoluteMaxDose,
+    };
+  }
+
+  if (!weightKg || weightKg <= 0) {
+    // Dog with no recorded weight: we can't compute a safe per-kg limit, and a
+    // toy breed's safe max can be as low as ~6 IU. Warn early so a dangerous
+    // dose can't pass silently (previously it fell through to a 10 IU warning,
+    // letting a 3 kg dog get 18 IU unflagged), while keeping the hard block
+    // generous so a legitimate large-dog dose isn't blocked. This also nudges
+    // the owner to set the pet's weight.
+    return {
+      warning: 3,
+      danger: 6,
       absoluteMax: config.insulin.absoluteMaxDose,
     };
   }

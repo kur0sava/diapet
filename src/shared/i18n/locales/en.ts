@@ -213,6 +213,15 @@ export const en = {
     petNotFound: 'Pet not found',
     petChangedDuringEntry:
       'The active pet changed while you were entering data. Please verify and save again.',
+    emergencyHypoTitle: '⚠️ Dangerously low glucose',
+    emergencyHypoBody:
+      'This reading is in the hypoglycemia danger zone. Act now — hypoglycemia can be life-threatening. Open the emergency guide for step-by-step first aid.',
+    emergencyHyperTitle: '⚠️ Very high glucose',
+    emergencyHyperBody:
+      'This reading is dangerously high and may signal ketoacidosis (DKA). Contact your vet as soon as possible. Open the emergency guide for what to do now.',
+    openEmergency: 'Open emergency guide',
+    emergencyDismiss: 'Not now',
+    emergencyBannerTap: 'Tap for emergency first aid',
     invalidValue: 'Enter a valid glucose value',
     highDoseWarning: 'Unusually high dose',
     highDoseWarningDesc:
