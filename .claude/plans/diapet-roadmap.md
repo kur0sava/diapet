@@ -1,19 +1,32 @@
 # DiaPet — Roadmap v3.0: Мульти-animal
 
-> Обновлён: 2026-04-27
+> Обновлён: 2026-07-03
 > Основной план разработки
 
 ---
 
 ## ТЕКУЩИЙ СТАТУС
 
-**HEAD master**: `5500ea9 feat(security): move Anthropic API to Supabase edge proxy + premium mode flag`
-**origin/master**: 14 коммитов позади локального master (требуется push)
+**HEAD master**: `f70e2ee style: prettier format GlucoseListScreen imports`
+**origin/master**: ✅ синхронизирован с local (запушено 2026-07-03)
 **Версия в сторах**: 2.4.3 (versionCode 15)
 **Версия в коде**: 2.5.0 (versionCode 17) — НЕ бампим
 **Google Play**: v2.4.3 опубликован
 **RuStore**: v2.4.3 опубликован
 **GitHub**: https://github.com/kur0sava/diapet
+
+### v2.5.0 финализация (2026-07-03)
+Сессия: приземлил висевший мед-аудит + прогнал агентский аудит (по явной просьбе) + ручные правки. HEAD `c5e389f` → `f70e2ee` (4 коммита, запушены).
+- **`3c888f9`** — мед-аудит из handoff 2026-05-22: сроки хранения инсулинов (ProZinc 60/80d, Caninsulin/Vetsulin 42d, Lantus 28d, Levemir 42d), U-40/U-100 (в ~2.5× МЕНЬШЕ), species target range в графиках, timezone day-bucket, prediction timeout.
+- **`944c681`** — фиксы агентского аудита (paranoid-codebase + logic-reviewer):
+  - 🔴 **eas.json не задавал `PREMIUM_MODE`** → EAS-сборка падала бы в `hidden` (урезанный) вместо `unlocked`, т.к. gitignored `.env` не долетает до билд-сервера. Задан `PREMIUM_MODE=unlocked` в production/rustore/preview. **Критично — не удалять.**
+  - smartAlerts: `glucose_improving` не хвалит при сползании в гипо (`movingAverage7d < targetLow`).
+  - GlucoseListScreen: фильтры уровней species-aware (были хардкод-кошачьи для собак).
+- **`6c6708c`** — TIR-подписи разведены: дневник «В целевом диапазоне» (4-9), аналитик «В мониторинговом диапазоне» (4-12). Числа не менялись.
+- **`f70e2ee`** — prettier.
+- ✅ Privacy policy (Firebase Analytics + opt-out) и UI-тумблер opt-out — подтверждены готовыми.
+- 🔴 **Осталось перед AI-релизом**: прогонять вывод LLM через `safetyGuard.sanitizeRecommendation` (сейчас фильтр доз к AI-тексту не применяется — латентно, AI off). См. `memory/project_audit_2026-07-03.md`.
+- Аудит-детали: `memory/project_audit_2026-07-03.md`.
 
 ### Архитектурный сдвиг (commit 5500ea9, 2026-04-27)
 - Anthropic API ключ выпилен из клиента — закрыт security-долг ЭТАП 13C client-side.
@@ -53,21 +66,34 @@
 - ЭТАП 13A-D Monetization (Payment provider TBD + Supabase + AdMob) — нужны creds; Prodamus отклонён как несовместимый с Google Play
 - ЭТАП 14 Bluetooth/widgets
 
-### Перед EAS rebuild — финальный чек-лист (обновлён 2026-04-27)
+### Adaptive Hints v2 — поведенческие персональные подсказки (идея, 2026-07-04)
+Цель: под ситуацию юзера подстраивать хинты и рекомендовать статьи/скрипты — из комбинации его действий (открыл X + залогировал Y + пропустил Z) делать выводы и помогать.
+
+**Уже есть фундамент:** `useHintTrigger` (реакция на события), MMKV-счётчики, Firebase-события (`glucose_added`, `encyclopedia_article_opened`, `feed_calculator_used`…), локальный анализатор (trendEngine→patternDetector→riskScore уже выводит клиническое положение), у статей есть `category/species/tags/relatedArticleIds`, `hintStore` с pending-очередью. Не хватает только **поведенческого** слоя (что открывает/логирует/игнорирует).
+
+**Подход (MVP → перспектива):**
+1. Локальный лог сигналов (device-only, SQLite/MMKV): экраны, что залогировал, что пропустил, где забуксовал.
+2. **Rule-engine** (детерминированные правила) поверх сигналов + выводов анализатора. Примеры: «3 дня меряет глюкозу, инъекций 0» → напоминания + статья про инъекции; «собака + Feed Guide + high-carb корм» → рекомендовать dog-diet; «risk danger + не открывал экстренный» → подсветить; «надир к цели» → статья про ремиссию.
+3. Выдача через существующую очередь хинтов + блок «рекомендованные статьи».
+
+**Критично заложить с самого начала:**
+- **Приватность = локально.** Это медданные. Персональная адаптация — на устройстве, БЕЗ отправки на сервер без явного opt-in. Firebase остаётся анонимным/агрегатным (метрики, не таргетинг). Плюс к продаже: «мы не следим».
+- **Safety-гейт обязателен**: все рекомендации через `safetyGuard.sanitizeRecommendation`; правила направляют к информации/ветеринару, НЕ назначают дозы/лечение.
+- **Rule-based раньше AI**: прозрачно, тестируемо, детерминированно → доверие. AI-слой (Sonnet, сейчас скрыт) поверх — позже.
+- Cold-start для новичков (дефолтный онбординг-трек), уважение к тумблеру хинтов, dismissible.
+
+### Перед EAS rebuild — финальный чек-лист (обновлён 2026-07-03)
 - [x] TSC чисто (`npx tsc --noEmit`)
-- [x] jest 51/51
+- [x] jest 51/51 · prettier clean
 - [x] Anthropic ключ убран из клиента (commit 5500ea9)
 - [x] Большой аудит-цикл смёржен в master (commit 5c34147)
 - [x] Edge Function реализован + захарден (auth + rate-limit + verify_jwt)
-- [ ] **Решить `PREMIUM_MODE`**: рекомендация — `unlocked` (Soft Launch). Поставить в `.env`.
-- [ ] **Задеплоить Edge Function в Supabase** (если `PREMIUM_MODE != hidden` и AI нужен):
-  - `npx supabase login`
-  - `npx supabase link --project-ref <ref>`
-  - `npx supabase secrets set ANTHROPIC_API_KEY=sk-ant-...`
-  - `npx supabase functions deploy ai-proxy`
-- [ ] Заполнить `.env`: `AI_PROXY_URL`, `SUPABASE_URL`, `SUPABASE_ANON_KEY`
-- [ ] **Удалить `ANTHROPIC_API_KEY` из локального `.env`** (он больше не нужен в клиенте)
-- [ ] `git push origin master` (14 коммитов локально)
+- [x] **`PREMIUM_MODE=unlocked`** решён + задан в `.env` И в `eas.json` (все профили) — иначе EAS собрал бы `hidden`
+- [x] Мед-аудит + агентский аудит-фиксы закоммичены (3c888f9 / 944c681 / 6c6708c)
+- [x] Privacy policy (Firebase Analytics + opt-out) + UI-тумблер opt-out готовы
+- [x] `git push origin master` (запушено 2026-07-03, `f70e2ee`)
+- [ ] AI: НЕ деплоим в 2.5.0 (`AI_PROXY_URL=''`, AI скрыт). Отдельный релиз. ⚠️ перед ним — safety-guard санитизация LLM-вывода.
+- [ ] 🔴 **Прогон на живом телефоне** — ЕДИНСТВЕННЫЙ незакрытый блокер (отложен пользователем 2026-07-03). Мешает Gradle SSL/truststore на машине.
 - [ ] `eas build --platform android --profile production --non-interactive`
 - [ ] `eas build --platform android --profile rustore --non-interactive`
 - [ ] Upload AAB → Google Play Console (production track)
