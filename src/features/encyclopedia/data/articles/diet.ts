@@ -17,7 +17,7 @@ export const diet: Article = {
 
 ### Главное правило: меньше углеводов
 
-Кошки — **облигатные хищники**. В природе их рацион: ~70-80% белка, ~20-25% жира, менее 2% углеводов. В их организме нет амилазы в слюне (в отличие от людей и собак), глюкокиназа печени в 2-5 раз слабее, а глюконеогенез работает постоянно — они не умеют «выключать» выработку глюкозы из аминокислот.
+Кошки — **облигатные хищники**. В природе их рацион (на сухое вещество): ~50-60% белка, ~35-45% жира и лишь несколько процентов углеводов (по анализу цельной добычи, Plantinga 2011). В их организме нет амилазы в слюне (в отличие от людей и собак), глюкокиназа печени в 2-5 раз слабее, а глюконеогенез работает постоянно — они не умеют «выключать» выработку глюкозы из аминокислот.
 
 Проще говоря: углеводы для кошек — это не еда, это нагрузка. Когда кошка с диабетом получает много углеводов, сахар в крови взлетает и держится долго.
 
@@ -90,7 +90,7 @@ Here's what's truly empowering: the right diet is something entirely in your han
 
 ### The Golden Rule: Fewer Carbohydrates
 
-Cats are **obligate carnivores**. In nature, their diet is ~70-80% protein, ~20-25% fat, and less than 2% carbohydrates. They lack salivary amylase (unlike humans and dogs), their liver glucokinase activity is 2-5x weaker, and gluconeogenesis runs constantly — they can't "switch off" glucose production from amino acids.
+Cats are **obligate carnivores**. In nature, their diet (on a dry-matter basis) is ~50-60% protein, ~35-45% fat, and only a few percent carbohydrates (whole-prey analysis, Plantinga 2011). They lack salivary amylase (unlike humans and dogs), their liver glucokinase activity is 2-5x weaker, and gluconeogenesis runs constantly — they can't "switch off" glucose production from amino acids.
 
 Simply put: carbs aren't food for cats, they're a metabolic burden. When a diabetic cat eats carbs, blood sugar spikes and stays high for a long time.
 

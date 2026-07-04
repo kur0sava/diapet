@@ -156,7 +156,9 @@ const CAT_INSULIN_TYPES: InsulinTypeInfo[] = [
     onsetHours: [1, 3],
     peakHours: [4, 8],
     durationHours: [10, 16],
-    shelfLifeDays: 60,
+    // Sanofi Lantus SPC 6.3: opened vial 28 days at <=25C. Same as the dog
+    // config and every encyclopedia article; was erroneously 60.
+    shelfLifeDays: 28,
     storageAfterOpening: 'room',
     isSuspension: false,
   },
@@ -339,6 +341,14 @@ const DOG_INSULIN_TYPES: InsulinTypeInfo[] = [
     shelfLifeDays: 28,
     storageAfterOpening: 'room',
     isSuspension: false,
+    // AAHA 2018 / Fleeman & Rand: for dogs the first-line insulins are Lente
+    // (Caninsulin/Vetsulin) and NPH. Glargine/detemir are second-line, used
+    // only when response to first-line is poor.
+    notFirstChoice: true,
+    notFirstChoiceReason: {
+      ru: 'Для собак гларгин — не первый выбор. Первая линия — Caninsulin/Vetsulin (ленте) или NPH. Гларгин назначают, если ответ на первую линию плохой. Обсуди с ветеринаром.',
+      en: 'For dogs, glargine is not a first-choice insulin. First-line options are Caninsulin/Vetsulin (lente) or NPH; glargine is used if response to first-line is poor. Discuss with your vet.',
+    },
   },
   {
     name: 'Detemir (Levemir)',
@@ -349,6 +359,13 @@ const DOG_INSULIN_TYPES: InsulinTypeInfo[] = [
     shelfLifeDays: 42,
     storageAfterOpening: 'room',
     isSuspension: false,
+    // Detemir is extremely potent in dogs (very low per-kg dosing) and is a
+    // second-line option, not first-choice (AAHA 2018 / Fleeman & Rand).
+    notFirstChoice: true,
+    notFirstChoiceReason: {
+      ru: 'Для собак детемир — не первый выбор и очень мощный (крайне низкие дозы на кг). Первая линия — Caninsulin/Vetsulin или NPH. Только по назначению ветеринара.',
+      en: 'For dogs, detemir is not first-choice and is very potent (very low per-kg doses). First-line options are Caninsulin/Vetsulin or NPH. Use only under veterinary guidance.',
+    },
   },
 ];
 
@@ -360,7 +377,12 @@ const DOG_CONFIG: SpeciesConfig = {
     normalHigh: 6.1,
     targetLow: 4.4,
     targetHigh: 8.0,
-    rangeHigh: 10.0,
+    // TIR upper bound. AAHA 2018 (Behrend et al.): a well-controlled diabetic
+    // dog acceptably runs up to ~13.9-16.7 mmol/L through the day; postprandial
+    // peaks of 10-14 on Lente/NPH BID are normal, not poor control. targetHigh
+    // (8.0) is the ideal nadir, kept separate. Was 10.0 — too tight, it
+    // systematically under-counted TIR and inflated risk for normal dogs.
+    rangeHigh: 13.9,
     emergencyLow: 3.3,
     severeLow: 2.2,
     emergencyHigh: 30,
@@ -399,7 +421,8 @@ const DOG_CONFIG: SpeciesConfig = {
   },
 
   validation: {
-    maxWeightKg: 80,
+    // Giant breeds (Mastiff, St. Bernard) can legitimately exceed 80 kg.
+    maxWeightKg: 100,
     maxAgeYears: 20,
   },
 

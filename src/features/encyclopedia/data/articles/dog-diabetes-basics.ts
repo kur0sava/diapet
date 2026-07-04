@@ -26,7 +26,7 @@ export const dogDiabetesBasics: Article = {
 
 - **Возраст:** чаще развивается у собак 7–9 лет
 - **Пол:** нестерилизованные суки в 2 раза чаще (из-за влияния прогестерона)
-- **Породы:** самоеды, австралийские терьеры, миниатюрные шнауцеры, пудели, бишон фризе, мопсы
+- **Породы:** самоеды, тибетские терьеры, керн-терьеры, миниатюрные шнауцеры, пудели, бишон фризе
 - **Вес:** ожирение повышает риск, но не является прямой причиной
 
 ## Типичные симптомы
@@ -71,7 +71,7 @@ Diabetes mellitus in dogs is a chronic condition where the pancreas stops produc
 
 - **Age:** most commonly develops in dogs aged 7–9
 - **Sex:** unspayed females are 2× more likely (due to progesterone effects)
-- **Breeds:** Samoyeds, Australian Terriers, Miniature Schnauzers, Poodles, Bichon Frise, Pugs
+- **Breeds:** Samoyeds, Tibetan Terriers, Cairn Terriers, Miniature Schnauzers, Poodles, Bichon Frise
 - **Weight:** obesity increases risk but isn't a direct cause
 
 ## Typical symptoms

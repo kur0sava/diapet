@@ -44,7 +44,7 @@ export const hypoglycemia: Article = {
 Это важнее всего! Кошка в сознании, реагирует на вас? Или без сознания / в судорогах?
 
 - **В сознании** → можно дать сладкое перорально (шаг 2)
-- **Без сознания или судороги** → **НЕ давайте ничего в рот!** Нанесите мёд тонким слоем на дёсны и **немедленно в клинику** (нужна IV декстроза 50%)
+- **Без сознания или судороги** → **НЕ давайте ничего в рот!** Нанесите мёд **минимальным** тонким слоем на дёсны (чтобы не скапливался во рту — риск аспирации) и **немедленно в клинику** (нужна IV декстроза 50%). Если сомневаетесь — пропустите этот шаг и сразу везите в клинику
 
 **Шаг 2: Нанесите сладкое на дёсны (если кошка в сознании)**
 
@@ -171,7 +171,7 @@ This can happen fast — within minutes. We know this is frightening. But a prep
 This is the most important step! Is your cat conscious and responsive? Or unconscious / having seizures?
 
 - **Conscious** → you can give sugar orally (step 2)
-- **Unconscious or seizing** → **Do NOT put anything in their mouth!** Rub a thin layer of honey on the gums and **rush to the clinic immediately** (they need IV dextrose 50%)
+- **Unconscious or seizing** → **Do NOT put anything in their mouth!** Rub only a **minimal** thin layer of honey on the gums (don't let it pool in the mouth — aspiration risk) and **rush to the clinic immediately** (they need IV dextrose 50%). If in doubt, skip this step and go straight to the clinic
 
 **Step 2: Apply something sweet to the gums (if cat is conscious)**
 
@@ -267,6 +267,8 @@ Keep within reach:
 With quick action, hypoglycemia responds very well to treatment. Honey on the gums is simple, fast, and effective. You already know what to do. A prepared pet parent is the best protection a cat can have.`,
   },
   category: 'tips',
+  // Feline-specific first aid (cat weights/doses). Dogs have dog-hypoglycemia.
+  species: 'cat',
   readingTimeMinutes: 7,
   order: 3,
   relatedArticleIds: ['injection-technique', 'glucose_monitoring', 'dka', 'first-days'],

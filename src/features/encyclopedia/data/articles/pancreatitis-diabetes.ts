@@ -56,7 +56,7 @@ export const pancreatitisDiabetes: Article = {
 
 **В первые дни:**
 - **Маленькие порции** — лучше 6-8 крошечных, чем 2 большие
-- **Низкожировая еда** — жир менее 15% в сухом веществе
+- **Умеренно-жирная, легко усваиваемая еда** — у кошек (в отличие от собак) жёсткое ограничение жира не доказано и может усилить потерю веса и риск печёночного липидоза у отказывающейся от еды кошки. Строгое ограничение жира — только временно в острую фазу и по назначению ветеринара (Zoran 2009, Xenoulis & Steiner 2015)
 - **Тёплая еда** — подогрейте, это улучшает аппетит
 - **Мягкая консистенция** — паштет лучше кусочков
 
@@ -122,7 +122,7 @@ Don't wait — with pancreatitis, timing matters.
 
 **During the first days:**
 - **Small portions** — 6-8 tiny meals are better than 2 large ones
-- **Low-fat food** — less than 15% fat on a dry-matter basis
+- **Moderate-fat, easily digestible food** — in cats (unlike dogs) strict fat restriction is not well supported and can worsen weight loss and the risk of hepatic lipidosis in a cat that stops eating. Reserve strict fat limits for the acute phase only, under veterinary guidance (Zoran 2009, Xenoulis & Steiner 2015)
 - **Warm food** — gently warm it to improve appetite
 - **Smooth texture** — pate works better than chunks
 
@@ -149,8 +149,14 @@ Managing two chronic conditions at once is truly heroic. There will be good days
   order: 4,
   relatedArticleIds: ['what-is-diabetes', 'comorbidities', 'dka', 'diet'],
   references: [
-    { ru: 'Xenoulis PG — Feline pancreatitis, JFMS 2015', en: 'Xenoulis PG — Feline pancreatitis, JFMS 2015' },
-    { ru: 'ISFM Guidelines on Diabetes Mellitus in Cats, 2023', en: 'ISFM Guidelines on Diabetes Mellitus in Cats, 2023' },
+    {
+      ru: 'Xenoulis PG — Feline pancreatitis, JFMS 2015',
+      en: 'Xenoulis PG — Feline pancreatitis, JFMS 2015',
+    },
+    {
+      ru: 'ISFM Guidelines on Diabetes Mellitus in Cats, 2023',
+      en: 'ISFM Guidelines on Diabetes Mellitus in Cats, 2023',
+    },
   ],
   tags: [
     { ru: 'панкреатит', en: 'pancreatitis' },

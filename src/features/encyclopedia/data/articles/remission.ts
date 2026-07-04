@@ -18,7 +18,7 @@ export const remission: Article = {
 ### Насколько это реально?
 
 Цифры вдохновляют:
-- **50-90%** кошек с диабетом 2 типа могут выйти в ремиссию
+- **50-90%** кошек с диабетом 2 типа могут выйти в ремиссию (верхняя граница ~90% — при раннем начале лечения гларгином и низкоуглеводной диетой с первых дней; в среднем по популяции ближе к **50-70%**)
 - Чаще всего это происходит в первые **1-6 месяцев** лечения
 - При правильном подходе шансы очень высоки
 
@@ -115,7 +115,7 @@ When owners first hear about diabetes, it often feels like insulin injections ar
 ### How Realistic Is This?
 
 The numbers are truly encouraging:
-- **50-90%** of cats with type 2 diabetes can achieve remission
+- **50-90%** of cats with type 2 diabetes can achieve remission (the ~90% upper end assumes early treatment with glargine and a low-carb diet from day one; population averages are closer to **50-70%**)
 - Most remissions happen within the first **1-6 months** of treatment
 - With the right approach, the odds are very much in your favor
 
@@ -162,10 +162,10 @@ Here are the **warning** (in a good way!) signs that appear 1-4 weeks before rem
 
 ### Dose Reduction Protocol
 
-| Nadir (mmol/L) | What to Do |
-|----------------|-----------|
 Decisions are based on **nadir** (the minimum of the curve), not on pre-injection glucose — pre-injection reflects the end of the previous dose and can be normal even when the nadir is too low.
 
+| Nadir (mmol/L) | What to Do |
+|----------------|-----------|
 | 5-8 | Continue current dose |
 | Below 5 (twice in a row) | Reduce by 0.5-1 IU |
 | Below 4 | Reduce by 1-2 IU or skip next dose |

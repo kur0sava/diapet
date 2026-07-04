@@ -57,7 +57,7 @@ export const dogHypoglycemia: Article = {
 
 ### Если собака БЕЗ СОЗНАНИЯ или в судорогах:
 1. **НЕ давай ничего в пасть** — риск аспирации
-2. Нанеси мёд/сироп на дёсны (глюкоза всасывается через слизистую)
+2. Нанеси мёд/сироп на дёсны **минимальным количеством** (чтобы не скапливалось во рту); глюкоза всасывается через слизистую. Сомневаешься — пропусти этот шаг и сразу вези в клинику
 3. **Немедленно везите в ветеринарную клинику** — это экстренная ситуация
 4. По дороге: оберни собаку одеялом, держи голову ниже тела
 
@@ -121,7 +121,7 @@ Hypoglycemia is a dangerous drop in blood glucose below normal levels. In dogs, 
 
 ### If the dog is UNCONSCIOUS or having seizures:
 1. **Do NOT give anything by mouth** — aspiration risk
-2. Apply honey/syrup to gums (glucose absorbs through the mucosa)
+2. Apply only a **minimal amount** of honey/syrup to the gums (don't let it pool in the mouth); glucose absorbs through the mucosa. If in doubt, skip this step and go straight to the clinic
 3. **Get to a veterinary clinic immediately** — this is an emergency
 4. On the way: wrap the dog in a blanket, keep the head below the body
 

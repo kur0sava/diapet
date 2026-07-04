@@ -18,7 +18,7 @@ export const ketoneTesting: Article = {
 ### Когда проверять кетоны
 
 **Обязательно:**
-- Глюкоза выше 20 ммоль/л (360 мг/дл) дважды подряд
+- Глюкоза держится выше 14-15 ммоль/л (250-270 мг/дл) — кетогенез возможен уже на этом уровне (O'Brien 2010 / ISFM 2023); ждать 20 ммоль/л поздно
 - Кошка не ест более 24 часов
 - **Рвота + вялость при любом повышении глюкозы выше нормы — проверяйте немедленно** (по ISFM 2023, не ждите достижения 20 ммоль/л)
 - Запах ацетона изо рта
@@ -76,7 +76,7 @@ Ketones are an alarm signal. When the body can't use glucose (no insulin), it st
 ### When to Check Ketones
 
 **Always check if:**
-- Glucose above 20 mmol/L (360 mg/dL) twice in a row
+- Glucose stays above 14-15 mmol/L (250-270 mg/dL) — ketogenesis can already occur at this level (O'Brien 2010 / ISFM 2023); waiting for 20 is too late
 - Cat hasn't eaten for more than 24 hours
 - **Vomiting + lethargy at any above-normal glucose — check immediately** (per ISFM 2023, do not wait for 20 mmol/L)
 - Acetone smell from breath

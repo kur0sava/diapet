@@ -47,7 +47,7 @@ export const dogInsulin: Article = {
 - Канинсулин — **U-40** (40 ЕД/мл)
 - NPH — **U-100** (100 ЕД/мл)
 - Использование неправильного шприца = **неправильная доза** = опасно!
-- U-40 шприцы обычно с красным колпачком, U-100 — с оранжевым
+- U-40 шприцы обычно с красным колпачком, U-100 — с оранжевым (цвета колпачков **не стандартизованы во всех странах и у всех производителей** — обязательно уточните маркировку у ветеринара или в аптеке)
 
 ## Хранение
 
@@ -106,7 +106,7 @@ export const dogInsulin: Article = {
 - Caninsulin is **U-40** (40 IU/mL)
 - NPH is **U-100** (100 IU/mL)
 - Using the wrong syringe = **wrong dose** = dangerous!
-- U-40 syringes usually have a red cap, U-100 have orange
+- U-40 syringes usually have a red cap, U-100 have orange (cap colors are **not standardized across all countries and manufacturers** — always verify the markings with your vet or pharmacist)
 
 ## Storage
 

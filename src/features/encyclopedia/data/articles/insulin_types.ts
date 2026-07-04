@@ -159,6 +159,8 @@ This is critically important, so please remember:
 > **The golden rule:** never change the insulin type, dose, or schedule without talking to your vet. Even if something seems "off" — call the vet first.`,
   },
   category: 'treatment',
+  // Feline-specific (feline dosing, ISFM remission). Dogs have dog-insulin.
+  species: 'cat',
   readingTimeMinutes: 6,
   order: 1,
   relatedArticleIds: [
