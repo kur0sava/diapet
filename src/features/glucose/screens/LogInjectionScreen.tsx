@@ -22,7 +22,7 @@ import { useTranslation } from 'react-i18next';
 import { useTheme } from '@shared/theme';
 import { Button, Input, Card } from '@shared/components/ui';
 import { differenceInMinutes } from 'date-fns';
-import { injectionRepository } from '@storage/database';
+import { injectionRepository, glucoseRepository } from '@storage/database';
 import { usePetStore } from '@shared/stores/petStore';
 import { getInsulinThresholds } from '@shared/config/speciesConfig';
 import { useQueryClient } from '@tanstack/react-query';
@@ -155,15 +155,22 @@ export default function LogInjectionScreen() {
       return;
     }
 
-    // X.8: Duplicate injection safety — warn if last injection < 6 hours ago
+    // X.8: Duplicate injection safety — warn if last injection < 6 hours ago.
+    // Checks both the injections table AND inline insulin doses recorded on
+    // glucose readings (LogGlucoseScreen) — those aren't InjectionLog rows,
+    // so previously a dose logged with a reading was invisible to this check.
     try {
-      const lastInj = await injectionRepository.findNearestTo(
-        activePet.id,
-        administeredAt.toISOString()
+      const iso = administeredAt.toISOString();
+      const [lastInj, lastInline] = await Promise.all([
+        injectionRepository.findNearestTo(activePet.id, iso),
+        glucoseRepository.findNearestInsulinTo(activePet.id, iso),
+      ]);
+      const nearestTimes = [lastInj?.administeredAt, lastInline?.recordedAt].filter(
+        (v): v is string => !!v
       );
-      if (lastInj) {
-        const minutesSince = Math.abs(
-          differenceInMinutes(administeredAt, new Date(lastInj.administeredAt))
+      if (nearestTimes.length > 0) {
+        const minutesSince = Math.min(
+          ...nearestTimes.map(ts => Math.abs(differenceInMinutes(administeredAt, new Date(ts))))
         );
         if (minutesSince < 360) {
           // 6 hours

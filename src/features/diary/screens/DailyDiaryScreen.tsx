@@ -191,6 +191,22 @@ export default function DailyDiaryScreen() {
       });
     }
 
+    // Inline insulin doses logged together with a glucose reading are not
+    // InjectionLog rows — surface them as injection events so the day's
+    // insulin history is complete (they already count in the analyzer).
+    for (const g of glucoseReadings) {
+      if (typeof g.insulinDose === 'number' && g.insulinDose > 0) {
+        events.push({
+          id: `inline-inj-${g.id}`,
+          time: g.recordedAt,
+          type: 'injection',
+          title: `${g.insulinDose} ${t('common.units')}${g.insulinType ? ` ${g.insulinType}` : ''}`,
+          subtitle: t('diary.inlineInsulinNote'),
+          color: theme.colors.secondary,
+        });
+      }
+    }
+
     for (const feed of feedings) {
       const parts: string[] = [];
       if (feed.foodType) parts.push(t(`feeding.${feed.foodType}`));

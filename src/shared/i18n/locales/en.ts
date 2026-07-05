@@ -148,6 +148,7 @@ export const en = {
     timeline: 'Timeline',
     addEntry: 'Add Entry',
     noEvents: 'No records for this day',
+    inlineInsulinNote: 'logged with a glucose reading',
     futureDate: 'This is a future date',
     avg: 'Average',
     inRange: 'In target range',

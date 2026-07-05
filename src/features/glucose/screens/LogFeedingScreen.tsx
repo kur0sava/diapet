@@ -535,7 +535,11 @@ export default function LogFeedingScreen() {
                 if (date) {
                   const merged = new Date(fedAt);
                   merged.setHours(date.getHours(), date.getMinutes(), date.getSeconds());
-                  setFedAt(merged);
+                  // Guard: don't allow a future time on today's date — same
+                  // clamp as LogGlucose/LogInjection (the date picker already
+                  // blocks future days).
+                  const nowTs = new Date();
+                  setFedAt(merged > nowTs ? nowTs : merged);
                 }
               }}
             />

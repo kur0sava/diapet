@@ -171,9 +171,13 @@ export default function DashboardScreen() {
 
   const [refreshing, setRefreshing] = React.useState(false);
 
-  // Refetch data when tab gains focus
+  // Refetch data when tab gains focus. Also re-read the glucose unit — it can
+  // change in Settings or inside LogGlucoseScreen while this screen stays
+  // mounted in the tab navigator (state was initialized once at mount).
   useFocusEffect(
     useCallback(() => {
+      const storedUnit = (storage.getString(StorageKeys.GLUCOSE_UNIT) ?? 'mmol/L') as GlucoseUnit;
+      setGlucoseUnit(prev => (prev === storedUnit ? prev : storedUnit));
       refetchGlucose();
       refetchHistory();
       refetchLastInjection();

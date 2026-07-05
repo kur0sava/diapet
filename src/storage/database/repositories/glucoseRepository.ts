@@ -196,6 +196,28 @@ export const glucoseRepository = {
     return row ? mapRowToReading(row) : null;
   },
 
+  /** Latest reading that carries an inline insulin dose (logged via LogGlucoseScreen). */
+  async findLatestWithInsulin(petId: string): Promise<GlucoseReading | null> {
+    const db = await getDatabase();
+    const row = await db.getFirstAsync<GlucoseRow>(
+      'SELECT * FROM glucose_readings WHERE pet_id = ? AND insulin_dose > 0 ORDER BY recorded_at DESC LIMIT 1',
+      [petId]
+    );
+    return row ? mapRowToReading(row) : null;
+  },
+
+  /** Reading with an inline insulin dose closest in time to a given ISO datetime
+   *  (duplicate-injection safety check — mirrors injectionRepository.findNearestTo). */
+  async findNearestInsulinTo(petId: string, isoDateTime: string): Promise<GlucoseReading | null> {
+    const db = await getDatabase();
+    const row = await db.getFirstAsync<GlucoseRow>(
+      `SELECT * FROM glucose_readings WHERE pet_id = ? AND insulin_dose > 0
+       ORDER BY ABS(julianday(recorded_at) - julianday(?)) ASC LIMIT 1`,
+      [petId, isoDateTime]
+    );
+    return row ? mapRowToReading(row) : null;
+  },
+
   async update(id: string, dto: Partial<CreateGlucoseDTO>): Promise<GlucoseReading | null> {
     const db = await getDatabase();
     const now = new Date().toISOString();

@@ -148,6 +148,7 @@ export const ru = {
     timeline: 'Хронология',
     addEntry: 'Добавить запись',
     noEvents: 'Записей за этот день нет',
+    inlineInsulinNote: 'записан вместе с замером глюкозы',
     futureDate: 'Это будущая дата',
     avg: 'Среднее',
     inRange: 'В целевом диапазоне',
