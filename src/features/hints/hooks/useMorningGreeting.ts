@@ -6,7 +6,13 @@ import { format } from 'date-fns';
 import { usePetStore } from '@shared/stores/petStore';
 
 export function useMorningGreeting() {
-  const species = usePetStore(s => s.activePet?.species);
+  // Mount-only effect. Previously this depended on the active pet's species:
+  // the first run (species still undefined while loadPets() is in flight)
+  // stamped HINTS_LAST_APP_OPEN_DATE = today and armed a 2s timer; when
+  // loadPets resolved ~ms later the species change re-ran the effect, the
+  // cleanup killed the timer, and the re-run bailed on `lastOpen === today`.
+  // Net effect: the morning greeting never fired. Species is now read from
+  // the store at timer-fire time, when pets are guaranteed loaded.
   useEffect(() => {
     if (storage.getBoolean(StorageKeys.HINTS_DISABLED)) return;
 
@@ -36,6 +42,7 @@ export function useMorningGreeting() {
     // Delay morning greeting to not interfere with app loading
     const timer = setTimeout(() => {
       if (useHintStore.getState().currentHint) return; // Something else shown
+      const species = usePetStore.getState().activePet?.species;
       const hint = selectHint('morning', stage, 'any', species);
       if (hint) {
         addShownId(hint.id);
@@ -44,5 +51,5 @@ export function useMorningGreeting() {
     }, 2000);
 
     return () => clearTimeout(timer);
-  }, [species]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, []);
 }

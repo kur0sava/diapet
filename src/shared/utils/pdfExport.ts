@@ -229,8 +229,15 @@ function buildHtml(
         ? L.diabetesType2
         : L.diabetesTypeUnknown;
 
-  // Glucose table rows
-  const glucoseRows = glucoseReadings
+  // Callers pass repository output sorted ASC (oldest first). The report must
+  // show the MOST RECENT entries: sort DESC before capping, otherwise a pet
+  // with >100 readings exports its oldest data and "recent injections" shows
+  // the first-ever 10 shots.
+  const byDateDesc = (a: string, b: string) => b.localeCompare(a);
+
+  // Glucose table rows (most recent 100)
+  const glucoseRows = [...glucoseReadings]
+    .sort((a, b) => byDateDesc(a.recordedAt, b.recordedAt))
     .slice(0, 100)
     .map(
       r => `
@@ -244,8 +251,9 @@ function buildHtml(
     )
     .join('');
 
-  // Injection table rows (last 10)
-  const injectionRows = injections
+  // Injection table rows (most recent 10)
+  const injectionRows = [...injections]
+    .sort((a, b) => byDateDesc(a.administeredAt, b.administeredAt))
     .slice(0, 10)
     .map(
       inj => `
@@ -258,8 +266,9 @@ function buildHtml(
     )
     .join('');
 
-  // Symptom rows
-  const symptomRows = symptoms
+  // Symptom rows (most recent 50)
+  const symptomRows = [...symptoms]
+    .sort((a, b) => byDateDesc(a.recordedAt, b.recordedAt))
     .slice(0, 50)
     .map(
       s => `
