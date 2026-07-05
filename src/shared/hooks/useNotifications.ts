@@ -42,13 +42,17 @@ export function useNotifications() {
         lightColor: '#FFD700',
       });
 
-      // On Android 12+, exact alarm permission may not be auto-granted.
-      // Without it, notifications use inexact alarms and arrive late.
-      await promptExactAlarmIfNeeded();
+      // Follow-up guidance only makes sense when the user actually granted
+      // notifications — otherwise we'd nag someone who just said "no".
+      if (finalStatus === 'granted') {
+        // On Android 12+, exact alarm permission may not be auto-granted.
+        // Without it, notifications use inexact alarms and arrive late.
+        await promptExactAlarmIfNeeded();
 
-      // Aggressive OEM battery managers force-stop the app and break the
-      // reminder re-scheduling chain (see promptBatteryOptimizationIfNeeded).
-      await promptBatteryOptimizationIfNeeded();
+        // Aggressive OEM battery managers force-stop the app and break the
+        // reminder re-scheduling chain (see promptBatteryOptimizationIfNeeded).
+        await promptBatteryOptimizationIfNeeded();
+      }
     }
 
     return finalStatus === 'granted';
@@ -132,9 +136,23 @@ async function promptExactAlarmIfNeeded(): Promise<void> {
     // expo-notifications exposes canScheduleExactAlarms on Android 12+
     const android = (perms as { android?: { allowsExactAlarms?: boolean } }).android;
     if (android && 'allowsExactAlarms' in android && android.allowsExactAlarms === false) {
-      // Open the app's notification settings — the nearest available surface
-      // where the user can find Alarms & Reminders toggle
-      await Linking.openSettings();
+      // Explain BEFORE navigating away — previously this called openSettings()
+      // directly and the user was dumped into system settings mid-onboarding
+      // with no idea why. Shown once (MMKV flag), same pattern as the battery
+      // optimization prompt below.
+      const { storage, StorageKeys } = await import('@storage/mmkv/storage');
+      if (storage.getBoolean(StorageKeys.EXACT_ALARM_PROMPTED)) return;
+      storage.set(StorageKeys.EXACT_ALARM_PROMPTED, true);
+
+      Alert.alert(i18n.t('notifications.exactAlarmTitle'), i18n.t('notifications.exactAlarmBody'), [
+        { text: i18n.t('notifications.batteryLater'), style: 'cancel' },
+        {
+          text: i18n.t('notifications.exactAlarmOpen'),
+          onPress: () => {
+            void Linking.openSettings().catch(() => {});
+          },
+        },
+      ]);
     }
   } catch {
     // Permission API shape varies across SDK versions — fail silently

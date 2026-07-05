@@ -147,6 +147,7 @@ export const StorageKeys = {
   TRIAL_STARTED_AT: 'trialStartedAt',
   ANALYTICS_OPT_OUT: 'analyticsOptOut',
   BATTERY_OPT_PROMPTED: 'batteryOptPrompted',
+  EXACT_ALARM_PROMPTED: 'exactAlarmPrompted',
 } as const;
 
 /** Per-pet vet contact key. See {@link StorageKeys.VET_NAME} for legacy migration. */

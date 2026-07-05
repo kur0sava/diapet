@@ -42,8 +42,14 @@ export async function scheduleHintPushNotifications(): Promise<void> {
     shownIds = [];
   }
 
-  // Filter by species and premium availability
-  const species = usePetStore.getState().activePet?.species ?? 'cat';
+  // Filter by species and premium availability. This runs from AppContent
+  // mount, often BEFORE loadPets() resolves — activePet is still null then,
+  // so fall back to the MMKV species cache (written on every pet switch)
+  // rather than defaulting dog owners to cat content.
+  const species =
+    usePetStore.getState().activePet?.species ??
+    (storage.getString(StorageKeys.ACTIVE_SPECIES) as 'cat' | 'dog' | undefined) ??
+    'cat';
   const backendReady = isBackendConfigured();
   const eligibleHints = PUSH_HINTS.filter(h => {
     if (h.mentionsPremium && !backendReady) return false;

@@ -870,6 +870,10 @@ export const en = {
       'Some phones stop background apps to save battery, which can silently delay or cancel injection and feeding reminders — especially after a reboot. To keep them reliable, exclude DiaPet from battery optimization.',
     batteryOpen: 'Open settings',
     batteryLater: 'Later',
+    exactAlarmTitle: 'Precise reminders',
+    exactAlarmBody:
+      'Android has restricted exact alarms for DiaPet — injection reminders may arrive several minutes late. Insulin timing matters: please enable "Alarms & reminders" for DiaPet in system settings.',
+    exactAlarmOpen: 'Open settings',
   },
 
   errors: {

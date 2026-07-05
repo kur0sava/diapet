@@ -23,7 +23,7 @@ import { getSpeciesConfig } from '@shared/config/speciesConfig';
 import { Icon } from '@shared/components/ui/Icon';
 import { storage, StorageKeys, vetNameKey, vetPhoneKey } from '@storage/mmkv/storage';
 import { useUnsavedChangesGuard } from '@shared/hooks/useUnsavedChangesGuard';
-import { useNotifications } from '@shared/hooks/useNotifications';
+import { restoreScheduleNotifications } from '@shared/hooks/useNotifications';
 
 export default function EditPetScreen() {
   const navigation = useMoreNavigation();
@@ -32,8 +32,6 @@ export default function EditPetScreen() {
   const activePet = usePetStore(s => s.activePet);
   const refreshActivePet = usePetStore(s => s.refreshActivePet);
   const queryClient = useQueryClient();
-  const { scheduleInjectionReminder, scheduleFeedingReminder, cancelScheduleNotifications } =
-    useNotifications();
 
   const [name, setName] = useState(activePet?.name ?? '');
   const [weightKg, setWeightKg] = useState(activePet?.weightKg?.toString() ?? '');
@@ -144,16 +142,13 @@ export default function EditPetScreen() {
         for (const time of feedingTimes)
           await scheduleRepository.addFeedingTime(activePet.id, time);
       });
-      // Reschedule notifications after schedule changes
-      const notificationsEnabled = storage.getBoolean(StorageKeys.NOTIFICATIONS_ENABLED) !== false;
-      if (notificationsEnabled) {
-        await cancelScheduleNotifications();
-        for (const time of injectionTimes) {
-          await scheduleInjectionReminder(time, activePet.name);
-        }
-        for (const time of feedingTimes) {
-          await scheduleFeedingReminder(time, activePet.name);
-        }
+      // Reschedule notifications after schedule changes. Rebuild for ALL pets
+      // via restoreScheduleNotifications: the previous cancel-all + reschedule-
+      // active-only left other pets without reminders until the next app
+      // foreground. Condition is === true (not !== false): a missing flag means
+      // the user never enabled notifications.
+      if (storage.getBoolean(StorageKeys.NOTIFICATIONS_ENABLED) === true) {
+        await restoreScheduleNotifications().catch(() => {});
       }
       await refreshActivePet();
       await queryClient.invalidateQueries({ queryKey: queryKeys.schedule.all });
