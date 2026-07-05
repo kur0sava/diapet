@@ -4,7 +4,7 @@
  */
 import { storage } from '@storage/mmkv/storage';
 import { GlucoseReading } from '@storage/domain/types';
-import { todayLocal } from '@shared/utils/dateUtils';
+import { todayLocal, toDateOnly } from '@shared/utils/dateUtils';
 import type { SpeciesConfig } from '@shared/config/speciesConfig';
 import { TrendResult } from './trendEngine';
 import { RiskScoreResult } from './riskScoreCalculator';
@@ -78,10 +78,20 @@ function incrementTodayCount(): void {
   );
 }
 
+function firedToday(type: AlertType): boolean {
+  const lastFired = getAlertHistory()[type];
+  return !!lastFired && toDateOnly(new Date(lastFired)) === todayLocal();
+}
+
 /**
  * C22: Check if an alert type can fire (throttling).
  */
 function canFireAlert(type: AlertType, now: Date): boolean {
+  // An alert that already fired today keeps showing for the rest of the day.
+  // Without this, the next recompute (screen refocus updates `now`) hit the
+  // daily cap and the card vanished before the user could read it.
+  if (firedToday(type)) return true;
+
   // Max 1 per day
   if (getTodayCount().count >= MAX_ALERTS_PER_DAY) return false;
 
@@ -97,6 +107,11 @@ function canFireAlert(type: AlertType, now: Date): boolean {
 }
 
 function markFired(type: AlertType): void {
+  // Idempotent per day: useAnalyzer runs in two screens (Dashboard and
+  // AnalyzerDashboard), each firing markAlertFired for the same alert —
+  // without this guard one alert consumed the daily quota twice and reset
+  // its cooldown on every recompute.
+  if (firedToday(type)) return;
   const history = getAlertHistory();
   history[type] = new Date().toISOString();
   saveAlertHistory(history);

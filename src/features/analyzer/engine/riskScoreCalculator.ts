@@ -95,6 +95,12 @@ function scoreInjectionAdherence(
   if (scheduledPerDay <= 0 || days <= 0) {
     score = 50;
     detail = 'No schedule configured';
+  } else if (days < 2) {
+    // Less than two full days of history — an adherence ratio would be noise
+    // (a brand-new user with perfect logging used to score ~86/100 here
+    // because `expected` was always scheduledPerDay×14).
+    score = 30;
+    detail = 'Not enough history yet';
   } else {
     const expected = scheduledPerDay * Math.min(days, 14);
     const actual = injections.length;
@@ -288,9 +294,20 @@ export function calculateRiskScore(input: RiskInput): RiskScoreResult {
   const recentFeedings = feedings.filter(f => new Date(f.fedAt).getTime() >= cutoff14d);
   const recentSymptoms = symptoms.filter(s => new Date(s.recordedAt).getTime() >= cutoff14d);
 
+  // Adherence window must not exceed the observed history: a user 3 days in
+  // can only have logged 3 days' worth of injections, so expecting 14 days
+  // inflates the risk score for every new install.
+  const earliestTs = Math.min(
+    ...readings.map(r => new Date(r.recordedAt).getTime()),
+    ...injections.map(i => new Date(i.administeredAt).getTime())
+  );
+  const observedDays = isFinite(earliestTs)
+    ? Math.max(1, Math.min(14, Math.ceil((now.getTime() - earliestTs) / (24 * 60 * 60 * 1000))))
+    : 0;
+
   const factors = [
     scoreGlucoseStability(trends),
-    scoreInjectionAdherence(recentInjections, scheduledInjectionsPerDay, 14),
+    scoreInjectionAdherence(recentInjections, scheduledInjectionsPerDay, observedDays),
     scoreFeedingRegularity(recentFeedings),
     scoreSymptomSeverity(recentSymptoms),
     scoreWeightTrend(weightKg, previousWeightKg),

@@ -152,14 +152,17 @@ export default function AnalyzerDashboardScreen() {
           </TouchableOpacity>
         )}
 
-        {/* Smart Insight */}
-        {smartAlert && <SmartInsightCard alert={smartAlert} />}
+        {/* Smart Insight — gated on hasEnoughData so the "insufficient data"
+            card above isn't contradicted by widgets computed from 1-2 readings */}
+        {hasEnoughData && smartAlert && <SmartInsightCard alert={smartAlert} />}
 
         {/* Risk Score Widget */}
-        {riskScore && <RiskScoreWidget score={riskScore.totalScore} level={riskScore.level} />}
+        {hasEnoughData && riskScore && (
+          <RiskScoreWidget score={riskScore.totalScore} level={riskScore.level} />
+        )}
 
         {/* Trend Section */}
-        {trends && (
+        {hasEnoughData && trends && (
           <View style={styles.section}>
             <Text
               style={[
