@@ -32,6 +32,7 @@ export const ru = {
     unsavedChangesDesc: 'У вас есть несохранённые данные. Уверены, что хотите выйти?',
     discard: 'Выйти без сохранения',
     longPressToDelete: 'Удерживайте запись для удаления',
+    search: 'Поиск...',
   },
 
   onboarding: {
@@ -429,6 +430,8 @@ export const ru = {
     minutesRead: 'мин. чтения',
     searchPlaceholder: 'Поиск статей...',
     articleNotFound: 'Статья не найдена',
+    addBookmark: 'Добавить в закладки',
+    removeBookmark: 'Убрать из закладок',
     tableOfContents: 'Оглавление',
     disclaimer: 'Информация носит образовательный характер и не заменяет консультацию ветеринара.',
     bookmarks: 'Закладки',

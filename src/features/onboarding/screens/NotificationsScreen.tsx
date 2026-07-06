@@ -147,7 +147,7 @@ export default function NotificationsScreen() {
         t('onboarding.permissionDeniedTitle'),
         t('onboarding.permissionDeniedBody'),
         [
-          { text: t('common.skip'), style: 'cancel' },
+          { text: t('onboarding.skip'), style: 'cancel' },
           { text: t('onboarding.openSettings'), onPress: () => Linking.openSettings() },
         ],
         { cancelable: true }

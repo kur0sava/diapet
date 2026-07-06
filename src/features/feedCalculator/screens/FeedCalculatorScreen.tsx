@@ -212,7 +212,7 @@ export default function FeedCalculatorScreen() {
             {result.fiberOk !== undefined && (
               <View style={styles.macroRow}>
                 <Text style={[styles.macroLabel, { color: theme.colors.text }]}>
-                  {t('feedCalculator.fiberDM')}
+                  {t('feedGuide.fiberDM')}
                 </Text>
                 <View style={styles.macroValue}>
                   <Text style={[styles.macroNumber, { color: theme.colors.text }]}>

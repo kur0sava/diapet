@@ -32,6 +32,7 @@ export const en = {
     unsavedChangesDesc: 'You have unsaved data. Are you sure you want to go back?',
     discard: 'Discard',
     longPressToDelete: 'Long press an entry to delete',
+    search: 'Search...',
   },
 
   onboarding: {
@@ -428,6 +429,8 @@ export const en = {
     minutesRead: 'min read',
     searchPlaceholder: 'Search articles...',
     articleNotFound: 'Article not found',
+    addBookmark: 'Add bookmark',
+    removeBookmark: 'Remove bookmark',
     tableOfContents: 'Table of Contents',
     disclaimer:
       'This information is for educational purposes and does not replace veterinary advice.',
