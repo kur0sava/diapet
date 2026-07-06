@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import {
   View,
   Text,
@@ -6,6 +6,7 @@ import {
   ScrollView,
   TouchableOpacity,
   ActivityIndicator,
+  Alert,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -16,16 +17,67 @@ import i18n from '@shared/i18n';
 import { parseDateOnly } from '@shared/utils/dateUtils';
 import { useTheme } from '@shared/theme';
 import { usePetStore } from '@shared/stores/petStore';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { queryKeys } from '@shared/utils/queryKeys';
-import { scheduleRepository } from '@storage/database';
+import { scheduleRepository, petRepository } from '@storage/database';
 import { Card } from '@shared/components/ui';
+import { restoreScheduleNotifications } from '@shared/hooks/useNotifications';
 
 export default function PetProfileScreen() {
   const navigation = useMoreNavigation();
   const { t } = useTranslation();
   const { theme } = useTheme();
   const activePet = usePetStore(s => s.activePet);
+  const pets = usePetStore(s => s.pets);
+  const loadPets = usePetStore(s => s.loadPets);
+  const queryClient = useQueryClient();
+  const deletingRef = useRef(false);
+
+  const handleDeletePet = () => {
+    if (!activePet || deletingRef.current) return;
+    // Deleting the LAST pet would leave a petless app with onboarding
+    // already completed — every screen would sit on empty states with no
+    // path back. Point at the full reset in Settings instead.
+    if (pets.length <= 1) {
+      Alert.alert(t('pets.deletePet'), t('pets.cantDeleteLastPet'));
+      return;
+    }
+    Alert.alert(t('pets.deletePetConfirm', { name: activePet.name }), t('pets.deletePetWarning'), [
+      { text: t('common.cancel'), style: 'cancel' },
+      {
+        text: t('common.delete'),
+        style: 'destructive',
+        onPress: () => {
+          Alert.alert(t('pets.deletePetFinal', { name: activePet.name }), undefined, [
+            { text: t('common.cancel'), style: 'cancel' },
+            {
+              text: t('settings.deleteForever'),
+              style: 'destructive',
+              onPress: async () => {
+                if (deletingRef.current) return;
+                deletingRef.current = true;
+                try {
+                  // FK CASCADE removes readings/injections/feedings/symptoms/
+                  // expenses/schedules; petRepository.delete also cleans the
+                  // per-pet MMKV keys (vet contact, AI/prediction caches).
+                  await petRepository.delete(activePet.id);
+                  await loadPets(); // re-picks the first remaining pet
+                  queryClient.invalidateQueries();
+                  // Rebuild reminders so the deleted pet's alarms disappear
+                  restoreScheduleNotifications().catch(() => {});
+                  navigation.goBack();
+                } catch {
+                  Alert.alert(t('common.error'), t('pets.deleteError'));
+                } finally {
+                  deletingRef.current = false;
+                }
+              },
+            },
+          ]);
+        },
+      },
+    ]);
+  };
 
   const { data: injectionTimes = [] } = useQuery({
     queryKey: queryKeys.schedule.injections(activePet?.id ?? ''),
@@ -242,6 +294,25 @@ export default function PetProfileScreen() {
             ))}
           </View>
         </Card>
+
+        {/* Danger zone — the only way to remove a single pet without wiping
+            the whole app (Settings → Delete all data). */}
+        <TouchableOpacity
+          style={[styles.deleteBtn, { borderColor: theme.colors.danger }]}
+          onPress={handleDeletePet}
+          accessibilityRole="button"
+          accessibilityLabel={t('pets.deletePet')}
+        >
+          <Icon name="trash-outline" size={18} color={theme.colors.danger} />
+          <Text
+            style={[
+              styles.deleteBtnText,
+              { color: theme.colors.danger, fontFamily: theme.fonts.semibold },
+            ]}
+          >
+            {t('pets.deletePet')}
+          </Text>
+        </TouchableOpacity>
       </ScrollView>
     </SafeAreaView>
   );
@@ -296,4 +367,15 @@ const styles = StyleSheet.create({
   timeChips: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
   timeChip: { paddingHorizontal: 14, paddingVertical: 8, borderRadius: 20 },
   timeText: { fontSize: 15 },
+  deleteBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+    padding: 14,
+    borderRadius: 12,
+    borderWidth: 1.5,
+    marginTop: 8,
+  },
+  deleteBtnText: { fontSize: 15 },
 });

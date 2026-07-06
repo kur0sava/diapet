@@ -539,6 +539,14 @@ export const en = {
     invalidTimeFormat: 'Please enter time in HH:MM format',
     invalidWeight: 'Enter a valid weight (0–30 kg)',
     saveError: 'Save error',
+    deletePet: 'Delete pet',
+    cantDeleteLastPet:
+      'You can’t delete your only pet. To start over, use "Delete all data" in Settings.',
+    deletePetConfirm: 'Delete {{name}}?',
+    deletePetWarning:
+      'All of this pet’s records — glucose, injections, feedings, symptoms, expenses and schedules — will be permanently deleted.',
+    deletePetFinal: 'Really delete {{name}} and all records?',
+    deleteError: 'Failed to delete pet',
     diabetesType1Short: 'Type 1',
     diabetesType2Short: 'Type 2',
     diabetesUnknown: 'Unknown',

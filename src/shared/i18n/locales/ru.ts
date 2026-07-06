@@ -539,6 +539,14 @@ export const ru = {
     invalidTimeFormat: 'Введите время в формате ЧЧ:ММ',
     invalidWeight: 'Введите корректный вес (0–30 кг)',
     saveError: 'Ошибка сохранения',
+    deletePet: 'Удалить питомца',
+    cantDeleteLastPet:
+      'Нельзя удалить единственного питомца. Если хотите начать заново — используйте «Удалить все данные» в Настройках.',
+    deletePetConfirm: 'Удалить {{name}}?',
+    deletePetWarning:
+      'Все записи питомца — глюкоза, инъекции, кормления, симптомы, расходы и расписания — будут удалены безвозвратно.',
+    deletePetFinal: 'Точно удалить {{name}} и все записи?',
+    deleteError: 'Не удалось удалить питомца',
     diabetesType1Short: 'Тип 1',
     diabetesType2Short: 'Тип 2',
     diabetesUnknown: 'Неизвестен',
