@@ -70,6 +70,8 @@ export const ru = {
     vetContactDesc: 'Контакт ветеринара для экстренного случая',
     vetName: 'Имя ветеринара',
     vetPhone: 'Телефон ветеринара',
+    vetNamePlaceholder: 'Др. Иванова',
+    vetPhonePlaceholder: '+7 999 000-00-00',
     setupNotifications: 'Настройка уведомлений',
     allowNotifications: 'Разрешить уведомления',
     notificationsDesc: 'Мы будем напоминать вам о инъекциях и кормлении',

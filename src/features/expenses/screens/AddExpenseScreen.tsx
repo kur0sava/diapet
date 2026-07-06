@@ -1,6 +1,18 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert, KeyboardAvoidingView, Platform } from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  TouchableOpacity,
+  Alert,
+  KeyboardAvoidingView,
+  Platform,
+} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import DateTimePicker from '@react-native-community/datetimepicker';
+import { format } from 'date-fns';
+import { toDateOnly, parseDateOnly } from '@shared/utils/dateUtils';
 import { Icon } from '@shared/components/ui/Icon';
 import { useRoute, RouteProp } from '@react-navigation/native';
 import { useMoreNavigation } from '@navigation/hooks';
@@ -18,7 +30,14 @@ import { MAX_EXPENSE_AMOUNT } from '@storage/domain/types';
 import * as Haptics from 'expo-haptics';
 import { useUnsavedChangesGuard } from '@shared/hooks/useUnsavedChangesGuard';
 
-const CATEGORIES: ExpenseCategory[] = ['insulin','testStrips','vetVisit','medication','food','other'];
+const CATEGORIES: ExpenseCategory[] = [
+  'insulin',
+  'testStrips',
+  'vetVisit',
+  'medication',
+  'food',
+  'other',
+];
 
 export default function AddExpenseScreen() {
   const navigation = useMoreNavigation();
@@ -32,7 +51,8 @@ export default function AddExpenseScreen() {
   const [category, setCategory] = useState<ExpenseCategory>('insulin');
   const [amount, setAmount] = useState('');
   const [description, setDescription] = useState('');
-  const [originalDate, setOriginalDate] = useState<string | undefined>();
+  const [expenseDate, setExpenseDate] = useState<Date>(() => new Date());
+  const [showDatePicker, setShowDatePicker] = useState(false);
   const [loading, setLoading] = useState(false);
   const savingRef = useRef(false);
   const [isDirty, setIsDirty] = useState(false);
@@ -46,9 +66,12 @@ export default function AddExpenseScreen() {
   }, [amount, description, category]);
 
   const categoryLabels: Record<ExpenseCategory, string> = {
-    insulin: t('expenses.insulin'), testStrips: t('expenses.testStrips'),
-    vetVisit: t('expenses.vetVisit'), medication: t('expenses.medication'),
-    food: t('expenses.food'), other: t('expenses.other'),
+    insulin: t('expenses.insulin'),
+    testStrips: t('expenses.testStrips'),
+    vetVisit: t('expenses.vetVisit'),
+    medication: t('expenses.medication'),
+    food: t('expenses.food'),
+    other: t('expenses.other'),
   };
 
   useEffect(() => {
@@ -59,60 +82,193 @@ export default function AddExpenseScreen() {
         setCategory(exp.category as ExpenseCategory);
         setAmount(exp.amount.toString());
         if (exp.description) setDescription(exp.description);
-        if (exp.date) setOriginalDate(exp.date);
+        if (exp.date) setExpenseDate(parseDateOnly(exp.date));
         // Mark initial load done so dirty tracking starts after this
-        setTimeout(() => { initialLoaded.current = true; }, 0);
+        setTimeout(() => {
+          initialLoaded.current = true;
+        }, 0);
       });
     }
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+    };
   }, [editId]);
 
   const handleSave = async () => {
     if (savingRef.current || !activePet) return;
     const numAmount = parseFloat(amount.replace(',', '.'));
-    if (!amount || isNaN(numAmount) || !isFinite(numAmount) || numAmount <= 0 || numAmount > MAX_EXPENSE_AMOUNT) { Alert.alert(t('common.error'), t('expenses.amountError')); return; }
+    if (
+      !amount ||
+      isNaN(numAmount) ||
+      !isFinite(numAmount) ||
+      numAmount <= 0 ||
+      numAmount > MAX_EXPENSE_AMOUNT
+    ) {
+      Alert.alert(t('common.error'), t('expenses.amountError'));
+      return;
+    }
     savingRef.current = true;
     setLoading(true);
     try {
       if (editId) {
-        await expenseRepository.update(editId, { category, amount: numAmount, description: description || undefined, date: originalDate });
+        await expenseRepository.update(editId, {
+          category,
+          amount: numAmount,
+          description: description || undefined,
+          date: toDateOnly(expenseDate),
+        });
       } else {
-        await expenseRepository.create({ petId: activePet.id, category, amount: numAmount, description: description || undefined, currency: i18n.language === 'ru' ? 'RUB' : 'USD' });
+        // Currency follows existing records, not the CURRENT language —
+        // otherwise switching RU→EN mid-usage would mix RUB and USD rows
+        // that SUM(amount) later adds together as one number.
+        const existing = await expenseRepository.findByPetId(activePet.id);
+        const currency = existing[0]?.currency ?? (i18n.language === 'ru' ? 'RUB' : 'USD');
+        await expenseRepository.create({
+          petId: activePet.id,
+          category,
+          amount: numAmount,
+          description: description || undefined,
+          date: toDateOnly(expenseDate),
+          currency,
+        });
       }
       await queryClient.invalidateQueries({ queryKey: queryKeys.expenses.all });
       disableGuard();
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       navigation.goBack();
-    } catch { Alert.alert(t('common.error'), t('expenses.saveError')); }
-    finally { savingRef.current = false; setLoading(false); }
+    } catch {
+      Alert.alert(t('common.error'), t('expenses.saveError'));
+    } finally {
+      savingRef.current = false;
+      setLoading(false);
+    }
   };
 
   return (
-    <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={{ flex: 1 }}>
+    <KeyboardAvoidingView
+      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+      style={{ flex: 1 }}
+    >
       <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.background }]}>
         <View style={[styles.navHeader, { borderBottomColor: theme.colors.border }]}>
           <TouchableOpacity onPress={() => navigation.goBack()} style={styles.navBtn}>
             <Icon name="chevron-back" size={22} color={theme.colors.primary} />
             <Text style={{ color: theme.colors.primary }}>{t('common.back')}</Text>
           </TouchableOpacity>
-          <Text numberOfLines={1} style={[styles.title, { color: theme.colors.text, fontFamily: theme.fonts.semibold }]}>{editId ? t('expenses.editExpense') : t('expenses.addExpense')}</Text>
+          <Text
+            numberOfLines={1}
+            style={[styles.title, { color: theme.colors.text, fontFamily: theme.fonts.semibold }]}
+          >
+            {editId ? t('expenses.editExpense') : t('expenses.addExpense')}
+          </Text>
           <View style={{ width: 60 }} />
         </View>
         <ScrollView contentContainerStyle={styles.content}>
-          <Text style={[styles.sectionTitle, { color: theme.colors.text, fontFamily: theme.fonts.bold }]}>{t('expenses.category')}</Text>
+          <Text
+            style={[
+              styles.sectionTitle,
+              { color: theme.colors.text, fontFamily: theme.fonts.bold },
+            ]}
+          >
+            {t('expenses.category')}
+          </Text>
           <View style={styles.categoryGrid}>
             {CATEGORIES.map(cat => (
-              <TouchableOpacity key={cat} style={[styles.categoryBtn, { backgroundColor: category === cat ? `${EXPENSE_COLORS[cat]}20` : theme.colors.surface, borderColor: category === cat ? EXPENSE_COLORS[cat] : 'transparent', borderWidth: 2, ...theme.shadows.sm }]} onPress={() => setCategory(cat)}>
-                <View style={[styles.categoryIconCircle, { backgroundColor: `${EXPENSE_COLORS[cat]}15` }]}>
+              <TouchableOpacity
+                key={cat}
+                style={[
+                  styles.categoryBtn,
+                  {
+                    backgroundColor:
+                      category === cat ? `${EXPENSE_COLORS[cat]}20` : theme.colors.surface,
+                    borderColor: category === cat ? EXPENSE_COLORS[cat] : 'transparent',
+                    borderWidth: 2,
+                    ...theme.shadows.sm,
+                  },
+                ]}
+                onPress={() => setCategory(cat)}
+              >
+                <View
+                  style={[
+                    styles.categoryIconCircle,
+                    { backgroundColor: `${EXPENSE_COLORS[cat]}15` },
+                  ]}
+                >
                   <Icon name={EXPENSE_ICON_NAMES[cat]} size={24} color={EXPENSE_COLORS[cat]} />
                 </View>
-                <Text style={[styles.categoryLabel, { color: category === cat ? EXPENSE_COLORS[cat] : theme.colors.text, fontFamily: theme.fonts.semibold }]}>{categoryLabels[cat]}</Text>
+                <Text
+                  style={[
+                    styles.categoryLabel,
+                    {
+                      color: category === cat ? EXPENSE_COLORS[cat] : theme.colors.text,
+                      fontFamily: theme.fonts.semibold,
+                    },
+                  ]}
+                >
+                  {categoryLabels[cat]}
+                </Text>
               </TouchableOpacity>
             ))}
           </View>
-          <Input label={`${t('expenses.amount')} (${t('expenses.currency')})`} value={amount} onChangeText={setAmount} placeholder="500" keyboardType="decimal-pad" style={{ fontSize: 24, fontWeight: '700', textAlign: 'center' }} />
-          <Input label={t('expenses.notes')} value={description} onChangeText={setDescription} placeholder={t('expenses.notesPlaceholder')} multiline numberOfLines={2} />
-          <Button title={t('common.save')} onPress={handleSave} fullWidth size="lg" loading={loading} style={{ marginTop: 24 }} />
+          <Input
+            label={`${t('expenses.amount')} (${t('expenses.currency')})`}
+            value={amount}
+            onChangeText={setAmount}
+            placeholder="500"
+            keyboardType="decimal-pad"
+            style={{ fontSize: 24, fontWeight: '700', textAlign: 'center' }}
+          />
+          <Text
+            style={[
+              styles.sectionTitle,
+              { color: theme.colors.text, fontFamily: theme.fonts.bold },
+            ]}
+          >
+            {t('glucose.date')}
+          </Text>
+          <TouchableOpacity
+            style={[styles.dateBtn, { backgroundColor: theme.colors.surfaceSecondary }]}
+            onPress={() => setShowDatePicker(true)}
+          >
+            <Icon
+              name="calendar-outline"
+              size={18}
+              color={theme.colors.primary}
+              style={{ marginRight: 6 }}
+            />
+            <Text
+              style={{ color: theme.colors.text, fontSize: 15, fontFamily: theme.fonts.semibold }}
+            >
+              {format(expenseDate, i18n.language === 'ru' ? 'dd.MM.yyyy' : 'MM/dd/yyyy')}
+            </Text>
+          </TouchableOpacity>
+          {showDatePicker && (
+            <DateTimePicker
+              value={expenseDate}
+              mode="date"
+              maximumDate={new Date()}
+              onChange={(_, date) => {
+                setShowDatePicker(false);
+                if (date) setExpenseDate(date);
+              }}
+            />
+          )}
+          <Input
+            label={t('expenses.notes')}
+            value={description}
+            onChangeText={setDescription}
+            placeholder={t('expenses.notesPlaceholder')}
+            multiline
+            numberOfLines={2}
+          />
+          <Button
+            title={t('common.save')}
+            onPress={handleSave}
+            fullWidth
+            size="lg"
+            loading={loading}
+            style={{ marginTop: 24 }}
+          />
         </ScrollView>
       </SafeAreaView>
     </KeyboardAvoidingView>
@@ -121,13 +277,33 @@ export default function AddExpenseScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
-  navHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', padding: 16, borderBottomWidth: 0.5, gap: 8 },
+  navHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    padding: 16,
+    borderBottomWidth: 0.5,
+    gap: 8,
+  },
   navBtn: { flexDirection: 'row', alignItems: 'center', gap: 2, minHeight: 44, minWidth: 44 },
   title: { fontSize: 17, flex: 1, textAlign: 'center' },
   content: { padding: 20, gap: 16, paddingBottom: 40 },
   sectionTitle: { fontSize: 16 },
   categoryGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 10 },
   categoryBtn: { width: '30%', padding: 14, borderRadius: 14, alignItems: 'center', gap: 6 },
-  categoryIconCircle: { width: 44, height: 44, borderRadius: 22, alignItems: 'center', justifyContent: 'center' },
+  categoryIconCircle: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   categoryLabel: { fontSize: 12, textAlign: 'center' },
+  dateBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 14,
+    borderRadius: 12,
+  },
 });

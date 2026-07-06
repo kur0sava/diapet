@@ -70,6 +70,8 @@ export const en = {
     vetContactDesc: 'Emergency vet contact information',
     vetName: 'Vet name',
     vetPhone: 'Vet phone',
+    vetNamePlaceholder: 'Dr. Smith',
+    vetPhonePlaceholder: '+1 555 000 0000',
     setupNotifications: 'Setup Notifications',
     allowNotifications: 'Allow notifications',
     notificationsDesc: "We'll remind you about injections and feedings",

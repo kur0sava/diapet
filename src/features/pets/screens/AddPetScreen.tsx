@@ -518,13 +518,13 @@ export default function AddPetScreen() {
           label={t('onboarding.vetName')}
           value={vetName}
           onChangeText={setVetName}
-          placeholder="Др. Иванова"
+          placeholder={t('onboarding.vetNamePlaceholder')}
         />
         <Input
           label={t('onboarding.vetPhone')}
           value={vetPhone}
           onChangeText={setVetPhone}
-          placeholder="+7 999 000-00-00"
+          placeholder={t('onboarding.vetPhonePlaceholder')}
           keyboardType="phone-pad"
         />
       </View>
