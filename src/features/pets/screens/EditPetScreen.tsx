@@ -76,6 +76,13 @@ export default function EditPetScreen() {
 
   const isValidTime = (time: string) => /^\d{1,2}:\d{2}$/.test(time);
 
+  /** "8:30" → "08:30" so duplicates can't slip past the Set check and
+   *  string ORDER BY time_of_day sorts chronologically. */
+  const normalizeTime = (time: string) => {
+    const [h, m] = time.split(':');
+    return `${h.padStart(2, '0')}:${m}`;
+  };
+
   const handleSave = async () => {
     if (savingRef.current || !activePet) return;
     if (!name.trim()) {
@@ -103,10 +110,13 @@ export default function EditPetScreen() {
       Alert.alert(t('common.error'), t('pets.invalidTimeFormat'));
       return;
     }
-    // Check for duplicate times within each schedule
+    // Normalize BEFORE the duplicate check — "8:30" and "08:30" are the
+    // same alarm and must not both be saved.
+    const normInjectionTimes = injectionTimes.map(normalizeTime);
+    const normFeedingTimes = feedingTimes.map(normalizeTime);
     if (
-      new Set(injectionTimes).size !== injectionTimes.length ||
-      new Set(feedingTimes).size !== feedingTimes.length
+      new Set(normInjectionTimes).size !== normInjectionTimes.length ||
+      new Set(normFeedingTimes).size !== normFeedingTimes.length
     ) {
       Alert.alert(t('common.error'), t('onboarding.duplicateTime'));
       return;
@@ -135,11 +145,11 @@ export default function EditPetScreen() {
       await db.withTransactionAsync(async () => {
         const existingInjections = await scheduleRepository.getInjectionTimes(activePet.id);
         for (const s of existingInjections) await scheduleRepository.deleteInjectionTime(s.id);
-        for (const time of injectionTimes)
+        for (const time of normInjectionTimes)
           await scheduleRepository.addInjectionTime(activePet.id, time);
         const existingFeedings = await scheduleRepository.getFeedingTimes(activePet.id);
         for (const s of existingFeedings) await scheduleRepository.deleteFeedingTime(s.id);
-        for (const time of feedingTimes)
+        for (const time of normFeedingTimes)
           await scheduleRepository.addFeedingTime(activePet.id, time);
       });
       // Reschedule notifications after schedule changes. Rebuild for ALL pets

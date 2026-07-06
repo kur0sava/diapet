@@ -125,7 +125,13 @@ export default function GlucoseListScreen() {
     const f = { ...filters };
     if (selectedLevels.length > 0) {
       const presets = levelPresets.filter(p => selectedLevels.includes(p.key));
-      f.levelRanges = presets.map(p => ({ min: p.min, max: p.max }));
+      // maxExclusive matches classification: only 'normal' includes its upper
+      // bound, so e.g. 9.0 no longer matches both "normal" and "high" filters
+      f.levelRanges = presets.map(p => ({
+        min: p.min,
+        max: p.max,
+        maxExclusive: p.key !== 'normal',
+      }));
     }
     // Enforce 30-day history limit for free users
     if (historyLimited) {

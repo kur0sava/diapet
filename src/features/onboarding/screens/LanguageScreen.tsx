@@ -1,11 +1,5 @@
 import React, { useState } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  StatusBar,
-} from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, StatusBar } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Icon } from '@shared/components/ui/Icon';
@@ -46,14 +40,21 @@ export default function LanguageScreen() {
           >
             <Icon name="paw" size={40} color="#fff" />
           </LinearGradient>
-          <Text style={[styles.title, { color: theme.colors.text, fontFamily: theme.fonts.bold }]}>DiaPet</Text>
-          <Text style={[styles.subtitle, { color: theme.colors.textSecondary, fontFamily: theme.fonts.medium }]}>
+          <Text style={[styles.title, { color: theme.colors.text, fontFamily: theme.fonts.bold }]}>
+            DiaPet
+          </Text>
+          <Text
+            style={[
+              styles.subtitle,
+              { color: theme.colors.textSecondary, fontFamily: theme.fonts.medium },
+            ]}
+          >
             {t('onboarding.selectLanguage')}
           </Text>
         </View>
 
         <View style={styles.languages}>
-          {LANGUAGES.map((lang) => (
+          {LANGUAGES.map(lang => (
             <TouchableOpacity
               key={lang.code}
               style={[
@@ -65,13 +66,33 @@ export default function LanguageScreen() {
                   ...theme.shadows.md,
                 },
               ]}
-              onPress={() => setSelected(lang.code as 'ru' | 'en')}
+              onPress={() => {
+                const code = lang.code as 'ru' | 'en';
+                setSelected(code);
+                // Apply immediately so the screen (and the Next button) switch
+                // language on tap, not only after Continue.
+                changeLanguage(code);
+              }}
               activeOpacity={0.8}
             >
               <Text style={styles.flag}>{lang.flag}</Text>
               <View>
-                <Text style={[styles.langLabel, { color: theme.colors.text, fontFamily: theme.fonts.semibold }]}>{lang.label}</Text>
-                <Text style={[styles.langSub, { color: theme.colors.textSecondary, fontFamily: theme.fonts.regular }]}>{lang.subtitle}</Text>
+                <Text
+                  style={[
+                    styles.langLabel,
+                    { color: theme.colors.text, fontFamily: theme.fonts.semibold },
+                  ]}
+                >
+                  {lang.label}
+                </Text>
+                <Text
+                  style={[
+                    styles.langSub,
+                    { color: theme.colors.textSecondary, fontFamily: theme.fonts.regular },
+                  ]}
+                >
+                  {lang.subtitle}
+                </Text>
               </View>
               {selected === lang.code && (
                 <View style={[styles.check, { backgroundColor: theme.colors.primary }]}>

@@ -118,7 +118,7 @@ export const glucoseRepository = {
           params.push(range.min);
         }
         if (range.max !== undefined) {
-          parts.push('value_mmol <= ?');
+          parts.push(range.maxExclusive ? 'value_mmol < ?' : 'value_mmol <= ?');
           params.push(range.max);
         }
         rangeConds.push(parts.length > 0 ? `(${parts.join(' AND ')})` : '1');

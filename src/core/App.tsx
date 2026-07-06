@@ -101,85 +101,91 @@ export default function App() {
     CormorantGaramond_700Bold,
   });
 
+  // Full startup sequence — shared by the mount effect AND the storage-error
+  // retry button. Previously retry only re-ran initStorage() and skipped
+  // language restore / subscription / auth / analytics, booting a half-
+  // initialized app.
+  const bootstrap = async () => {
+    await initStorage();
+    restoreLanguage();
+    // Fallback: set hints registration date for existing users who completed onboarding
+    // before the hints system was introduced
+    if (
+      storage.getBoolean(StorageKeys.ONBOARDING_COMPLETE) &&
+      !storage.getString(StorageKeys.HINTS_REGISTRATION_DATE)
+    ) {
+      storage.set(StorageKeys.HINTS_REGISTRATION_DATE, new Date().toISOString());
+    }
+    // Recovery: if onboarding was never completed but pets exist in DB,
+    // the previous install crashed mid-onboarding. Purge orphaned pets so
+    // the re-run of onboarding doesn't leave duplicates behind. Also
+    // wipe MMKV pointers/per-pet keys so the next launch's ThemeContext
+    // doesn't briefly render the dead pet's species color before the
+    // re-onboarded pet is created (audit BUG-H002).
+    if (!storage.getBoolean(StorageKeys.ONBOARDING_COMPLETE)) {
+      try {
+        const existing = await petRepository.findActive();
+        for (const p of existing) await petRepository.delete(p.id);
+      } catch {
+        /* best-effort recovery */
+      }
+      storage.delete(StorageKeys.ACTIVE_PET_ID);
+      storage.delete(StorageKeys.ACTIVE_SPECIES);
+      storage.delete(StorageKeys.NOTIFICATIONS_ENABLED);
+      // Sweep stranded per-pet vet keys whose petId is no longer in DB.
+      // petRepository.delete already nukes them for known pet ids, but
+      // an interrupted handleFinish may have written one before the pet
+      // row was even committed.
+      for (const key of storage.getAllKeys()) {
+        if (key.startsWith('vetName_') || key.startsWith('vetPhone_')) {
+          storage.delete(key);
+        }
+      }
+    }
+    // v2.5.1: migrate legacy global vet contact to per-pet keys.
+    // Pre-2.5.1 single-pet installs stored vetName/vetPhone globally; with
+    // dog support arriving and multi-pet plausible, attribute the legacy
+    // values to the active pet, then drop the globals so subsequent edits
+    // can't fight migration.
+    try {
+      const legacyName = storage.getString(StorageKeys.VET_NAME);
+      const legacyPhone = storage.getString(StorageKeys.VET_PHONE);
+      if (legacyName !== undefined || legacyPhone !== undefined) {
+        const activePetId = storage.getString(StorageKeys.ACTIVE_PET_ID);
+        if (activePetId) {
+          if (legacyName !== undefined && !storage.contains(vetNameKey(activePetId))) {
+            storage.set(vetNameKey(activePetId), legacyName);
+          }
+          if (legacyPhone !== undefined && !storage.contains(vetPhoneKey(activePetId))) {
+            storage.set(vetPhoneKey(activePetId), legacyPhone);
+          }
+          storage.delete(StorageKeys.VET_NAME);
+          storage.delete(StorageKeys.VET_PHONE);
+        }
+      }
+    } catch {
+      /* best-effort: stale legacy keys harmless until next launch */
+    }
+    // Init device ID + check subscription status via Supabase
+    getDeviceId();
+    useSubscriptionStore.getState().loadStatus();
+    // Configure Google Sign-In and restore session
+    configureGoogleSignIn();
+    useAuthStore.getState().restoreSession();
+    // Analytics — respects opt-out flag, auto-tracks app_open / first_open
+    initAnalytics().catch(() => {});
+    setUserProperty('premium_mode', getPremiumMode());
+    setReady(true);
+  };
+
   useEffect(() => {
-    initStorage()
-      .then(async () => {
-        restoreLanguage();
-        // Fallback: set hints registration date for existing users who completed onboarding
-        // before the hints system was introduced
-        if (
-          storage.getBoolean(StorageKeys.ONBOARDING_COMPLETE) &&
-          !storage.getString(StorageKeys.HINTS_REGISTRATION_DATE)
-        ) {
-          storage.set(StorageKeys.HINTS_REGISTRATION_DATE, new Date().toISOString());
-        }
-        // Recovery: if onboarding was never completed but pets exist in DB,
-        // the previous install crashed mid-onboarding. Purge orphaned pets so
-        // the re-run of onboarding doesn't leave duplicates behind. Also
-        // wipe MMKV pointers/per-pet keys so the next launch's ThemeContext
-        // doesn't briefly render the dead pet's species color before the
-        // re-onboarded pet is created (audit BUG-H002).
-        if (!storage.getBoolean(StorageKeys.ONBOARDING_COMPLETE)) {
-          try {
-            const existing = await petRepository.findActive();
-            for (const p of existing) await petRepository.delete(p.id);
-          } catch {
-            /* best-effort recovery */
-          }
-          storage.delete(StorageKeys.ACTIVE_PET_ID);
-          storage.delete(StorageKeys.ACTIVE_SPECIES);
-          storage.delete(StorageKeys.NOTIFICATIONS_ENABLED);
-          // Sweep stranded per-pet vet keys whose petId is no longer in DB.
-          // petRepository.delete already nukes them for known pet ids, but
-          // an interrupted handleFinish may have written one before the pet
-          // row was even committed.
-          for (const key of storage.getAllKeys()) {
-            if (key.startsWith('vetName_') || key.startsWith('vetPhone_')) {
-              storage.delete(key);
-            }
-          }
-        }
-        // v2.5.1: migrate legacy global vet contact to per-pet keys.
-        // Pre-2.5.1 single-pet installs stored vetName/vetPhone globally; with
-        // dog support arriving and multi-pet plausible, attribute the legacy
-        // values to the active pet, then drop the globals so subsequent edits
-        // can't fight migration.
-        try {
-          const legacyName = storage.getString(StorageKeys.VET_NAME);
-          const legacyPhone = storage.getString(StorageKeys.VET_PHONE);
-          if (legacyName !== undefined || legacyPhone !== undefined) {
-            const activePetId = storage.getString(StorageKeys.ACTIVE_PET_ID);
-            if (activePetId) {
-              if (legacyName !== undefined && !storage.contains(vetNameKey(activePetId))) {
-                storage.set(vetNameKey(activePetId), legacyName);
-              }
-              if (legacyPhone !== undefined && !storage.contains(vetPhoneKey(activePetId))) {
-                storage.set(vetPhoneKey(activePetId), legacyPhone);
-              }
-              storage.delete(StorageKeys.VET_NAME);
-              storage.delete(StorageKeys.VET_PHONE);
-            }
-          }
-        } catch {
-          /* best-effort: stale legacy keys harmless until next launch */
-        }
-        // Init device ID + check subscription status via Supabase
-        getDeviceId();
-        useSubscriptionStore.getState().loadStatus();
-        // Configure Google Sign-In and restore session
-        configureGoogleSignIn();
-        useAuthStore.getState().restoreSession();
-        // Analytics — respects opt-out flag, auto-tracks app_open / first_open
-        initAnalytics().catch(() => {});
-        setUserProperty('premium_mode', getPremiumMode());
-        setReady(true);
-      })
-      .catch(err => {
-        console.error('Failed to initialize storage:', err);
-        // C004: do not silently fall back to unencrypted MMKV — show error screen
-        setStorageError(true);
-        setReady(true);
-      });
+    bootstrap().catch(err => {
+      console.error('Failed to initialize storage:', err);
+      // C004: do not silently fall back to unencrypted MMKV — show error screen
+      setStorageError(true);
+      setReady(true);
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -212,9 +218,11 @@ export default function App() {
           }}
           onPress={() => {
             setStorageError(false);
-            initStorage()
-              .then(() => setReady(true))
-              .catch(() => setStorageError(true));
+            setReady(false);
+            bootstrap().catch(() => {
+              setStorageError(true);
+              setReady(true);
+            });
           }}
         >
           <Text style={{ color: '#fff', fontWeight: '600', fontSize: 15 }}>

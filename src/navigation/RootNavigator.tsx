@@ -11,6 +11,14 @@ import PaywallScreen from '@features/subscription/screens/PaywallScreen';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
+import { isAiFeatureVisible } from '@shared/config/runtimeConfig';
+import { isAiConfigured } from '@features/hints/utils/aiClient';
+
+// AiTab is only registered in MainNavigator when the AI feature is enabled —
+// keeping a dead 'ai' deep link route would make diapet://ai throw a
+// navigation warning against an unmounted screen. Both flags are build-static.
+const aiTabAvailable = isAiFeatureVisible() && isAiConfigured();
+
 const linking: LinkingOptions<RootStackParamList> = {
   prefixes: ['diapet://'],
   config: {
@@ -30,7 +38,7 @@ const linking: LinkingOptions<RootStackParamList> = {
               AnalyzerDashboard: 'analyzer',
             },
           },
-          AiTab: 'ai',
+          ...(aiTabAvailable ? { AiTab: 'ai' } : {}),
           EncyclopediaTab: {
             screens: {
               ArticleList: 'articles',

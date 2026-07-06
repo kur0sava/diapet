@@ -93,6 +93,10 @@ export default function SettingsScreen() {
                   storage.delete(StorageKeys.HINTS_PUSH_SHOWN_IDS);
                   storage.delete(StorageKeys.HINTS_PUSH_LAST_SCHEDULED);
                   storage.delete('hintsMissedCheckDate');
+                  // Smart-alert throttling must reset with the data it was
+                  // computed from, or the fresh pet inherits old cooldowns
+                  storage.delete('analyzer_alert_history');
+                  storage.delete('analyzer_alerts_today');
                   // Clean up AI chat history, daily limits, prediction cache, and
                   // per-pet vet contacts for all pets
                   const allKeys = storage.getAllKeys();

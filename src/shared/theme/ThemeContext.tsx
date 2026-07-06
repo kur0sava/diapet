@@ -1,4 +1,12 @@
-import React, { createContext, useContext, useState, useMemo, useCallback, ReactNode } from 'react';
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useMemo,
+  useCallback,
+  useEffect,
+  ReactNode,
+} from 'react';
 import { useColorScheme } from 'react-native';
 import { Colors } from './colors';
 import { FontFamily, FontWeight, FontSize, LineHeight } from './typography';
@@ -142,11 +150,22 @@ export function ThemeProvider({
   // user switches pets. Fall back to MMKV cache (fast path, used on cold start
   // before petStore has finished loadPets) and to 'cat' as final default.
   const activePetSpecies = usePetStore(s => s.activePet?.species);
-  const species =
-    speciesProp ??
-    activePetSpecies ??
-    (storage.getString(StorageKeys.ACTIVE_SPECIES) as PetSpecies | undefined) ??
-    'cat';
+  // The MMKV fallback must be reactive too: during onboarding PetInfoScreen
+  // writes ACTIVE_SPECIES on species select expecting the theme to switch
+  // live, but a plain storage read here only re-evaluates when something
+  // else re-renders the provider. Listen for the key change explicitly.
+  const [mmkvSpecies, setMmkvSpecies] = useState<PetSpecies | undefined>(
+    () => storage.getString(StorageKeys.ACTIVE_SPECIES) as PetSpecies | undefined
+  );
+  useEffect(() => {
+    const sub = storage.addOnValueChangedListener(changedKey => {
+      if (changedKey === StorageKeys.ACTIVE_SPECIES) {
+        setMmkvSpecies(storage.getString(StorageKeys.ACTIVE_SPECIES) as PetSpecies | undefined);
+      }
+    });
+    return () => sub.remove();
+  }, []);
+  const species = speciesProp ?? activePetSpecies ?? mmkvSpecies ?? 'cat';
 
   const theme = useMemo(() => buildTheme(isDark, species), [isDark, species]);
 

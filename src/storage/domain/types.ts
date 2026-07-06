@@ -16,8 +16,11 @@ export interface GlucoseFilter {
   dateTo?: string;
   levelMin?: number;
   levelMax?: number;
-  /** For disjoint level ranges (e.g. low + veryHigh) */
-  levelRanges?: Array<{ min?: number; max?: number }>;
+  /** For disjoint level ranges (e.g. low + veryHigh). `maxExclusive` mirrors
+   *  getGlucoseLevelFromRanges semantics: every range except 'normal' has an
+   *  exclusive upper bound, so a value exactly on the boundary (e.g. 9.0)
+   *  matches only the range whose colour the UI shows. */
+  levelRanges?: Array<{ min?: number; max?: number; maxExclusive?: boolean }>;
   mealRelations?: MealRelation[];
 }
 

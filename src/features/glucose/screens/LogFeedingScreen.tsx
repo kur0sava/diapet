@@ -89,7 +89,17 @@ export default function LogFeedingScreen() {
 
   const dateChanged = fedAt.getTime() !== initialFedAt.current;
   const disableGuard = useUnsavedChangesGuard(
-    !!amount || !!notes || dateChanged || foodType !== 'dry' || !!selectedFood
+    !!amount ||
+      !!notes ||
+      dateChanged ||
+      foodType !== 'dry' ||
+      !!selectedFood ||
+      // manual nutrition fields count as unsaved work too
+      !!protein ||
+      !!fat ||
+      !!fiber ||
+      !!ash ||
+      !!moisture
   );
 
   // Calculate DMB from manual inputs

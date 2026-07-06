@@ -24,7 +24,7 @@ import { Button, Input, Card } from '@shared/components/ui';
 import { differenceInMinutes } from 'date-fns';
 import { injectionRepository, glucoseRepository } from '@storage/database';
 import { usePetStore } from '@shared/stores/petStore';
-import { getInsulinThresholds } from '@shared/config/speciesConfig';
+import { getInsulinThresholds, getSpeciesConfig } from '@shared/config/speciesConfig';
 import { useQueryClient } from '@tanstack/react-query';
 import { queryKeys } from '@shared/utils/queryKeys';
 import * as Haptics from 'expo-haptics';
@@ -55,8 +55,12 @@ export default function LogInjectionScreen() {
   const [showTimePicker, setShowTimePicker] = useState(false);
   const [loading, setLoading] = useState(false);
   const { triggerAfterAction } = useHintTrigger();
-  const commonInsulinsRaw = t('injection.commonInsulins', { returnObjects: true });
-  const commonInsulins = Array.isArray(commonInsulinsRaw) ? (commonInsulinsRaw as string[]) : [];
+  // Quick-select from speciesConfig — the old i18n list was one shared set
+  // for both species, offering cat-first insulins to dog owners and vice
+  // versa. commonTypes is already curated per species (first-line first).
+  const commonInsulins = getSpeciesConfig(activePet?.species ?? 'cat').insulin.commonTypes.map(
+    ct => ct.name
+  );
   // ARCH005: prevent duplicate injection on double-tap
   const savingRef = useRef(false);
   const dateChanged = administeredAt.getTime() !== initialAdministeredAt.current;
