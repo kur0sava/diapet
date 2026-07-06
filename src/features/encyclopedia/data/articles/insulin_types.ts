@@ -54,7 +54,11 @@ export const insulinTypes: Article = {
 - **Длительность:** 4-12 ч — обычно слишком коротко для кошек (по Feldman & Nelson)
 - **Важно:** не является препаратом первого выбора по рекомендациям ISFM (2023)
 
-### Доступность в России
+### Доступность и правила по регионам
+
+Регистрация, рецептурный статус и цены инсулинов сильно зависят от страны. Ниже — общая картина; конкретный выбор всегда за вашим ветеринаром и местными правилами отпуска.
+
+#### Россия
 
 В России ветеринарные инсулины (ProZinc, Caninsulin) **не зарегистрированы**. Все ветеринары используют человеческие инсулины off-label — это общепринятая практика:
 
@@ -64,6 +68,19 @@ export const insulinTypes: Article = {
 - **Ринсулин НПХ (Герофарм)** — бюджетный NPH (~500-1000 руб), но менее эффективен для кошек
 
 Все эти инсулины — **U-100**, поэтому в России нужны только шприцы U-100.
+
+#### США
+
+- **ProZinc** и **Vetsulin** одобрены FDA для кошек и отпускаются по рецепту ветеринара
+- Человеческие инсулины (гларгин, детемир) назначаются off-label — это законно при назначении ветеринаром (правила AMDUCA)
+- Обратите внимание: ветеринарные инсулины здесь **U-40**, человеческие — U-100. Шприц должен соответствовать препарату
+
+#### ЕС и Великобритания
+
+- **Caninsulin** и **ProZinc** зарегистрированы как ветеринарные препараты
+- По правилу «каскада» ветеринар обязан в первую очередь рассматривать зарегистрированный ветеринарный препарат; человеческие инсулины — только когда ветпрепарат не подходит, по назначению врача
+
+> Цены и наличие меняются; не заказывайте инсулин из-за рубежа и не заменяйте препарат самостоятельно — концентрация (U-40/U-100) и профиль действия могут отличаться.
 
 ### U-40 и U-100 — не перепутайте!
 
@@ -127,9 +144,24 @@ Insulin works differently in cats than in humans. The onset, peak, and duration 
 - **Duration:** 4-12 h — usually too short for cats (per Feldman & Nelson)
 - **Important:** not a first-line choice per ISFM guidelines (2023)
 
-### Availability in Russia
+### Availability and Regulations by Region
 
-In Russia, veterinary insulins (ProZinc, Caninsulin) are **not registered**. All vets use human insulins off-label — this is standard practice:
+Registration, prescription rules, and prices vary a lot between countries. Below is the general picture; the actual choice is always up to your vet and local dispensing rules.
+
+#### United States
+
+- **ProZinc** and **Vetsulin** are FDA-approved for cats and dispensed with a veterinary prescription
+- Human insulins (glargine, detemir) are prescribed off-label — legal when directed by your vet (AMDUCA extra-label rules)
+- Note: the veterinary insulins here are **U-40**, human insulins are U-100 — the syringe must match the product
+
+#### EU & UK
+
+- **Caninsulin** and **ProZinc** are registered veterinary medicines
+- Under the prescribing "cascade", vets must consider the authorised veterinary product first; human insulins are used only when the veterinary product isn't suitable, under veterinary direction
+
+#### Russia
+
+Veterinary insulins (ProZinc, Caninsulin) are **not registered**. All vets use human insulins off-label — this is standard practice:
 
 - **Lantus (Sanofi)** — available at pharmacies, ~3,000-4,500 RUB
 - **RinGlar (Geropharm)** — Russian glargine biosimilar, same active ingredient, cheaper (~1,500-2,500 RUB). Ask your vet
@@ -137,6 +169,8 @@ In Russia, veterinary insulins (ProZinc, Caninsulin) are **not registered**. All
 - **Rinsulin NPH (Geropharm)** — budget NPH (~500-1,000 RUB), but less effective for cats
 
 All of these are **U-100**, so in Russia you only need U-100 syringes.
+
+> Prices and availability change; don't order insulin from abroad or switch products on your own — concentration (U-40/U-100) and action profiles can differ.
 
 ### U-40 and U-100 — Don't Mix Them Up!
 

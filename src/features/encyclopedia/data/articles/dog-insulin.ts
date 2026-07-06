@@ -49,6 +49,14 @@ export const dogInsulin: Article = {
 - Использование неправильного шприца = **неправильная доза** = опасно!
 - U-40 шприцы обычно с красным колпачком, U-100 — с оранжевым (цвета колпачков **не стандартизованы во всех странах и у всех производителей** — обязательно уточните маркировку у ветеринара или в аптеке)
 
+## Доступность по регионам
+
+- **США:** Vetsulin одобрен FDA для собак; ProZinc также одобрен для собак. Отпуск — по рецепту ветеринара; человеческие инсулины (NPH, гларгин) назначаются off-label по правилам AMDUCA
+- **ЕС и Великобритания:** Caninsulin зарегистрирован для собак; по правилу «каскада» ветеринар сначала рассматривает зарегистрированный ветпрепарат
+- **Россия:** Caninsulin не зарегистрирован — ветеринары используют человеческие инсулины (NPH «Ринсулин/Протафан», гларгин) off-label; все они U-100
+
+> Доступность и правила отпуска зависят от страны — всегда следуй назначению своего ветеринара.
+
 ## Хранение
 
 - Закрытый флакон: холодильник (2–8°C)
@@ -107,6 +115,14 @@ export const dogInsulin: Article = {
 - NPH is **U-100** (100 IU/mL)
 - Using the wrong syringe = **wrong dose** = dangerous!
 - U-40 syringes usually have a red cap, U-100 have orange (cap colors are **not standardized across all countries and manufacturers** — always verify the markings with your vet or pharmacist)
+
+## Availability by Region
+
+- **United States:** Vetsulin is FDA-approved for dogs; ProZinc is approved for dogs as well. Dispensed with a veterinary prescription; human insulins (NPH, glargine) are prescribed off-label under AMDUCA rules
+- **EU & UK:** Caninsulin is a registered veterinary medicine for dogs; under the prescribing "cascade" the vet considers the authorised veterinary product first
+- **Russia:** Caninsulin is not registered — vets use human insulins (NPH, glargine) off-label; all of them are U-100
+
+> Availability and dispensing rules differ by country — always follow your own vet's prescription.
 
 ## Storage
 
