@@ -12,6 +12,7 @@ import type { IoniconName } from '@shared/components/ui';
 import * as Haptics from 'expo-haptics';
 import { startTrial } from '@features/subscription/utils/trial';
 import { isAiConfigured } from '@features/hints/utils/aiClient';
+import { isMonetizationEnabled } from '@shared/config/runtimeConfig';
 
 type Promise = { icon: IoniconName; titleKey: string; descKey: string };
 
@@ -117,17 +118,22 @@ export default function SuccessScreen() {
             ))}
           </View>
 
-          <View style={[styles.trialBadge, { backgroundColor: theme.colors.primaryLight }]}>
-            <Icon name="gift" size={18} color={theme.colors.primary} />
-            <Text
-              style={[
-                styles.trialBadgeText,
-                { color: theme.colors.primary, fontFamily: theme.fonts.semibold },
-              ]}
-            >
-              {t('onboarding.success.trialBadge')}
-            </Text>
-          </View>
+          {/* "7 days of Pro free" only makes sense when billing exists — in
+              unlocked/hidden builds there is no Pro or paywall anywhere in the
+              UI, so the promise would point at nothing. */}
+          {isMonetizationEnabled() && (
+            <View style={[styles.trialBadge, { backgroundColor: theme.colors.primaryLight }]}>
+              <Icon name="gift" size={18} color={theme.colors.primary} />
+              <Text
+                style={[
+                  styles.trialBadgeText,
+                  { color: theme.colors.primary, fontFamily: theme.fonts.semibold },
+                ]}
+              >
+                {t('onboarding.success.trialBadge')}
+              </Text>
+            </View>
+          )}
         </Animated.View>
       </View>
 

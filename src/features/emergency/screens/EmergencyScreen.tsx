@@ -42,17 +42,12 @@ export default function EmergencyScreen() {
   const callVet = () => {
     if (callingRef.current) return;
     if (!vetPhone) {
-      // Не уводим с Emergency в Settings — пользователь теряет инструкции в момент паники.
-      // Предлагаем только звонок 112, добавить ветеринара можно после.
+      // Не уводим с Emergency в Settings — пользователь теряет инструкции в
+      // момент паники. Раньше здесь предлагался звонок 112, но человеческая
+      // экстренная служба с диабетом питомца не поможет — просто объясняем,
+      // где добавить контакт, и оставляем пользователя на инструкциях.
       Alert.alert(t('emergency.noVetContact'), t('emergency.addVetContact'), [
-        { text: t('common.cancel'), style: 'cancel' },
-        {
-          text: t('emergency.call112'),
-          onPress: () =>
-            Linking.openURL('tel:112').catch(() =>
-              Alert.alert(t('emergency.callFailed'), t('emergency.callFailedDesc'))
-            ),
-        },
+        { text: t('common.ok', { defaultValue: 'OK' }) },
       ]);
       return;
     }

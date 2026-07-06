@@ -33,6 +33,7 @@ export const en = {
     discard: 'Discard',
     longPressToDelete: 'Long press an entry to delete',
     search: 'Search...',
+    ok: 'OK',
   },
 
   onboarding: {
@@ -415,7 +416,7 @@ export const en = {
     callFailed: 'Call failed',
     callFailedDesc: 'Please check the vet phone number in pet settings.',
     goToSettings: 'Go to settings',
-    tapToAddVet: 'Tap to add vet contact',
+    tapToAddVet: 'No contact yet — add it in the pet profile',
     disclaimer:
       'This information is for reference only. In any emergency, contact your veterinarian immediately.',
     emergencyMode: 'Emergency mode',
@@ -1021,6 +1022,9 @@ export const en = {
     restoreSuccess: 'Data restored successfully',
     restoreError: 'Restore error',
     restoreCorrupt: 'The backup file is damaged and cannot be restored.',
+    sessionNotReadyTitle: 'Account not connected',
+    sessionNotReadyBody:
+      'Could not verify your Google sign-in (you may be offline). Check your connection and sign in again.',
     noBackupFound: 'No backup found',
   },
 };

@@ -53,12 +53,27 @@ export default function AccountScreen() {
   const handleSignOut = () => {
     Alert.alert(t('auth.signOutConfirm'), t('auth.signOutWarning'), [
       { text: t('common.cancel'), style: 'cancel' },
-      { text: t('auth.signOut'), style: 'destructive', onPress: () => signOut() },
+      {
+        text: t('auth.signOut'),
+        style: 'destructive',
+        // catch: a network error inside Google/Firebase sign-out otherwise
+        // surfaces as an unhandled promise rejection
+        onPress: () => signOut().catch(() => {}),
+      },
     ]);
   };
 
+  // user can be restored from MMKV cache while the silent sign-in (and thus
+  // firebaseUid) failed — e.g. offline. Without this the backup/restore
+  // buttons silently did nothing.
+  const requireSession = (): boolean => {
+    if (firebaseUid) return true;
+    Alert.alert(t('auth.sessionNotReadyTitle'), t('auth.sessionNotReadyBody'));
+    return false;
+  };
+
   const handleBackup = async () => {
-    if (!firebaseUid) return;
+    if (!requireSession() || !firebaseUid) return;
     setBackupLoading(true);
     try {
       await backupToCloud(firebaseUid);
@@ -79,7 +94,7 @@ export default function AccountScreen() {
   };
 
   const handleRestore = async () => {
-    if (!firebaseUid) return;
+    if (!requireSession() || !firebaseUid) return;
     Alert.alert(t('auth.restoreConfirm'), t('auth.restoreWarning'), [
       { text: t('common.cancel'), style: 'cancel' },
       {

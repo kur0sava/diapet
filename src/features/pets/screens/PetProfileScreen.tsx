@@ -148,9 +148,13 @@ export default function PetProfileScreen() {
                 ? t('pets.dog')
                 : t('pets.pet')
           )}
-          {activePet.weightKg &&
+          {/* != null (not truthy): a numeric 0 from a legacy backup would leak
+              a bare `0` text node into the View — an RN render crash */}
+          {activePet.weightKg != null &&
+            activePet.weightKg > 0 &&
             renderInfoRow(t('pets.weight'), `${activePet.weightKg} ${t('common.kg')}`)}
-          {activePet.birthYear &&
+          {activePet.birthYear != null &&
+            activePet.birthYear > 0 &&
             renderInfoRow(
               t('pets.age'),
               `${new Date().getFullYear() - activePet.birthYear} ${t('pets.years')}`
