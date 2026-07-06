@@ -85,7 +85,7 @@
 - [x] C2. RU-плейсхолдеры в EN («Др. Иванова», «+7 999…», «Барсик», «Протафан») — Vet Contact/EditPet/AddPet.
 - [x] C3. EditPet: «8:30» vs «08:30» — нормализовать в HH:MM перед dedupe/сохранением.
 - [x] C4. Фильтр уровней GlucoseList: SQL `<= max` для всех диапазонов → 9.0 в двух фильтрах сразу (сделать полуинтервалы как в classify).
-- [ ] C5 (ОТЛОЖЕНО на v2.6 — визуальный редизайн). GlucoseChart: индексная ось X сжимает пропущенные дни; y-подписи могут накладываться.
+- [x] C5. GlucoseChart (сделано 2026-07-07: временнáя ось X, анти-коллизия X/Y-подписей): индексная ось X сжимает пропущенные дни; y-подписи могут накладываться.
 - [x] C6. Delete-all не чистит `analyzer_alert_history`/`analyzer_alerts_today`.
 - [x] C7. Deep-link `diapet://ai` при скрытом AiTab — убрать из linking-конфига при !showAiTab.
 - [x] C8. Retry-кнопка storage-error (`App.tsx:213-218`) пропускает пост-инициализацию (язык/подписка/auth/analytics).
@@ -157,5 +157,5 @@ ArticleList/FeedGuide (species-aware — в отличие от FoodSelector), d
 4. tsc + tests + ручная проверка ключевых флоу → пересборка vc17 (`NODE_OPTIONS=--use-system-ca npx eas-cli build ...`) → push.
 
 
-## СТАТУС 2026-07-07: ВСЕ ПУНКТЫ ЗАКРЫТЫ (кроме C5 — отложен)
+## СТАТУС 2026-07-07: ВСЕ 40 ПУНКТОВ ЗАКРЫТЫ, включая C5
 Коммиты: 4856760, 136dd45, bb1fdc8, a04b7cc, e9ccf58, 1911e4b, 7da4ac7, aa21cc3, 0dd4035, 13c517d.

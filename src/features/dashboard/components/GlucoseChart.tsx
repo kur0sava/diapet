@@ -76,7 +76,17 @@ export function GlucoseChart({ data, species }: Props) {
   const range = maxVal - minVal;
 
   const getY = (v: number) => CHART_HEIGHT - ((v - minVal) / range) * CHART_HEIGHT;
-  const getX = (i: number) => (i / Math.max(daily.length - 1, 1)) * CHART_WIDTH;
+
+  // Time-proportional X: previously points were spaced by index, so a 5-day
+  // gap between measurements looked identical to a 1-day gap and the chart
+  // silently lied about the timeline. Map each day to its real position
+  // between the first and last day instead.
+  const dayNumber = (dateKey: string) => Math.round(Date.parse(`${dateKey}T12:00:00`) / 86400000);
+  const firstDay = dayNumber(daily[0].date);
+  const lastDay = dayNumber(daily[daily.length - 1].date);
+  const daySpan = Math.max(lastDay - firstDay, 1);
+  const getX = (i: number) =>
+    daily.length === 1 ? 0 : ((dayNumber(daily[i].date) - firstDay) / daySpan) * CHART_WIDTH;
 
   // SVG path connecting daily averages
   const pathD = daily
@@ -91,24 +101,54 @@ export function GlucoseChart({ data, species }: Props) {
   const normalMaxY = getY(normalMax);
   const normalMinY = getY(normalMin);
 
+  // Y-axis labels for the data extremes are skipped when they'd overlap the
+  // (green) target-range labels — with a tight data range all four crowd
+  // into a few pixels.
+  const Y_LABEL_MIN_GAP = 12;
+  const showMaxLabel = Math.abs(getY(maxVal) - normalMaxY) >= Y_LABEL_MIN_GAP;
+  const showMinLabel = Math.abs(getY(minVal) - normalMinY) >= Y_LABEL_MIN_GAP;
+
   // X-axis label indices — show first, middle, last when >7 days
-  const xLabelIndices =
+  const X_LABEL_WIDTH = 44;
+  const xLabelCandidates =
     daily.length <= 7
       ? daily.map((_, i) => i)
       : [0, Math.floor(daily.length / 2), daily.length - 1];
+  // Drop labels that would overlap a previously kept one (time-proportional
+  // positions can put two measured days almost on top of each other); the
+  // newest date always survives.
+  const xLabelIndices: number[] = [];
+  for (const i of xLabelCandidates) {
+    const prev = xLabelIndices[xLabelIndices.length - 1];
+    if (prev === undefined || getX(i) - getX(prev) >= X_LABEL_WIDTH) {
+      xLabelIndices.push(i);
+    }
+  }
+  const lastIdx = daily.length - 1;
+  if (!xLabelIndices.includes(lastIdx)) {
+    while (
+      xLabelIndices.length > 0 &&
+      getX(lastIdx) - getX(xLabelIndices[xLabelIndices.length - 1]) < X_LABEL_WIDTH
+    ) {
+      xLabelIndices.pop();
+    }
+    xLabelIndices.push(lastIdx);
+  }
 
   return (
     <View style={styles.container}>
       {/* Y-axis labels — positioned to match actual data scale */}
       <View style={styles.yAxis}>
-        <Text
-          style={[
-            styles.axisLabel,
-            { color: theme.colors.textTertiary, position: 'absolute', top: getY(maxVal) - 5 },
-          ]}
-        >
-          {maxVal.toFixed(0)}
-        </Text>
+        {showMaxLabel && (
+          <Text
+            style={[
+              styles.axisLabel,
+              { color: theme.colors.textTertiary, position: 'absolute', top: getY(maxVal) - 5 },
+            ]}
+          >
+            {maxVal.toFixed(0)}
+          </Text>
+        )}
         <Text
           style={[
             styles.axisLabel,
@@ -125,14 +165,16 @@ export function GlucoseChart({ data, species }: Props) {
         >
           {normalMin}
         </Text>
-        <Text
-          style={[
-            styles.axisLabel,
-            { color: theme.colors.textTertiary, position: 'absolute', top: getY(minVal) - 5 },
-          ]}
-        >
-          {minVal.toFixed(0)}
-        </Text>
+        {showMinLabel && (
+          <Text
+            style={[
+              styles.axisLabel,
+              { color: theme.colors.textTertiary, position: 'absolute', top: getY(minVal) - 5 },
+            ]}
+          >
+            {minVal.toFixed(0)}
+          </Text>
+        )}
       </View>
 
       {/* Chart area */}
@@ -223,17 +265,33 @@ export function GlucoseChart({ data, species }: Props) {
         })}
       </View>
 
-      {/* X-axis labels */}
+      {/* X-axis labels — anchored to the labelled point's real x position
+          (a space-between row drifted away from the dots once the axis
+          became time-proportional) */}
       <View style={styles.xAxis}>
-        {xLabelIndices.map(i => (
-          <Text
-            key={daily[i].date}
-            style={[styles.xLabel, { color: theme.colors.textTertiary }]}
-            numberOfLines={1}
-          >
-            {formatShortDate(daily[i].sampleRecordedAt)}
-          </Text>
-        ))}
+        {xLabelIndices.map(i => {
+          const left = Math.min(
+            Math.max(getX(i) - X_LABEL_WIDTH / 2, 0),
+            CHART_WIDTH - X_LABEL_WIDTH
+          );
+          return (
+            <Text
+              key={daily[i].date}
+              style={[
+                styles.xLabel,
+                {
+                  color: theme.colors.textTertiary,
+                  position: 'absolute',
+                  left,
+                  width: X_LABEL_WIDTH,
+                },
+              ]}
+              numberOfLines={1}
+            >
+              {formatShortDate(daily[i].sampleRecordedAt)}
+            </Text>
+          );
+        })}
       </View>
 
       {/* Legend */}
@@ -266,8 +324,7 @@ const styles = StyleSheet.create({
   countBadge: { position: 'absolute', borderRadius: 6, paddingHorizontal: 3, paddingVertical: 0.5 },
   countText: { fontSize: 8, fontWeight: '600' },
   xAxis: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    height: 14,
     marginTop: 4,
     marginLeft: Y_AXIS_WIDTH + 4,
   },
