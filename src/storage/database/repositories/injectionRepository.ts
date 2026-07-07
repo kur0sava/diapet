@@ -1,4 +1,5 @@
 import { getDatabase } from '../database';
+import { encodeCursor, decodeCursor } from './cursor';
 import { InjectionLog, CreateInjectionDTO, PaginatedResult } from '@storage/domain/types';
 import uuid from 'react-native-uuid';
 
@@ -67,16 +68,22 @@ export const injectionRepository = {
     cursor?: string
   ): Promise<PaginatedResult<InjectionLog>> {
     const db = await getDatabase();
+    // Composite cursor — see cursor.ts (plain `< ts` drops same-timestamp rows)
+    const cur = decodeCursor(cursor);
     const rows = await db.getAllAsync<InjectionRow>(
-      'SELECT * FROM injections WHERE pet_id = ? AND (? IS NULL OR administered_at < ?) ORDER BY administered_at DESC LIMIT ?',
-      [petId, cursor ?? null, cursor ?? null, limit + 1]
+      `SELECT * FROM injections WHERE pet_id = ?
+       AND (? IS NULL OR administered_at < ? OR (administered_at = ? AND id < ?))
+       ORDER BY administered_at DESC, id DESC LIMIT ?`,
+      [petId, cur.ts, cur.ts, cur.ts, cur.id, limit + 1]
     );
     const hasNextPage = rows.length > limit;
     const items = hasNextPage ? rows.slice(0, limit) : rows;
     const data = items.map(mapRow);
     return {
       data,
-      nextCursor: hasNextPage ? data[data.length - 1].administeredAt : null,
+      nextCursor: hasNextPage
+        ? encodeCursor(data[data.length - 1].administeredAt, data[data.length - 1].id)
+        : null,
     };
   },
 

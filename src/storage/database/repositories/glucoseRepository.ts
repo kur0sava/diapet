@@ -1,4 +1,5 @@
 import { getDatabase } from '../database';
+import { encodeCursor, decodeCursor } from './cursor';
 import {
   GlucoseReading,
   CreateGlucoseDTO,
@@ -73,16 +74,25 @@ export const glucoseRepository = {
     cursor?: string
   ): Promise<PaginatedResult<GlucoseReading>> {
     const db = await getDatabase();
+    // Composite (recorded_at, id) cursor: a plain `recorded_at < ?` cursor
+    // silently drops every row that shares a timestamp with the page
+    // boundary (caught by the scenario fuzz — 20 same-second readings
+    // paginated down to 7).
+    const cur = decodeCursor(cursor);
     const rows = await db.getAllAsync<GlucoseRow>(
-      'SELECT * FROM glucose_readings WHERE pet_id = ? AND (? IS NULL OR recorded_at < ?) ORDER BY recorded_at DESC LIMIT ?',
-      [petId, cursor ?? null, cursor ?? null, limit + 1]
+      `SELECT * FROM glucose_readings WHERE pet_id = ?
+       AND (? IS NULL OR recorded_at < ? OR (recorded_at = ? AND id < ?))
+       ORDER BY recorded_at DESC, id DESC LIMIT ?`,
+      [petId, cur.ts, cur.ts, cur.ts, cur.id, limit + 1]
     );
     const hasNextPage = rows.length > limit;
     const items = hasNextPage ? rows.slice(0, limit) : rows;
     const data = items.map(mapRowToReading);
     return {
       data,
-      nextCursor: hasNextPage ? data[data.length - 1].recordedAt : null,
+      nextCursor: hasNextPage
+        ? encodeCursor(data[data.length - 1].recordedAt, data[data.length - 1].id)
+        : null,
     };
   },
 
@@ -97,8 +107,9 @@ export const glucoseRepository = {
     const params: (string | number | null)[] = [petId];
 
     if (cursor) {
-      conditions.push('recorded_at < ?');
-      params.push(cursor);
+      const cur = decodeCursor(cursor);
+      conditions.push('(recorded_at < ? OR (recorded_at = ? AND id < ?))');
+      params.push(cur.ts, cur.ts, cur.id);
     }
     if (filters.dateFrom) {
       conditions.push('recorded_at >= ?');
@@ -144,7 +155,7 @@ export const glucoseRepository = {
     params.push(limit + 1);
 
     const rows = await db.getAllAsync<GlucoseRow>(
-      `SELECT * FROM glucose_readings WHERE ${where} ORDER BY recorded_at DESC LIMIT ?`,
+      `SELECT * FROM glucose_readings WHERE ${where} ORDER BY recorded_at DESC, id DESC LIMIT ?`,
       params
     );
     const hasNextPage = rows.length > limit;
@@ -152,7 +163,9 @@ export const glucoseRepository = {
     const data = items.map(mapRowToReading);
     return {
       data,
-      nextCursor: hasNextPage ? data[data.length - 1].recordedAt : null,
+      nextCursor: hasNextPage
+        ? encodeCursor(data[data.length - 1].recordedAt, data[data.length - 1].id)
+        : null,
     };
   },
 

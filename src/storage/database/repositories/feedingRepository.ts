@@ -1,4 +1,5 @@
 import { getDatabase } from '../database';
+import { encodeCursor, decodeCursor } from './cursor';
 import { FeedingLog, CreateFeedingDTO, PaginatedResult } from '@storage/domain/types';
 import uuid from 'react-native-uuid';
 
@@ -66,16 +67,22 @@ export const feedingRepository = {
     cursor?: string
   ): Promise<PaginatedResult<FeedingLog>> {
     const db = await getDatabase();
+    // Composite cursor — see cursor.ts (plain `< ts` drops same-timestamp rows)
+    const cur = decodeCursor(cursor);
     const rows = await db.getAllAsync<FeedingRow>(
-      'SELECT * FROM feedings WHERE pet_id = ? AND (? IS NULL OR fed_at < ?) ORDER BY fed_at DESC LIMIT ?',
-      [petId, cursor ?? null, cursor ?? null, limit + 1]
+      `SELECT * FROM feedings WHERE pet_id = ?
+       AND (? IS NULL OR fed_at < ? OR (fed_at = ? AND id < ?))
+       ORDER BY fed_at DESC, id DESC LIMIT ?`,
+      [petId, cur.ts, cur.ts, cur.ts, cur.id, limit + 1]
     );
     const hasNextPage = rows.length > limit;
     const items = hasNextPage ? rows.slice(0, limit) : rows;
     const data = items.map(mapRow);
     return {
       data,
-      nextCursor: hasNextPage ? data[data.length - 1].fedAt : null,
+      nextCursor: hasNextPage
+        ? encodeCursor(data[data.length - 1].fedAt, data[data.length - 1].id)
+        : null,
     };
   },
 

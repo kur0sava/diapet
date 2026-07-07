@@ -1,5 +1,11 @@
 import { getDatabase } from '../database';
-import { SymptomEntry, SymptomType, CreateSymptomDTO, PaginatedResult } from '@storage/domain/types';
+import { encodeCursor, decodeCursor } from './cursor';
+import {
+  SymptomEntry,
+  SymptomType,
+  CreateSymptomDTO,
+  PaginatedResult,
+} from '@storage/domain/types';
 import uuid from 'react-native-uuid';
 import * as FileSystem from 'expo-file-system/legacy';
 
@@ -25,9 +31,18 @@ export const symptomRepository = {
       await db.runAsync(
         `INSERT INTO symptoms (id, pet_id, symptom_types, severity, photo_uris, notes, glucose_reading_id, recorded_at, created_at, updated_at)
          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-        [id, dto.petId, JSON.stringify(dto.symptomTypes), dto.severity ?? 'mild',
-         dto.photoUris ? JSON.stringify(dto.photoUris) : null,
-         dto.notes ?? null, dto.glucoseReadingId ?? null, dto.recordedAt ?? now, now, now]
+        [
+          id,
+          dto.petId,
+          JSON.stringify(dto.symptomTypes),
+          dto.severity ?? 'mild',
+          dto.photoUris ? JSON.stringify(dto.photoUris) : null,
+          dto.notes ?? null,
+          dto.glucoseReadingId ?? null,
+          dto.recordedAt ?? now,
+          now,
+          now,
+        ]
       );
       for (const symptomType of dto.symptomTypes) {
         const entryId = uuid.v4() as string;
@@ -50,14 +65,25 @@ export const symptomRepository = {
       'SELECT symptom_type FROM symptom_entry_types WHERE symptom_id = ?',
       [id]
     );
-    return mapRowToSymptom(row, types.length > 0 ? types.map(t => t.symptom_type as SymptomType) : undefined);
+    return mapRowToSymptom(
+      row,
+      types.length > 0 ? types.map(t => t.symptom_type as SymptomType) : undefined
+    );
   },
 
-  async findByPetId(petId: string, limit = 50, cursor?: string): Promise<PaginatedResult<SymptomEntry>> {
+  async findByPetId(
+    petId: string,
+    limit = 50,
+    cursor?: string
+  ): Promise<PaginatedResult<SymptomEntry>> {
     const db = await getDatabase();
+    // Composite cursor — see cursor.ts (plain `< ts` drops same-timestamp rows)
+    const cur = decodeCursor(cursor);
     const rows = await db.getAllAsync<SymptomRow>(
-      'SELECT * FROM symptoms WHERE pet_id = ? AND (? IS NULL OR recorded_at < ?) ORDER BY recorded_at DESC LIMIT ?',
-      [petId, cursor ?? null, cursor ?? null, limit + 1]
+      `SELECT * FROM symptoms WHERE pet_id = ?
+       AND (? IS NULL OR recorded_at < ? OR (recorded_at = ? AND id < ?))
+       ORDER BY recorded_at DESC, id DESC LIMIT ?`,
+      [petId, cur.ts, cur.ts, cur.ts, cur.id, limit + 1]
     );
     const hasNextPage = rows.length > limit;
     const items = hasNextPage ? rows.slice(0, limit) : rows;
@@ -67,7 +93,7 @@ export const symptomRepository = {
     }
 
     // Batch-load all symptom types for the returned symptom IDs
-    const ids = items.map((r) => r.id);
+    const ids = items.map(r => r.id);
     const placeholders = ids.map(() => '?').join(',');
     const typeRows = await db.getAllAsync<{ symptom_id: string; symptom_type: string }>(
       `SELECT symptom_id, symptom_type FROM symptom_entry_types WHERE symptom_id IN (${placeholders})`,
@@ -81,14 +107,19 @@ export const symptomRepository = {
       typesBySymptomId.set(tr.symptom_id, arr);
     }
 
-    const data = items.map((row) => {
+    const data = items.map(row => {
       const junctionTypes = typesBySymptomId.get(row.id);
-      return mapRowToSymptom(row, junctionTypes && junctionTypes.length > 0 ? junctionTypes : undefined);
+      return mapRowToSymptom(
+        row,
+        junctionTypes && junctionTypes.length > 0 ? junctionTypes : undefined
+      );
     });
 
     return {
       data,
-      nextCursor: hasNextPage ? data[data.length - 1].recordedAt : null,
+      nextCursor: hasNextPage
+        ? encodeCursor(data[data.length - 1].recordedAt, data[data.length - 1].id)
+        : null,
     };
   },
 
@@ -113,7 +144,10 @@ export const symptomRepository = {
     }
     return rows.map(row => {
       const junctionTypes = typesBySymptomId.get(row.id);
-      return mapRowToSymptom(row, junctionTypes && junctionTypes.length > 0 ? junctionTypes : undefined);
+      return mapRowToSymptom(
+        row,
+        junctionTypes && junctionTypes.length > 0 ? junctionTypes : undefined
+      );
     });
   },
 
@@ -123,12 +157,30 @@ export const symptomRepository = {
     await db.withTransactionAsync(async () => {
       const sets: string[] = [];
       const params: (string | null)[] = [];
-      if (dto.symptomTypes !== undefined) { sets.push('symptom_types=?'); params.push(JSON.stringify(dto.symptomTypes)); }
-      if (dto.severity !== undefined) { sets.push('severity=?'); params.push(dto.severity); }
-      if ('photoUris' in dto) { sets.push('photo_uris=?'); params.push(dto.photoUris ? JSON.stringify(dto.photoUris) : null); }
-      if ('notes' in dto) { sets.push('notes=?'); params.push(dto.notes ?? null); }
-      if ('glucoseReadingId' in dto) { sets.push('glucose_reading_id=?'); params.push(dto.glucoseReadingId ?? null); }
-      if (dto.recordedAt !== undefined) { sets.push('recorded_at=?'); params.push(dto.recordedAt); }
+      if (dto.symptomTypes !== undefined) {
+        sets.push('symptom_types=?');
+        params.push(JSON.stringify(dto.symptomTypes));
+      }
+      if (dto.severity !== undefined) {
+        sets.push('severity=?');
+        params.push(dto.severity);
+      }
+      if ('photoUris' in dto) {
+        sets.push('photo_uris=?');
+        params.push(dto.photoUris ? JSON.stringify(dto.photoUris) : null);
+      }
+      if ('notes' in dto) {
+        sets.push('notes=?');
+        params.push(dto.notes ?? null);
+      }
+      if ('glucoseReadingId' in dto) {
+        sets.push('glucose_reading_id=?');
+        params.push(dto.glucoseReadingId ?? null);
+      }
+      if (dto.recordedAt !== undefined) {
+        sets.push('recorded_at=?');
+        params.push(dto.recordedAt);
+      }
       if (sets.length > 0) {
         sets.push('updated_at=?');
         params.push(now, id);
@@ -152,7 +204,8 @@ export const symptomRepository = {
     const db = await getDatabase();
     // Read photo URIs before deleting the record
     const row = await db.getFirstAsync<{ photo_uris: string | null }>(
-      'SELECT photo_uris FROM symptoms WHERE id = ?', [id]
+      'SELECT photo_uris FROM symptoms WHERE id = ?',
+      [id]
     );
     // Delete DB row first (atomic) — CASCADE handles symptom_entry_types
     await db.runAsync('DELETE FROM symptoms WHERE id = ?', [id]);
@@ -160,7 +213,11 @@ export const symptomRepository = {
     if (row?.photo_uris) {
       const uris = safeJsonParse<string[]>(row.photo_uris, []);
       for (const uri of uris) {
-        try { await FileSystem.deleteAsync(uri, { idempotent: true }); } catch { /* ignore */ }
+        try {
+          await FileSystem.deleteAsync(uri, { idempotent: true });
+        } catch {
+          /* ignore */
+        }
       }
     }
   },
@@ -168,7 +225,11 @@ export const symptomRepository = {
 
 function safeJsonParse<T>(json: string | null | undefined, fallback: T): T {
   if (!json) return fallback;
-  try { return JSON.parse(json); } catch { return fallback; }
+  try {
+    return JSON.parse(json);
+  } catch {
+    return fallback;
+  }
 }
 
 function mapRowToSymptom(row: SymptomRow, types?: SymptomType[]): SymptomEntry {
