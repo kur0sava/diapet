@@ -133,6 +133,7 @@ But you can prevent this from happening! Consistent treatment and your loving ca
   category: 'basics',
   readingTimeMinutes: 5,
   order: 1,
+  species: 'cat',
   relatedArticleIds: ['first-days', 'remission', 'diet', 'dka'],
   references: [
     {

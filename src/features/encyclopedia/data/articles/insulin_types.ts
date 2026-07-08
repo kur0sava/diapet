@@ -46,7 +46,7 @@ export const insulinTypes: Article = {
 - **Концентрация:** U-40 — нужны шприцы U-40!
 - **Начало / Пик / Длительность:** 1-4 ч / 2-8 ч / 8-16 ч (MSD SPC / Feldman & Nelson)
 - **Где доступен:** зарегистрирован для кошек в ЕС, Австралии, Канаде
-- **Хранение:** 42 дня после первого использования. Vetsulin в США хранят в холодильнике, а Caninsulin в части стран допускает хранение ниже 25°C после вскрытия. Всегда сверяйтесь с местной инструкцией. Это суспензия — перекатывать флакон перед инъекцией, НЕ трясти
+- **Хранение:** 42 дня после первого использования. Caninsulin/Vetsulin — суспензия; инструкция производителя (MSD) требует хранения в холодильнике (2–8°C) и до, и **после** вскрытия. Не храните вскрытый флакон при комнатной температуре — расслаивается кристаллическая фракция и искажается доза. Перекатывать флакон перед инъекцией, НЕ трясти
 
 #### Протафан / НПХ (NPH)
 
@@ -136,7 +136,7 @@ Insulin works differently in cats than in humans. The onset, peak, and duration 
 - **Concentration:** U-40 — requires U-40 syringes!
 - **Onset / Peak / Duration:** 1-4 h / 2-8 h / 8-16 h (MSD SPC / Feldman & Nelson)
 - **Availability:** registered for cats in the EU, Australia, and Canada
-- **Storage:** 42 days after first use. Vetsulin in the US is kept refrigerated, while some Caninsulin labels allow storage below 25°C after opening. Always follow the local package insert. It's a suspension — roll the vial before injection, do NOT shake
+- **Storage:** 42 days after first use. Caninsulin/Vetsulin is a suspension; the manufacturer (MSD) label requires refrigeration (2–8°C) both before **and after** opening. Don't store an opened vial at room temperature — the crystalline fraction settles and the dose becomes inaccurate. Roll the vial before injection, do NOT shake
 
 #### Protaphane / NPH
 

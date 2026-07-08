@@ -147,6 +147,7 @@ Managing two chronic conditions at once is truly heroic. There will be good days
   category: 'complications',
   readingTimeMinutes: 4,
   order: 4,
+  species: 'cat',
   relatedArticleIds: ['what-is-diabetes', 'comorbidities', 'dka', 'diet'],
   references: [
     {

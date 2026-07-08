@@ -180,6 +180,7 @@ This is exactly why changing the dose on your own is risky — without a full gl
   category: 'monitoring',
   readingTimeMinutes: 7,
   order: 1,
+  species: 'cat',
   relatedArticleIds: [
     'flexible-monitoring',
     'fructosamine',

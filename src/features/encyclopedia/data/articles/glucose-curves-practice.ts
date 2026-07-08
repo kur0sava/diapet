@@ -163,11 +163,21 @@ A glucose curve is a series of readings every 2 hours over 12 hours. It shows ho
   category: 'medical',
   readingTimeMinutes: 8,
   order: 14,
+  species: 'cat',
   relatedArticleIds: ['glucose_monitoring', 'flexible-monitoring', 'insulin_types', 'hypoglycemia'],
   references: [
-    { ru: 'ISFM Guidelines on Diabetes Mellitus in Cats, 2023', en: 'ISFM Guidelines on Diabetes Mellitus in Cats, 2023' },
-    { ru: 'Rand J. — Feline Diabetes Mellitus, Veterinary Clinics, 2012', en: 'Rand J. — Feline Diabetes Mellitus, Veterinary Clinics, 2012' },
-    { ru: 'AAHA Diabetes Management Guidelines for Dogs and Cats, 2018', en: 'AAHA Diabetes Management Guidelines for Dogs and Cats, 2018' },
+    {
+      ru: 'ISFM Guidelines on Diabetes Mellitus in Cats, 2023',
+      en: 'ISFM Guidelines on Diabetes Mellitus in Cats, 2023',
+    },
+    {
+      ru: 'Rand J. — Feline Diabetes Mellitus, Veterinary Clinics, 2012',
+      en: 'Rand J. — Feline Diabetes Mellitus, Veterinary Clinics, 2012',
+    },
+    {
+      ru: 'AAHA Diabetes Management Guidelines for Dogs and Cats, 2018',
+      en: 'AAHA Diabetes Management Guidelines for Dogs and Cats, 2018',
+    },
   ],
   tags: [
     { ru: 'кривая глюкозы', en: 'glucose curve' },

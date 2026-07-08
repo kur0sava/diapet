@@ -62,7 +62,7 @@ export const dogInsulin: Article = {
 - Закрытый флакон: холодильник (2–8°C)
 - Открытый флакон: комнатная температура или холодильник (зависит от типа)
 - Срок после вскрытия зависит от препарата:
-  - **Канинсулин / Vetsulin: 42 дня** (после вскрытия; Vetsulin в США хранят в холодильнике, а Caninsulin в части стран допускает хранение до 25°C — всегда сверяйся с местной инструкцией)
+  - **Канинсулин / Vetsulin: 42 дня** после вскрытия. Это суспензия — инструкция производителя (MSD) требует хранения в холодильнике (2–8°C) и до, и после вскрытия. Не храни вскрытый флакон при комнатной температуре — расслаивается кристаллическая фракция и искажается доза
   - **NPH (Humulin N / Протафан): 28 дней**
   - **Lantus (гларгин): 28 дней**
   - **Levemir (детемир): 42 дня**
@@ -129,7 +129,7 @@ export const dogInsulin: Article = {
 - Unopened vial: refrigerator (2–8°C)
 - Opened vial: room temperature or fridge (depends on type)
 - Shelf life after opening depends on the product:
-  - **Caninsulin / Vetsulin: 42 days** after first use (Vetsulin in the US is refrigerated after opening, while some Caninsulin labels allow storage up to 25°C — always follow the local package insert)
+  - **Caninsulin / Vetsulin: 42 days** after first use. It's a suspension — the manufacturer (MSD) label requires refrigeration (2–8°C) both before and after opening. Don't store an opened vial at room temperature — the crystalline fraction settles and the dose becomes inaccurate
   - **NPH (Humulin N / Protaphane): 28 days**
   - **Lantus (glargine): 28 days**
   - **Levemir (detemir): 42 days**

@@ -14,11 +14,14 @@ import { useMoreNavigation } from '@navigation/hooks';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '@shared/theme';
 import { Button, Input } from '@shared/components/ui';
+import DateTimePicker from '@react-native-community/datetimepicker';
 import { petRepository, scheduleRepository, getDatabase } from '@storage/database';
 import { usePetStore } from '@shared/stores/petStore';
 import { useQueryClient } from '@tanstack/react-query';
 import { queryKeys } from '@shared/utils/queryKeys';
 import { MAX_SCHEDULE_TIMES } from '@storage/domain/types';
+import type { PetGender, DiabetesType } from '@storage/domain/types';
+import { toDateOnly } from '@shared/utils/dateUtils';
 import { getSpeciesConfig } from '@shared/config/speciesConfig';
 import { Icon } from '@shared/components/ui/Icon';
 import { storage, StorageKeys, vetNameKey, vetPhoneKey } from '@storage/mmkv/storage';
@@ -34,7 +37,18 @@ export default function EditPetScreen() {
   const queryClient = useQueryClient();
 
   const [name, setName] = useState(activePet?.name ?? '');
+  const [gender, setGender] = useState<PetGender>(activePet?.gender ?? 'unknown');
   const [weightKg, setWeightKg] = useState(activePet?.weightKg?.toString() ?? '');
+  const [age, setAge] = useState(
+    activePet?.birthYear ? String(new Date().getFullYear() - activePet.birthYear) : ''
+  );
+  const [diabetesType, setDiabetesType] = useState<DiabetesType>(
+    activePet?.diabetesType ?? 'unknown'
+  );
+  const [diagnosisDate, setDiagnosisDate] = useState<Date | null>(
+    activePet?.diagnosisDate ? new Date(activePet.diagnosisDate) : null
+  );
+  const [showDatePicker, setShowDatePicker] = useState(false);
   const [insulinType, setInsulinType] = useState(activePet?.insulinType ?? '');
   const [vetName, setVetName] = useState('');
   const [vetPhone, setVetPhone] = useState('');
@@ -48,7 +62,19 @@ export default function EditPetScreen() {
   // Track changes after initial load
   useEffect(() => {
     if (initialLoaded.current) setIsDirty(true);
-  }, [name, weightKg, insulinType, vetName, vetPhone, injectionTimes, feedingTimes]);
+  }, [
+    name,
+    gender,
+    weightKg,
+    age,
+    diabetesType,
+    diagnosisDate,
+    insulinType,
+    vetName,
+    vetPhone,
+    injectionTimes,
+    feedingTimes,
+  ]);
 
   useEffect(() => {
     if (!activePet) return;
@@ -104,6 +130,16 @@ export default function EditPetScreen() {
         return;
       }
     }
+    // Validate age (optional): 0..species max
+    const ageTrimmed = age.trim();
+    if (ageTrimmed) {
+      const parsedAge = parseInt(ageTrimmed, 10);
+      const maxAge = getSpeciesConfig(activePet.species).validation.maxAgeYears;
+      if (isNaN(parsedAge) || parsedAge < 0 || parsedAge > maxAge) {
+        Alert.alert(t('common.error'), t('onboarding.ageInvalid'));
+        return;
+      }
+    }
     // Validate all time entries are complete HH:MM format
     const allTimes = [...injectionTimes, ...feedingTimes];
     if (allTimes.some(t => !isValidTime(t))) {
@@ -127,7 +163,11 @@ export default function EditPetScreen() {
       const parsedWeight = weightTrimmed ? parseFloat(weightTrimmed.replace(',', '.')) : NaN;
       await petRepository.update(activePet.id, {
         name: name.trim(),
+        gender,
         weightKg: parsedWeight > 0 ? parsedWeight : undefined,
+        birthYear: ageTrimmed ? new Date().getFullYear() - parseInt(ageTrimmed, 10) : undefined,
+        diabetesType,
+        diagnosisDate: diagnosisDate ? toDateOnly(diagnosisDate) : undefined,
         insulinType: insulinType || undefined,
       });
       if (vetName) {
@@ -277,13 +317,128 @@ export default function EditPetScreen() {
             }
             maxLength={50}
           />
-          <Input
-            label={`${t('pets.weight')} (${t('common.kg')})`}
-            value={weightKg}
-            onChangeText={setWeightKg}
-            placeholder={activePet?.species === 'dog' ? '15' : '4.5'}
-            keyboardType="decimal-pad"
-          />
+          <View style={styles.field}>
+            <Text style={[styles.label, { color: theme.colors.textSecondary }]}>
+              {t('onboarding.petGender')}
+            </Text>
+            <View style={styles.row}>
+              {(
+                [
+                  { value: 'male', label: t('common.male'), icon: '♂️' },
+                  { value: 'female', label: t('common.female'), icon: '♀️' },
+                ] as const
+              ).map(opt => (
+                <TouchableOpacity
+                  key={opt.value}
+                  style={[
+                    styles.optionBtn,
+                    {
+                      backgroundColor:
+                        gender === opt.value ? theme.colors.primary : theme.colors.surfaceSecondary,
+                      flex: 1,
+                    },
+                  ]}
+                  onPress={() => setGender(opt.value as PetGender)}
+                >
+                  <Text
+                    style={{
+                      color: gender === opt.value ? '#fff' : theme.colors.text,
+                      fontWeight: '600',
+                    }}
+                  >
+                    {opt.icon} {opt.label}
+                  </Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+          </View>
+          <View style={styles.rowInputs}>
+            <Input
+              label={`${t('pets.weight')} (${t('common.kg')})`}
+              value={weightKg}
+              onChangeText={setWeightKg}
+              placeholder={activePet?.species === 'dog' ? '15' : '4.5'}
+              keyboardType="decimal-pad"
+              containerStyle={{ flex: 1 }}
+            />
+            <Input
+              label={t('onboarding.petAge')}
+              value={age}
+              onChangeText={setAge}
+              placeholder="5"
+              keyboardType="number-pad"
+              containerStyle={{ flex: 1 }}
+              hint={t('onboarding.petAgeHint')}
+            />
+          </View>
+          <View style={styles.field}>
+            <Text style={[styles.label, { color: theme.colors.textSecondary }]}>
+              {t('onboarding.diagnosisDate')}
+            </Text>
+            <TouchableOpacity
+              style={[styles.dateBtn, { backgroundColor: theme.colors.surfaceSecondary }]}
+              onPress={() => setShowDatePicker(true)}
+            >
+              <Text
+                style={{
+                  color: diagnosisDate ? theme.colors.text : theme.colors.placeholder,
+                  padding: 14,
+                }}
+              >
+                {diagnosisDate ? diagnosisDate.toLocaleDateString() : t('onboarding.diagnosisDate')}
+              </Text>
+            </TouchableOpacity>
+            {showDatePicker && (
+              <DateTimePicker
+                value={diagnosisDate ?? new Date()}
+                mode="date"
+                onChange={(_, date) => {
+                  setShowDatePicker(false);
+                  if (date) setDiagnosisDate(date);
+                }}
+                maximumDate={new Date()}
+              />
+            )}
+          </View>
+          <View style={styles.field}>
+            <Text style={[styles.label, { color: theme.colors.textSecondary }]}>
+              {t('onboarding.diabetesType')}
+            </Text>
+            {(
+              [
+                { value: 'type1' as const, label: t('onboarding.diabetesType1') },
+                { value: 'type2' as const, label: t('onboarding.diabetesType2') },
+                { value: 'unknown' as const, label: t('onboarding.diabetesUnknown') },
+              ] as const
+            ).map(opt => (
+              <TouchableOpacity
+                key={opt.value}
+                style={[
+                  styles.radioRow,
+                  {
+                    borderColor:
+                      diabetesType === opt.value ? theme.colors.primary : theme.colors.border,
+                  },
+                ]}
+                onPress={() => setDiabetesType(opt.value)}
+              >
+                <View
+                  style={[
+                    styles.radio,
+                    {
+                      borderColor:
+                        diabetesType === opt.value ? theme.colors.primary : theme.colors.border,
+                    },
+                  ]}
+                >
+                  {diabetesType === opt.value && (
+                    <View style={[styles.radioDot, { backgroundColor: theme.colors.primary }]} />
+                  )}
+                </View>
+                <Text style={[styles.radioLabel, { color: theme.colors.text }]}>{opt.label}</Text>
+              </TouchableOpacity>
+            ))}
+          </View>
           <Input
             label={t('pets.insulinType')}
             value={insulinType}
@@ -381,4 +536,29 @@ const styles = StyleSheet.create({
   sectionTitle: { fontSize: 16 },
   timeRow: { flexDirection: 'row', alignItems: 'center' },
   addBtn: { padding: 14, borderWidth: 1.5, borderStyle: 'dashed', alignItems: 'center' },
+  field: { gap: 8 },
+  label: { fontSize: 13, fontWeight: '500' },
+  row: { flexDirection: 'row', gap: 12 },
+  rowInputs: { flexDirection: 'row', gap: 12 },
+  optionBtn: { padding: 14, borderRadius: 12, alignItems: 'center' },
+  dateBtn: { borderRadius: 12, overflow: 'hidden' },
+  radioRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 14,
+    borderRadius: 12,
+    borderWidth: 1.5,
+    gap: 12,
+    marginTop: 6,
+  },
+  radio: {
+    width: 20,
+    height: 20,
+    borderRadius: 10,
+    borderWidth: 2,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  radioDot: { width: 10, height: 10, borderRadius: 5 },
+  radioLabel: { fontSize: 15 },
 });

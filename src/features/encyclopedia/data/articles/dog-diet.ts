@@ -42,7 +42,7 @@ export const dogDiet: Article = {
 - **Hills w/d** — высокая клетчатка, низкий жир, для диабета и контроля веса
 - **Royal Canin Diabetic (Canine)** — специально для собак с диабетом, высокая клетчатка
 - **Farmina Vet Life Diabetic (Canine)** — доступен в России и Европе
-- **Purina Pro Plan Veterinary Diets DM Canine** — существует отдельная собачья версия DM; **не путай с кошачьим Purina DM** (у кошек другая стратегия — высокий белок/низкие углеводы, собакам это не подходит из-за риска панкреатита)
+- ⚠️ **Не давай собаке кошачьи диабетические корма** (Purina DM Feline, Hill's m/d Feline и др.) — у кошек стратегия «высокий белок / низкие углеводы», собаке она не подходит и повышает риск панкреатита
 
 ## Главное правило: СТАБИЛЬНОСТЬ
 
@@ -91,7 +91,7 @@ Cats are obligate carnivores who need a high-protein, low-carb diet. Dogs are om
 - **Hills w/d** — high fiber, low fat, for diabetes and weight management
 - **Royal Canin Diabetic (Canine)** — specifically for diabetic dogs, high fiber
 - **Farmina Vet Life Diabetic (Canine)** — available in Russia and Europe
-- **Purina Pro Plan Veterinary Diets DM Canine** — there is a separate canine version of DM; **do not confuse with the feline Purina DM** (cats use a different strategy — high protein / low carb, which is unsuitable for dogs due to pancreatitis risk)
+- ⚠️ **Don't feed a dog feline diabetic foods** (Purina DM Feline, Hill's m/d Feline, etc.) — cats use a "high protein / low carb" strategy that is unsuitable for dogs and raises pancreatitis risk
 
 ## The golden rule: CONSISTENCY
 

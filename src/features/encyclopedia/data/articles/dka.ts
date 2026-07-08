@@ -175,6 +175,7 @@ Ketone test strips (Ketostix, Uriket) are a simple way to check ketones at home:
   category: 'complications',
   readingTimeMinutes: 4,
   order: 2,
+  species: 'cat',
   relatedArticleIds: ['what-is-diabetes', 'ketone-testing', 'hypoglycemia'],
   references: [
     {

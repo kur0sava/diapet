@@ -143,10 +143,17 @@ Working shifts? Injections can be adapted:
   category: 'lifestyle',
   readingTimeMinutes: 8,
   order: 3,
+  species: 'cat',
   relatedArticleIds: ['first-days', 'injection-technique', 'hypoglycemia', 'common-mistakes'],
   references: [
-    { ru: 'ISFM Guidelines on Diabetes Mellitus in Cats, 2023', en: 'ISFM Guidelines on Diabetes Mellitus in Cats, 2023' },
-    { ru: 'AAHA Diabetes Management Guidelines for Dogs and Cats, 2018', en: 'AAHA Diabetes Management Guidelines for Dogs and Cats, 2018' },
+    {
+      ru: 'ISFM Guidelines on Diabetes Mellitus in Cats, 2023',
+      en: 'ISFM Guidelines on Diabetes Mellitus in Cats, 2023',
+    },
+    {
+      ru: 'AAHA Diabetes Management Guidelines for Dogs and Cats, 2018',
+      en: 'AAHA Diabetes Management Guidelines for Dogs and Cats, 2018',
+    },
   ],
   tags: [
     { ru: 'практика', en: 'practical' },

@@ -105,6 +105,7 @@ When a cat goes into remission, fructosamine returns to the healthy range (170-3
   category: 'monitoring',
   readingTimeMinutes: 5,
   order: 2,
+  species: 'cat',
   relatedArticleIds: ['glucose_monitoring', 'flexible-monitoring', 'stress-hyperglycemia'],
   references: [
     {

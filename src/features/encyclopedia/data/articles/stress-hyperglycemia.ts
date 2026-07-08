@@ -27,7 +27,7 @@ export const stressHyperglycemia: Article = {
 | Признак | Стрессовая гипергликемия | Плохой контроль |
 |---------|-------------------------|-----------------|
 | Где замер | Ветклиника | Дома, спокойная обстановка |
-| Фруктозамин | Нормальный (170-340 мкмоль/л, ISFM 2023) | Повышенный (>400 мкмоль/л) |
+| Фруктозамин | Норма/хороший контроль (170-450 мкмоль/л) | Повышенный (>450 мкмоль/л) |
 | Домашние замеры | Стабильные, в пределах нормы | Тоже высокие |
 | Поведение дома | Нормальное | Жажда, частое мочеиспускание |
 
@@ -77,7 +77,7 @@ Stress triggers the release of cortisol and adrenaline. These hormones:
 | Sign | Stress Hyperglycemia | Poor Control |
 |------|---------------------|--------------|
 | Where measured | Vet clinic | At home, calm environment |
-| Fructosamine | Normal (170-340 µmol/L, ISFM 2023) | Elevated (>400 µmol/L) |
+| Fructosamine | Normal/good control (170-450 µmol/L) | Elevated (>450 µmol/L) |
 | Home readings | Stable, within range | Also high |
 | Behavior at home | Normal | Excessive thirst, frequent urination |
 
@@ -115,6 +115,7 @@ If home readings are also consistently high (>12-13 mmol/L on home curves, per I
   category: 'medical',
   readingTimeMinutes: 5,
   order: 10,
+  species: 'cat',
   relatedArticleIds: ['glucose_monitoring', 'flexible-monitoring', 'fructosamine'],
   references: [
     {

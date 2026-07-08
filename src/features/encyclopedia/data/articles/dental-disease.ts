@@ -125,10 +125,17 @@ Many owners fear anesthesia — and understandably so. But modern vets have prot
   category: 'medical',
   readingTimeMinutes: 6,
   order: 13,
+  species: 'cat',
   relatedArticleIds: ['what-is-diabetes', 'comorbidities', 'diet'],
   references: [
-    { ru: 'AAFP/AAHA Dental Care Guidelines for Dogs and Cats, 2019', en: 'AAFP/AAHA Dental Care Guidelines for Dogs and Cats, 2019' },
-    { ru: 'ISFM Guidelines on Diabetes Mellitus in Cats, 2023', en: 'ISFM Guidelines on Diabetes Mellitus in Cats, 2023' },
+    {
+      ru: 'AAFP/AAHA Dental Care Guidelines for Dogs and Cats, 2019',
+      en: 'AAFP/AAHA Dental Care Guidelines for Dogs and Cats, 2019',
+    },
+    {
+      ru: 'ISFM Guidelines on Diabetes Mellitus in Cats, 2023',
+      en: 'ISFM Guidelines on Diabetes Mellitus in Cats, 2023',
+    },
   ],
   tags: [
     { ru: 'зубы', en: 'dental' },

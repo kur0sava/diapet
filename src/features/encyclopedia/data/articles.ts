@@ -27,6 +27,20 @@ import { dogCataracts } from './articles/dog-cataracts';
 import { dogDiet } from './articles/dog-diet';
 import { dogInsulin } from './articles/dog-insulin';
 import { dogHypoglycemia } from './articles/dog-hypoglycemia';
+import { dogGlucoseMonitoring } from './articles/dog-glucose-monitoring';
+import { dogDka } from './articles/dog-dka';
+import { dogFirstDays } from './articles/dog-first-days';
+import { dogCommonMistakes } from './articles/dog-common-mistakes';
+import { dogFructosamine } from './articles/dog-fructosamine';
+import { dogComorbidities } from './articles/dog-comorbidities';
+import { dogPancreatitis } from './articles/dog-pancreatitis';
+import { dogGlucoseCurves } from './articles/dog-glucose-curves';
+import { dogKetoneTesting } from './articles/dog-ketone-testing';
+import { dogInjectionTechnique } from './articles/dog-injection-technique';
+import { dogSpayDiestrus } from './articles/dog-spay-diestrus';
+import { dogRealLife } from './articles/dog-real-life';
+import { dogChoosingVet } from './articles/dog-choosing-vet';
+import { dogCostPlanning } from './articles/dog-cost-planning';
 
 export const articles: Article[] = [
   whatIsDiabetes,
@@ -57,4 +71,18 @@ export const articles: Article[] = [
   dogDiet,
   dogInsulin,
   dogHypoglycemia,
+  dogGlucoseMonitoring,
+  dogDka,
+  dogFirstDays,
+  dogCommonMistakes,
+  dogFructosamine,
+  dogComorbidities,
+  dogPancreatitis,
+  dogGlucoseCurves,
+  dogKetoneTesting,
+  dogInjectionTechnique,
+  dogSpayDiestrus,
+  dogRealLife,
+  dogChoosingVet,
+  dogCostPlanning,
 ];

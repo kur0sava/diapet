@@ -233,6 +233,7 @@ You're doing great. Really.`,
   category: 'tips',
   readingTimeMinutes: 8,
   order: 1,
+  species: 'cat',
   relatedArticleIds: [
     'first-days',
     'injection-technique',

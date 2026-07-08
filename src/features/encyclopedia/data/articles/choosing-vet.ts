@@ -139,10 +139,17 @@ Not every vet is equally experienced with diabetes. That's normal — just like 
   category: 'lifestyle',
   readingTimeMinutes: 6,
   order: 16,
+  species: 'cat',
   relatedArticleIds: ['first-days', 'common-mistakes', 'comorbidities'],
   references: [
-    { ru: 'ISFM Guidelines on Diabetes Mellitus in Cats, 2023', en: 'ISFM Guidelines on Diabetes Mellitus in Cats, 2023' },
-    { ru: 'AAHA Diabetes Management Guidelines for Dogs and Cats, 2018', en: 'AAHA Diabetes Management Guidelines for Dogs and Cats, 2018' },
+    {
+      ru: 'ISFM Guidelines on Diabetes Mellitus in Cats, 2023',
+      en: 'ISFM Guidelines on Diabetes Mellitus in Cats, 2023',
+    },
+    {
+      ru: 'AAHA Diabetes Management Guidelines for Dogs and Cats, 2018',
+      en: 'AAHA Diabetes Management Guidelines for Dogs and Cats, 2018',
+    },
   ],
   tags: [
     { ru: 'ветеринар', en: 'vet' },

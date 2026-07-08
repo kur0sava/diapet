@@ -131,6 +131,7 @@ Ketones are an alarm signal. When the body can't use glucose (no insulin), it st
   category: 'medical',
   readingTimeMinutes: 6,
   order: 12,
+  species: 'cat',
   relatedArticleIds: ['dka', 'glucose_monitoring', 'first-days'],
   references: [
     {

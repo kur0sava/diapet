@@ -119,7 +119,7 @@ Diabetes is a long-term expense. But the good news: with proper planning, it's q
 - Store properly: refrigerated, never freeze
 - An opened vial: **strictly follow the manufacturer label — 28 days** (Sanofi SPC for Lantus). Some vets use opened vials longer if refrigerated, but this is off-label practice without evidence: beyond 28 days neither sterility nor potency is guaranteed. If budget is tight — discuss with your vet, don't extend on your own
 - **In Russia:** RinGlar (Geropharm) is a Lantus biosimilar — same active ingredient, ~1,500-2,500 RUB vs 3,000-4,500 RUB for Lantus. Ask your vet
-- **In the USA:** NPH insulin at Walmart (ReliOn brand) costs just $25/vial — the cheapest option
+- **In the USA:** NPH insulin (e.g. Walmart ReliOn, ~$25/vial) is the cheapest option, but NPH is **not first-choice for cats** — shorter duration of action and a lower remission rate (~25% vs 50-90% on glargine). Discuss with your vet before switching purely to save money
 
 **Test strips:**
 - **In Russia:** AlphaTRAK 2 is unavailable. Use **Contour Plus** (good quality) or **Satellite Express** (cheapest strips ~400-600 RUB/50 pcs, but less accurate). Note: human glucometers read 10-15% lower for cats
@@ -157,6 +157,7 @@ Keep a safety fund for:
   category: 'lifestyle',
   readingTimeMinutes: 7,
   order: 15,
+  species: 'cat',
   relatedArticleIds: ['first-days', 'insulin_types', 'diet', 'flexible-monitoring'],
   references: [
     {

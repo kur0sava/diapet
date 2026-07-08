@@ -8,7 +8,7 @@ export const flexibleMonitoring: Article = {
   },
   summaryKey: {
     ru: 'Не каждый может делать кривые глюкозы каждую неделю. Вот как контролировать диабет с минимальным стрессом для вас и кошки.',
-    en: 'Not everyone can do glucose curves every week. Here\'s how to manage diabetes with minimal stress for you and your cat.',
+    en: "Not everyone can do glucose curves every week. Here's how to manage diabetes with minimal stress for you and your cat.",
   },
   contentKey: {
     ru: `## Реалистичный подход к мониторингу
@@ -135,10 +135,17 @@ Surprisingly, careful observation of your cat provides a lot of information:
   category: 'lifestyle',
   readingTimeMinutes: 6,
   order: 2,
+  species: 'cat',
   relatedArticleIds: ['glucose_monitoring', 'fructosamine', 'remission'],
   references: [
-    { ru: 'ISFM Guidelines on Diabetes Mellitus in Cats, 2023', en: 'ISFM Guidelines on Diabetes Mellitus in Cats, 2023' },
-    { ru: 'Cornell Feline Health Center — Feline Diabetes, 2021', en: 'Cornell Feline Health Center — Feline Diabetes, 2021' },
+    {
+      ru: 'ISFM Guidelines on Diabetes Mellitus in Cats, 2023',
+      en: 'ISFM Guidelines on Diabetes Mellitus in Cats, 2023',
+    },
+    {
+      ru: 'Cornell Feline Health Center — Feline Diabetes, 2021',
+      en: 'Cornell Feline Health Center — Feline Diabetes, 2021',
+    },
   ],
   tags: [
     { ru: 'мониторинг', en: 'monitoring' },

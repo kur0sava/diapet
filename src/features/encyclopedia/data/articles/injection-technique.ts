@@ -135,6 +135,7 @@ Every injection you give is an act of love. Before long, you'll be doing it on a
   category: 'treatment',
   readingTimeMinutes: 4,
   order: 2,
+  species: 'cat',
   relatedArticleIds: ['first-days', 'insulin_types', 'common-mistakes', 'real-life-management'],
   references: [
     {

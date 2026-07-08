@@ -687,8 +687,8 @@ export const HINTS: HintContent[] = [
     stage: 'week2',
     category: 'support',
     timeOfDay: 'any',
-    ru: 'Если показатели скачут и ты чувствуешь, что всё делаешь неправильно — это нормальный этап. Диабет у кошек требует терпения, и ты с этим справляешься.',
-    en: "If readings are all over the place and you feel like you're doing everything wrong — that's a normal phase. Feline diabetes takes patience, and you're handling it.",
+    ru: 'Если показатели скачут и ты чувствуешь, что всё делаешь неправильно — это нормальный этап. Диабет требует терпения, и ты с этим справляешься.',
+    en: "If readings are all over the place and you feel like you're doing everything wrong — that's a normal phase. Diabetes takes patience, and you're handling it.",
   },
   {
     id: 'glu_w2_04',
@@ -1394,8 +1394,8 @@ export const HINTS: HintContent[] = [
     stage: 'week3',
     category: 'medical_fact',
     timeOfDay: 'evening',
-    ru: 'Если используешь ProZinc (U-40) — убедись, что у тебя шприцы U-40! Если набрать U-40 инсулин по шкале шприца U-100, питомец получит примерно в 2.5 раза меньше инсулина, чем нужно.',
-    en: 'If you use ProZinc (U-40), make sure you have U-40 syringes. If you draw U-40 insulin using a U-100 syringe scale, your pet will get about 2.5 times less insulin than intended.',
+    ru: 'Если используешь инсулин U-40 (ProZinc, Caninsulin/Vetsulin) — убедись, что у тебя шприцы U-40! Если набрать U-40 инсулин по шкале шприца U-100, питомец получит примерно в 2.5 раза меньше инсулина, чем нужно.',
+    en: 'If you use a U-40 insulin (ProZinc, Caninsulin/Vetsulin), make sure you have U-40 syringes. If you draw U-40 insulin using a U-100 syringe scale, your pet will get about 2.5 times less insulin than intended.',
   },
   {
     id: 'gluc_extra_01',

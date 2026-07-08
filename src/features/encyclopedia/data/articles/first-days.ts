@@ -149,10 +149,17 @@ By the end of the week, you should have a working routine:
   category: 'lifestyle',
   readingTimeMinutes: 7,
   order: 1,
+  species: 'cat',
   relatedArticleIds: ['what-is-diabetes', 'injection-technique', 'hypoglycemia', 'diet'],
   references: [
-    { ru: 'ISFM Guidelines on Diabetes Mellitus in Cats, 2023', en: 'ISFM Guidelines on Diabetes Mellitus in Cats, 2023' },
-    { ru: 'Rand J. — Feline Diabetes Mellitus, Veterinary Clinics, 2012', en: 'Rand J. — Feline Diabetes Mellitus, Veterinary Clinics, 2012' },
+    {
+      ru: 'ISFM Guidelines on Diabetes Mellitus in Cats, 2023',
+      en: 'ISFM Guidelines on Diabetes Mellitus in Cats, 2023',
+    },
+    {
+      ru: 'Rand J. — Feline Diabetes Mellitus, Veterinary Clinics, 2012',
+      en: 'Rand J. — Feline Diabetes Mellitus, Veterinary Clinics, 2012',
+    },
   ],
   tags: [
     { ru: 'первые дни', en: 'first days' },
