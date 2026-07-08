@@ -212,8 +212,15 @@ async function openBatteryOptimizationSettings(): Promise<void> {
  * AppState 'active' transition; a slow Android cold start can fire both
  * within milliseconds. Without this, two concurrent runs interleave their
  * cancel/schedule loops and produce duplicate alarms (audit BUG-H005).
+ *
+ * BUG-H002: a call that arrives while a restore is in flight must NOT be
+ * dropped — EditPet fires one right after changing the schedule, and losing
+ * it would leave the OS alarms on the OLD times until the next foreground.
+ * Instead it sets restoreQueued and the active run loops once more, reading
+ * the fresh DB state. Multiple queued calls coalesce into a single rerun.
  */
 let isRestoring = false;
+let restoreQueued = false;
 
 /**
  * Restore injection/feeding notifications on app startup.
@@ -230,90 +237,100 @@ let isRestoring = false;
  * a time.
  */
 export async function restoreScheduleNotifications(): Promise<void> {
-  if (isRestoring) return;
+  if (isRestoring) {
+    restoreQueued = true;
+    return;
+  }
   isRestoring = true;
   try {
-    const { storage, StorageKeys } = await import('@storage/mmkv/storage');
-    const { scheduleRepository, petRepository } = await import('@storage/database');
-
-    // Only restore if user explicitly enabled notifications
-    if (storage.getBoolean(StorageKeys.NOTIFICATIONS_ENABLED) !== true) return;
-
-    // Check permissions without prompting
-    const { status } = await Notifications.getPermissionsAsync();
-    if (status !== 'granted') return;
-
-    const pets = await petRepository.findActive();
-    if (pets.length === 0) return;
-
-    // Ensure Android channels exist (may be missing after app update or data clear)
-    if (Platform.OS === 'android') {
-      await Notifications.setNotificationChannelAsync('injections', {
-        name: 'Инъекции / Injections',
-        importance: Notifications.AndroidImportance.MAX,
-        vibrationPattern: [0, 250, 250, 250],
-        lightColor: '#4F8EF7',
-      });
-      await Notifications.setNotificationChannelAsync('feedings', {
-        name: 'Кормление / Feedings',
-        importance: Notifications.AndroidImportance.HIGH,
-        vibrationPattern: [0, 250, 250, 250],
-        lightColor: '#34C759',
-      });
-    }
-
-    // Cancel existing schedule notifications (keep hint pushes)
-    const scheduled = await Notifications.getAllScheduledNotificationsAsync();
-    for (const n of scheduled) {
-      const type = (n.content.data as { type?: string })?.type;
-      if (type === 'injection' || type === 'feeding') {
-        await Notifications.cancelScheduledNotificationAsync(n.identifier);
-      }
-    }
-
-    // Re-schedule from DB for every pet
-    for (const pet of pets) {
-      const injectionTimes = await scheduleRepository.getInjectionTimes(pet.id);
-      for (const s of injectionTimes) {
-        const [hours, minutes] = s.timeOfDay.split(':').map(Number);
-        if (isNaN(hours) || isNaN(minutes)) continue;
-        await Notifications.scheduleNotificationAsync({
-          content: {
-            title: i18n.t('notifications.injectionTitle', { petName: pet.name }),
-            body: i18n.t('notifications.injectionBody'),
-            sound: true,
-            data: { type: 'injection', petId: pet.id },
-          },
-          trigger: {
-            type: Notifications.SchedulableTriggerInputTypes.DAILY,
-            hour: hours,
-            minute: minutes,
-            channelId: 'injections',
-          },
-        });
-      }
-
-      const feedingTimes = await scheduleRepository.getFeedingTimes(pet.id);
-      for (const s of feedingTimes) {
-        const [hours, minutes] = s.timeOfDay.split(':').map(Number);
-        if (isNaN(hours) || isNaN(minutes)) continue;
-        await Notifications.scheduleNotificationAsync({
-          content: {
-            title: i18n.t('notifications.feedingTitle', { petName: pet.name }),
-            body: i18n.t('notifications.feedingBody'),
-            sound: true,
-            data: { type: 'feeding', petId: pet.id },
-          },
-          trigger: {
-            type: Notifications.SchedulableTriggerInputTypes.DAILY,
-            hour: hours,
-            minute: minutes,
-            channelId: 'feedings',
-          },
-        });
-      }
-    }
+    do {
+      restoreQueued = false;
+      await doRestoreScheduleNotifications();
+    } while (restoreQueued);
   } finally {
     isRestoring = false;
+  }
+}
+
+async function doRestoreScheduleNotifications(): Promise<void> {
+  const { storage, StorageKeys } = await import('@storage/mmkv/storage');
+  const { scheduleRepository, petRepository } = await import('@storage/database');
+
+  // Only restore if user explicitly enabled notifications
+  if (storage.getBoolean(StorageKeys.NOTIFICATIONS_ENABLED) !== true) return;
+
+  // Check permissions without prompting
+  const { status } = await Notifications.getPermissionsAsync();
+  if (status !== 'granted') return;
+
+  const pets = await petRepository.findActive();
+  if (pets.length === 0) return;
+
+  // Ensure Android channels exist (may be missing after app update or data clear)
+  if (Platform.OS === 'android') {
+    await Notifications.setNotificationChannelAsync('injections', {
+      name: 'Инъекции / Injections',
+      importance: Notifications.AndroidImportance.MAX,
+      vibrationPattern: [0, 250, 250, 250],
+      lightColor: '#4F8EF7',
+    });
+    await Notifications.setNotificationChannelAsync('feedings', {
+      name: 'Кормление / Feedings',
+      importance: Notifications.AndroidImportance.HIGH,
+      vibrationPattern: [0, 250, 250, 250],
+      lightColor: '#34C759',
+    });
+  }
+
+  // Cancel existing schedule notifications (keep hint pushes)
+  const scheduled = await Notifications.getAllScheduledNotificationsAsync();
+  for (const n of scheduled) {
+    const type = (n.content.data as { type?: string })?.type;
+    if (type === 'injection' || type === 'feeding') {
+      await Notifications.cancelScheduledNotificationAsync(n.identifier);
+    }
+  }
+
+  // Re-schedule from DB for every pet
+  for (const pet of pets) {
+    const injectionTimes = await scheduleRepository.getInjectionTimes(pet.id);
+    for (const s of injectionTimes) {
+      const [hours, minutes] = s.timeOfDay.split(':').map(Number);
+      if (isNaN(hours) || isNaN(minutes)) continue;
+      await Notifications.scheduleNotificationAsync({
+        content: {
+          title: i18n.t('notifications.injectionTitle', { petName: pet.name }),
+          body: i18n.t('notifications.injectionBody'),
+          sound: true,
+          data: { type: 'injection', petId: pet.id },
+        },
+        trigger: {
+          type: Notifications.SchedulableTriggerInputTypes.DAILY,
+          hour: hours,
+          minute: minutes,
+          channelId: 'injections',
+        },
+      });
+    }
+
+    const feedingTimes = await scheduleRepository.getFeedingTimes(pet.id);
+    for (const s of feedingTimes) {
+      const [hours, minutes] = s.timeOfDay.split(':').map(Number);
+      if (isNaN(hours) || isNaN(minutes)) continue;
+      await Notifications.scheduleNotificationAsync({
+        content: {
+          title: i18n.t('notifications.feedingTitle', { petName: pet.name }),
+          body: i18n.t('notifications.feedingBody'),
+          sound: true,
+          data: { type: 'feeding', petId: pet.id },
+        },
+        trigger: {
+          type: Notifications.SchedulableTriggerInputTypes.DAILY,
+          hour: hours,
+          minute: minutes,
+          channelId: 'feedings',
+        },
+      });
+    }
   }
 }
