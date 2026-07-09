@@ -147,6 +147,31 @@ describe('food catalog', () => {
       const otc = getCatalogOtcFoods('RU', 'dog');
       expect(otc.every(f => f.category !== 'prescription' && f.regions.includes('RU'))).toBe(true);
     });
+
+    it("RU catalog excludes Hill's and Farmina (unavailable since 2023-24 sanctions)", () => {
+      const ruCat = [
+        ...getCatalogPrescriptionFoods('RU', 'cat'),
+        ...getCatalogOtcFoods('RU', 'cat'),
+      ];
+      const ruDog = [
+        ...getCatalogPrescriptionFoods('RU', 'dog'),
+        ...getCatalogOtcFoods('RU', 'dog'),
+      ];
+      expect(ruCat.some(f => f.brand === "Hill's")).toBe(false);
+      expect(ruCat.some(f => f.brand === 'Farmina')).toBe(false);
+      expect(ruDog.some(f => f.brand === "Hill's")).toBe(false);
+      expect(ruDog.some(f => f.brand === 'Farmina')).toBe(false);
+      // But Royal Canin + Purina (locally produced) stay available
+      expect(ruCat.some(f => f.brand === 'Royal Canin')).toBe(true);
+      expect(ruCat.some(f => f.brand === 'Purina Pro Plan')).toBe(true);
+    });
+
+    it('DE users see EU-market prescription foods (DE→EU visibility)', () => {
+      const de = getCatalogPrescriptionFoods('DE', 'cat');
+      // Royal Canin Diabetic is tagged EU, not DE — must still surface for DE
+      expect(de.some(f => f.brand === 'Royal Canin')).toBe(true);
+      expect(de.some(f => f.brand === "Hill's")).toBe(true);
+    });
   });
 
   describe('refresh', () => {

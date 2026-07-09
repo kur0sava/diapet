@@ -31,7 +31,7 @@ export const MANIFEST_SCHEMA_VERSION = 1;
 /** When the bundled data was last curated. A cached/remote manifest is only
  * accepted if it is strictly newer — an app update with fresher bundled data
  * must not be shadowed by a stale download. Update alongside data edits. */
-export const BUNDLED_GENERATED_AT = '2026-07-09T00:00:00.000Z';
+export const BUNDLED_GENERATED_AT = '2026-07-09T18:00:00.000Z';
 
 /** Re-fetch at most once a day; pull-to-refresh bypasses via force. */
 const REFRESH_THROTTLE_MS = 24 * 60 * 60 * 1000;
@@ -170,6 +170,20 @@ export function __resetFoodCatalogForTests(): void {
 
 type FoodSpecies = 'cat' | 'dog';
 
+/**
+ * Whether a food is available in the given region. Germany (DE) is split out
+ * as its own region for local stores/brands, but it is also part of the EU
+ * market — so a DE user must also see EU-tagged foods (Royal Canin Diabetic,
+ * Purina DM, etc. are tagged EU, not DE). Without this, German diabetic-pet
+ * owners saw only the handful of DE-tagged foods and missed every mainstream
+ * prescription diet.
+ */
+function foodInRegion(food: DiabeticCatFood, region: Region): boolean {
+  if (food.regions.includes(region)) return true;
+  if (region === 'DE' && food.regions.includes('EU')) return true;
+  return false;
+}
+
 export function getCatalogFoods(species: FoodSpecies): DiabeticCatFood[] {
   const state = getFoodCatalog();
   return species === 'dog' ? state.dog : state.cat;
@@ -180,7 +194,7 @@ export function getCatalogPrescriptionFoods(
   species: FoodSpecies = 'cat'
 ): DiabeticCatFood[] {
   const foods = getCatalogFoods(species).filter(f => f.category === 'prescription');
-  return region ? foods.filter(f => f.regions.includes(region)) : foods;
+  return region ? foods.filter(f => foodInRegion(f, region)) : foods;
 }
 
 /** Everything that is not first-line Rx: veterinary weight-management +
@@ -190,7 +204,7 @@ export function getCatalogOtcFoods(
   species: FoodSpecies = 'cat'
 ): DiabeticCatFood[] {
   const foods = getCatalogFoods(species).filter(f => f.category !== 'prescription');
-  return region ? foods.filter(f => f.regions.includes(region)) : foods;
+  return region ? foods.filter(f => foodInRegion(f, region)) : foods;
 }
 
 // ────────────────────────────────────────────────────

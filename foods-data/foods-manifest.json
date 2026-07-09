@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-07-09T00:00:00.000Z",
+  "generatedAt": "2026-07-09T18:00:00.000Z",
   "foods": {
     "cat": [
       {
@@ -100,18 +100,11 @@
         "fatDM": 23,
         "carbsDM": 15,
         "regions": [
-          "RU",
           "EU",
           "UK",
-          "US",
-          "GLOBAL"
+          "US"
         ],
         "whereToBuy": {
-          "RU": [
-            "4lapy.ru",
-            "ZooMag",
-            "vet clinics"
-          ],
           "EU": [
             "zooplus.de",
             "vet clinics"
@@ -124,13 +117,10 @@
             "chewy.com",
             "petco.com",
             "petsmart.com"
-          ],
-          "GLOBAL": [],
-          "DE": []
+          ]
         },
-        "priceHint": "RU: 1500-2500₽/1.5кг",
         "prescriptionRequired": true,
-        "notes": "Высокобелковый, низкоуглеводный. Один из лучших по составу для диабета. Наличие в РФ может варьироваться."
+        "notes": "Высокобелковый, низкоуглеводный. Один из лучших по составу для диабета. ⚠️ В РФ недоступен с 2023-24 (поставки Hill's приостановлены). Российская альтернатива: Purina DM или Royal Canin Diabetic."
       },
       {
         "id": "hills-wd-dry",
@@ -144,17 +134,11 @@
         "carbsDM": 34,
         "fiberDM": 8,
         "regions": [
-          "RU",
           "EU",
           "UK",
-          "US",
-          "GLOBAL"
+          "US"
         ],
         "whereToBuy": {
-          "RU": [
-            "4lapy.ru",
-            "ZooMag"
-          ],
           "EU": [
             "zooplus.de"
           ],
@@ -163,13 +147,11 @@
           ],
           "US": [
             "chewy.com"
-          ],
-          "GLOBAL": [],
-          "DE": []
+          ]
         },
         "prescriptionRequired": true,
         "species": "cat",
-        "notes": "⚠️ Углеводы 34% DM — существенно выше порога для кошачьего диабета (<15% DM). НЕ рекомендуется как первая линия при сахарном диабете у кошек. Может назначаться ветеринаром при коморбидных ожирении + мягкой гипергликемии, когда контроль веса приоритетнее. Для диабета предпочтительны Purina DM, Hill's m/d, Royal Canin Diabetic или Farmina Diabetic."
+        "notes": "⚠️ Углеводы 34% DM — существенно выше порога для кошачьего диабета (<15% DM). НЕ рекомендуется как первая линия при сахарном диабете у кошек. Может назначаться ветеринаром при коморбидных ожирении + мягкой гипергликемии, когда контроль веса приоритетнее. Для диабета предпочтительны Purina DM, Royal Canin Diabetic или Farmina Diabetic."
       },
       {
         "id": "purina-dm-dry",
@@ -264,32 +246,20 @@
         "carbsDM": 11,
         "fiberDM": 5,
         "regions": [
-          "RU",
           "EU",
-          "UK",
-          "GLOBAL"
+          "UK"
         ],
         "whereToBuy": {
-          "RU": [
-            "4lapy.ru",
-            "Ozon",
-            "holistic-shop.ru",
-            "petdog.ru"
-          ],
           "EU": [
             "zooplus.de",
             "farmina.com"
           ],
           "UK": [
             "farmina.com"
-          ],
-          "US": [],
-          "GLOBAL": [],
-          "DE": []
+          ]
         },
-        "priceHint": "RU: 700-1000₽/400г, 2000-3000₽/2кг",
         "prescriptionRequired": true,
-        "notes": "Источник углеводов — овёс и полба (низкий ГИ). Один из лучших по углеводам (11% DM). Итальянское производство."
+        "notes": "Источник углеводов — овёс и полба (низкий ГИ). Один из лучших по углеводам (11% DM). Итальянское производство. ⚠️ В РФ сухие корма Farmina под запретом ввоза с 2024 — недоступны."
       },
       {
         "id": "farmina-diabetic-wet",
@@ -302,32 +272,20 @@
         "fatDM": 20,
         "carbsDM": 10,
         "regions": [
-          "RU",
           "EU",
-          "UK",
-          "GLOBAL"
+          "UK"
         ],
         "whereToBuy": {
-          "RU": [
-            "4lapy.ru",
-            "КотМатрос",
-            "markvet.ru",
-            "zoonemo.net"
-          ],
           "EU": [
             "zooplus.de",
             "farmina.com"
           ],
           "UK": [
             "farmina.com"
-          ],
-          "US": [],
-          "GLOBAL": [],
-          "DE": []
+          ]
         },
-        "priceHint": "RU: 150-220₽/банка 85г",
         "prescriptionRequired": true,
-        "notes": "Углеводы из семян киноа. Курица + рыба. Хороший вариант для влажного кормления."
+        "notes": "Углеводы из семян киноа. Курица + рыба. Хороший вариант для влажного кормления. ⚠️ Ввоз в РФ ограничен."
       },
       {
         "id": "craftia-diabetic-dry",
@@ -904,19 +862,11 @@
         "fiberDM": 17,
         "kcalPerKg": 3010,
         "regions": [
-          "RU",
           "EU",
           "UK",
-          "US",
-          "GLOBAL"
+          "US"
         ],
         "whereToBuy": {
-          "RU": [
-            "4lapy.ru",
-            "ZooMag",
-            "markvet.ru",
-            "vet clinics"
-          ],
           "EU": [
             "zooplus.de",
             "vet clinics"
@@ -928,14 +878,11 @@
           "US": [
             "chewy.com",
             "petco.com"
-          ],
-          "GLOBAL": [],
-          "DE": []
+          ]
         },
-        "priceHint": "RU: 2500-3800₽/4кг, 5000-7500₽/12кг",
         "prescriptionRequired": true,
         "species": "dog",
-        "notes": "Высокое содержание клетчатки (17% DM) — замедляет всплеск глюкозы после еды. Низкий жир (10% DM) = низкий риск панкреатита. AAHA 2018 — терапия первой линии."
+        "notes": "Высокое содержание клетчатки (17% DM) — замедляет всплеск глюкозы после еды. Низкий жир (10% DM) = низкий риск панкреатита. AAHA 2018 — терапия первой линии. ⚠️ В РФ недоступен с 2023-24 — альтернатива Royal Canin Diabetic."
       },
       {
         "id": "hills-wd-canine-wet",
@@ -949,16 +896,11 @@
         "carbsDM": 48,
         "fiberDM": 14,
         "regions": [
-          "RU",
           "EU",
           "UK",
           "US"
         ],
         "whereToBuy": {
-          "RU": [
-            "4lapy.ru",
-            "markvet.ru"
-          ],
           "EU": [
             "zooplus.de"
           ],
@@ -967,14 +909,11 @@
           ],
           "US": [
             "chewy.com"
-          ],
-          "GLOBAL": [],
-          "DE": []
+          ]
         },
-        "priceHint": "RU: 250-350₽/банка 370г",
         "prescriptionRequired": true,
         "species": "dog",
-        "notes": "Влажная версия w/d. Удобна при плохом аппетите или для увеличения потребления воды у собак с сопутствующими заболеваниями."
+        "notes": "Влажная версия w/d. Удобна при плохом аппетите или для увеличения потребления воды у собак с сопутствующими заболеваниями. ⚠️ В РФ недоступен с 2023-24."
       },
       {
         "id": "purina-dco-dry",
@@ -1028,33 +967,21 @@
         "fiberDM": 4,
         "kcalPerKg": 3390,
         "regions": [
-          "RU",
           "EU",
-          "UK",
-          "GLOBAL"
+          "UK"
         ],
         "whereToBuy": {
-          "RU": [
-            "4lapy.ru",
-            "Ozon",
-            "holistic-shop.ru",
-            "petdog.ru"
-          ],
           "EU": [
             "zooplus.de",
             "farmina.com"
           ],
           "UK": [
             "farmina.com"
-          ],
-          "US": [],
-          "GLOBAL": [],
-          "DE": []
+          ]
         },
-        "priceHint": "RU: 1500-2200₽/2кг, 4500-6500₽/12кг",
         "prescriptionRequired": true,
         "species": "dog",
-        "notes": "Источник углеводов — горох + овёс (низкий ГИ). Выше белок (32% DM) и ниже клетчатка (4%) чем Hill's/RC — подходит собакам с чувствительным ЖКТ, но менее выражен fiber-эффект."
+        "notes": "Источник углеводов — горох + овёс (низкий ГИ). Выше белок (32% DM) и ниже клетчатка (4%) чем Hill's/RC — подходит собакам с чувствительным ЖКТ, но менее выражен fiber-эффект. ⚠️ В РФ сухие Farmina под запретом ввоза с 2024."
       },
       {
         "id": "virbac-hpm-weight-diabetes",
@@ -1170,16 +1097,11 @@
         "carbsDM": 46,
         "fiberDM": 13,
         "regions": [
-          "RU",
           "EU",
           "UK",
           "US"
         ],
         "whereToBuy": {
-          "RU": [
-            "4lapy.ru",
-            "Ozon"
-          ],
           "EU": [
             "zooplus.de"
           ],
@@ -1190,10 +1112,9 @@
             "chewy.com"
           ]
         },
-        "priceHint": "RU: 1800-2800₽/2кг",
         "prescriptionRequired": false,
         "species": "dog",
-        "notes": "OTC без рецепта. Профиль ближе к диабетическим Rx, чем стандартный adult-корм. При лёгкой гипергликемии + ожирении — приемлемая опция при согласовании с врачом."
+        "notes": "OTC без рецепта. Профиль ближе к диабетическим Rx, чем стандартный adult-корм. При лёгкой гипергликемии + ожирении — приемлемая опция при согласовании с врачом. ⚠️ В РФ недоступен с 2023-24."
       },
       {
         "id": "purina-pro-plan-overweight",

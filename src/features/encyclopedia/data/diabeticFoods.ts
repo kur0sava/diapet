@@ -211,19 +211,17 @@ export const PRESCRIPTION_FOODS: DiabeticCatFood[] = [
     proteinDM: 51,
     fatDM: 23,
     carbsDM: 15,
-    regions: ['RU', 'EU', 'UK', 'US', 'GLOBAL'],
+    // Not available in RU since 2023-24: Rosselkhoznadzor suspended Hill's
+    // Netherlands factory (Aug 2023) and paused the Italian one (Feb 2024).
+    regions: ['EU', 'UK', 'US'],
     whereToBuy: {
-      RU: ['4lapy.ru', 'ZooMag', 'vet clinics'],
       EU: ['zooplus.de', 'vet clinics'],
       UK: ['petsathome.com', 'viovet.co.uk'],
       US: ['chewy.com', 'petco.com', 'petsmart.com'],
-      GLOBAL: [],
-      DE: [],
     },
-    priceHint: 'RU: 1500-2500₽/1.5кг',
     prescriptionRequired: true,
     notes:
-      'Высокобелковый, низкоуглеводный. Один из лучших по составу для диабета. Наличие в РФ может варьироваться.',
+      "Высокобелковый, низкоуглеводный. Один из лучших по составу для диабета. ⚠️ В РФ недоступен с 2023-24 (поставки Hill's приостановлены). Российская альтернатива: Purina DM или Royal Canin Diabetic.",
   },
   // Hill's w/d Feline reclassified from 'prescription' (diabetic) to 'veterinary':
   // at 34% DM carbs it does not meet the feline diabetic diet criterion
@@ -241,19 +239,17 @@ export const PRESCRIPTION_FOODS: DiabeticCatFood[] = [
     fatDM: 10,
     carbsDM: 34,
     fiberDM: 8,
-    regions: ['RU', 'EU', 'UK', 'US', 'GLOBAL'],
+    // Hill's unavailable in RU since 2023-24 (see hills-md-dry).
+    regions: ['EU', 'UK', 'US'],
     whereToBuy: {
-      RU: ['4lapy.ru', 'ZooMag'],
       EU: ['zooplus.de'],
       UK: ['petsathome.com'],
       US: ['chewy.com'],
-      GLOBAL: [],
-      DE: [],
     },
     prescriptionRequired: true,
     species: 'cat',
     notes:
-      "⚠️ Углеводы 34% DM — существенно выше порога для кошачьего диабета (<15% DM). НЕ рекомендуется как первая линия при сахарном диабете у кошек. Может назначаться ветеринаром при коморбидных ожирении + мягкой гипергликемии, когда контроль веса приоритетнее. Для диабета предпочтительны Purina DM, Hill's m/d, Royal Canin Diabetic или Farmina Diabetic.",
+      '⚠️ Углеводы 34% DM — существенно выше порога для кошачьего диабета (<15% DM). НЕ рекомендуется как первая линия при сахарном диабете у кошек. Может назначаться ветеринаром при коморбидных ожирении + мягкой гипергликемии, когда контроль веса приоритетнее. Для диабета предпочтительны Purina DM, Royal Canin Diabetic или Farmina Diabetic.',
   },
 
   // ── Purina ──
@@ -317,19 +313,16 @@ export const PRESCRIPTION_FOODS: DiabeticCatFood[] = [
     fatDM: 13,
     carbsDM: 11,
     fiberDM: 5,
-    regions: ['RU', 'EU', 'UK', 'GLOBAL'],
+    // Farmina dry banned in RU (Rosselkhoznadzor, 2024) + Italian import
+    // restricted. Available in EU/UK.
+    regions: ['EU', 'UK'],
     whereToBuy: {
-      RU: ['4lapy.ru', 'Ozon', 'holistic-shop.ru', 'petdog.ru'],
       EU: ['zooplus.de', 'farmina.com'],
       UK: ['farmina.com'],
-      US: [],
-      GLOBAL: [],
-      DE: [],
     },
-    priceHint: 'RU: 700-1000₽/400г, 2000-3000₽/2кг',
     prescriptionRequired: true,
     notes:
-      'Источник углеводов — овёс и полба (низкий ГИ). Один из лучших по углеводам (11% DM). Итальянское производство.',
+      'Источник углеводов — овёс и полба (низкий ГИ). Один из лучших по углеводам (11% DM). Итальянское производство. ⚠️ В РФ сухие корма Farmina под запретом ввоза с 2024 — недоступны.',
   },
   {
     id: 'farmina-diabetic-wet',
@@ -341,18 +334,15 @@ export const PRESCRIPTION_FOODS: DiabeticCatFood[] = [
     proteinDM: 53,
     fatDM: 20,
     carbsDM: 10,
-    regions: ['RU', 'EU', 'UK', 'GLOBAL'],
+    // Italian import restricted to RU; available in EU/UK.
+    regions: ['EU', 'UK'],
     whereToBuy: {
-      RU: ['4lapy.ru', 'КотМатрос', 'markvet.ru', 'zoonemo.net'],
       EU: ['zooplus.de', 'farmina.com'],
       UK: ['farmina.com'],
-      US: [],
-      GLOBAL: [],
-      DE: [],
     },
-    priceHint: 'RU: 150-220₽/банка 85г',
     prescriptionRequired: true,
-    notes: 'Углеводы из семян киноа. Курица + рыба. Хороший вариант для влажного кормления.',
+    notes:
+      'Углеводы из семян киноа. Курица + рыба. Хороший вариант для влажного кормления. ⚠️ Ввоз в РФ ограничен.',
   },
 
   // ── Craftia (Россия) ──
@@ -790,20 +780,17 @@ export const PRESCRIPTION_DOG_FOODS: DiabeticCatFood[] = [
     carbsDM: 50,
     fiberDM: 17,
     kcalPerKg: 3010,
-    regions: ['RU', 'EU', 'UK', 'US', 'GLOBAL'],
+    // Hill's unavailable in RU since 2023-24 (factory suspensions).
+    regions: ['EU', 'UK', 'US'],
     whereToBuy: {
-      RU: ['4lapy.ru', 'ZooMag', 'markvet.ru', 'vet clinics'],
       EU: ['zooplus.de', 'vet clinics'],
       UK: ['petsathome.com', 'viovet.co.uk'],
       US: ['chewy.com', 'petco.com'],
-      GLOBAL: [],
-      DE: [],
     },
-    priceHint: 'RU: 2500-3800₽/4кг, 5000-7500₽/12кг',
     prescriptionRequired: true,
     species: 'dog',
     notes:
-      'Высокое содержание клетчатки (17% DM) — замедляет всплеск глюкозы после еды. Низкий жир (10% DM) = низкий риск панкреатита. AAHA 2018 — терапия первой линии.',
+      'Высокое содержание клетчатки (17% DM) — замедляет всплеск глюкозы после еды. Низкий жир (10% DM) = низкий риск панкреатита. AAHA 2018 — терапия первой линии. ⚠️ В РФ недоступен с 2023-24 — альтернатива Royal Canin Diabetic.',
   },
   {
     id: 'hills-wd-canine-wet',
@@ -816,20 +803,16 @@ export const PRESCRIPTION_DOG_FOODS: DiabeticCatFood[] = [
     fatDM: 11,
     carbsDM: 48,
     fiberDM: 14,
-    regions: ['RU', 'EU', 'UK', 'US'],
+    regions: ['EU', 'UK', 'US'],
     whereToBuy: {
-      RU: ['4lapy.ru', 'markvet.ru'],
       EU: ['zooplus.de'],
       UK: ['petsathome.com'],
       US: ['chewy.com'],
-      GLOBAL: [],
-      DE: [],
     },
-    priceHint: 'RU: 250-350₽/банка 370г',
     prescriptionRequired: true,
     species: 'dog',
     notes:
-      'Влажная версия w/d. Удобна при плохом аппетите или для увеличения потребления воды у собак с сопутствующими заболеваниями.',
+      'Влажная версия w/d. Удобна при плохом аппетите или для увеличения потребления воды у собак с сопутствующими заболеваниями. ⚠️ В РФ недоступен с 2023-24.',
   },
 
   // ── Purina ──
@@ -873,20 +856,16 @@ export const PRESCRIPTION_DOG_FOODS: DiabeticCatFood[] = [
     carbsDM: 42,
     fiberDM: 4,
     kcalPerKg: 3390,
-    regions: ['RU', 'EU', 'UK', 'GLOBAL'],
+    // Farmina dry banned in RU (2024) + Italian import restricted.
+    regions: ['EU', 'UK'],
     whereToBuy: {
-      RU: ['4lapy.ru', 'Ozon', 'holistic-shop.ru', 'petdog.ru'],
       EU: ['zooplus.de', 'farmina.com'],
       UK: ['farmina.com'],
-      US: [],
-      GLOBAL: [],
-      DE: [],
     },
-    priceHint: 'RU: 1500-2200₽/2кг, 4500-6500₽/12кг',
     prescriptionRequired: true,
     species: 'dog',
     notes:
-      "Источник углеводов — горох + овёс (низкий ГИ). Выше белок (32% DM) и ниже клетчатка (4%) чем Hill's/RC — подходит собакам с чувствительным ЖКТ, но менее выражен fiber-эффект.",
+      "Источник углеводов — горох + овёс (низкий ГИ). Выше белок (32% DM) и ниже клетчатка (4%) чем Hill's/RC — подходит собакам с чувствительным ЖКТ, но менее выражен fiber-эффект. ⚠️ В РФ сухие Farmina под запретом ввоза с 2024.",
   },
 
   // ── Virbac ──
@@ -982,18 +961,17 @@ export const OTC_DOG_FOODS: DiabeticCatFood[] = [
     fatDM: 10,
     carbsDM: 46,
     fiberDM: 13,
-    regions: ['RU', 'EU', 'UK', 'US'],
+    // Hill's (incl. retail Science Plan) unavailable in RU since 2023-24.
+    regions: ['EU', 'UK', 'US'],
     whereToBuy: {
-      RU: ['4lapy.ru', 'Ozon'],
       EU: ['zooplus.de'],
       UK: ['petsathome.com'],
       US: ['chewy.com'],
     },
-    priceHint: 'RU: 1800-2800₽/2кг',
     prescriptionRequired: false,
     species: 'dog',
     notes:
-      'OTC без рецепта. Профиль ближе к диабетическим Rx, чем стандартный adult-корм. При лёгкой гипергликемии + ожирении — приемлемая опция при согласовании с врачом.',
+      'OTC без рецепта. Профиль ближе к диабетическим Rx, чем стандартный adult-корм. При лёгкой гипергликемии + ожирении — приемлемая опция при согласовании с врачом. ⚠️ В РФ недоступен с 2023-24.',
   },
   {
     id: 'purina-pro-plan-overweight',
