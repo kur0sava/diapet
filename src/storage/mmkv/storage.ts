@@ -148,6 +148,9 @@ export const StorageKeys = {
   ANALYTICS_OPT_OUT: 'analyticsOptOut',
   BATTERY_OPT_PROMPTED: 'batteryOptPrompted',
   EXACT_ALARM_PROMPTED: 'exactAlarmPrompted',
+  /** User's geographic region (see @shared/config/regionConfig). Detected
+   * from device locale on first launch, changeable in Settings. */
+  REGION: 'appRegion',
 } as const;
 
 /** Per-pet vet contact key. See {@link StorageKeys.VET_NAME} for legacy migration. */

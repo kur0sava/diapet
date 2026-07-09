@@ -586,6 +586,9 @@ export const ru = {
     appearance: 'ОФОРМЛЕНИЕ',
     languageSection: 'ЯЗЫК',
     glucoseUnitsSection: 'ЕДИНИЦЫ ГЛЮКОЗЫ',
+    regionSection: 'РЕГИОН',
+    regionDescription:
+      'Влияет на каталог кормов, магазины и региональные рекомендации по препаратам. Определяется автоматически, можно изменить.',
     hintsSection: 'ПОДСКАЗКИ',
     showHints: 'Показывать подсказки',
     hintsDescription: 'Всплывающие подсказки помогают в первые 30 дней использования приложения',
@@ -753,6 +756,7 @@ export const ru = {
       MX: 'Мексика',
       GLOBAL: 'Глобально',
     },
+    yourRegion: 'Ваш',
   },
 
   feedCalculator: {

@@ -10,6 +10,7 @@ module.exports = {
     '^react-native-mmkv$': '<rootDir>/src/test/mocks/mmkvMock.ts',
     '^expo-secure-store$': '<rootDir>/src/test/mocks/secureStoreMock.ts',
     '^expo-crypto$': '<rootDir>/src/test/mocks/expoCryptoMock.ts',
+    '^expo-localization$': '<rootDir>/src/test/mocks/expoLocalizationMock.ts',
     '^@core/(.*)$': '<rootDir>/src/core/$1',
     '^@features/(.*)$': '<rootDir>/src/features/$1',
     '^@shared/(.*)$': '<rootDir>/src/shared/$1',

@@ -40,6 +40,7 @@ const BACKUP_MMKV_KEYS = [
   StorageKeys.EXPENSE_BUDGET_MONTHLY,
   StorageKeys.NOTIFICATIONS_ENABLED,
   StorageKeys.HINTS_DISABLED,
+  StorageKeys.REGION,
 ] as const;
 
 /** Prefixes for dynamic per-pet keys included in backup. Must match {@link vetNameKey} / {@link vetPhoneKey}. */

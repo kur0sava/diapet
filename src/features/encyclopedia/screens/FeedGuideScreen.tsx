@@ -11,6 +11,7 @@ import {
   type Region,
 } from '../data/diabeticFoods';
 import { usePetStore } from '@shared/stores/petStore';
+import { getAppRegion } from '@shared/config/regionConfig';
 
 const REGIONS: { key: Region; emoji: string }[] = [
   { key: 'RU', emoji: '🇷🇺' },
@@ -36,6 +37,13 @@ export default function FeedGuideScreen() {
   // Natural feeding guide is cat-only (taurine, protein ratios). Hide for dogs
   // to avoid species-wrong advice; will be re-enabled when dog natural guide lands.
   const showNaturalFood = species !== 'dog';
+  // User's region first in the grid, marked as "yours" — one tap to their
+  // local catalog instead of scanning the list every time.
+  const appRegion = getAppRegion();
+  const orderedRegions = [
+    ...REGIONS.filter(r => r.key === appRegion),
+    ...REGIONS.filter(r => r.key !== appRegion),
+  ];
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.background }]}>
@@ -68,23 +76,34 @@ export default function FeedGuideScreen() {
           {t('feedGuide.whereToBuyDesc')}
         </Text>
         <View style={styles.regionGrid}>
-          {REGIONS.map(({ key, emoji }) => (
-            <TouchableOpacity
-              key={key}
-              style={[
-                styles.regionChip,
-                { backgroundColor: theme.colors.surface, ...theme.shadows.sm },
-              ]}
-              onPress={() => navigation.navigate('FeedGuideRegion', { region: key })}
-              activeOpacity={0.7}
-            >
-              <Text style={styles.regionEmoji}>{emoji}</Text>
-              <Text style={[styles.regionLabel, { color: theme.colors.text }]}>
-                {t(`feedGuide.regions.${key}`)}
-              </Text>
-              <Icon name="chevron-forward" size={16} color={theme.colors.textTertiary} />
-            </TouchableOpacity>
-          ))}
+          {orderedRegions.map(({ key, emoji }) => {
+            const isYours = key === appRegion;
+            return (
+              <TouchableOpacity
+                key={key}
+                style={[
+                  styles.regionChip,
+                  { backgroundColor: theme.colors.surface, ...theme.shadows.sm },
+                  isYours && { borderWidth: 1.5, borderColor: theme.colors.primary },
+                ]}
+                onPress={() => navigation.navigate('FeedGuideRegion', { region: key })}
+                activeOpacity={0.7}
+              >
+                <Text style={styles.regionEmoji}>{emoji}</Text>
+                <Text style={[styles.regionLabel, { color: theme.colors.text }]}>
+                  {t(`feedGuide.regions.${key}`)}
+                </Text>
+                {isYours && (
+                  <View style={[styles.yourBadge, { backgroundColor: theme.colors.primaryLight }]}>
+                    <Text style={[styles.yourBadgeText, { color: theme.colors.primary }]}>
+                      {t('feedGuide.yourRegion')}
+                    </Text>
+                  </View>
+                )}
+                <Icon name="chevron-forward" size={16} color={theme.colors.textTertiary} />
+              </TouchableOpacity>
+            );
+          })}
         </View>
 
         {/* Portion Calculator (tool) */}
@@ -218,6 +237,8 @@ const styles = StyleSheet.create({
   },
   regionEmoji: { fontSize: 20 },
   regionLabel: { flex: 1, fontSize: 14, fontWeight: '600' },
+  yourBadge: { paddingHorizontal: 6, paddingVertical: 2, borderRadius: 6 },
+  yourBadgeText: { fontSize: 10, fontWeight: '700' },
   sectionCard: {
     flexDirection: 'row',
     alignItems: 'center',

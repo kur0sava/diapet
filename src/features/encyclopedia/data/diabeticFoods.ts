@@ -23,16 +23,11 @@
 
 export type FoodType = 'dry' | 'wet' | 'both';
 export type FoodCategory = 'prescription' | 'veterinary' | 'otc_low_carb';
-export type Region =
-  | 'RU' // Россия
-  | 'EU' // Европа (ЕС)
-  | 'UK' // Великобритания
-  | 'US' // США
-  | 'DE' // Германия
-  | 'MX' // Мексика
-  | 'GLOBAL'; // Глобально
-
-export const VALID_REGIONS: readonly Region[] = ['RU', 'EU', 'UK', 'US', 'DE', 'MX', 'GLOBAL'];
+// Region moved to the shared region profile (single source of truth for
+// geo-adaptation); re-exported here so existing importers keep working.
+export type { Region } from '@shared/config/regionConfig';
+export { VALID_REGIONS } from '@shared/config/regionConfig';
+import type { Region } from '@shared/config/regionConfig';
 
 export interface DiabeticCatFood {
   id: string;

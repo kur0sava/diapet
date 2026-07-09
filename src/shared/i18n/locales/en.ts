@@ -586,6 +586,9 @@ export const en = {
     appearance: 'APPEARANCE',
     languageSection: 'LANGUAGE',
     glucoseUnitsSection: 'GLUCOSE UNITS',
+    regionSection: 'REGION',
+    regionDescription:
+      'Affects the food catalog, stores and regional medication guidance. Detected automatically, can be changed.',
     hintsSection: 'HINTS',
     showHints: 'Show hints',
     hintsDescription: 'Pop-up hints help during the first 30 days of using the app',
@@ -753,6 +756,7 @@ export const en = {
       MX: 'Mexico',
       GLOBAL: 'Global',
     },
+    yourRegion: 'Yours',
   },
 
   feedCalculator: {

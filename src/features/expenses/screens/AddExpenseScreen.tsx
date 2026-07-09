@@ -27,6 +27,7 @@ import { ExpenseCategory, EXPENSE_ICON_NAMES, EXPENSE_COLORS } from '../types';
 import { useQueryClient } from '@tanstack/react-query';
 import { queryKeys } from '@shared/utils/queryKeys';
 import { MAX_EXPENSE_AMOUNT } from '@storage/domain/types';
+import { getAppRegion, getRegionDefaults } from '@shared/config/regionConfig';
 import * as Haptics from 'expo-haptics';
 import { useUnsavedChangesGuard } from '@shared/hooks/useUnsavedChangesGuard';
 
@@ -118,11 +119,13 @@ export default function AddExpenseScreen() {
           date: toDateOnly(expenseDate),
         });
       } else {
-        // Currency follows existing records, not the CURRENT language —
+        // Currency follows existing records, not the CURRENT language/region —
         // otherwise switching RU→EN mid-usage would mix RUB and USD rows
-        // that SUM(amount) later adds together as one number.
+        // that SUM(amount) later adds together as one number. The very first
+        // row derives its currency from the region profile (RUB/EUR/GBP/…),
+        // which is more precise than the old language-based guess.
         const existing = await expenseRepository.findByPetId(activePet.id);
-        const currency = existing[0]?.currency ?? (i18n.language === 'ru' ? 'RUB' : 'USD');
+        const currency = existing[0]?.currency ?? getRegionDefaults(getAppRegion()).currency;
         await expenseRepository.create({
           petId: activePet.id,
           category,

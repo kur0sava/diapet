@@ -21,6 +21,7 @@ import { restoreScheduleNotifications } from '@shared/hooks/useNotifications';
 import { usePetStore } from '@shared/stores/petStore';
 import { initStorage, storage, StorageKeys, vetNameKey, vetPhoneKey } from '@storage/mmkv/storage';
 import { runStartupRecovery } from '@core/startupRecovery';
+import { initRegionOnFirstRun } from '@shared/config/regionConfig';
 import i18n, { restoreLanguage } from '@shared/i18n';
 import '@shared/i18n';
 import {
@@ -108,6 +109,10 @@ export default function App() {
   const bootstrap = async () => {
     await initStorage();
     restoreLanguage();
+    // Region profile: detect from device locale on first launch; on a fresh
+    // install also derive default language / glucose unit (never overrides
+    // choices the user already made).
+    initRegionOnFirstRun();
     // Fallback: set hints registration date for existing users who completed onboarding
     // before the hints system was introduced
     if (

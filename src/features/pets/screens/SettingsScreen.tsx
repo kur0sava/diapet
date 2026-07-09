@@ -15,6 +15,22 @@ import { queryKeys } from '@shared/utils/queryKeys';
 import Constants from 'expo-constants';
 import { CommonActions } from '@react-navigation/native';
 import { isAnalyticsEnabled, setAnalyticsOptOut } from '@shared/analytics/analytics';
+import {
+  getAppRegion,
+  setAppRegion,
+  VALID_REGIONS,
+  type Region,
+} from '@shared/config/regionConfig';
+
+const REGION_EMOJI: Record<Region, string> = {
+  RU: '🇷🇺',
+  US: '🇺🇸',
+  EU: '🇪🇺',
+  UK: '🇬🇧',
+  DE: '🇩🇪',
+  MX: '🇲🇽',
+  GLOBAL: '🌍',
+};
 
 export default function SettingsScreen() {
   const navigation = useMoreNavigation();
@@ -34,6 +50,7 @@ export default function SettingsScreen() {
     () => !storage.getBoolean(StorageKeys.HINTS_DISABLED)
   );
   const [analyticsEnabled, setAnalyticsEnabled] = useState(() => isAnalyticsEnabled());
+  const [region, setRegion] = useState<Region>(() => getAppRegion());
 
   const handleDeleteAllData = () => {
     // UX-015: First confirmation with explicit irreversibility warning
@@ -260,6 +277,42 @@ export default function SettingsScreen() {
           </View>
         </Card>
         <Text style={[styles.sectionHeader, { color: theme.colors.textSecondary }]}>
+          {t('settings.regionSection')}
+        </Text>
+        <Card style={styles.card}>
+          <View style={styles.regionGrid}>
+            {VALID_REGIONS.map(r => (
+              <TouchableOpacity
+                key={r}
+                style={[
+                  styles.regionBtn,
+                  {
+                    backgroundColor:
+                      region === r ? theme.colors.primary : theme.colors.surfaceSecondary,
+                  },
+                ]}
+                onPress={() => {
+                  setAppRegion(r);
+                  setRegion(r);
+                }}
+              >
+                <Text
+                  style={{
+                    color: region === r ? '#fff' : theme.colors.text,
+                    fontSize: 13,
+                    fontWeight: '600',
+                  }}
+                >
+                  {REGION_EMOJI[r]} {t(`feedGuide.regions.${r}`)}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+          <Text style={[styles.hintDesc, { color: theme.colors.textTertiary }]}>
+            {t('settings.regionDescription')}
+          </Text>
+        </Card>
+        <Text style={[styles.sectionHeader, { color: theme.colors.textSecondary }]}>
           {t('settings.hintsSection')}
         </Text>
         <Card style={styles.card}>
@@ -350,6 +403,8 @@ const styles = StyleSheet.create({
   themeBtn: { flex: 1, padding: 10, borderRadius: 10, alignItems: 'center' },
   langRow: { flexDirection: 'row', gap: 10 },
   langBtn: { padding: 14, borderRadius: 12, alignItems: 'center' },
+  regionGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginBottom: 10 },
+  regionBtn: { paddingHorizontal: 12, paddingVertical: 9, borderRadius: 10 },
   switchRow: { flexDirection: 'row', alignItems: 'center', gap: 12 },
   hintDesc: { fontSize: 12, lineHeight: 16 },
   dangerBtn: { padding: 14, borderRadius: 12, borderWidth: 1.5, alignItems: 'center' },
