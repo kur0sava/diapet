@@ -10,6 +10,7 @@ import { Icon } from '@shared/components/ui/Icon';
 import type { IoniconName } from '@shared/components/ui';
 import { storageUtils, StorageKeys } from '@storage/mmkv/storage';
 import { usePetStore } from '@shared/stores/petStore';
+import { getFoodCatalog } from '../data/foodCatalog';
 
 const useLang = () => {
   const { i18n } = useTranslation();
@@ -37,6 +38,12 @@ export default function ArticleListScreen() {
   const [selectedCategory, setSelectedCategory] = useState<ArticleCategory | null>(null);
   const [showBookmarks, setShowBookmarks] = useState(false);
   const species = usePetStore(s => s.activePet?.species ?? 'cat');
+  // "Updated <date>" on the feed-guide banner signals the food catalog is
+  // maintained (remote-refreshed), not frozen in the APK.
+  const catalogDate = (() => {
+    const d = new Date(getFoodCatalog().generatedAt);
+    return isNaN(d.getTime()) ? '' : d.toLocaleDateString();
+  })();
   const bookmarkedIds = showBookmarks
     ? (storageUtils.getObject<string[]>(StorageKeys.BOOKMARKED_ARTICLES) ?? [])
     : [];
@@ -235,6 +242,14 @@ export default function ArticleListScreen() {
             <View style={styles.feedGuideBannerContent}>
               <Text style={styles.feedGuideBannerTitle}>{t('feedGuide.title')}</Text>
               <Text style={styles.feedGuideBannerDesc}>{t('feedGuide.subtitle')}</Text>
+              {catalogDate !== '' && (
+                <View style={styles.feedGuideUpdatedRow}>
+                  <Icon name="sync-outline" size={11} color="rgba(255,255,255,0.85)" />
+                  <Text style={styles.feedGuideUpdated}>
+                    {t('feedGuide.catalogUpdatedShort', { date: catalogDate })}
+                  </Text>
+                </View>
+              )}
             </View>
             <Icon name="chevron-forward" size={20} color="rgba(255,255,255,0.7)" />
           </TouchableOpacity>
@@ -306,4 +321,6 @@ const styles = StyleSheet.create({
   feedGuideBannerContent: { flex: 1 },
   feedGuideBannerTitle: { fontSize: 16, fontWeight: '700', color: '#fff' },
   feedGuideBannerDesc: { fontSize: 12, color: 'rgba(255,255,255,0.85)', marginTop: 2 },
+  feedGuideUpdatedRow: { flexDirection: 'row', alignItems: 'center', gap: 4, marginTop: 4 },
+  feedGuideUpdated: { fontSize: 11, color: 'rgba(255,255,255,0.85)', fontWeight: '600' },
 });

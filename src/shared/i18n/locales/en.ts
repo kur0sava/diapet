@@ -758,6 +758,7 @@ export const en = {
     },
     yourRegion: 'Yours',
     catalogUpdated: 'Catalog as of {{date}} · pull down to update',
+    catalogUpdatedShort: 'Updated {{date}}',
   },
 
   feedCalculator: {
