@@ -31,7 +31,7 @@ export const MANIFEST_SCHEMA_VERSION = 1;
 /** When the bundled data was last curated. A cached/remote manifest is only
  * accepted if it is strictly newer — an app update with fresher bundled data
  * must not be shadowed by a stale download. Update alongside data edits. */
-export const BUNDLED_GENERATED_AT = '2026-07-09T20:00:00.000Z';
+export const BUNDLED_GENERATED_AT = '2026-07-09T22:00:00.000Z';
 
 /** Re-fetch at most once a day; pull-to-refresh bypasses via force. */
 const REFRESH_THROTTLE_MS = 24 * 60 * 60 * 1000;

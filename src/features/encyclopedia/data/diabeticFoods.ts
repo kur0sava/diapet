@@ -358,9 +358,18 @@ export const PRESCRIPTION_FOODS: DiabeticCatFood[] = [
     nameRu: 'Фармина Вет Лайф Диабетик влажный',
     type: 'wet',
     category: 'prescription',
+    // 2026 SECOND-PASS audit: re-verified against farmina.com official
+    // product page (Malta store, item 971) — GA: crude protein 15.00%,
+    // crude fat 5.70%, crude fibre 2.60%, crude ash 2.60%, moisture 71.50%,
+    // starch 2.00%, total sugar 0.80%. DM = 100-71.5 = 28.5%.
+    // proteinDM = 15/28.5*100 = 52.6 ≈ 53 (confirmed, no change).
+    // fatDM = 5.7/28.5*100 = 20.0 (confirmed, no change).
+    // fiberDM = 2.6/28.5*100 = 9.1 → added below (previously missing).
+    // carbsDM via starch+sugar = 2.8/28.5*100 = 9.8 ≈ 10 (confirmed).
     proteinDM: 53,
     fatDM: 20,
     carbsDM: 10,
+    fiberDM: 9,
     // Italian import restricted to RU; available in EU/UK.
     regions: ['EU', 'UK'],
     whereToBuy: {
@@ -412,15 +421,16 @@ export const PRESCRIPTION_FOODS: DiabeticCatFood[] = [
     nameRu: 'Солид Натура Вет Диет Диабетик',
     type: 'wet',
     category: 'veterinary',
-    // 2026 audit: this entry previously had NO macro fields at all. Added
-    // from official GA (zaisy.ru): protein 13%, fat 5%, fibre 2.6%,
-    // ash 2.6%, moisture 80%, starch 2%, total sugar 0.8% (per 100g).
-    // NOTE: protein(min)+fat(min)+fibre(max)+ash(max)+moisture(max) sums to
-    // 103.2% — guaranteed-analysis mins/maxes are not additive, so a
+    // 2026 SECOND-PASS audit: re-verified directly against the official
+    // product page (zaisy.ru/155538) — GA is byte-for-byte identical to the
+    // first-pass figures: protein 13%, fat 5%, fibre 2.6%, ash 2.6%,
+    // moisture 80%, starch 2%, total sugar 0.8% (per 100g). CONFIRMED, no
+    // change. NOTE: protein(min)+fat(min)+fibre(max)+ash(max)+moisture(max)
+    // sums to 103.2% — guaranteed-analysis mins/maxes are not additive, so a
     // straight NFE subtraction goes negative. carbsDM below uses the
     // starch+sugar figures instead (2.8% as-fed / 20% DM fraction ≈ 14% DM)
-    // as the more defensible low-confidence estimate — flagged for
-    // re-verification against the physical label.
+    // as the more defensible estimate; still the best available proxy for
+    // rapidly-available carbohydrate on this label.
     proteinDM: 65,
     fatDM: 25,
     carbsDM: 14,
@@ -630,11 +640,25 @@ export const OTC_LOW_CARB_FOODS: DiabeticCatFood[] = [
     nameRu: 'Нуло Фристайл утка и тунец',
     type: 'wet',
     category: 'otc_low_carb',
-    carbsDM: 5.8,
+    // 2026 SECOND-PASS audit: re-verified against nulo.com official product
+    // page (live-fetched): crude protein 11.0% min, crude fat 8.0% min,
+    // crude fiber 0.75% max, moisture 78.0% max. Ash not published on the
+    // AAFCO label; assumed ~2% (typical for a meat-heavy pate) — LOW
+    // CONFIDENCE for the ash figure specifically, flagged for
+    // re-verification against a physical can label.
+    // DM=22%: proteinDM=50.0, fatDM=36.4, fiberDM=3.4,
+    // carbsDM(NFE, assumed ash 2%)=100-50.0-36.4-3.4-9.1=1.1.
+    // Previous carbsDM (5.8) was in the same ballpark and did not change the
+    // verdict — both land well within the "good" (<=7% DM) band for cats.
+    proteinDM: 50,
+    fatDM: 36,
+    carbsDM: 2,
+    fiberDM: 3.4,
     kcalPerKg: 1225,
     regions: ['US'],
     prescriptionRequired: false,
-    notes: 'Высокое качество. Без зерна, без искусственных добавок.',
+    notes:
+      'Высокое качество. Без зерна, без искусственных добавок. Углеводы крайне низкие (~1-2% DM, зола на этикетке не указана — оценка приблизительная).',
   },
 
   // ── Немецкие бренды (доступны в Европе через Zooplus) ──
@@ -645,7 +669,18 @@ export const OTC_LOW_CARB_FOODS: DiabeticCatFood[] = [
     nameRu: 'ГранатаПет ДелиКатессен влажный',
     type: 'wet',
     category: 'otc_low_carb',
-    carbsDM: 3,
+    // 2026 SECOND-PASS audit — MAJOR CORRECTION: previous carbsDM (3) had no
+    // sourced macro breakdown at all. Recomputed from official GA (Chicken
+    // PUR variant, petfoodau.com product page / mczoo.de, cross-confirmed):
+    // crude protein 10.2%, crude fat 5.3%, crude ash 2.2%, crude fibre 0.5%,
+    // moisture 80%. DM=20%: proteinDM=51.0, fatDM=26.5, fiberDM=2.5,
+    // ashDM=11.0, carbsDM(NFE)=100-51.0-26.5-2.5-11.0=9.0.
+    // VERDICT CHANGE: 3% DM was 'good' (<=7 ideal); 9% DM is 'acceptable'
+    // (<=15) — still a solid low-carb option, just not top-tier.
+    proteinDM: 51,
+    fatDM: 27,
+    carbsDM: 9,
+    fiberDM: 3,
     regions: ['DE', 'EU'],
     whereToBuy: {
       DE: ['zooplus.de', 'fressnapf.de'],
@@ -657,7 +692,7 @@ export const OTC_LOW_CARB_FOODS: DiabeticCatFood[] = [
     },
     prescriptionRequired: false,
     notes:
-      'Немецкое производство. Высокое содержание мяса, низкие углеводы. Доступен через Zooplus.',
+      'Немецкое производство. Высокое содержание мяса. Углеводы ~9% DM (уточнено 2026, было ошибочно занижено до 3%) — хороший, но не идеальный показатель. Доступен через Zooplus.',
   },
   {
     id: 'catz-finefood',
@@ -666,7 +701,21 @@ export const OTC_LOW_CARB_FOODS: DiabeticCatFood[] = [
     nameRu: 'Катц Файнфуд Пурррр коллекция',
     type: 'wet',
     category: 'otc_low_carb',
-    carbsDM: 2,
+    // 2026 SECOND-PASS audit — MAJOR CORRECTION: previous carbsDM (2) had no
+    // sourced macro breakdown. Recomputed from official GA for the No.103
+    // Chicken variant (fuettern-mit-spass.de / wirfuerstier.com label,
+    // representative of the "Purrrr" mono-protein line): crude protein
+    // 10.2%, fat 5.6%, crude ash 2.4%, crude fibre 0.3%, moisture 80%.
+    // DM=20%: proteinDM=51.0, fatDM=28.0, fiberDM=1.5, ashDM=12.0,
+    // carbsDM(NFE)=100-51.0-28.0-1.5-12.0=7.5.
+    // NOTE: other flavors vary (e.g. Kangaroo ~14% DM carbs, Salmon runs
+    // higher-fat/lower-carb) — Chicken used as the representative SKU.
+    // VERDICT CHANGE: 2% DM was 'good' (<=7 ideal); 7.5% DM is just over the
+    // ideal cutoff → 'acceptable' (still well under the 15% ceiling).
+    proteinDM: 51,
+    fatDM: 28,
+    carbsDM: 7.5,
+    fiberDM: 1.5,
     regions: ['DE', 'EU', 'UK'],
     whereToBuy: {
       DE: ['zooplus.de'],
@@ -677,7 +726,8 @@ export const OTC_LOW_CARB_FOODS: DiabeticCatFood[] = [
       GLOBAL: [],
     },
     prescriptionRequired: false,
-    notes: 'Без зерна (кроме Pheasant & Chicken с рисом). Монобелковые варианты. Немецкий.',
+    notes:
+      'Без зерна (кроме Pheasant & Chicken с рисом). Монобелковые варианты. Немецкий. Углеводы ~7.5% DM для варианта с курицей (уточнено 2026, было ошибочно занижено до 2%) — у других вкусов состав заметно варьируется.',
   },
   {
     id: 'animonda-carny',
@@ -768,7 +818,21 @@ export const OTC_LOW_CARB_FOODS: DiabeticCatFood[] = [
     product: 'Tiny Tasters (Wet)',
     type: 'wet',
     category: 'otc_low_carb',
-    carbsDM: 3.7,
+    // 2026 SECOND-PASS audit — MAJOR CORRECTION: previous carbsDM (3.7) had
+    // no sourced macro breakdown. Recomputed from official AAFCO GA
+    // (wellnesspetfood.com product-catalog pages), averaged across pate
+    // variants: protein ~10.7% (range 10.0-12.0), fat ~6.5% (range 3.5-8.0),
+    // fibre 1.0% max, moisture 78% max. Ash is not published on AAFCO wet
+    // labels; assumed ~2.2% (typical for meat-heavy pate) — LOW CONFIDENCE,
+    // flagged for re-verification against a physical can/pouch label.
+    // DM=22%: proteinDM=48.6, fatDM=29.5, fiberDM=4.5, ashDM(assumed)=10.0,
+    // carbsDM(NFE)=100-48.6-29.5-4.5-10.0=7.4.
+    // VERDICT CHANGE: 3.7% DM was 'good' (<=7 ideal); ~7.4% DM lands just
+    // over the ideal cutoff → 'acceptable' (still well under 15% ceiling).
+    proteinDM: 49,
+    fatDM: 30,
+    carbsDM: 7.4,
+    fiberDM: 4.5,
     kcalPerKg: 1291,
     regions: ['US', 'RU'],
     whereToBuy: {
@@ -939,21 +1003,28 @@ export const PRESCRIPTION_DOG_FOODS: DiabeticCatFood[] = [
     nameRu: 'Роял Канин Гликобаланс для собак (сухой)',
     type: 'dry',
     category: 'prescription',
-    // 2026 audit — MAJOR CORRECTION: previous entry (27/13/44/8) substantially
-    // understated protein and overstated carbs. Recomputed from official GA,
-    // averaged across two regional labels which differ meaningfully:
-    //  EU/RSA "Diabetic": protein 37%, fat 12%, fibre 6.5%, ash 5.3%,
-    //    starch 19.1%, sugars 0.55%, moisture ~11% → ~42% protein DM,
-    //    ~32% carbs DM, ~7% fibre DM.
-    //  US "Glycobalance": protein 35% min, fat 10-14%, fibre 9.8% max,
-    //    starch 22.2% max, sugars 2% max, moisture 10.5% max → ~39% protein
-    //    DM, ~29% carbs DM, ~11% fibre DM.
-    // Values below are the midpoint; regional labels genuinely differ.
+    // 2026 SECOND-PASS audit: re-fetched both regional labels directly.
+    //  EU/UK (royalcanin.com/uk, live-fetched): protein 37.0%, fat 12.0%,
+    //    crude fibre 7.2%, crude ash 5.4%, starch 20.2%, total sugars 1%,
+    //    ME 3380 kcal/kg. Moisture not published on the EU page; assumed
+    //    10% (typical RC dry, matches US max below). DM=90%:
+    //    proteinDM=41.1, fatDM=13.3, fiberDM=8.0, carbsDM(NFE)=31.6.
+    //  US (royalcanin.com/us via Petco/Chewy labels): crude protein 35% min,
+    //    crude fat 10-14% (midpoint 12), crude fiber 10% max, moisture 10%
+    //    max, starch 25% max, sugars 5.7% max. Ash not published on AAFCO
+    //    label; assumed ~6% DM (comparable to EU) for NFE. DM=90%:
+    //    proteinDM=38.9, fatDM=13.3, fiberDM=11.1, carbsDM(NFE)=30.7.
+    // getFoodVerdict for dogs depends only on fatDM/fiberDM (not carbsDM):
+    //   EU fiberDM=8.0 → lowFat(13.3<=14) && fiberDM>=6 → 'acceptable'.
+    //   US fiberDM=11.1 → fiberHigh(>=10) → 'acceptable'.
+    // Same verdict both regions → KEPT AS ONE ENTRY with midpoint values
+    // (decision: do not split, per audit instructions — a split is only
+    // warranted when the regional gap flips the badge, which it doesn't here).
     proteinDM: 40,
     fatDM: 13,
-    carbsDM: 30,
-    fiberDM: 9,
-    kcalPerKg: 3544,
+    carbsDM: 31,
+    fiberDM: 10,
+    kcalPerKg: 3380,
     regions: ['RU', 'EU', 'UK', 'US', 'GLOBAL'],
     whereToBuy: {
       RU: ['royalcanin.ru', '4lapy.ru', 'markvet.ru', 'ZooZavr'],
@@ -1202,10 +1273,18 @@ export const OTC_DOG_FOODS: DiabeticCatFood[] = [
     nameRu: 'Роял Канин Сатиети для собак',
     type: 'dry',
     category: 'veterinary',
+    // 2026 SECOND-PASS audit: re-verified against royalcanin.com/uk official
+    // page (live-fetched): protein 30%, fat 9.5%, crude ash 5.8%, crude
+    // fibre 17%. Moisture not published; assumed 10.5% (matches US AAFCO
+    // max — petsmart.com label). DM=89.5%: proteinDM=33.5, fatDM=10.6,
+    // fiberDM=19.0, ashDM=6.5, carbsDM(NFE)=100-33.5-10.6-19.0-6.5=30.4.
+    // Fibre corrected upward (16→19) and carbs corrected downward (40→30);
+    // fat/protein essentially unchanged. getFoodVerdict unaffected either
+    // way — fiberDM was already ≥15 (fiberIdeal) before and after → 'good'.
     proteinDM: 33,
-    fatDM: 10,
-    carbsDM: 40,
-    fiberDM: 16,
+    fatDM: 11,
+    carbsDM: 30,
+    fiberDM: 19,
     regions: ['RU', 'EU', 'UK', 'US', 'GLOBAL'],
     whereToBuy: {
       RU: ['royalcanin.ru', '4lapy.ru', 'markvet.ru'],
@@ -1219,7 +1298,7 @@ export const OTC_DOG_FOODS: DiabeticCatFood[] = [
     prescriptionRequired: false,
     species: 'dog',
     notes:
-      'Не помечен как "диабетический", но профиль (низкий жир 10%, волокно 16%) близок к Rx для диабета. Используется, когда Glycobalance недоступен. Обсуди с ветеринаром.',
+      'Не помечен как "диабетический", но профиль (низкий жир ~11% DM, высокая клетчатка ~19% DM — уточнено 2026) близок к Rx для диабета. Используется, когда Glycobalance недоступен. Обсуди с ветеринаром.',
   },
   {
     id: 'hills-science-plan-perfect-weight',
@@ -1228,10 +1307,19 @@ export const OTC_DOG_FOODS: DiabeticCatFood[] = [
     nameRu: 'Хиллс Perfect Weight для собак',
     type: 'dry',
     category: 'otc_low_carb',
+    // 2026 SECOND-PASS audit: re-verified against hillspet.com official
+    // product page, which publishes nutrient content directly on a DRY
+    // MATTER basis (no as-fed→DM conversion needed): protein 28.8% DM,
+    // fat 11.2% DM, crude fiber 10.3% DM (Chicken & Brown Rice Recipe).
+    // Ash not published on this page; assumed ~8% DM (typical dry dog food)
+    // for the NFE estimate: carbsDM=100-28.8-11.2-10.3-8=41.7.
+    // Fiber corrected substantially downward (13→10) — still clears the
+    // fiberHigh threshold (≥10% DM) so getFoodVerdict stays 'acceptable'
+    // both before and after.
     proteinDM: 29,
-    fatDM: 10,
-    carbsDM: 46,
-    fiberDM: 13,
+    fatDM: 11,
+    carbsDM: 42,
+    fiberDM: 10,
     // Hill's (incl. retail Science Plan) unavailable in RU since 2023-24.
     regions: ['EU', 'UK', 'US'],
     whereToBuy: {
@@ -1242,7 +1330,7 @@ export const OTC_DOG_FOODS: DiabeticCatFood[] = [
     prescriptionRequired: false,
     species: 'dog',
     notes:
-      'OTC без рецепта. Профиль ближе к диабетическим Rx, чем стандартный adult-корм. При лёгкой гипергликемии + ожирении — приемлемая опция при согласовании с врачом. ⚠️ В РФ недоступен с 2023-24.',
+      'OTC без рецепта. Профиль ближе к диабетическим Rx, чем стандартный adult-корм (клетчатка ~10% DM — уточнено 2026, было завышено до 13%). При лёгкой гипергликемии + ожирении — приемлемая опция при согласовании с врачом. ⚠️ В РФ недоступен с 2023-24.',
   },
   {
     id: 'purina-pro-plan-overweight',
@@ -1251,10 +1339,23 @@ export const OTC_DOG_FOODS: DiabeticCatFood[] = [
     nameRu: 'Пурина Про План для собак с избыточным весом',
     type: 'dry',
     category: 'otc_low_carb',
-    proteinDM: 33,
+    // 2026 SECOND-PASS audit — VERDICT-FLIPPING CORRECTION: re-verified
+    // against zooplus.com official Purina Pro Plan Adult Light/Sterilised
+    // with OPTIWEIGHT label (live-fetched): protein 27.0%, fat 9.0%,
+    // fibre 3.5%, ash 7.5%. Moisture not published; assumed 9% (typical dry).
+    // DM=91%: proteinDM=29.7, fatDM=9.9, fiberDM=3.85, ashDM=8.2,
+    // carbsDM(NFE)=100-29.7-9.9-3.85-8.2=48.35.
+    // Previous fiberDM (9) was substantially overstated — actual fibre is
+    // only ~3.85% DM, well below the ≥10% DM "acceptable" threshold and far
+    // below the ≥15% DM ideal. getFoodVerdict FLIPS from 'acceptable' to
+    // 'bad': lowFat is true (9.9<=14) but fiberDM(3.85) < 6, so the
+    // "lowFat && fiber>=6" fallback no longer applies. This diet does not
+    // meet either canine diabetic-diet pathway (high-fibre OR low-fat+fibre)
+    // — demote from the diabetic-adjacent list in owner guidance.
+    proteinDM: 30,
     fatDM: 10,
     carbsDM: 48,
-    fiberDM: 9,
+    fiberDM: 4,
     regions: ['RU', 'EU', 'UK', 'US'],
     whereToBuy: {
       RU: ['shop.purina.ru', '4lapy.ru', 'Ozon', 'Wildberries'],
@@ -1266,7 +1367,7 @@ export const OTC_DOG_FOODS: DiabeticCatFood[] = [
     prescriptionRequired: false,
     species: 'dog',
     notes:
-      '⚠ Клетчатка 9% DM — на границе (≥10% DM желательно). Бюджетный OTC вариант, но НЕ замена рецептурной диабетической диете. Только при одобрении ветеринаром.',
+      "⚠️ ЧЕСТНАЯ ОЦЕНКА (обновлено 2026): клетчатка всего ~4% DM (было ошибочно указано 9%) — существенно ниже целевого порога (≥10% DM) для контроля гликемии у собак. Бюджетный OTC вариант для контроля веса, но НЕ рекомендуется как диабетическая диета — ни по клетчатке, ни по низкому жиру не даёт клинического преимущества. Обсуди с ветеринаром альтернативы (Royal Canin Satiety, Hill's Perfect Weight).",
   },
   {
     id: 'acana-light-fit',
@@ -1275,9 +1376,18 @@ export const OTC_DOG_FOODS: DiabeticCatFood[] = [
     nameRu: 'Акана Light & Fit',
     type: 'dry',
     category: 'otc_low_carb',
-    proteinDM: 34,
-    fatDM: 12,
-    carbsDM: 38,
+    // 2026 SECOND-PASS audit: re-verified against acana.com official product
+    // page (live-fetched): crude protein 33% min, crude fat 10-12% (midpoint
+    // 11), crude fiber 8% max, moisture 12% max, ash 7% max (from
+    // acana.com GA table). DM=88%: proteinDM=37.5, fatDM=12.5, fiberDM=9.1,
+    // ashDM=8.0, carbsDM(NFE)=100-37.5-12.5-9.1-8.0=32.9.
+    // Protein corrected upward (34→38) and carbs corrected downward (38→33);
+    // fat/fiber essentially unchanged. getFoodVerdict unaffected — fiberDM
+    // stays in the 6-10% band ("lowFat && fiber>=6" → 'acceptable') both
+    // before and after.
+    proteinDM: 38,
+    fatDM: 13,
+    carbsDM: 33,
     fiberDM: 9,
     regions: ['RU', 'EU', 'UK', 'US'],
     whereToBuy: {

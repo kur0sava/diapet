@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-07-09T20:00:00.000Z",
+  "generatedAt": "2026-07-09T22:00:00.000Z",
   "foods": {
     "cat": [
       {
@@ -274,6 +274,7 @@
         "proteinDM": 53,
         "fatDM": 20,
         "carbsDM": 10,
+        "fiberDM": 9,
         "regions": [
           "EU",
           "UK"
@@ -547,13 +548,16 @@
         "nameRu": "Нуло Фристайл утка и тунец",
         "type": "wet",
         "category": "otc_low_carb",
-        "carbsDM": 5.8,
+        "proteinDM": 50,
+        "fatDM": 36,
+        "carbsDM": 2,
+        "fiberDM": 3.4,
         "kcalPerKg": 1225,
         "regions": [
           "US"
         ],
         "prescriptionRequired": false,
-        "notes": "Высокое качество. Без зерна, без искусственных добавок."
+        "notes": "Высокое качество. Без зерна, без искусственных добавок. Углеводы крайне низкие (~1-2% DM, зола на этикетке не указана — оценка приблизительная)."
       },
       {
         "id": "granatapet",
@@ -562,7 +566,10 @@
         "nameRu": "ГранатаПет ДелиКатессен влажный",
         "type": "wet",
         "category": "otc_low_carb",
-        "carbsDM": 3,
+        "proteinDM": 51,
+        "fatDM": 27,
+        "carbsDM": 9,
+        "fiberDM": 3,
         "regions": [
           "DE",
           "EU"
@@ -581,7 +588,7 @@
           "GLOBAL": []
         },
         "prescriptionRequired": false,
-        "notes": "Немецкое производство. Высокое содержание мяса, низкие углеводы. Доступен через Zooplus."
+        "notes": "Немецкое производство. Высокое содержание мяса. Углеводы ~9% DM (уточнено 2026, было ошибочно занижено до 3%) — хороший, но не идеальный показатель. Доступен через Zooplus."
       },
       {
         "id": "catz-finefood",
@@ -590,7 +597,10 @@
         "nameRu": "Катц Файнфуд Пурррр коллекция",
         "type": "wet",
         "category": "otc_low_carb",
-        "carbsDM": 2,
+        "proteinDM": 51,
+        "fatDM": 28,
+        "carbsDM": 7.5,
+        "fiberDM": 1.5,
         "regions": [
           "DE",
           "EU",
@@ -611,7 +621,7 @@
           "GLOBAL": []
         },
         "prescriptionRequired": false,
-        "notes": "Без зерна (кроме Pheasant & Chicken с рисом). Монобелковые варианты. Немецкий."
+        "notes": "Без зерна (кроме Pheasant & Chicken с рисом). Монобелковые варианты. Немецкий. Углеводы ~7.5% DM для варианта с курицей (уточнено 2026, было ошибочно занижено до 2%) — у других вкусов состав заметно варьируется."
       },
       {
         "id": "animonda-carny",
@@ -723,7 +733,10 @@
         "product": "Tiny Tasters (Wet)",
         "type": "wet",
         "category": "otc_low_carb",
-        "carbsDM": 3.7,
+        "proteinDM": 49,
+        "fatDM": 30,
+        "carbsDM": 7.4,
+        "fiberDM": 4.5,
         "kcalPerKg": 1291,
         "regions": [
           "US",
@@ -921,9 +934,9 @@
         "category": "prescription",
         "proteinDM": 40,
         "fatDM": 13,
-        "carbsDM": 30,
-        "fiberDM": 9,
-        "kcalPerKg": 3544,
+        "carbsDM": 31,
+        "fiberDM": 10,
+        "kcalPerKg": 3380,
         "regions": [
           "RU",
           "EU",
@@ -1217,9 +1230,9 @@
         "type": "dry",
         "category": "veterinary",
         "proteinDM": 33,
-        "fatDM": 10,
-        "carbsDM": 40,
-        "fiberDM": 16,
+        "fatDM": 11,
+        "carbsDM": 30,
+        "fiberDM": 19,
         "regions": [
           "RU",
           "EU",
@@ -1248,7 +1261,7 @@
         "priceHint": "RU: 2200-3200₽/1.5кг, 6500-9000₽/12кг",
         "prescriptionRequired": false,
         "species": "dog",
-        "notes": "Не помечен как \"диабетический\", но профиль (низкий жир 10%, волокно 16%) близок к Rx для диабета. Используется, когда Glycobalance недоступен. Обсуди с ветеринаром."
+        "notes": "Не помечен как \"диабетический\", но профиль (низкий жир ~11% DM, высокая клетчатка ~19% DM — уточнено 2026) близок к Rx для диабета. Используется, когда Glycobalance недоступен. Обсуди с ветеринаром."
       },
       {
         "id": "hills-science-plan-perfect-weight",
@@ -1258,9 +1271,9 @@
         "type": "dry",
         "category": "otc_low_carb",
         "proteinDM": 29,
-        "fatDM": 10,
-        "carbsDM": 46,
-        "fiberDM": 13,
+        "fatDM": 11,
+        "carbsDM": 42,
+        "fiberDM": 10,
         "regions": [
           "EU",
           "UK",
@@ -1279,7 +1292,7 @@
         },
         "prescriptionRequired": false,
         "species": "dog",
-        "notes": "OTC без рецепта. Профиль ближе к диабетическим Rx, чем стандартный adult-корм. При лёгкой гипергликемии + ожирении — приемлемая опция при согласовании с врачом. ⚠️ В РФ недоступен с 2023-24."
+        "notes": "OTC без рецепта. Профиль ближе к диабетическим Rx, чем стандартный adult-корм (клетчатка ~10% DM — уточнено 2026, было завышено до 13%). При лёгкой гипергликемии + ожирении — приемлемая опция при согласовании с врачом. ⚠️ В РФ недоступен с 2023-24."
       },
       {
         "id": "purina-pro-plan-overweight",
@@ -1288,10 +1301,10 @@
         "nameRu": "Пурина Про План для собак с избыточным весом",
         "type": "dry",
         "category": "otc_low_carb",
-        "proteinDM": 33,
+        "proteinDM": 30,
         "fatDM": 10,
         "carbsDM": 48,
-        "fiberDM": 9,
+        "fiberDM": 4,
         "regions": [
           "RU",
           "EU",
@@ -1318,7 +1331,7 @@
         "priceHint": "RU: 900-1400₽/1.5кг, 3500-5000₽/14кг",
         "prescriptionRequired": false,
         "species": "dog",
-        "notes": "⚠ Клетчатка 9% DM — на границе (≥10% DM желательно). Бюджетный OTC вариант, но НЕ замена рецептурной диабетической диете. Только при одобрении ветеринаром."
+        "notes": "⚠️ ЧЕСТНАЯ ОЦЕНКА (обновлено 2026): клетчатка всего ~4% DM (было ошибочно указано 9%) — существенно ниже целевого порога (≥10% DM) для контроля гликемии у собак. Бюджетный OTC вариант для контроля веса, но НЕ рекомендуется как диабетическая диета — ни по клетчатке, ни по низкому жиру не даёт клинического преимущества. Обсуди с ветеринаром альтернативы (Royal Canin Satiety, Hill's Perfect Weight)."
       },
       {
         "id": "acana-light-fit",
@@ -1327,9 +1340,9 @@
         "nameRu": "Акана Light & Fit",
         "type": "dry",
         "category": "otc_low_carb",
-        "proteinDM": 34,
-        "fatDM": 12,
-        "carbsDM": 38,
+        "proteinDM": 38,
+        "fatDM": 13,
+        "carbsDM": 33,
         "fiberDM": 9,
         "regions": [
           "RU",
