@@ -227,6 +227,9 @@ export const en = {
     openEmergency: 'Open emergency guide',
     emergencyDismiss: 'Not now',
     emergencyBannerTap: 'Tap for emergency first aid',
+    extremeValueTitle: 'Check the value',
+    extremeValueBody:
+      'You entered {{value}} {{unit}} — that is a critical value. Please confirm it is correct and not a typo.',
     invalidValue: 'Enter a valid glucose value',
     highDoseWarning: 'Unusually high dose',
     highDoseWarningDesc:

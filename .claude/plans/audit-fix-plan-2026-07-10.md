@@ -42,15 +42,15 @@
   **Фикс:** kg/lb-переключатель, привязанный к дефолту региона, хранить каноничные кг; минимум — sanity-check веса против видовых диапазонов + предупреждение.
   Файлы: `PetInfoScreen.tsx`, `EditPetScreen.tsx`, `AddPetScreen.tsx`; потребитель `speciesConfig.ts:getInsulinThresholds`.
 
-- ⬜ **A4 (HIGH). Экстремальная глюкоза сохраняется ДО подтверждения.**
-  Опечатка 25 вместо 2.5 → запись сохраняется, потом всплывает emergency-алерт + красный баннер на 24ч (ложная тревога, порча risk-score).
-  **Фикс:** для значений в emergency-зоне — confirm-before-save («Вы ввели X — это критическое значение, подтвердите»).
-  Файлы: `LogGlucoseScreen.tsx:doSave`, `DashboardScreen.tsx:emergencyAlerts`.
+- ✅ **A4 (HIGH). Экстремальная глюкоза сохраняется ДО подтверждения.** [сделано 2026-07-10]
+  handleSave разбит: значение в emergency-зоне (< emergencyLow / > emergencyHigh, species-aware) → confirm-before-save
+  (`glucose.extremeValueTitle/Body`, эхо введённого значения+единицы) ПЕРЕД записью. Продолжение вынесено в
+  `continueAfterValueChecks` (доза+A1+threshold). Post-save emergency-алерт в doSave (first-aid guide) сохранён для реальных значений.
 
-- ⬜ **A5 (HIGH/пересечение). Глобальный тумблер единиц в LogGlucose.**
-  `storage.set(GLUCOSE_UNIT, u)` мгновенно мутирует глобальную настройку при тапе для «прикинуть конверсию».
-  **Фикс:** тумблер локальный для экрана; глобальную единицу менять только из Settings (или при успешном сохранении).
-  Файл: `LogGlucoseScreen.tsx:411-428`.
+- ✅ **A5 (HIGH/пересечение). Глобальный тумблер единиц в LogGlucose.** [сделано 2026-07-10]
+  Убрана строка `storage.set(StorageKeys.GLUCOSE_UNIT, u)` из onPress тумблера — теперь он ЛОКАЛЬНЫЙ для экрана
+  (конверсия значения остаётся). Глобальная единица меняется только из Settings. Тап «прикинуть конверсию» больше
+  не флипает единицу в dashboard/list/PDF.
 
 - ⬜ **A6 (MED). Dog-конфиг: `normalLow`/`emergencyLow` (3.3) vs `targetLow`/ranges (4.4) — два «нижних нормы».**
   `checkEmergencyThresholds` фаерит гипо при <3.3 = ниже заявленной нормы. Разные пути классифицируют по-разному.

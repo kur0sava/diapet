@@ -228,6 +228,9 @@ export const ru = {
     openEmergency: 'Открыть экстренную инструкцию',
     emergencyDismiss: 'Не сейчас',
     emergencyBannerTap: 'Нажмите — экстренная первая помощь',
+    extremeValueTitle: 'Проверьте значение',
+    extremeValueBody:
+      'Вы ввели {{value}} {{unit}} — это критическое значение. Подтвердите, что оно верное, а не опечатка.',
     invalidValue: 'Введите корректное значение глюкозы',
     highDoseWarning: 'Необычно высокая доза',
     highDoseWarningDesc:

@@ -340,16 +340,10 @@ export default function LogGlucoseScreen() {
     [activePet, doSave, t]
   );
 
-  const handleSave = useCallback(async () => {
-    if (savingRef.current) return;
-    if (!activePet) {
-      Alert.alert(t('common.error'), t('glucose.petNotFound'));
-      return;
-    }
-    if (!isValidValue) {
-      Alert.alert(t('common.error'), t('glucose.invalidValue'));
-      return;
-    }
+  // Dose validation + A1 duplicate-dose guard + threshold checks. Split out of
+  // handleSave so the A4 extreme-value confirmation can gate the whole chain.
+  const continueAfterValueChecks = useCallback(async () => {
+    if (!activePet) return;
     const doseNum = insulinDose ? parseFloat(insulinDose.replace(',', '.')) : 0;
     if (insulinDose && (isNaN(doseNum) || doseNum <= 0)) {
       Alert.alert(t('common.error'), t('injection.doseError'));
@@ -382,7 +376,34 @@ export default function LogGlucoseScreen() {
       }
     }
     proceedWithDoseChecks(doseNum);
-  }, [activePet, isValidValue, insulinDose, recordedAt, editId, proceedWithDoseChecks, t]);
+  }, [activePet, insulinDose, recordedAt, editId, proceedWithDoseChecks, t]);
+
+  const handleSave = useCallback(() => {
+    if (savingRef.current) return;
+    if (!activePet) {
+      Alert.alert(t('common.error'), t('glucose.petNotFound'));
+      return;
+    }
+    if (!isValidValue) {
+      Alert.alert(t('common.error'), t('glucose.invalidValue'));
+      return;
+    }
+    // A4 (audit): a value in the emergency zone is either a real emergency or a
+    // typo (e.g. 25 instead of 2.5). Confirm BEFORE persisting — previously the
+    // reading was saved first, so a typo created a false emergency and lit the
+    // 24h dashboard banner. On confirm we continue; the post-save emergency
+    // alert in doSave still offers the first-aid guide for genuine values.
+    const enteredMmol = unit === 'mg/dL' ? mgdlToMmol(numValue) : numValue;
+    const gcfg = getSpeciesConfig(activePet.species).glucose;
+    if (enteredMmol < gcfg.emergencyLow || enteredMmol > gcfg.emergencyHigh) {
+      Alert.alert(t('glucose.extremeValueTitle'), t('glucose.extremeValueBody', { value, unit }), [
+        { text: t('common.cancel'), style: 'cancel' },
+        { text: t('common.confirm'), onPress: () => continueAfterValueChecks() },
+      ]);
+      return;
+    }
+    continueAfterValueChecks();
+  }, [activePet, isValidValue, unit, numValue, value, continueAfterValueChecks, t]);
 
   const levelLabels: Record<string, string> = {
     severe_low: t('glucose.severeLow'),
@@ -459,8 +480,12 @@ export default function LogGlucoseScreen() {
                           : (num / MGDL_PER_MMOLL).toFixed(1);
                       setValue(parseFloat(converted) > 0 ? converted : '');
                     }
+                    // A5 (audit): this toggle is LOCAL to the entry screen only.
+                    // It used to persist StorageKeys.GLUCOSE_UNIT immediately,
+                    // so a tap to sanity-check a conversion silently flipped the
+                    // app-wide display unit (dashboard/list/PDF) — a medical
+                    // safety issue. The global unit is changed only from Settings.
                     setUnit(u);
-                    storage.set(StorageKeys.GLUCOSE_UNIT, u);
                   }}
                 >
                   <Text
