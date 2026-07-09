@@ -88,23 +88,23 @@ Diabetes is a long-term expense. But the good news: with proper planning, it's q
 
 ### One-Time Costs (First Month)
 
-| Item | US/Canada | Europe |
-|------|-----------|--------|
-| Glucometer | $15-40 | €20-50 |
-| Lancets (100 pcs) | $5-10 | €5-10 |
-| Initial vet visit | $50-200 | €50-150 |
-| Blood work (chemistry + T4) | $100-300 | €80-200 |
+| Item | Russia | Europe/US |
+|------|--------|-----------|
+| Glucometer | 500-2000 ₽ | €20-50 / $15-40 |
+| Lancets (100 pcs) | 200-400 ₽ | €5-10 |
+| Initial vet visit | 1500-5000 ₽ | €50-150 / $50-200 |
+| Blood work (chemistry + T4) | 2000-5000 ₽ | €80-200 / $100-300 |
 
 ### Monthly Costs
 
-| Item | US/Canada | Europe |
-|------|-----------|--------|
-| Insulin (Lantus/Levemir) | $30-100 | €30-80 |
-| Test strips (50 pcs) | $15-50 | €15-40 |
-| Food (low-carb wet) | $50-150 | €50-120 |
-| Syringes/needles | $5-15 | €5-15 |
+| Item | Russia | Europe/US |
+|------|--------|-----------|
+| Insulin (Lantus/Levemir) | 1500-3500 ₽ | €30-80 / $30-100 |
+| Test strips (50 pcs) | 800-2000 ₽ | €15-40 / $15-50 |
+| Food (low-carb wet) | 3000-8000 ₽ | €50-120 / $50-150 |
+| Syringes/needles | 300-600 ₽ | €5-15 |
 
-**Monthly total: $100-315 / €100-255**
+**Monthly total: 5,600-14,000 ₽ / €100-255 / $100-315**
 
 ### Periodic Costs
 

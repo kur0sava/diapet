@@ -30,7 +30,7 @@ export const dogFructosamine: Article = {
 | Значение (мкмоль/л) | Что значит |
 |---|---|
 | 225-365 | Норма у здоровой собаки |
-| 350-450 | Хороший контроль диабета |
+| 365-450 | Хороший контроль диабета |
 | 450-550 | Субоптимально — обсудите с ветеринаром |
 | Выше 550 | Контроль недостаточный, нужна коррекция |
 
@@ -65,7 +65,7 @@ Reference ranges are **lab-dependent** — always check your lab's report. As a 
 | Value (umol/L) | What it means |
 |---|---|
 | 225-365 | Normal in a healthy dog |
-| 350-450 | Good diabetic control |
+| 365-450 | Good diabetic control |
 | 450-550 | Suboptimal — discuss with your vet |
 | Above 550 | Insufficient control, adjustment needed |
 

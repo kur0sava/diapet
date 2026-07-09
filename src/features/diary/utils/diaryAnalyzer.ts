@@ -1,5 +1,5 @@
 import { GlucoseReading, getGlucoseLevel, getGlucoseLevelFromRanges } from '@storage/domain/types';
-import type { SpeciesConfig } from '@shared/config/speciesConfig';
+import { getTirBounds, type SpeciesConfig } from '@shared/config/speciesConfig';
 
 export type DiaryRecommendation = {
   type: 'critical' | 'warning' | 'info' | 'good';
@@ -19,14 +19,16 @@ export function computeDayStats(readings: GlucoseReading[], config?: SpeciesConf
   if (readings.length === 0) {
     return { avg: null, min: null, max: null, count: 0, inRangePercent: null };
   }
-  const targetLow = config?.glucose.targetLow ?? 4.0;
-  const targetHigh = config?.glucose.targetHigh ?? 9.0;
+  // M001: same TIR band as the analyzer dashboard (targetLow..rangeHigh) —
+  // the diary used targetHigh and showed a different "% in range" for the
+  // same data.
+  const tir = getTirBounds(config);
   const values = readings.map(r => r.valueMmol);
   const sum = values.reduce((a, b) => a + b, 0);
   const avg = Math.round((sum / values.length) * 10) / 10;
   const min = Math.round(Math.min(...values) * 10) / 10;
   const max = Math.round(Math.max(...values) * 10) / 10;
-  const inRange = values.filter(v => v >= targetLow && v <= targetHigh).length;
+  const inRange = values.filter(v => v >= tir.low && v <= tir.high).length;
   const inRangePercent = Math.round((inRange / values.length) * 100);
   return { avg, min, max, count: values.length, inRangePercent };
 }

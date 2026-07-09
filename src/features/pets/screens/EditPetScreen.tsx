@@ -161,14 +161,30 @@ export default function EditPetScreen() {
     setLoading(true);
     try {
       const parsedWeight = weightTrimmed ? parseFloat(weightTrimmed.replace(',', '.')) : NaN;
-      await petRepository.update(activePet.id, {
-        name: name.trim(),
-        gender,
-        weightKg: parsedWeight > 0 ? parsedWeight : undefined,
-        birthYear: ageTrimmed ? new Date().getFullYear() - parseInt(ageTrimmed, 10) : undefined,
-        diabetesType,
-        diagnosisDate: diagnosisDate ? toDateOnly(diagnosisDate) : undefined,
-        insulinType: insulinType || undefined,
+      // UX-017 + M003: profile AND schedules are both SQLite — write them in
+      // ONE transaction so a mid-save failure can't leave the profile updated
+      // with the old schedule (the user sees "save error" and assumes nothing
+      // was saved). MMKV vet contact goes after the commit: those writes are
+      // synchronous and practically infallible.
+      const db = await getDatabase();
+      await db.withTransactionAsync(async () => {
+        await petRepository.update(activePet.id, {
+          name: name.trim(),
+          gender,
+          weightKg: parsedWeight > 0 ? parsedWeight : undefined,
+          birthYear: ageTrimmed ? new Date().getFullYear() - parseInt(ageTrimmed, 10) : undefined,
+          diabetesType,
+          diagnosisDate: diagnosisDate ? toDateOnly(diagnosisDate) : undefined,
+          insulinType: insulinType || undefined,
+        });
+        const existingInjections = await scheduleRepository.getInjectionTimes(activePet.id);
+        for (const s of existingInjections) await scheduleRepository.deleteInjectionTime(s.id);
+        for (const time of normInjectionTimes)
+          await scheduleRepository.addInjectionTime(activePet.id, time);
+        const existingFeedings = await scheduleRepository.getFeedingTimes(activePet.id);
+        for (const s of existingFeedings) await scheduleRepository.deleteFeedingTime(s.id);
+        for (const time of normFeedingTimes)
+          await scheduleRepository.addFeedingTime(activePet.id, time);
       });
       if (vetName) {
         storage.set(vetNameKey(activePet.id), vetName);
@@ -180,18 +196,6 @@ export default function EditPetScreen() {
       } else {
         storage.delete(vetPhoneKey(activePet.id));
       }
-      // UX-017: Wrap schedule updates in transaction to prevent partial writes
-      const db = await getDatabase();
-      await db.withTransactionAsync(async () => {
-        const existingInjections = await scheduleRepository.getInjectionTimes(activePet.id);
-        for (const s of existingInjections) await scheduleRepository.deleteInjectionTime(s.id);
-        for (const time of normInjectionTimes)
-          await scheduleRepository.addInjectionTime(activePet.id, time);
-        const existingFeedings = await scheduleRepository.getFeedingTimes(activePet.id);
-        for (const s of existingFeedings) await scheduleRepository.deleteFeedingTime(s.id);
-        for (const time of normFeedingTimes)
-          await scheduleRepository.addFeedingTime(activePet.id, time);
-      });
       // Reschedule notifications after schedule changes. Rebuild for ALL pets
       // via restoreScheduleNotifications: the previous cancel-all + reschedule-
       // active-only left other pets without reminders until the next app

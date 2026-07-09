@@ -4,11 +4,7 @@
  */
 import { GlucoseReading } from '@storage/domain/types';
 import type { SpeciesConfig } from '@shared/config/speciesConfig';
-import { getSpeciesConfig } from '@shared/config/speciesConfig';
-
-/** Default cat target glucose range (mmol/L) — used when no species config provided */
-const DEFAULT_TARGET_LOW = 4;
-const DEFAULT_TARGET_HIGH = 12;
+import { getSpeciesConfig, getTirBounds } from '@shared/config/speciesConfig';
 /** Morning window: readings recorded between 05:00-09:00 */
 const MORNING_HOUR_START = 5;
 const MORNING_HOUR_END = 9;
@@ -210,13 +206,18 @@ export function analyzeTrends(
   now = new Date(),
   config?: SpeciesConfig
 ): TrendResult {
-  const targetLow = config?.glucose.targetLow ?? DEFAULT_TARGET_LOW;
-  const targetHigh = config?.glucose.rangeHigh ?? DEFAULT_TARGET_HIGH;
+  // M001: unified TIR band (targetLow..rangeHigh), shared with diary/prediction
+  const { low: targetLow, high: targetHigh } = getTirBounds(config);
 
+  // Clamp: a reading recorded "in the future" (device clock changed) must
+  // not produce a negative tracking period
   const periodDays =
     readings.length > 0
-      ? Math.ceil(
-          (now.getTime() - new Date(readings[0].recordedAt).getTime()) / (24 * 60 * 60 * 1000)
+      ? Math.max(
+          0,
+          Math.ceil(
+            (now.getTime() - new Date(readings[0].recordedAt).getTime()) / (24 * 60 * 60 * 1000)
+          )
         )
       : 0;
 

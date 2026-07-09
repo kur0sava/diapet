@@ -757,7 +757,6 @@ export const en = {
 
   feedCalculator: {
     title: 'Feed Calculator',
-    subtitle: 'Check if food is suitable for diabetic cats',
     protein: 'Protein %',
     fat: 'Fat %',
     fiber: 'Fiber %',

@@ -24,6 +24,7 @@ import { storage, StorageKeys, storageUtils } from '@storage/mmkv/storage';
 import { glucoseRepository, injectionRepository, scheduleRepository } from '@storage/database';
 import { buildAiSystemPrompt, AiPetContext } from '../data/aiSystemPrompt';
 import { sendChatMessage, ChatMessage, isAiConfigured } from '../utils/aiClient';
+import { sanitizeRecommendation } from '@features/analyzer/engine/safetyGuard';
 import { differenceInDays } from 'date-fns';
 import { parseDateOnly, todayLocal, toDateOnly } from '@shared/utils/dateUtils';
 
@@ -236,7 +237,13 @@ export default function AiAssistantScreen() {
       incrementDailyChatCount();
       setRemaining(getRemainingMessages());
 
-      const assistantMsg: ChatMessage = { role: 'assistant', content: response };
+      // M002: LLM output must pass the same safety guard as local analyzer
+      // text — the system prompt forbids dose advice, but prompts are not a
+      // guarantee. Sanitized BEFORE display and persistence to history.
+      const assistantMsg: ChatMessage = {
+        role: 'assistant',
+        content: sanitizeRecommendation(response).sanitizedText,
+      };
       updateMessages(prev => [...prev, assistantMsg]);
     } catch (e) {
       const err = e as Error;

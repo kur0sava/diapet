@@ -33,7 +33,7 @@ export const glucoseMonitoring: Article = {
 - **OneTouch Select** — аналогичное качество
 - **Сателлит Экспресс** — самый дешёвый (полоски ~400-600/50 шт), но точность ниже
 
-**Важно:** человеческие глюкометры показывают у кошек на **10-15% ниже** реальной глюкозы. У собак разница меньше (~5-8%). Учитывайте это при интерпретации результатов!
+**Важно:** человеческие глюкометры показывают у кошек на **10-15% ниже** реальной глюкозы. У собак разница меньше (~5-10%). Учитывайте это при интерпретации результатов!
 
 #### FreeStyle Libre — непрерывный мониторинг
 
@@ -116,7 +116,7 @@ In some countries, AlphaTRAK 2 may be unavailable. Good alternatives:
 - **OneTouch Select** — similar quality
 - **FreeStyle** — widely available
 
-**Important:** human glucometers read **10-15% lower** than actual glucose in cats. In dogs, the difference is smaller (~5-8%). Keep this in mind when interpreting results!
+**Important:** human glucometers read **10-15% lower** than actual glucose in cats. In dogs, the difference is smaller (~5-10%). Keep this in mind when interpreting results!
 
 #### FreeStyle Libre — Continuous Monitoring
 

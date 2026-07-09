@@ -73,7 +73,12 @@ export function sanitizeRecommendation(text: string): SafetyCheckResult {
   for (const pattern of FORBIDDEN_PATTERNS) {
     if (pattern.test(sanitized)) {
       violations.push(`Forbidden phrase matched: ${pattern.source}`);
-      sanitized = sanitized.replace(pattern, '(обсудите с ветеринаром / discuss with your vet)');
+      // Replace EVERY occurrence: the literals above are non-global (a `g`
+      // flag would make .test() stateful via lastIndex), so build a global
+      // copy for the replace. A non-global replace only removed the first
+      // match, letting repeated dose advice through (audit M002).
+      const global = new RegExp(pattern.source, pattern.flags + 'g');
+      sanitized = sanitized.replace(global, '(обсудите с ветеринаром / discuss with your vet)');
     }
   }
 

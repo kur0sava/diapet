@@ -34,6 +34,23 @@ describe('sanitizeRecommendation', () => {
     const result = sanitizeRecommendation('increase dose gradually');
     expect(result.sanitizedText).toContain('discuss with your vet');
   });
+
+  it('M002: replaces EVERY occurrence of a repeated forbidden phrase', () => {
+    const result = sanitizeRecommendation(
+      'In the morning increase the dose. If glucose stays high in the evening, increase the dose again.'
+    );
+    expect(result.isSafe).toBe(false);
+    expect(result.sanitizedText).not.toMatch(/increase\s+(the\s+)?dose/i);
+  });
+
+  it('M002: sanitizes mixed RU/EN repeated violations', () => {
+    const result = sanitizeRecommendation(
+      'Увеличьте дозу утром. Вечером снова увеличьте дозу. Also inject 3 units now and inject 2 units later.'
+    );
+    expect(result.isSafe).toBe(false);
+    expect(result.sanitizedText).not.toMatch(/увеличь/i);
+    expect(result.sanitizedText).not.toMatch(/inject\s+\d/i);
+  });
 });
 
 describe('checkEmergencyThresholds', () => {

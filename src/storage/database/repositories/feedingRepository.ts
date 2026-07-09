@@ -105,6 +105,8 @@ export const feedingRepository = {
   },
 
   async findForDay(petId: string, dateStr: string): Promise<FeedingLog[]> {
+    // TZ invariant: dateStr = calendar day in the CURRENT device timezone;
+    // see glucoseRepository.findForDay for the full rationale.
     const dayStart = new Date(`${dateStr}T00:00:00`).toISOString();
     const dayEnd = new Date(`${dateStr}T23:59:59.999`).toISOString();
     const db = await getDatabase();

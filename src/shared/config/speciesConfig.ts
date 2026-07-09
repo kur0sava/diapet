@@ -168,7 +168,8 @@ const CAT_INSULIN_TYPES: InsulinTypeInfo[] = [
     onsetHours: [1, 3],
     peakHours: [3, 8],
     durationHours: [8, 16],
-    shelfLifeDays: 42,
+    // BI ProZinc SPC: use within 60 days of first vial puncture
+    shelfLifeDays: 60,
     storageAfterOpening: 'fridge',
     isSuspension: true,
   },
@@ -313,12 +314,14 @@ const CAT_CONFIG: SpeciesConfig = {
 const DOG_INSULIN_TYPES: InsulinTypeInfo[] = [
   {
     // MSD label: refrigerate 2–8 °C before and after opening. Suspension.
+    // SPC: use within 42 days of first puncture — same as the cat config
+    // entry and the encyclopedia articles; was inconsistently 28 here.
     name: 'Caninsulin (Lente)',
     concentration: 'U-40',
     onsetHours: [1, 4],
     peakHours: [4, 8],
     durationHours: [8, 24],
-    shelfLifeDays: 28,
+    shelfLifeDays: 42,
     storageAfterOpening: 'fridge',
     isSuspension: true,
   },
@@ -485,6 +488,25 @@ const CONFIGS: Record<PetSpecies, SpeciesConfig> = {
  */
 export function getSpeciesConfig(species: PetSpecies): SpeciesConfig {
   return CONFIGS[species] ?? CAT_CONFIG;
+}
+
+/**
+ * Unified time-in-range band: targetLow..rangeHigh (audit M001).
+ *
+ * Every "% in range" the user sees — diary day stats, analyzer TIR,
+ * prediction snapshot — must use THIS band. The diary used to count against
+ * the tighter therapy target (targetHigh, e.g. 4-9 for cats) while the
+ * dashboard counted against the monitoring range (rangeHigh, 4-12), so the
+ * same day showed two different percentages. rangeHigh is the clinically
+ * honest bound for "acceptable control" (postprandial peaks above the ideal
+ * nadir target are normal, not poor control); targetHigh remains the therapy
+ * goal used for level classification and advice.
+ */
+export function getTirBounds(config?: SpeciesConfig): { low: number; high: number } {
+  return {
+    low: config?.glucose.targetLow ?? CAT_CONFIG.glucose.targetLow,
+    high: config?.glucose.rangeHigh ?? CAT_CONFIG.glucose.rangeHigh,
+  };
 }
 
 /**

@@ -39,26 +39,72 @@ function hourOfDay(iso: string): number {
   return new Date(iso).getHours();
 }
 
+const HOUR_MS = 60 * 60 * 1000;
+
+/**
+ * M004: readings sorted by time with the epoch cached. The event→reading
+ * detectors below used to nest full scans (O(feedings×readings)) and parse
+ * two dates per pair — after months of data that's hundreds of thousands of
+ * Date allocations on every analyzer focus. One sort + binary search brings
+ * it to O((events + readings)·log readings).
+ */
+interface TimedReading {
+  reading: GlucoseReading;
+  t: number;
+}
+
+function buildTimeline(readings: GlucoseReading[]): TimedReading[] {
+  return readings
+    .map(r => ({ reading: r, t: new Date(r.recordedAt).getTime() }))
+    .sort((a, b) => a.t - b.t);
+}
+
+/** Readings with recordedAt in the inclusive window [startMs, endMs]. */
+function readingsInWindow(
+  timeline: TimedReading[],
+  startMs: number,
+  endMs: number
+): GlucoseReading[] {
+  let lo = 0;
+  let hi = timeline.length;
+  while (lo < hi) {
+    const mid = (lo + hi) >> 1;
+    if (timeline[mid].t < startMs) lo = mid + 1;
+    else hi = mid;
+  }
+  const out: GlucoseReading[] = [];
+  for (let i = lo; i < timeline.length && timeline[i].t <= endMs; i++) {
+    out.push(timeline[i].reading);
+  }
+  return out;
+}
+
+/** Average valueMmol of readings in the window, or null if none. */
+function avgInWindow(timeline: TimedReading[], startMs: number, endMs: number): number | null {
+  const inWindow = readingsInWindow(timeline, startMs, endMs);
+  if (inWindow.length === 0) return null;
+  return inWindow.reduce((s, r) => s + r.valueMmol, 0) / inWindow.length;
+}
+
 /**
  * C7: Somogyi effect — low nadir followed by rebound spike.
  * Thresholds: nadir < somogyiNadirThreshold, rebound > somogyiReboundThreshold.
  */
-function detectSomogyi(readings: GlucoseReading[], config?: SpeciesConfig): DetectedPattern | null {
+function detectSomogyi(timeline: TimedReading[], config?: SpeciesConfig): DetectedPattern | null {
   const nadirThreshold = config?.analyzer.somogyiNadirThreshold ?? 4;
   const reboundThreshold = config?.analyzer.somogyiReboundThreshold ?? 18;
-  const sorted = [...readings].sort((a, b) => a.recordedAt.localeCompare(b.recordedAt));
 
-  for (let i = 0; i < sorted.length - 1; i++) {
-    if (sorted[i].valueMmol >= nadirThreshold) continue; // Need low nadir
-    for (let j = i + 1; j < sorted.length; j++) {
-      const gap = hoursApart(sorted[i].recordedAt, sorted[j].recordedAt);
+  for (let i = 0; i < timeline.length - 1; i++) {
+    if (timeline[i].reading.valueMmol >= nadirThreshold) continue; // Need low nadir
+    for (let j = i + 1; j < timeline.length; j++) {
+      const gap = (timeline[j].t - timeline[i].t) / HOUR_MS;
       if (gap > 12) break;
-      if (sorted[j].valueMmol >= reboundThreshold) {
+      if (timeline[j].reading.valueMmol >= reboundThreshold) {
         return {
           type: 'somogyi',
           confidence: 'medium',
-          description: `Low ${sorted[i].valueMmol.toFixed(1)} mmol/L → rebound ${sorted[j].valueMmol.toFixed(1)} mmol/L within ${Math.round(gap)}h`,
-          evidence: [sorted[i].id, sorted[j].id],
+          description: `Low ${timeline[i].reading.valueMmol.toFixed(1)} mmol/L → rebound ${timeline[j].reading.valueMmol.toFixed(1)} mmol/L within ${Math.round(gap)}h`,
+          evidence: [timeline[i].reading.id, timeline[j].reading.id],
           detectedAt: new Date().toISOString(),
         };
       }
@@ -101,25 +147,22 @@ function detectDawnPhenomenon(readings: GlucoseReading[]): DetectedPattern | nul
  * C9: Post-meal spike — feeding followed by glucose above postMealSpikeThreshold within 2-4 hours.
  */
 function detectPostMealSpike(
-  readings: GlucoseReading[],
+  timeline: TimedReading[],
   feedings: FeedingLog[],
   config?: SpeciesConfig
 ): DetectedPattern | null {
   const spikeThreshold = config?.analyzer.postMealSpikeThreshold ?? 15;
-  const spikes: { feedingId: string; readingId: string; value: number; gap: number }[] = [];
+  const spikes: { feedingId: string; readingId: string; value: number }[] = [];
 
   for (const feeding of feedings) {
-    for (const reading of readings) {
-      const gap = hoursApart(feeding.fedAt, reading.recordedAt);
-      if (gap >= 2 && gap <= 4 && new Date(reading.recordedAt) > new Date(feeding.fedAt)) {
-        if (reading.valueMmol > spikeThreshold) {
-          spikes.push({
-            feedingId: feeding.id,
-            readingId: reading.id,
-            value: reading.valueMmol,
-            gap,
-          });
-        }
+    const fedMs = new Date(feeding.fedAt).getTime();
+    for (const reading of readingsInWindow(timeline, fedMs + 2 * HOUR_MS, fedMs + 4 * HOUR_MS)) {
+      if (reading.valueMmol > spikeThreshold) {
+        spikes.push({
+          feedingId: feeding.id,
+          readingId: reading.id,
+          value: reading.valueMmol,
+        });
       }
     }
   }
@@ -182,21 +225,18 @@ function detectMissedInjectionImpact(
  * C11: Food type correlation — which food type gives better glucose control.
  */
 function detectFoodCorrelation(
-  readings: GlucoseReading[],
+  timeline: TimedReading[],
   feedings: FeedingLog[]
 ): DetectedPattern | null {
   const foodTypeAvg = new Map<string, { total: number; count: number }>();
 
   for (const feeding of feedings) {
     const foodKey = feeding.foodType ?? 'unknown';
-    // Find glucose reading 2-4h after this feeding
-    const postReadings = readings.filter(r => {
-      const gap = hoursApart(feeding.fedAt, r.recordedAt);
-      return gap >= 2 && gap <= 4 && new Date(r.recordedAt) > new Date(feeding.fedAt);
-    });
-    if (postReadings.length === 0) continue;
+    // Average glucose 2-4h after this feeding
+    const fedMs = new Date(feeding.fedAt).getTime();
+    const avg = avgInWindow(timeline, fedMs + 2 * HOUR_MS, fedMs + 4 * HOUR_MS);
+    if (avg === null) continue;
 
-    const avg = postReadings.reduce((s, r) => s + r.valueMmol, 0) / postReadings.length;
     const existing = foodTypeAvg.get(foodKey) ?? { total: 0, count: 0 };
     foodTypeAvg.set(foodKey, { total: existing.total + avg, count: existing.count + 1 });
   }
@@ -226,20 +266,17 @@ function detectFoodCorrelation(
  * C12: Dose-response analysis — specific dose → glucose 4h later.
  */
 function detectDoseResponse(
-  readings: GlucoseReading[],
+  timeline: TimedReading[],
   injections: InjectionLog[]
 ): DetectedPattern | null {
   const doseGroups = new Map<number, number[]>();
 
   for (const inj of injections) {
-    const postReadings = readings.filter(r => {
-      const gap = hoursApart(inj.administeredAt, r.recordedAt);
-      return gap >= 3 && gap <= 6 && new Date(r.recordedAt) > new Date(inj.administeredAt);
-    });
-    if (postReadings.length === 0) continue;
+    const injMs = new Date(inj.administeredAt).getTime();
+    const avgGlucose = avgInWindow(timeline, injMs + 3 * HOUR_MS, injMs + 6 * HOUR_MS);
+    if (avgGlucose === null) continue;
 
     const dose = Math.round(inj.doseUnits * 2) / 2; // Round to 0.5
-    const avgGlucose = postReadings.reduce((s, r) => s + r.valueMmol, 0) / postReadings.length;
     const existing = doseGroups.get(dose) ?? [];
     existing.push(avgGlucose);
     doseGroups.set(dose, existing);
@@ -319,14 +356,16 @@ export function detectPatterns(input: PatternInput): DetectedPattern[] {
   const injections = input.injections.filter(r => new Date(r.administeredAt).getTime() >= cutoff);
   const feedings = input.feedings.filter(r => new Date(r.fedAt).getTime() >= cutoff);
   const patterns: DetectedPattern[] = [];
+  // M004: one shared sorted timeline for all event→reading detectors
+  const timeline = buildTimeline(readings);
 
   const detectors = [
-    () => detectSomogyi(readings, config),
+    () => detectSomogyi(timeline, config),
     () => detectDawnPhenomenon(readings),
-    () => detectPostMealSpike(readings, feedings, config),
+    () => detectPostMealSpike(timeline, feedings, config),
     () => detectMissedInjectionImpact(readings, injections, config),
-    () => detectFoodCorrelation(readings, feedings),
-    () => detectDoseResponse(readings, injections),
+    () => detectFoodCorrelation(timeline, feedings),
+    () => detectDoseResponse(timeline, injections),
     () => detectRemissionCandidate(readings, now, config),
   ];
 

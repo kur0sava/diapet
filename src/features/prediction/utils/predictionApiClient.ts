@@ -3,6 +3,7 @@
  * Calls Claude AI with structured prompt and parses JSON response.
  */
 import { sendChatMessage, MODEL_SONNET } from '@features/hints/utils/aiClient';
+import { sanitizeRecommendation } from '@features/analyzer/engine/safetyGuard';
 import { buildPredictionSystemPrompt } from '../data/predictionSystemPrompt';
 import type { PredictionDataSnapshot, PredictionResult } from '../data/predictionTypes';
 
@@ -82,7 +83,41 @@ function parsePredictionResponse(raw: string): PredictionResult {
         : new Date(Date.now() + 6 * 60 * 60 * 1000).toISOString(),
   };
 
-  return predictionResult;
+  return sanitizePredictionResult(predictionResult);
+}
+
+/**
+ * M002: every user-facing text field of the AI response must pass the same
+ * safety guard as local analyzer output — the prompt forbids dose advice,
+ * but prompts are not a guarantee. Runs before caching, so a violating
+ * response can't be re-shown from cache either.
+ */
+function sanitizePredictionResult(result: PredictionResult): PredictionResult {
+  const clean = (text: string): string => sanitizeRecommendation(text).sanitizedText;
+  return {
+    ...result,
+    summary: clean(result.summary),
+    disclaimer: clean(result.disclaimer),
+    checklist: result.checklist.map(item => ({
+      ...item,
+      title: typeof item.title === 'string' ? clean(item.title) : item.title,
+      description:
+        typeof item.description === 'string' ? clean(item.description) : item.description,
+      timing: typeof item.timing === 'string' ? clean(item.timing) : item.timing,
+    })),
+    remission: result.remission
+      ? {
+          ...result.remission,
+          summary:
+            typeof result.remission.summary === 'string'
+              ? clean(result.remission.summary)
+              : result.remission.summary,
+          factors: Array.isArray(result.remission.factors)
+            ? result.remission.factors.map(f => (typeof f === 'string' ? clean(f) : f))
+            : result.remission.factors,
+        }
+      : undefined,
+  };
 }
 
 function validateStatus(status: unknown): status is PredictionResult['status'] {

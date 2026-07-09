@@ -757,7 +757,6 @@ export const ru = {
 
   feedCalculator: {
     title: 'Калькулятор корма',
-    subtitle: 'Проверьте подходит ли корм для диабетической кошки',
     protein: 'Белок %',
     fat: 'Жир %',
     fiber: 'Клетчатка %',

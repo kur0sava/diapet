@@ -24,7 +24,7 @@ import type {
 import { analyzeTrends } from '@features/analyzer/engine/trendEngine';
 import { detectPatterns } from '@features/analyzer/engine/patternDetector';
 import { calculateRiskScore } from '@features/analyzer/engine/riskScoreCalculator';
-import { getSpeciesConfig } from '@shared/config/speciesConfig';
+import { getSpeciesConfig, getTirBounds } from '@shared/config/speciesConfig';
 import { toDateOnly } from '@shared/utils/dateUtils';
 
 // ─── Helpers ───
@@ -315,8 +315,8 @@ export async function collectPredictionData(
     pet: petSnapshot,
     glucose: computeGlucoseStats(
       allGlucose,
-      speciesConfig.glucose.targetLow,
-      speciesConfig.glucose.rangeHigh
+      getTirBounds(speciesConfig).low,
+      getTirBounds(speciesConfig).high
     ),
     injections: computeInjectionStats(allInjections),
     feedings: computeFeedingStats(allFeedings),

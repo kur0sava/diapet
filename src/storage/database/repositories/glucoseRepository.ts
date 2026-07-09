@@ -170,7 +170,14 @@ export const glucoseRepository = {
   },
 
   async findForDay(petId: string, dateStr: string): Promise<GlucoseReading[]> {
-    // BL-05: Convert local day boundaries to UTC ISO for comparison with stored UTC timestamps
+    // BL-05: Convert local day boundaries to UTC ISO for comparison with stored UTC timestamps.
+    // TZ invariant: `dateStr` is a calendar day in the CURRENT device timezone
+    // (Date parses "T00:00:00" as local time). Same rule in injection/feeding
+    // repositories — all "day" views group by the device's present timezone.
+    // After a timezone change, records near midnight may regroup to the
+    // neighboring day; that is accepted behavior (diary always answers "what
+    // happened this day where I am now"), not data loss — don't "fix" one
+    // repository alone or day views will disagree with each other.
     const dayStart = new Date(`${dateStr}T00:00:00`).toISOString();
     const dayEnd = new Date(`${dateStr}T23:59:59.999`).toISOString();
     const db = await getDatabase();
