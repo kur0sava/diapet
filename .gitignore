@@ -1,6 +1,10 @@
 # Dependencies
 node_modules/
 
+# Local build/tooling scratch (EAS/gradle/claude locks)
+.gradle-user/
+.claude/scheduled_tasks.lock
+
 # Expo
 .expo/
 dist/

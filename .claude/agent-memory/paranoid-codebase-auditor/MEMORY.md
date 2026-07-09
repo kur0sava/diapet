@@ -1,5 +1,30 @@
 # DiaPet Audit Memory
 
+## Audit 2026-07-08/09 (HEAD 0dd722c) — persistence/deferred-crash focus
+- **NEW CRITICAL (not previously flagged): silent total data loss via App.tsx orphan-pet purge + MMKV key loss.**
+  App.tsx bootstrap deletes ALL pets from SQLite when `ONBOARDING_COMPLETE` reads false. MMKV is encrypted with a
+  per-device key in SecureStore/Keystore. If that key is lost but the DB+MMKV FILES survive (Android Auto Backup
+  restore to a new device — keystore keys are NOT backed up; or keystore invalidation), MMKV reads empty →
+  ONBOARDING_COMPLETE=false → **every pet + all glucose history deleted, silently**. Amplified by `android.allowBackup`
+  defaulting to true (app.json sets no allowBackup=false). Fix: make purge non-destructive (adopt existing pet /
+  set ONBOARDING_COMPLETE=true) OR gate deletion on pet createdAt age < few min; and set allowBackup:false.
+- **EditPetScreen persistence gap**: only name/weight/insulinType/vet/schedule editable. gender, birthYear(age),
+  diabetesType, diagnosisDate, species, breed, photoUri are NEVER editable post-creation. diagnosisDate/diabetesType
+  feed risk score → a fat-fingered onboarding value skews analyzer forever with no correction path.
+- breed & photoUri: in schema+DTO but collected in NO UI (always null).
+- restoreScheduleNotifications module-level `isRestoring` guard: EditPet's post-save reschedule is SKIPPED if an
+  AppState-active restore is mid-flight → edited reminder time not applied until next foreground.
+- TIR inconsistency CONFIRMED still present: diaryAnalyzer computeDayStats uses targetLow..targetHigh (cat 4-9);
+  trendEngine + predictionDataCollector use targetLow..rangeHigh (cat 4-12). Same day → two different "% in range".
+
+## Audit 2026-07-03 (HEAD 3c888f9) — v2.5.0 script/runtime audit
+- NO P0/P1 blockers. Codebase heavily audited already; charts+analyzer now species-aware (getSpeciesConfig everywhere, species passed to both charts).
+- Prior findings CONFIRMED FIXED: aiClient AbortController timeout, DashboardScreen operator precedence (parenthesized ?? []), migration v9 guarded, mgdlToMmol 2dp.
+- REMAINING (P2/P3, mostly latent because AI hidden AI_PROXY_URL=''):
+  1. In-range% DEFINITION INCONSISTENCY: trendEngine + predictionDataCollector use glucose.rangeHigh (cat 12); diaryAnalyzer uses glucose.targetHigh (cat 9). Same readings → different "% in range" dashboard vs diary. P2 medical-UX.
+  2. safetyGuard.sanitizeRecommendation regex missing /g (line 76) — 2nd occurrence of forbidden dose phrase survives. Also: AI prediction/chat output NOT routed through sanitizeRecommendation at all → bigger gap when AI ships.
+  3. DashboardScreen calculateTrend maxDev/avg → NaN if avg==0 (guarded by numValue>0 validation).
+
 ## Architecture Summary
 - Offline-first SQLite + MMKV storage, no network API calls (except RevenueCat subscriptions + AI chat via Anthropic API)
 - Zustand petStore is the single runtime source for active pet, synced with MMKV for persistence
