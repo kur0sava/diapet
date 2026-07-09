@@ -1,5 +1,12 @@
 import React, { useMemo, useState, useCallback } from 'react';
-import { View, Text, StyleSheet, SectionList, TouchableOpacity } from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  SectionList,
+  TouchableOpacity,
+  RefreshControl,
+} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRoute } from '@react-navigation/native';
 import { useEncyclopediaNavigation } from '@navigation/hooks';
@@ -9,14 +16,18 @@ import { useTheme } from '@shared/theme';
 import { Icon } from '@shared/components/ui/Icon';
 import type { IoniconName } from '@shared/components/ui';
 import {
-  getPrescriptionFoods,
-  getOtcFoods,
   getFoodsByCarbs,
   getFoodVerdict,
   VALID_REGIONS,
   type Region,
   type DiabeticCatFood,
 } from '../data/diabeticFoods';
+import {
+  getCatalogPrescriptionFoods,
+  getCatalogOtcFoods,
+  getFoodCatalog,
+  refreshFoodCatalog,
+} from '../data/foodCatalog';
 import { getStoresForRegion } from '../data/regionStores';
 import type { StoreEntry } from '../types';
 import { usePetStore } from '@shared/stores/petStore';
@@ -54,6 +65,17 @@ export default function FeedGuideRegionScreen() {
 
   const [filter, setFilter] = useState<FilterType>('all');
   const [sortByCarbs, setSortByCarbs] = useState(false);
+  // Bumped after a successful pull-to-refresh so the food memos re-read the
+  // (possibly replaced) catalog.
+  const [catalogVersion, setCatalogVersion] = useState(0);
+  const [refreshing, setRefreshing] = useState(false);
+
+  const onRefresh = useCallback(async () => {
+    setRefreshing(true);
+    const status = await refreshFoodCatalog(true);
+    if (status === 'updated') setCatalogVersion(v => v + 1);
+    setRefreshing(false);
+  }, []);
 
   const regionStoreInfo = useMemo(() => getStoresForRegion(region), [region]);
 
@@ -72,13 +94,23 @@ export default function FeedGuideRegionScreen() {
   );
 
   const prescriptionFoods = useMemo(
-    () => filterFoods(getPrescriptionFoods(region, foodSpecies)),
-    [region, foodSpecies, filterFoods]
+    () => filterFoods(getCatalogPrescriptionFoods(region, foodSpecies)),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [region, foodSpecies, filterFoods, catalogVersion]
   );
   const otcFoods = useMemo(
-    () => filterFoods(getOtcFoods(region, foodSpecies)),
-    [region, foodSpecies, filterFoods]
+    () => filterFoods(getCatalogOtcFoods(region, foodSpecies)),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [region, foodSpecies, filterFoods, catalogVersion]
   );
+  // "Catalog as of <date>" — tells the user the list is maintained, not
+  // frozen in the APK. Pull down to force-refresh.
+  const catalogDate = useMemo(() => {
+    const iso = getFoodCatalog().generatedAt;
+    const d = new Date(iso);
+    return isNaN(d.getTime()) ? '' : d.toLocaleDateString();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [catalogVersion]);
 
   const sections = useMemo(() => {
     const s = [];
@@ -264,9 +296,16 @@ export default function FeedGuideRegionScreen() {
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
           <Icon name="arrow-back" size={24} color={theme.colors.text} />
         </TouchableOpacity>
-        <Text style={[styles.title, { color: theme.colors.text }]} numberOfLines={1}>
-          {t(`feedGuide.regions.${region}`)}
-        </Text>
+        <View style={{ flex: 1 }}>
+          <Text style={[styles.title, { color: theme.colors.text }]} numberOfLines={1}>
+            {t(`feedGuide.regions.${region}`)}
+          </Text>
+          {catalogDate !== '' && (
+            <Text style={[styles.catalogDate, { color: theme.colors.textTertiary }]}>
+              {t('feedGuide.catalogUpdated', { date: catalogDate })}
+            </Text>
+          )}
+        </View>
       </View>
 
       <View style={styles.filterRow}>
@@ -339,6 +378,14 @@ export default function FeedGuideRegionScreen() {
         contentContainerStyle={styles.list}
         showsVerticalScrollIndicator={false}
         stickySectionHeadersEnabled={false}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            tintColor={theme.colors.primary}
+            colors={[theme.colors.primary]}
+          />
+        }
         ListEmptyComponent={
           <Text style={[styles.emptyText, { color: theme.colors.textSecondary }]}>
             {t('feedGuide.noFoodsInRegion')}
@@ -360,7 +407,8 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   backButton: { padding: 4, minHeight: 44, minWidth: 44, justifyContent: 'center' },
-  title: { fontSize: 22, fontWeight: '800', flex: 1 },
+  title: { fontSize: 22, fontWeight: '800' },
+  catalogDate: { fontSize: 11, marginTop: 2 },
   filterRow: {
     flexDirection: 'row',
     flexWrap: 'wrap',

@@ -22,6 +22,7 @@ import { usePetStore } from '@shared/stores/petStore';
 import { initStorage, storage, StorageKeys, vetNameKey, vetPhoneKey } from '@storage/mmkv/storage';
 import { runStartupRecovery } from '@core/startupRecovery';
 import { initRegionOnFirstRun } from '@shared/config/regionConfig';
+import { refreshFoodCatalog } from '@features/encyclopedia/data/foodCatalog';
 import i18n, { restoreLanguage } from '@shared/i18n';
 import '@shared/i18n';
 import {
@@ -70,6 +71,9 @@ function AppContent() {
     // Initial restore on mount
     restoreScheduleNotifications().catch(() => {});
     scheduleHintPushNotifications().catch(() => {});
+    // Self-updating food catalog: background pull, throttled to 1/day,
+    // silent on any failure (bundled/cached data keeps serving).
+    refreshFoodCatalog().catch(() => {});
 
     // Re-register on every foreground return — Android may silently drop
     // scheduled alarms after Doze, battery optimization, or app updates

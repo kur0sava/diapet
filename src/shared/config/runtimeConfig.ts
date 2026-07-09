@@ -33,6 +33,19 @@ export function getAiProxyUrl(): string {
   return getStringExtra('aiProxyUrl').replace(/\/+$/, '');
 }
 
+/**
+ * Manifest for the self-updating diabetic food catalog. Default points to a
+ * standalone public GitHub repo (raw.githubusercontent.com) so the list can
+ * be curated — including by community PRs — without app releases, and keeps
+ * working even if the app itself stops being maintained.
+ */
+const DEFAULT_FOODS_MANIFEST_URL =
+  'https://raw.githubusercontent.com/kur0sava/diapet-foods-data/main/foods-manifest.json';
+
+export function getFoodsManifestUrl(): string {
+  return getStringExtra('foodsManifestUrl') || DEFAULT_FOODS_MANIFEST_URL;
+}
+
 export function getSupabaseAnonKey(): string {
   return getStringExtra('supabaseAnonKey');
 }

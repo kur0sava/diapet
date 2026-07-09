@@ -757,6 +757,7 @@ export const ru = {
       GLOBAL: 'Глобально',
     },
     yourRegion: 'Ваш',
+    catalogUpdated: 'Каталог от {{date}} · потяните вниз для обновления',
   },
 
   feedCalculator: {

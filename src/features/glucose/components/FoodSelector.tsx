@@ -13,11 +13,8 @@ import { Icon } from '@shared/components/ui/Icon';
 import { useTranslation } from 'react-i18next';
 import i18n from '@shared/i18n';
 import { useTheme } from '@shared/theme';
-import {
-  ALL_CAT_FOODS,
-  ALL_DOG_FOODS,
-  getFoodVerdict,
-} from '@features/encyclopedia/data/diabeticFoods';
+import { getFoodVerdict } from '@features/encyclopedia/data/diabeticFoods';
+import { getCatalogFoods } from '@features/encyclopedia/data/foodCatalog';
 import { ALTERNATIVE_FOODS } from '@features/encyclopedia/data/alternativeFoods';
 import { NATURAL_FEEDING_GUIDE } from '@features/encyclopedia/data/naturalFoods';
 import { usePetStore } from '@shared/stores/petStore';
@@ -58,7 +55,7 @@ function buildUnifiedList(species: FoodSpecies): UnifiedFood[] {
   const lang = i18n.language;
   const items: UnifiedFood[] = [];
 
-  const commercial = species === 'dog' ? ALL_DOG_FOODS : ALL_CAT_FOODS;
+  const commercial = getCatalogFoods(species);
   for (const f of commercial) {
     items.push({
       id: f.id,
@@ -105,7 +102,7 @@ function buildUnifiedList(species: FoodSpecies): UnifiedFood[] {
 function getFoodNutrition(id: string, species: FoodSpecies): SelectedFoodData | null {
   const lang = i18n.language;
 
-  const commercial = species === 'dog' ? ALL_DOG_FOODS : ALL_CAT_FOODS;
+  const commercial = getCatalogFoods(species);
   const diabeticFood = commercial.find(f => f.id === id);
   if (diabeticFood) {
     return {

@@ -28,6 +28,9 @@ export default {
       supabaseUrl: process.env.SUPABASE_URL || '',
       supabaseAnonKey: process.env.SUPABASE_ANON_KEY || '',
       paymentProviderUrl: process.env.PAYMENT_PROVIDER_URL || '',
+      // Optional override for the self-updating food catalog manifest.
+      // Empty → runtimeConfig falls back to the public diapet-foods-data repo.
+      foodsManifestUrl: process.env.FOODS_MANIFEST_URL || '',
     },
   },
 };

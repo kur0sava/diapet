@@ -151,6 +151,10 @@ export const StorageKeys = {
   /** User's geographic region (see @shared/config/regionConfig). Detected
    * from device locale on first launch, changeable in Settings. */
   REGION: 'appRegion',
+  /** Self-updating food catalog: last downloaded manifest JSON + fetch time.
+   * See @features/encyclopedia/data/foodCatalog. */
+  FOOD_CATALOG_CACHE: 'foodCatalogCache',
+  FOOD_CATALOG_FETCHED_AT: 'foodCatalogFetchedAt',
 } as const;
 
 /** Per-pet vet contact key. See {@link StorageKeys.VET_NAME} for legacy migration. */
