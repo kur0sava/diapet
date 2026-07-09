@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-07-09T18:00:00.000Z",
+  "generatedAt": "2026-07-09T20:00:00.000Z",
   "foods": {
     "cat": [
       {
@@ -10,10 +10,10 @@
         "nameRu": "Роял Канин Диабетик сухой",
         "type": "dry",
         "category": "prescription",
-        "proteinDM": 48,
-        "fatDM": 15,
-        "carbsDM": 20,
-        "fiberDM": 11,
+        "proteinDM": 50,
+        "fatDM": 13,
+        "carbsDM": 24,
+        "fiberDM": 5,
         "regions": [
           "RU",
           "EU",
@@ -48,7 +48,7 @@
         },
         "priceHint": "RU: 800-1200₽/400г, 2500-3500₽/1.5кг",
         "prescriptionRequired": true,
-        "notes": "Самый распространённый ветеринарный корм для диабетических кошек. Низкий гликемический индекс. Доступен повсеместно в РФ."
+        "notes": "Самый распространённый ветеринарный корм для диабетических кошек. Низкий гликемический индекс. Доступен повсеместно в РФ. Углеводы ~24% DM (пересчитано из этикетки 2026) — выше идеала ISFM (<7%), но в пределах допустимого (<15% для DS46 не выполняется строго; продукт традиционно позиционируется как приемлемый благодаря низкому ГИ источников крахмала, а не абсолютно низкому проценту)."
       },
       {
         "id": "rc-diabetic-wet",
@@ -57,9 +57,10 @@
         "nameRu": "Роял Канин Диабетик влажный",
         "type": "wet",
         "category": "prescription",
-        "proteinDM": 40,
-        "fatDM": 26,
-        "carbsDM": 14,
+        "proteinDM": 51,
+        "fatDM": 18,
+        "carbsDM": 15,
+        "fiberDM": 6,
         "regions": [
           "RU",
           "EU",
@@ -160,9 +161,10 @@
         "nameRu": "Пурина DM сухой",
         "type": "dry",
         "category": "prescription",
-        "proteinDM": 55,
-        "fatDM": 18,
-        "carbsDM": 12,
+        "proteinDM": 58,
+        "fatDM": 17,
+        "carbsDM": 13,
+        "fiberDM": 3,
         "regions": [
           "RU",
           "EU",
@@ -193,18 +195,19 @@
         },
         "priceHint": "RU: 1200-2000₽/1.5кг",
         "prescriptionRequired": true,
-        "notes": "Один из самых низкоуглеводных сухих кормов (12% DM). Очень высокий белок (55%)."
+        "notes": "Один из самых низкоуглеводных сухих кормов (13% DM). Очень высокий белок (58%)."
       },
       {
         "id": "purina-dm-wet",
         "brand": "Purina Pro Plan",
-        "product": "Veterinary Diets DM ST/OX (Wet)",
+        "product": "Veterinary Diets DM Dietetic Management (Wet, Loaf in Sauce)",
         "nameRu": "Пурина DM влажный",
         "type": "wet",
         "category": "prescription",
-        "proteinDM": 52,
-        "fatDM": 30,
-        "carbsDM": 6,
+        "proteinDM": 55,
+        "fatDM": 20,
+        "carbsDM": 2,
+        "fiberDM": 9,
         "regions": [
           "RU",
           "EU",
@@ -232,7 +235,7 @@
         },
         "priceHint": "RU: 130-200₽/пауч 85г, 250-350₽/банка 195г",
         "prescriptionRequired": true,
-        "notes": "Всего 6% углеводов! Лучший показатель среди рецептурных влажных кормов. Доступен в паучах и банках."
+        "notes": "Всего ~2% углеводов на сухое вещество! Лучший показатель среди рецептурных влажных кормов. Доступен в паучах и банках. (Savory Selects — другая линейка с похожим, но не идентичным составом.)"
       },
       {
         "id": "farmina-diabetic-dry",
@@ -294,8 +297,11 @@
         "nameRu": "Крафтиа Галена Диабетик",
         "type": "dry",
         "category": "veterinary",
-        "proteinDM": 42,
-        "carbsDM": 18,
+        "proteinDM": 46,
+        "fatDM": 13,
+        "carbsDM": 28,
+        "fiberDM": 5,
+        "kcalPerKg": 3808,
         "regions": [
           "RU"
         ],
@@ -312,7 +318,7 @@
         },
         "priceHint": "RU: 900-1300₽/1.4кг, 2500-3500₽/4.5кг",
         "prescriptionRequired": false,
-        "notes": "Российский бренд. Доступен на маркетплейсах. Не требует рецепта."
+        "notes": "Российский бренд. Доступен на маркетплейсах. Не требует рецепта. ⚠️ Углеводы ~28% DM — выше порога ISFM для диабетической диеты (<15% DM); использовать как бюджетный вариант только под контролем ветеринара, не как основной низкоуглеводный корм."
       },
       {
         "id": "solid-natura-diabetic",
@@ -321,6 +327,10 @@
         "nameRu": "Солид Натура Вет Диет Диабетик",
         "type": "wet",
         "category": "veterinary",
+        "proteinDM": 65,
+        "fatDM": 25,
+        "carbsDM": 14,
+        "fiberDM": 13,
         "regions": [
           "RU"
         ],
@@ -337,7 +347,82 @@
         },
         "priceHint": "RU: 100-160₽/банка 100г",
         "prescriptionRequired": false,
-        "notes": "Курица + лосось. Российское производство. Не всегда в наличии."
+        "notes": "Курица + лосось. Российское производство. Не всегда в наличии. Углеводы (~14% DM) — оценка по крахмалу+сахару из этикетки, требует уточнения у производителя."
+      },
+      {
+        "id": "monge-vetsolution-diabetic-feline",
+        "brand": "Monge",
+        "product": "VetSolution Diabetic Feline (Dry)",
+        "nameRu": "Монж ВетСолюшн Диабетик для кошек",
+        "type": "dry",
+        "category": "veterinary",
+        "proteinDM": 38,
+        "fatDM": 11,
+        "carbsDM": 35,
+        "fiberDM": 9,
+        "regions": [
+          "EU"
+        ],
+        "whereToBuy": {
+          "EU": [
+            "zooplus.de",
+            "monge.it",
+            "vet clinics"
+          ]
+        },
+        "prescriptionRequired": true,
+        "notes": "⚠️ ЧЕСТНАЯ ОЦЕНКА: несмотря на название \"Diabetic\", реальные углеводы ~35% DM (крахмал 25% + сахар 6.2% как есть) — это существенно ВЫШЕ порога ISFM для диабетической диеты кошек (<15% DM), сопоставимо с обычным беззерновым кормом для здоровых кошек. Механизм действия у Monge основан на замедлении гликемического ответа (мелонный концентрат, пажитник, XOS), а не на низком содержании углеводов. НЕ рекомендуется как основная низкоуглеводная диета для инсулинозависимых кошек; Purina DM, Royal Canin Diabetic или Farmina Vet Life Diabetic предпочтительнее. Доступность в РФ не подтверждена — не указывать регион RU без дополнительной проверки."
+      },
+      {
+        "id": "ortipo-vetdiet-diabetic-glucose-control",
+        "brand": "Ortipo",
+        "product": "VetDiet Diabetic Glucose Control (Dry)",
+        "nameRu": "Ортипо ВетДиет Диабетик Глюкоз Контроль",
+        "type": "dry",
+        "category": "veterinary",
+        "proteinDM": 50,
+        "fatDM": 13,
+        "carbsDM": 25,
+        "fiberDM": 4,
+        "regions": [
+          "RU"
+        ],
+        "whereToBuy": {
+          "RU": [
+            "ortipo.ru"
+          ]
+        },
+        "priceHint": "RU: см. ortipo.ru (0.5кг/1.5кг/6кг фасовки)",
+        "prescriptionRequired": false,
+        "notes": "Российский холистик-бренд, продаётся напрямую через ortipo.ru без рецепта. ⚠️ Углеводы ~25% DM — выше порога ISFM (<15% DM) для диабетической диеты; рассматривать как бюджетный дополнительный вариант, не как основной выбор при инсулинозависимом диабете. Обсудить с ветеринаром."
+      },
+      {
+        "id": "trovet-wrd-feline",
+        "brand": "Trovet",
+        "product": "Weight & Diabetic WRD (Dry)",
+        "nameRu": "Тровет Вейт энд Диабетик для кошек",
+        "type": "dry",
+        "category": "veterinary",
+        "proteinDM": 39,
+        "fatDM": 9,
+        "carbsDM": 39,
+        "fiberDM": 5,
+        "regions": [
+          "EU",
+          "UK"
+        ],
+        "whereToBuy": {
+          "EU": [
+            "zooplus.de",
+            "vet clinics"
+          ],
+          "UK": [
+            "petfoodwarehouse.co.uk",
+            "vet clinics"
+          ]
+        },
+        "prescriptionRequired": true,
+        "notes": "Нидерландский Rx-бренд, продукт совмещает \"снижение веса\" и \"диабет\" в одном названии (WRD). ⚠️ ЧЕСТНАЯ ОЦЕНКА: углеводы ~39% DM — высокие для кошки, НЕ соответствует низкоуглеводному подходу ISFM/Rand. Ориентирован скорее на кошек с лёгкой гипергликемией на фоне ожирения, чем на строгий контроль инсулинозависимого диабета. Не первый выбор — Purina DM, Royal Canin Diabetic или Farmina Vet Life Diabetic предпочтительнее."
       },
       {
         "id": "tiki-after-dark-chicken",
@@ -346,7 +431,10 @@
         "nameRu": "Тики Кэт Афтер Дарк с курицей",
         "type": "wet",
         "category": "otc_low_carb",
-        "carbsDM": 0.1,
+        "proteinDM": 71,
+        "fatDM": 13,
+        "carbsDM": 1,
+        "fiberDM": 4,
         "kcalPerKg": 751,
         "regions": [
           "US"
@@ -361,14 +449,17 @@
         "nameRu": "Фэнси Фист Классик Паштет",
         "type": "wet",
         "category": "otc_low_carb",
-        "carbsDM": 3,
+        "proteinDM": 46,
+        "fatDM": 23,
+        "carbsDM": 10,
+        "fiberDM": 7,
         "regions": [
           "US",
           "UK",
           "EU"
         ],
         "prescriptionRequired": false,
-        "notes": "Бюджетный вариант! Серия Classic Pate имеет ~3-7% углеводов. Рекомендуется ветеринарами как доступная альтернатива. В UK продаётся как Purina Gourmet Gold."
+        "notes": "Бюджетный вариант! Серия Classic Pate имеет ~10% углеводов DM (варьируется по вкусу). Рекомендуется ветеринарами как доступная альтернатива. В UK продаётся как Purina Gourmet Gold."
       },
       {
         "id": "sheba-pate",
@@ -377,7 +468,10 @@
         "nameRu": "Шеба паштет",
         "type": "wet",
         "category": "otc_low_carb",
+        "proteinDM": 45,
+        "fatDM": 25,
         "carbsDM": 7.5,
+        "fiberDM": 7.5,
         "regions": [
           "US",
           "UK",
@@ -415,13 +509,16 @@
         "nameRu": "Доктор Элси Клин Протеин с курицей",
         "type": "dry",
         "category": "otc_low_carb",
-        "carbsDM": 0.3,
+        "proteinDM": 67,
+        "fatDM": 19,
+        "carbsDM": 2,
+        "fiberDM": 5,
         "kcalPerKg": 4030,
         "regions": [
           "US"
         ],
         "prescriptionRequired": false,
-        "notes": "Рекордно низкие углеводы для сухого корма (0.3%!). Только в США."
+        "notes": "Рекордно низкие углеводы для сухого корма (~2% DM). Только в США."
       },
       {
         "id": "ziwi-peak-lamb",
@@ -430,8 +527,11 @@
         "nameRu": "Зиви Пик сублимированный с ягнёнком",
         "type": "dry",
         "category": "otc_low_carb",
-        "carbsDM": 4.7,
-        "kcalPerKg": 5600,
+        "proteinDM": 44,
+        "fatDM": 35,
+        "carbsDM": 4,
+        "fiberDM": 3.5,
+        "kcalPerKg": 4950,
         "regions": [
           "US",
           "EU",
@@ -520,7 +620,10 @@
         "nameRu": "Анимонда Карни",
         "type": "wet",
         "category": "otc_low_carb",
-        "carbsDM": 3,
+        "proteinDM": 50,
+        "fatDM": 29,
+        "carbsDM": 9,
+        "fiberDM": 2.4,
         "regions": [
           "DE",
           "EU",
@@ -583,7 +686,10 @@
         "nameRu": "Пурина Гурмэ Голд паштет",
         "type": "wet",
         "category": "otc_low_carb",
-        "carbsDM": 5,
+        "proteinDM": 55,
+        "fatDM": 23,
+        "carbsDM": 9,
+        "fiberDM": 0.2,
         "regions": [
           "UK",
           "EU",
@@ -647,9 +753,10 @@
         "nameRu": "Анимонда Вом Файнстен беззерновой сухой",
         "type": "dry",
         "category": "otc_low_carb",
-        "proteinDM": 44,
-        "fatDM": 22,
-        "carbsDM": 12,
+        "proteinDM": 37,
+        "fatDM": 13,
+        "carbsDM": 40,
+        "fiberDM": 4,
         "regions": [
           "DE",
           "EU"
@@ -664,7 +771,7 @@
           ]
         },
         "prescriptionRequired": false,
-        "notes": "Немецкий. Беззерновой сухой корм. Низкое содержание углеводов для сухого корма."
+        "notes": "⚠️ ЧЕСТНАЯ ОЦЕНКА (обновлено 2026): реальные углеводы ~40% DM, а не заявленные ранее 12%. \"Беззерновой\" ≠ \"низкоуглеводный\" — сухие гранулы требуют крахмалистого связующего (в данном случае картофель/горох) независимо от отсутствия зерна. НЕ подходит для диабетических кошек, несмотря на позиционирование как премиум-корм. Не рекомендовать как вариант для диабетика."
       },
       {
         "id": "josera-cat-culinesse",
@@ -673,9 +780,10 @@
         "nameRu": "Йозера Нэйчер Кэт беззерновой",
         "type": "dry",
         "category": "otc_low_carb",
-        "proteinDM": 44,
+        "proteinDM": 36,
         "fatDM": 22,
-        "carbsDM": 11,
+        "carbsDM": 33,
+        "fiberDM": 2,
         "regions": [
           "DE",
           "EU"
@@ -691,7 +799,7 @@
           ]
         },
         "prescriptionRequired": false,
-        "notes": "Немецкий бренд. Без злаков, с мясом птицы и лосося. Один из лучших сухих для диабетиков."
+        "notes": "⚠️ ЧЕСТНАЯ ОЦЕНКА (обновлено 2026): реальные углеводы ~33% DM, а не заявленные ранее 11%. Беззерновой состав не означает низкоуглеводный — крахмал даёт горох/картофель. НЕ рекомендовать как вариант для диабетика, несмотря на прежнюю формулировку \"один из лучших\"."
       },
       {
         "id": "applaws-dry-chicken",
@@ -700,9 +808,11 @@
         "nameRu": "Апплоус сухой с курицей",
         "type": "dry",
         "category": "otc_low_carb",
-        "proteinDM": 47,
-        "fatDM": 22,
-        "carbsDM": 10,
+        "proteinDM": 41,
+        "fatDM": 18,
+        "carbsDM": 30,
+        "fiberDM": 2,
+        "kcalPerKg": 4046,
         "regions": [
           "DE",
           "EU",
@@ -722,7 +832,7 @@
           ]
         },
         "prescriptionRequired": false,
-        "notes": "80% мяса. Один из самых низкоуглеводных сухих кормов на рынке."
+        "notes": "⚠️ ЧЕСТНАЯ ОЦЕНКА (обновлено 2026): реальные углеводы ~30% DM, а не заявленные ранее 10%. \"80% мяса\" в маркетинге не отменяет того, что оставшиеся 20% в основном крахмал, необходимый для формирования гранулы. НЕ подходит как низкоуглеводный корм для диабетической кошки."
       },
       {
         "id": "royal-canin-diabetic-mx",
@@ -731,9 +841,10 @@
         "nameRu": "Роял Канин Диабетик",
         "type": "both",
         "category": "prescription",
-        "proteinDM": 48,
-        "fatDM": 24,
-        "carbsDM": 7,
+        "proteinDM": 50,
+        "fatDM": 15,
+        "carbsDM": 20,
+        "fiberDM": 5,
         "regions": [
           "MX",
           "GLOBAL"
@@ -746,7 +857,7 @@
           ]
         },
         "prescriptionRequired": true,
-        "notes": "Disponible en México. Requiere receta veterinaria. Bajo en carbohidratos."
+        "notes": "Disponible en México. Requiere receta veterinaria. Ver ficha \"rc-diabetic-dry\"/\"rc-diabetic-wet\" para el desglose por formato (seco ~24% DM, húmedo ~15% DM)."
       },
       {
         "id": "hills-md-mx",
@@ -756,8 +867,8 @@
         "type": "both",
         "category": "prescription",
         "proteinDM": 51,
-        "fatDM": 24,
-        "carbsDM": 8,
+        "fatDM": 23,
+        "carbsDM": 15,
         "regions": [
           "MX",
           "GLOBAL"
@@ -808,10 +919,10 @@
         "nameRu": "Роял Канин Гликобаланс для собак (сухой)",
         "type": "dry",
         "category": "prescription",
-        "proteinDM": 27,
+        "proteinDM": 40,
         "fatDM": 13,
-        "carbsDM": 44,
-        "fiberDM": 8,
+        "carbsDM": 30,
+        "fiberDM": 9,
         "kcalPerKg": 3544,
         "regions": [
           "RU",
@@ -847,7 +958,7 @@
         "priceHint": "RU: 2500-3500₽/2кг, 6000-8000₽/7.5кг",
         "prescriptionRequired": true,
         "species": "dog",
-        "notes": "Ранее назывался Diabetic Canine. Низкий гликемический индекс, умеренный белок, оптимизированное волокно. Один из самых назначаемых Rx для собак-диабетиков в РФ и мире."
+        "notes": "Ранее назывался Diabetic Canine. Низкий гликемический индекс, умеренный белок, оптимизированное волокно. Один из самых назначаемых Rx для собак-диабетиков в РФ и мире. ⚠️ Клетчатка (~9% DM) ниже идеала (15% DM) — механизм контроля глюкозы у RC основан на низком ГИ крахмала, а не на объёме клетчатки, в отличие от Hill's w/d."
       },
       {
         "id": "hills-wd-canine-dry",
@@ -961,10 +1072,10 @@
         "nameRu": "Фармина Вет Лайф Диабетик для собак (сухой)",
         "type": "dry",
         "category": "prescription",
-        "proteinDM": 32,
-        "fatDM": 10,
-        "carbsDM": 42,
-        "fiberDM": 4,
+        "proteinDM": 36,
+        "fatDM": 11,
+        "carbsDM": 36,
+        "fiberDM": 9,
         "kcalPerKg": 3390,
         "regions": [
           "EU",
@@ -981,7 +1092,7 @@
         },
         "prescriptionRequired": true,
         "species": "dog",
-        "notes": "Источник углеводов — горох + овёс (низкий ГИ). Выше белок (32% DM) и ниже клетчатка (4%) чем Hill's/RC — подходит собакам с чувствительным ЖКТ, но менее выражен fiber-эффект. ⚠️ В РФ сухие Farmina под запретом ввоза с 2024."
+        "notes": "Источник углеводов — горох + овёс (низкий ГИ). Белок 36% DM, клетчатка ~9% DM (ближе к идеалу, чем считалось ранее) — подходит собакам с чувствительным ЖКТ. ⚠️ В РФ сухие Farmina под запретом ввоза с 2024."
       },
       {
         "id": "virbac-hpm-weight-diabetes",
@@ -990,10 +1101,10 @@
         "nameRu": "Вирбак HPM W1 для собак",
         "type": "dry",
         "category": "prescription",
-        "proteinDM": 45,
-        "fatDM": 10,
-        "carbsDM": 27,
-        "fiberDM": 13,
+        "proteinDM": 37,
+        "fatDM": 13,
+        "carbsDM": 25,
+        "fiberDM": 16,
         "regions": [
           "EU",
           "UK"
@@ -1010,7 +1121,7 @@
         },
         "prescriptionRequired": true,
         "species": "dog",
-        "notes": "Французский Rx. Высокий белок + низкие углеводы (редкое сочетание для собачьих диабетических диет). Хорош при коморбидном ожирении. В РФ не ввозится стабильно."
+        "notes": "Французский Rx. Высокая клетчатка (~16% DM) + умеренные углеводы. Хорош при коморбидном ожирении (94% животного белка). В РФ не ввозится стабильно."
       },
       {
         "id": "brit-vd-diabetes",
@@ -1019,10 +1130,10 @@
         "nameRu": "Брит Ветеринари Диабет для собак",
         "type": "dry",
         "category": "prescription",
-        "proteinDM": 25,
-        "fatDM": 12,
-        "carbsDM": 45,
-        "fiberDM": 8,
+        "proteinDM": 41,
+        "fatDM": 13,
+        "carbsDM": 29,
+        "fiberDM": 7,
         "regions": [
           "RU",
           "EU"
@@ -1042,7 +1153,61 @@
         "priceHint": "RU: 1200-1800₽/2кг, 3500-5000₽/12кг",
         "prescriptionRequired": false,
         "species": "dog",
-        "notes": "Чешский бренд. Доступен в РФ без рецепта (хотя производитель позиционирует как Rx). Более бюджетная альтернатива Hill's/RC."
+        "notes": "Чешский бренд. Доступен в РФ без рецепта (хотя производитель позиционирует как Rx). Более бюджетная альтернатива Hill's/RC. Клетчатка (~7% DM) ниже целевого порога (≥10% DM)."
+      },
+      {
+        "id": "purina-dm-diabetes-management-canine-dry",
+        "brand": "Purina Pro Plan",
+        "product": "Veterinary Diets DM Diabetes Management Canine (Dry)",
+        "nameRu": "Пурина DM Diabetes Management для собак (сухой)",
+        "type": "dry",
+        "category": "prescription",
+        "proteinDM": 40,
+        "fatDM": 13,
+        "carbsDM": 32,
+        "fiberDM": 8,
+        "kcalPerKg": 3699,
+        "regions": [
+          "UK"
+        ],
+        "whereToBuy": {
+          "UK": [
+            "purina.co.uk",
+            "vet clinics"
+          ]
+        },
+        "prescriptionRequired": true,
+        "species": "dog",
+        "notes": "UK-специфичное название линейки Purina для собак-диабетиков (не путать с DCO Dual Fiber Control — другой рецептурой). Содержит экстракт белой фасоли (ингибитор амилазы) для снижения постпрандиальной гипергликемии."
+      },
+      {
+        "id": "trovet-wrd-canine",
+        "brand": "Trovet",
+        "product": "Weight & Diabetic WRD (Dry)",
+        "nameRu": "Тровет Вейт энд Диабетик для собак",
+        "type": "dry",
+        "category": "prescription",
+        "proteinDM": 35,
+        "fatDM": 6.5,
+        "carbsDM": 42,
+        "fiberDM": 9,
+        "regions": [
+          "EU",
+          "UK"
+        ],
+        "whereToBuy": {
+          "EU": [
+            "zooplus.de",
+            "vet clinics"
+          ],
+          "UK": [
+            "petfoodwarehouse.co.uk",
+            "vet clinics"
+          ]
+        },
+        "prescriptionRequired": true,
+        "species": "dog",
+        "notes": "Нидерландский Rx-бренд, совмещает \"снижение веса\" и \"диабет\" в одном названии (WRD). Жир исключительно низкий (~6.5% DM) — существенно ниже порога риска панкреатита (25% DM), что особенно ценно для собак с диабетом на фоне панкреатита. Рекомендуется распределять корм на 3-5 приёмов в день для стабилизации гликемии."
       },
       {
         "id": "rc-satiety-canine",

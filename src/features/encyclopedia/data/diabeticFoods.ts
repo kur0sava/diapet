@@ -158,10 +158,15 @@ export const PRESCRIPTION_FOODS: DiabeticCatFood[] = [
     nameRu: 'Роял Канин Диабетик сухой',
     type: 'dry',
     category: 'prescription',
-    proteinDM: 48,
-    fatDM: 15,
-    carbsDM: 20,
-    fiberDM: 11,
+    // 2026 audit: recomputed on DM basis from official analytical constituents
+    // (protein 46% min, fat 12% min, crude ash 7.9%, crude fibre 4.1%,
+    // starch 19%, total sugars 1.5% — Royal Canin AU/zooplus product pages).
+    // Moisture not published for the dry SKU; assumed 8% (typical RC dry).
+    // Previous entry (48/15/20/11) understated carbs and overstated fibre.
+    proteinDM: 50,
+    fatDM: 13,
+    carbsDM: 24,
+    fiberDM: 5,
     regions: ['RU', 'EU', 'UK', 'US', 'GLOBAL'],
     whereToBuy: {
       RU: ['royalcanin.ru', '4lapy.ru', 'ZooZavr', 'ZooMag', 'Ozon'],
@@ -174,7 +179,7 @@ export const PRESCRIPTION_FOODS: DiabeticCatFood[] = [
     priceHint: 'RU: 800-1200₽/400г, 2500-3500₽/1.5кг',
     prescriptionRequired: true,
     notes:
-      'Самый распространённый ветеринарный корм для диабетических кошек. Низкий гликемический индекс. Доступен повсеместно в РФ.',
+      'Самый распространённый ветеринарный корм для диабетических кошек. Низкий гликемический индекс. Доступен повсеместно в РФ. Углеводы ~24% DM (пересчитано из этикетки 2026) — выше идеала ISFM (<7%), но в пределах допустимого (<15% для DS46 не выполняется строго; продукт традиционно позиционируется как приемлемый благодаря низкому ГИ источников крахмала, а не абсолютно низкому проценту).',
   },
   {
     id: 'rc-diabetic-wet',
@@ -183,9 +188,14 @@ export const PRESCRIPTION_FOODS: DiabeticCatFood[] = [
     nameRu: 'Роял Канин Диабетик влажный',
     type: 'wet',
     category: 'prescription',
-    proteinDM: 40,
-    fatDM: 26,
-    carbsDM: 14,
+    // 2026 audit: recomputed from official GA ("Diabetic Thin Slices in
+    // Gravy" — RC UK/RS/AU): protein 8.9%, fat 3.2%, moisture 82.5%,
+    // ash 1.7%, fibre 1.1%, sugars 1.3%, starch 1.2% (as-fed).
+    // Previous fatDM (26) was overstated; carbsDM (14) closely matched.
+    proteinDM: 51,
+    fatDM: 18,
+    carbsDM: 15,
+    fiberDM: 6,
     regions: ['RU', 'EU', 'UK', 'US', 'GLOBAL'],
     whereToBuy: {
       RU: ['royalcanin.ru', '4lapy.ru', 'ZooZavr'],
@@ -260,9 +270,13 @@ export const PRESCRIPTION_FOODS: DiabeticCatFood[] = [
     nameRu: 'Пурина DM сухой',
     type: 'dry',
     category: 'prescription',
-    proteinDM: 55,
-    fatDM: 18,
-    carbsDM: 12,
+    // 2026 audit: recomputed from official GA (protein 51% min, fat 15% min,
+    // fibre 3% max, ash 7.7% max, moisture 12% max — proplanvetdirect.com/
+    // Petco/Chewy label). Close to previous figures; minor refinement.
+    proteinDM: 58,
+    fatDM: 17,
+    carbsDM: 13,
+    fiberDM: 3,
     regions: ['RU', 'EU', 'UK', 'US', 'GLOBAL'],
     whereToBuy: {
       RU: ['shop.purina.ru', '4lapy.ru', 'ZooMag', 'markvet.ru'],
@@ -274,18 +288,24 @@ export const PRESCRIPTION_FOODS: DiabeticCatFood[] = [
     },
     priceHint: 'RU: 1200-2000₽/1.5кг',
     prescriptionRequired: true,
-    notes: 'Один из самых низкоуглеводных сухих кормов (12% DM). Очень высокий белок (55%).',
+    notes: 'Один из самых низкоуглеводных сухих кормов (13% DM). Очень высокий белок (58%).',
   },
   {
     id: 'purina-dm-wet',
     brand: 'Purina Pro Plan',
-    product: 'Veterinary Diets DM ST/OX (Wet)',
+    product: 'Veterinary Diets DM Dietetic Management (Wet, Loaf in Sauce)',
     nameRu: 'Пурина DM влажный',
     type: 'wet',
     category: 'prescription',
-    proteinDM: 52,
-    fatDM: 30,
-    carbsDM: 6,
+    // 2026 audit: "ST/OX" branding is outdated; current label reads "DM
+    // Dietetic Management". Recomputed from official GA, standard loaf
+    // variant: protein 12% min, fat 4.5% min, fibre 2% max, ash 3.1% max,
+    // moisture 78% max (valleyvet.com label PDF / Petco). Previous fatDM
+    // (30) was substantially overstated; actual fat is closer to 20% DM.
+    proteinDM: 55,
+    fatDM: 20,
+    carbsDM: 2,
+    fiberDM: 9,
     regions: ['RU', 'EU', 'UK', 'US', 'GLOBAL'],
     whereToBuy: {
       RU: ['shop.purina.ru', '4lapy.ru', 'markvet.ru'],
@@ -298,7 +318,7 @@ export const PRESCRIPTION_FOODS: DiabeticCatFood[] = [
     priceHint: 'RU: 130-200₽/пауч 85г, 250-350₽/банка 195г',
     prescriptionRequired: true,
     notes:
-      'Всего 6% углеводов! Лучший показатель среди рецептурных влажных кормов. Доступен в паучах и банках.',
+      'Всего ~2% углеводов на сухое вещество! Лучший показатель среди рецептурных влажных кормов. Доступен в паучах и банках. (Savory Selects — другая линейка с похожим, но не идентичным составом.)',
   },
 
   // ── Farmina ──
@@ -321,6 +341,13 @@ export const PRESCRIPTION_FOODS: DiabeticCatFood[] = [
       UK: ['farmina.com'],
     },
     prescriptionRequired: true,
+    // 2026 audit: verified against official GA (protein 46%, fat 13%, fibre
+    // 4.6%, starch 10.5%, total sugar 0.33%, moisture ~6.5%) — figures
+    // confirmed accurate, no change. carbsDM here reflects starch+sugar
+    // (rapidly-available carbohydrate), which is lower than a strict NFE
+    // subtraction would give because Farmina's fibre blend (oat/spelt/
+    // flaxseed/chicory) contributes non-starch polysaccharides not captured
+    // by the crude-fibre assay.
     notes:
       'Источник углеводов — овёс и полба (низкий ГИ). Один из лучших по углеводам (11% DM). Итальянское производство. ⚠️ В РФ сухие корма Farmina под запретом ввоза с 2024 — недоступны.',
   },
@@ -353,8 +380,15 @@ export const PRESCRIPTION_FOODS: DiabeticCatFood[] = [
     nameRu: 'Крафтиа Галена Диабетик',
     type: 'dry',
     category: 'veterinary',
-    proteinDM: 42,
-    carbsDM: 18,
+    // 2026 audit: recomputed from official GA (zoomag.ru product page):
+    // protein 43%, fat 12%, fibre 5%, ash 7.3%, starch 17%, total sugar
+    // 1.3%, "calculated moisture" 6%. Previous entry only had proteinDM/
+    // carbsDM and understated carbs (18 → actual ~28% DM).
+    proteinDM: 46,
+    fatDM: 13,
+    carbsDM: 28,
+    fiberDM: 5,
+    kcalPerKg: 3808,
     regions: ['RU'],
     whereToBuy: {
       RU: ['Ozon', 'Wildberries'],
@@ -366,7 +400,8 @@ export const PRESCRIPTION_FOODS: DiabeticCatFood[] = [
     },
     priceHint: 'RU: 900-1300₽/1.4кг, 2500-3500₽/4.5кг',
     prescriptionRequired: false,
-    notes: 'Российский бренд. Доступен на маркетплейсах. Не требует рецепта.',
+    notes:
+      'Российский бренд. Доступен на маркетплейсах. Не требует рецепта. ⚠️ Углеводы ~28% DM — выше порога ISFM для диабетической диеты (<15% DM); использовать как бюджетный вариант только под контролем ветеринара, не как основной низкоуглеводный корм.',
   },
 
   // ── Solid Natura (Россия) ──
@@ -377,6 +412,19 @@ export const PRESCRIPTION_FOODS: DiabeticCatFood[] = [
     nameRu: 'Солид Натура Вет Диет Диабетик',
     type: 'wet',
     category: 'veterinary',
+    // 2026 audit: this entry previously had NO macro fields at all. Added
+    // from official GA (zaisy.ru): protein 13%, fat 5%, fibre 2.6%,
+    // ash 2.6%, moisture 80%, starch 2%, total sugar 0.8% (per 100g).
+    // NOTE: protein(min)+fat(min)+fibre(max)+ash(max)+moisture(max) sums to
+    // 103.2% — guaranteed-analysis mins/maxes are not additive, so a
+    // straight NFE subtraction goes negative. carbsDM below uses the
+    // starch+sugar figures instead (2.8% as-fed / 20% DM fraction ≈ 14% DM)
+    // as the more defensible low-confidence estimate — flagged for
+    // re-verification against the physical label.
+    proteinDM: 65,
+    fatDM: 25,
+    carbsDM: 14,
+    fiberDM: 13,
     regions: ['RU'],
     whereToBuy: {
       RU: ['4lapy.ru', 'Ozon'],
@@ -388,7 +436,78 @@ export const PRESCRIPTION_FOODS: DiabeticCatFood[] = [
     },
     priceHint: 'RU: 100-160₽/банка 100г',
     prescriptionRequired: false,
-    notes: 'Курица + лосось. Российское производство. Не всегда в наличии.',
+    notes:
+      'Курица + лосось. Российское производство. Не всегда в наличии. Углеводы (~14% DM) — оценка по крахмалу+сахару из этикетки, требует уточнения у производителя.',
+  },
+
+  // ── Monge (Italy, EU) — added 2026 audit ──
+  {
+    id: 'monge-vetsolution-diabetic-feline',
+    brand: 'Monge',
+    product: 'VetSolution Diabetic Feline (Dry)',
+    nameRu: 'Монж ВетСолюшн Диабетик для кошек',
+    type: 'dry',
+    category: 'veterinary', // see honesty note below — real carbs too high for a diabetic-first-line diet
+    // Sourced from monge.it official product PDF/pages: protein 35%,
+    // fat 10%, fibre 8%, ash 7%, starch 25%, total sugars 6.2% (as-fed).
+    // Moisture not published for this dry SKU; assumed 8% (typical dry).
+    proteinDM: 38,
+    fatDM: 11,
+    carbsDM: 35,
+    fiberDM: 9,
+    regions: ['EU'],
+    whereToBuy: {
+      EU: ['zooplus.de', 'monge.it', 'vet clinics'],
+    },
+    prescriptionRequired: true,
+    notes:
+      '⚠️ ЧЕСТНАЯ ОЦЕНКА: несмотря на название "Diabetic", реальные углеводы ~35% DM (крахмал 25% + сахар 6.2% как есть) — это существенно ВЫШЕ порога ISFM для диабетической диеты кошек (<15% DM), сопоставимо с обычным беззерновым кормом для здоровых кошек. Механизм действия у Monge основан на замедлении гликемического ответа (мелонный концентрат, пажитник, XOS), а не на низком содержании углеводов. НЕ рекомендуется как основная низкоуглеводная диета для инсулинозависимых кошек; Purina DM, Royal Canin Diabetic или Farmina Vet Life Diabetic предпочтительнее. Доступность в РФ не подтверждена — не указывать регион RU без дополнительной проверки.',
+  },
+  // ── Ortipo (Russia) — added 2026 audit ──
+  {
+    id: 'ortipo-vetdiet-diabetic-glucose-control',
+    brand: 'Ortipo',
+    product: 'VetDiet Diabetic Glucose Control (Dry)',
+    nameRu: 'Ортипо ВетДиет Диабетик Глюкоз Контроль',
+    type: 'dry',
+    category: 'veterinary',
+    // Sourced from ortipo.ru official GA table: protein 46.5%, fat 12%,
+    // ash 6.8%, fibre 4%. Moisture not published; assumed 7% (typical dry).
+    proteinDM: 50,
+    fatDM: 13,
+    carbsDM: 25,
+    fiberDM: 4,
+    regions: ['RU'],
+    whereToBuy: {
+      RU: ['ortipo.ru'],
+    },
+    priceHint: 'RU: см. ortipo.ru (0.5кг/1.5кг/6кг фасовки)',
+    prescriptionRequired: false,
+    notes:
+      'Российский холистик-бренд, продаётся напрямую через ortipo.ru без рецепта. ⚠️ Углеводы ~25% DM — выше порога ISFM (<15% DM) для диабетической диеты; рассматривать как бюджетный дополнительный вариант, не как основной выбор при инсулинозависимом диабете. Обсудить с ветеринаром.',
+  },
+  // ── Trovet (Netherlands) — added 2026 audit ──
+  {
+    id: 'trovet-wrd-feline',
+    brand: 'Trovet',
+    product: 'Weight & Diabetic WRD (Dry)',
+    nameRu: 'Тровет Вейт энд Диабетик для кошек',
+    type: 'dry',
+    category: 'veterinary', // see honesty note — real carbs too high for feline diabetic-first-line
+    // Sourced from trovet.com official GA: protein 36%, fat 8.5%,
+    // fibre 4.5%, ash 7%, moisture 8%.
+    proteinDM: 39,
+    fatDM: 9,
+    carbsDM: 39,
+    fiberDM: 5,
+    regions: ['EU', 'UK'],
+    whereToBuy: {
+      EU: ['zooplus.de', 'vet clinics'],
+      UK: ['petfoodwarehouse.co.uk', 'vet clinics'],
+    },
+    prescriptionRequired: true,
+    notes:
+      'Нидерландский Rx-бренд, продукт совмещает "снижение веса" и "диабет" в одном названии (WRD). ⚠️ ЧЕСТНАЯ ОЦЕНКА: углеводы ~39% DM — высокие для кошки, НЕ соответствует низкоуглеводному подходу ISFM/Rand. Ориентирован скорее на кошек с лёгкой гипергликемией на фоне ожирения, чем на строгий контроль инсулинозависимого диабета. Не первый выбор — Purina DM, Royal Canin Diabetic или Farmina Vet Life Diabetic предпочтительнее.',
   },
 ];
 
@@ -405,7 +524,15 @@ export const OTC_LOW_CARB_FOODS: DiabeticCatFood[] = [
     nameRu: 'Тики Кэт Афтер Дарк с курицей',
     type: 'wet',
     category: 'otc_low_carb',
-    carbsDM: 0.1,
+    // 2026 audit: previous carbsDM (0.1) was the as-fed value, not DM basis.
+    // Recomputed from official GA (chicken recipe: protein 12% min, fat
+    // 2.2% min, fibre 0.7% max, moisture 83% max); ash not published,
+    // assumed ~2% (typical for meat-heavy formulas) — flagged for
+    // re-verification against the physical label.
+    proteinDM: 71,
+    fatDM: 13,
+    carbsDM: 1,
+    fiberDM: 4,
     kcalPerKg: 751,
     regions: ['US'],
     prescriptionRequired: false,
@@ -418,11 +545,17 @@ export const OTC_LOW_CARB_FOODS: DiabeticCatFood[] = [
     nameRu: 'Фэнси Фист Классик Паштет',
     type: 'wet',
     category: 'otc_low_carb',
-    carbsDM: 3,
+    // 2026 audit: recomputed from official Purina label PDF (Chicken Feast:
+    // protein 10% min, fat 5% min, fibre 1.5% max, ash 3.25% max,
+    // moisture 78% max). Previous carbsDM (3) understated actual value.
+    proteinDM: 46,
+    fatDM: 23,
+    carbsDM: 10,
+    fiberDM: 7,
     regions: ['US', 'UK', 'EU'],
     prescriptionRequired: false,
     notes:
-      'Бюджетный вариант! Серия Classic Pate имеет ~3-7% углеводов. Рекомендуется ветеринарами как доступная альтернатива. В UK продаётся как Purina Gourmet Gold.',
+      'Бюджетный вариант! Серия Classic Pate имеет ~10% углеводов DM (варьируется по вкусу). Рекомендуется ветеринарами как доступная альтернатива. В UK продаётся как Purina Gourmet Gold.',
   },
   {
     id: 'sheba-pate',
@@ -431,7 +564,13 @@ export const OTC_LOW_CARB_FOODS: DiabeticCatFood[] = [
     nameRu: 'Шеба паштет',
     type: 'wet',
     category: 'otc_low_carb',
+    // 2026 audit: verified against official GA (Savory Chicken Entree:
+    // protein 9% min, fat 5% min, fibre 1.5% max, ash 3% max, moisture 80%
+    // max) — carbsDM confirmed accurate, added full macro breakdown.
+    proteinDM: 45,
+    fatDM: 25,
     carbsDM: 7.5,
+    fiberDM: 7.5,
     regions: ['US', 'UK', 'RU', 'EU', 'GLOBAL'],
     whereToBuy: {
       RU: ['4lapy.ru', 'Ozon', 'любой зоомагазин'],
@@ -452,11 +591,18 @@ export const OTC_LOW_CARB_FOODS: DiabeticCatFood[] = [
     nameRu: 'Доктор Элси Клин Протеин с курицей',
     type: 'dry',
     category: 'otc_low_carb',
-    carbsDM: 0.3,
+    // 2026 audit: previous carbsDM (0.3) was the as-fed value, not DM basis.
+    // Recomputed from official GA (protein 59% min, fat 17% min, fibre 4%
+    // max, moisture 12% max); ash not published, assumed ~6% (typical dry
+    // cat food) — flagged for re-verification against the physical label.
+    proteinDM: 67,
+    fatDM: 19,
+    carbsDM: 2,
+    fiberDM: 5,
     kcalPerKg: 4030,
     regions: ['US'],
     prescriptionRequired: false,
-    notes: 'Рекордно низкие углеводы для сухого корма (0.3%!). Только в США.',
+    notes: 'Рекордно низкие углеводы для сухого корма (~2% DM). Только в США.',
   },
   {
     id: 'ziwi-peak-lamb',
@@ -465,8 +611,14 @@ export const OTC_LOW_CARB_FOODS: DiabeticCatFood[] = [
     nameRu: 'Зиви Пик сублимированный с ягнёнком',
     type: 'dry',
     category: 'otc_low_carb',
-    carbsDM: 4.7,
-    kcalPerKg: 5600,
+    // 2026 audit: recomputed from official ZIWI GA (protein 38% min, fat
+    // 30% min, fibre 3% max, ash 12% max, moisture 14% max) and corrected
+    // energy value (4950 kcal ME/kg per us.ziwipets.com, not 5600).
+    proteinDM: 44,
+    fatDM: 35,
+    carbsDM: 4,
+    fiberDM: 3.5,
+    kcalPerKg: 4950,
     regions: ['US', 'EU', 'UK'],
     prescriptionRequired: false,
     notes: 'Сублимированный корм из Новой Зеландии. Премиум, дорогой, но отличный состав.',
@@ -534,7 +686,14 @@ export const OTC_LOW_CARB_FOODS: DiabeticCatFood[] = [
     nameRu: 'Анимонда Карни',
     type: 'wet',
     category: 'otc_low_carb',
-    carbsDM: 3,
+    // 2026 audit: recomputed from official analytische Bestandteile
+    // (representative variant: protein 10.5% min, fat 6% min, fibre 0.5%
+    // max, ash 2% max, moisture 79% max — animonda.de). Previous carbsDM
+    // (3) understated actual value; still well within the "good" range.
+    proteinDM: 50,
+    fatDM: 29,
+    carbsDM: 9,
+    fiberDM: 2.4,
     regions: ['DE', 'EU', 'RU'],
     whereToBuy: {
       RU: ['Ozon', '4lapy.ru', 'зоомагазины'],
@@ -581,7 +740,13 @@ export const OTC_LOW_CARB_FOODS: DiabeticCatFood[] = [
     nameRu: 'Пурина Гурмэ Голд паштет',
     type: 'wet',
     category: 'otc_low_carb',
-    carbsDM: 5,
+    // 2026 audit: recomputed from official Purina UK analytical constituents
+    // (Chicken variant: moisture 78%, protein 12%, fat 5%, ash 2.9%,
+    // fibre 0.05%). Previous carbsDM (5) understated actual value slightly.
+    proteinDM: 55,
+    fatDM: 23,
+    carbsDM: 9,
+    fiberDM: 0.2,
     regions: ['UK', 'EU', 'RU', 'GLOBAL'],
     whereToBuy: {
       RU: ['любой супермаркет', 'Ozon', '4lapy.ru'],
@@ -626,16 +791,23 @@ export const OTC_LOW_CARB_FOODS: DiabeticCatFood[] = [
     nameRu: 'Анимонда Вом Файнстен беззерновой сухой',
     type: 'dry',
     category: 'otc_low_carb',
-    proteinDM: 44,
-    fatDM: 22,
-    carbsDM: 12,
+    // 2026 audit — MAJOR CORRECTION: previous entry (proteinDM 44/fatDM 22/
+    // carbsDM 12) was not supported by the label. Recomputed from official
+    // analytische Bestandteile (Adult/kastriert variant, closest match to
+    // "Deluxe Grain-Free Adult"): protein 34%, fat 12%, fibre 3.5%,
+    // ash 6%, moisture 8% (animonda.de / zooundco.de / globus-baumarkt.de).
+    proteinDM: 37,
+    fatDM: 13,
+    carbsDM: 40,
+    fiberDM: 4,
     regions: ['DE', 'EU'],
     whereToBuy: {
       DE: ['zooplus.de', 'fressnapf.de'],
       EU: ['zooplus.de'],
     },
     prescriptionRequired: false,
-    notes: 'Немецкий. Беззерновой сухой корм. Низкое содержание углеводов для сухого корма.',
+    notes:
+      '⚠️ ЧЕСТНАЯ ОЦЕНКА (обновлено 2026): реальные углеводы ~40% DM, а не заявленные ранее 12%. "Беззерновой" ≠ "низкоуглеводный" — сухие гранулы требуют крахмалистого связующего (в данном случае картофель/горох) независимо от отсутствия зерна. НЕ подходит для диабетических кошек, несмотря на позиционирование как премиум-корм. Не рекомендовать как вариант для диабетика.',
   },
   {
     id: 'josera-cat-culinesse',
@@ -644,9 +816,14 @@ export const OTC_LOW_CARB_FOODS: DiabeticCatFood[] = [
     nameRu: 'Йозера Нэйчер Кэт беззерновой',
     type: 'dry',
     category: 'otc_low_carb',
-    proteinDM: 44,
+    // 2026 audit — MAJOR CORRECTION: previous entry (44/22/11) was not
+    // supported by the label. Recomputed from official analytische
+    // Bestandteile (josera.de datasheet): protein 33%, fat 20%, fibre 2%,
+    // ash 7.1%; moisture not published, assumed 8% (typical dry).
+    proteinDM: 36,
     fatDM: 22,
-    carbsDM: 11,
+    carbsDM: 33,
+    fiberDM: 2,
     regions: ['DE', 'EU'],
     whereToBuy: {
       DE: ['zooplus.de', 'fressnapf.de', 'Amazon.de'],
@@ -654,7 +831,7 @@ export const OTC_LOW_CARB_FOODS: DiabeticCatFood[] = [
     },
     prescriptionRequired: false,
     notes:
-      'Немецкий бренд. Без злаков, с мясом птицы и лосося. Один из лучших сухих для диабетиков.',
+      '⚠️ ЧЕСТНАЯ ОЦЕНКА (обновлено 2026): реальные углеводы ~33% DM, а не заявленные ранее 11%. Беззерновой состав не означает низкоуглеводный — крахмал даёт горох/картофель. НЕ рекомендовать как вариант для диабетика, несмотря на прежнюю формулировку "один из лучших".',
   },
   {
     id: 'applaws-dry-chicken',
@@ -663,9 +840,15 @@ export const OTC_LOW_CARB_FOODS: DiabeticCatFood[] = [
     nameRu: 'Апплоус сухой с курицей',
     type: 'dry',
     category: 'otc_low_carb',
-    proteinDM: 47,
-    fatDM: 22,
-    carbsDM: 10,
+    // 2026 audit — MAJOR CORRECTION: previous entry (47/22/10) was not
+    // supported by the label. Recomputed from official GA (UK: protein 37%,
+    // fibre 2%, fat 16.5%, ash 8%, 4046 kcal/kg; US moisture 9% used since
+    // UK page doesn't publish it — applaws.com).
+    proteinDM: 41,
+    fatDM: 18,
+    carbsDM: 30,
+    fiberDM: 2,
+    kcalPerKg: 4046,
     regions: ['DE', 'EU', 'UK'],
     whereToBuy: {
       DE: ['zooplus.de', 'Amazon.de'],
@@ -673,7 +856,8 @@ export const OTC_LOW_CARB_FOODS: DiabeticCatFood[] = [
       UK: ['Amazon.co.uk', 'Pets at Home'],
     },
     prescriptionRequired: false,
-    notes: '80% мяса. Один из самых низкоуглеводных сухих кормов на рынке.',
+    notes:
+      '⚠️ ЧЕСТНАЯ ОЦЕНКА (обновлено 2026): реальные углеводы ~30% DM, а не заявленные ранее 10%. "80% мяса" в маркетинге не отменяет того, что оставшиеся 20% в основном крахмал, необходимый для формирования гранулы. НЕ подходит как низкоуглеводный корм для диабетической кошки.',
   },
 
   // ── MX — корма доступные в Мексике ──
@@ -684,15 +868,21 @@ export const OTC_LOW_CARB_FOODS: DiabeticCatFood[] = [
     nameRu: 'Роял Канин Диабетик',
     type: 'both',
     category: 'prescription',
-    proteinDM: 48,
-    fatDM: 24,
-    carbsDM: 7,
+    // 2026 audit: aligned with the sourced RC Diabetic DS46 dry (24% DM
+    // carbs) / Thin Slices wet (15% DM carbs) entries above rather than the
+    // previous unsourced placeholder (7% DM); value here is a dry/wet
+    // average since this MX entry bundles both formats.
+    proteinDM: 50,
+    fatDM: 15,
+    carbsDM: 20,
+    fiberDM: 5,
     regions: ['MX', 'GLOBAL'],
     whereToBuy: {
       MX: ['PetCo México', 'Petsy.mx', 'MercadoLibre'],
     },
     prescriptionRequired: true,
-    notes: 'Disponible en México. Requiere receta veterinaria. Bajo en carbohidratos.',
+    notes:
+      'Disponible en México. Requiere receta veterinaria. Ver ficha "rc-diabetic-dry"/"rc-diabetic-wet" para el desglose por formato (seco ~24% DM, húmedo ~15% DM).',
   },
   {
     id: 'hills-md-mx',
@@ -701,9 +891,12 @@ export const OTC_LOW_CARB_FOODS: DiabeticCatFood[] = [
     nameRu: 'Хиллс m/d',
     type: 'both',
     category: 'prescription',
+    // 2026 audit: this MX entry used unsourced placeholder values that
+    // diverged from the main hills-md-dry entry (51/23/15). Aligned here;
+    // not independently re-verified for the MX-specific SKU this session.
     proteinDM: 51,
-    fatDM: 24,
-    carbsDM: 8,
+    fatDM: 23,
+    carbsDM: 15,
     regions: ['MX', 'GLOBAL'],
     whereToBuy: {
       MX: ['PetCo México', 'Petsy.mx'],
@@ -746,10 +939,20 @@ export const PRESCRIPTION_DOG_FOODS: DiabeticCatFood[] = [
     nameRu: 'Роял Канин Гликобаланс для собак (сухой)',
     type: 'dry',
     category: 'prescription',
-    proteinDM: 27,
+    // 2026 audit — MAJOR CORRECTION: previous entry (27/13/44/8) substantially
+    // understated protein and overstated carbs. Recomputed from official GA,
+    // averaged across two regional labels which differ meaningfully:
+    //  EU/RSA "Diabetic": protein 37%, fat 12%, fibre 6.5%, ash 5.3%,
+    //    starch 19.1%, sugars 0.55%, moisture ~11% → ~42% protein DM,
+    //    ~32% carbs DM, ~7% fibre DM.
+    //  US "Glycobalance": protein 35% min, fat 10-14%, fibre 9.8% max,
+    //    starch 22.2% max, sugars 2% max, moisture 10.5% max → ~39% protein
+    //    DM, ~29% carbs DM, ~11% fibre DM.
+    // Values below are the midpoint; regional labels genuinely differ.
+    proteinDM: 40,
     fatDM: 13,
-    carbsDM: 44,
-    fiberDM: 8,
+    carbsDM: 30,
+    fiberDM: 9,
     kcalPerKg: 3544,
     regions: ['RU', 'EU', 'UK', 'US', 'GLOBAL'],
     whereToBuy: {
@@ -764,7 +967,7 @@ export const PRESCRIPTION_DOG_FOODS: DiabeticCatFood[] = [
     prescriptionRequired: true,
     species: 'dog',
     notes:
-      'Ранее назывался Diabetic Canine. Низкий гликемический индекс, умеренный белок, оптимизированное волокно. Один из самых назначаемых Rx для собак-диабетиков в РФ и мире.',
+      "Ранее назывался Diabetic Canine. Низкий гликемический индекс, умеренный белок, оптимизированное волокно. Один из самых назначаемых Rx для собак-диабетиков в РФ и мире. ⚠️ Клетчатка (~9% DM) ниже идеала (15% DM) — механизм контроля глюкозы у RC основан на низком ГИ крахмала, а не на объёме клетчатки, в отличие от Hill's w/d.",
   },
 
   // ── Hill's ──
@@ -851,10 +1054,15 @@ export const PRESCRIPTION_DOG_FOODS: DiabeticCatFood[] = [
     nameRu: 'Фармина Вет Лайф Диабетик для собак (сухой)',
     type: 'dry',
     category: 'prescription',
-    proteinDM: 32,
-    fatDM: 10,
-    carbsDM: 42,
-    fiberDM: 4,
+    // 2026 audit: recomputed from official GA (farmina.com/vivapets.com):
+    // protein 33% min, fat 10.5% min, fibre 7.9% max, ash 7.9% max,
+    // moisture 7.5% max, starch 17.5% max. Previous fiberDM (4) was
+    // substantially understated — actual fibre is much closer to the
+    // canine diabetic-diet target (≥10% DM ideal) than previously shown.
+    proteinDM: 36,
+    fatDM: 11,
+    carbsDM: 36,
+    fiberDM: 9,
     kcalPerKg: 3390,
     // Farmina dry banned in RU (2024) + Italian import restricted.
     regions: ['EU', 'UK'],
@@ -865,7 +1073,7 @@ export const PRESCRIPTION_DOG_FOODS: DiabeticCatFood[] = [
     prescriptionRequired: true,
     species: 'dog',
     notes:
-      "Источник углеводов — горох + овёс (низкий ГИ). Выше белок (32% DM) и ниже клетчатка (4%) чем Hill's/RC — подходит собакам с чувствительным ЖКТ, но менее выражен fiber-эффект. ⚠️ В РФ сухие Farmina под запретом ввоза с 2024.",
+      'Источник углеводов — горох + овёс (низкий ГИ). Белок 36% DM, клетчатка ~9% DM (ближе к идеалу, чем считалось ранее) — подходит собакам с чувствительным ЖКТ. ⚠️ В РФ сухие Farmina под запретом ввоза с 2024.',
   },
 
   // ── Virbac ──
@@ -876,10 +1084,15 @@ export const PRESCRIPTION_DOG_FOODS: DiabeticCatFood[] = [
     nameRu: 'Вирбак HPM W1 для собак',
     type: 'dry',
     category: 'prescription',
-    proteinDM: 45,
-    fatDM: 10,
-    carbsDM: 27,
-    fiberDM: 13,
+    // 2026 audit: recomputed from official GA (produits-veto.com/
+    // farmaciasdirect.eu): moisture 9%, protein 34%, fat 11.5%, ash 7.5%,
+    // fibre 15%, carbohydrates (ELN) 23%, starch 14%, total sugars 1%.
+    // Fibre (~16.5% DM) is notably HIGHER than previously listed (13%) —
+    // crosses the canine ideal-fibre threshold (≥15% DM).
+    proteinDM: 37,
+    fatDM: 13,
+    carbsDM: 25,
+    fiberDM: 16,
     regions: ['EU', 'UK'],
     whereToBuy: {
       EU: ['zooplus.de', 'vet clinics'],
@@ -888,7 +1101,7 @@ export const PRESCRIPTION_DOG_FOODS: DiabeticCatFood[] = [
     prescriptionRequired: true,
     species: 'dog',
     notes:
-      'Французский Rx. Высокий белок + низкие углеводы (редкое сочетание для собачьих диабетических диет). Хорош при коморбидном ожирении. В РФ не ввозится стабильно.',
+      'Французский Rx. Высокая клетчатка (~16% DM) + умеренные углеводы. Хорош при коморбидном ожирении (94% животного белка). В РФ не ввозится стабильно.',
   },
 
   // ── Brit ──
@@ -899,10 +1112,14 @@ export const PRESCRIPTION_DOG_FOODS: DiabeticCatFood[] = [
     nameRu: 'Брит Ветеринари Диабет для собак',
     type: 'dry',
     category: 'prescription',
-    proteinDM: 25,
-    fatDM: 12,
-    carbsDM: 45,
-    fiberDM: 8,
+    // 2026 audit — MAJOR CORRECTION: previous entry (25/12/45/8) substantially
+    // understated protein and overstated carbs. Recomputed from official GA
+    // (britvetdiets.com/vetsend.co.uk): protein 37%, fat 12%, fibre 6.5%,
+    // ash 8%, moisture 10%, starch 16%, total sugars 1.5%.
+    proteinDM: 41,
+    fatDM: 13,
+    carbsDM: 29,
+    fiberDM: 7,
     regions: ['RU', 'EU'],
     whereToBuy: {
       RU: ['4lapy.ru', 'Ozon', 'Wildberries', 'petshop.ru'],
@@ -912,7 +1129,61 @@ export const PRESCRIPTION_DOG_FOODS: DiabeticCatFood[] = [
     prescriptionRequired: false,
     species: 'dog',
     notes:
-      "Чешский бренд. Доступен в РФ без рецепта (хотя производитель позиционирует как Rx). Более бюджетная альтернатива Hill's/RC.",
+      "Чешский бренд. Доступен в РФ без рецепта (хотя производитель позиционирует как Rx). Более бюджетная альтернатива Hill's/RC. Клетчатка (~7% DM) ниже целевого порога (≥10% DM).",
+  },
+
+  // ── Purina (UK-branded twin of DCO) — added 2026 audit ──
+  {
+    id: 'purina-dm-diabetes-management-canine-dry',
+    brand: 'Purina Pro Plan',
+    product: 'Veterinary Diets DM Diabetes Management Canine (Dry)',
+    nameRu: 'Пурина DM Diabetes Management для собак (сухой)',
+    type: 'dry',
+    category: 'prescription',
+    // Sourced from purina.co.uk official product page: protein 37%, fat
+    // 12%, ash 7%, fibre 7%, carbohydrate 29.5% (moisture back-calculated
+    // ≈7.5%). This is a UK-specific product name, distinct from the
+    // "DCO Dual Fiber Control" branding used in the US/EU — same clinical
+    // purpose (diabetes management), different regional SKU/formulation.
+    proteinDM: 40,
+    fatDM: 13,
+    carbsDM: 32,
+    fiberDM: 8,
+    kcalPerKg: 3699, // 342 kcal/100g as-fed, per label
+    regions: ['UK'],
+    whereToBuy: {
+      UK: ['purina.co.uk', 'vet clinics'],
+    },
+    prescriptionRequired: true,
+    species: 'dog',
+    notes:
+      'UK-специфичное название линейки Purina для собак-диабетиков (не путать с DCO Dual Fiber Control — другой рецептурой). Содержит экстракт белой фасоли (ингибитор амилазы) для снижения постпрандиальной гипергликемии.',
+  },
+  // ── Trovet (Netherlands) — added 2026 audit ──
+  {
+    id: 'trovet-wrd-canine',
+    brand: 'Trovet',
+    product: 'Weight & Diabetic WRD (Dry)',
+    nameRu: 'Тровет Вейт энд Диабетик для собак',
+    type: 'dry',
+    category: 'prescription',
+    // Sourced from trovet.com official GA: protein 32%, fat 6%, fibre 8.5%,
+    // ash 6.5%, moisture 8%. Notably low fat (excellent for pancreatitis
+    // risk in diabetic dogs) though fibre sits just under the "ideal" 15%
+    // DM canine threshold.
+    proteinDM: 35,
+    fatDM: 6.5,
+    carbsDM: 42,
+    fiberDM: 9,
+    regions: ['EU', 'UK'],
+    whereToBuy: {
+      EU: ['zooplus.de', 'vet clinics'],
+      UK: ['petfoodwarehouse.co.uk', 'vet clinics'],
+    },
+    prescriptionRequired: true,
+    species: 'dog',
+    notes:
+      'Нидерландский Rx-бренд, совмещает "снижение веса" и "диабет" в одном названии (WRD). Жир исключительно низкий (~6.5% DM) — существенно ниже порога риска панкреатита (25% DM), что особенно ценно для собак с диабетом на фоне панкреатита. Рекомендуется распределять корм на 3-5 приёмов в день для стабилизации гликемии.',
   },
 ];
 
@@ -1084,15 +1355,23 @@ export function getFoodVerdict(
   fiberDM?: number
 ): 'good' | 'acceptable' | 'bad' {
   if (species === 'dog') {
-    const fatOk = fatDM == null || fatDM <= DIABETIC_NUTRITION_GUIDELINES_DOG.fatMaxPercent;
-    const fatIdeal =
-      fatDM != null && fatDM <= DIABETIC_NUTRITION_GUIDELINES_DOG.fatIdealPercent + 2;
-    const fiberOk = fiberDM == null || fiberDM >= DIABETIC_NUTRITION_GUIDELINES_DOG.fiberMinPercent;
-    const fiberIdeal =
-      fiberDM != null && fiberDM >= DIABETIC_NUTRITION_GUIDELINES_DOG.fiberIdealPercent;
-    if (!fatOk) return 'bad'; // pancreatitis risk trumps everything
-    if (fatIdeal && fiberIdeal) return 'good';
-    if (fiberOk) return 'acceptable';
+    const G = DIABETIC_NUTRITION_GUIDELINES_DOG;
+    // Fat is the hard safety gate: high fat drives pancreatitis, a major
+    // trigger of insulin resistance in diabetic dogs.
+    if (fatDM != null && fatDM > G.fatMaxPercent) return 'bad';
+    const lowFat = fatDM == null || fatDM <= G.fatIdealPercent + 2; // ≈≤14% DM
+    const fiberIdeal = fiberDM != null && fiberDM >= G.fiberIdealPercent; // ≥15%
+    const fiberHigh = fiberDM != null && fiberDM >= G.fiberMinPercent; // ≥10%
+    // Two legitimate clinical approaches to canine diabetic control (AAHA 2018):
+    //   (a) high-fibre bulk — Hill's w/d, Purina DCO: fibre ≥10–15% DM
+    //   (b) low-fat + low-glycaemic starch — Royal Canin Glycobalance, Trovet,
+    //       Brit VD: fibre sits at ~7–9% because glucose control comes from the
+    //       starch source, not fibre volume. A pure fibre gate wrongly fails
+    //       these first-line Rx diets (2026 audit finding).
+    if (lowFat && fiberIdeal) return 'good';
+    if (fiberHigh) return 'acceptable';
+    if (lowFat && fiberDM != null && fiberDM >= 6) return 'acceptable';
+    if (fiberDM == null) return 'acceptable'; // fibre unknown, fat ok → neutral
     return 'bad';
   }
   // cat (default)
