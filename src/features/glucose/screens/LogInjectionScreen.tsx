@@ -21,8 +21,8 @@ import type { HomeStackParamList } from '@navigation/types';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '@shared/theme';
 import { Button, Input, Card } from '@shared/components/ui';
-import { differenceInMinutes } from 'date-fns';
-import { injectionRepository, glucoseRepository } from '@storage/database';
+import { injectionRepository } from '@storage/database';
+import { findRecentInsulinDose } from '../utils/recentInsulinCheck';
 import { usePetStore } from '@shared/stores/petStore';
 import { getInsulinThresholds, getSpeciesConfig } from '@shared/config/speciesConfig';
 import { useQueryClient } from '@tanstack/react-query';
@@ -159,44 +159,28 @@ export default function LogInjectionScreen() {
       return;
     }
 
-    // X.8: Duplicate injection safety — warn if last injection < 6 hours ago.
-    // Checks both the injections table AND inline insulin doses recorded on
-    // glucose readings (LogGlucoseScreen) — those aren't InjectionLog rows,
-    // so previously a dose logged with a reading was invisible to this check.
-    try {
-      const iso = administeredAt.toISOString();
-      const [lastInj, lastInline] = await Promise.all([
-        injectionRepository.findNearestTo(activePet.id, iso),
-        glucoseRepository.findNearestInsulinTo(activePet.id, iso),
-      ]);
-      const nearestTimes = [lastInj?.administeredAt, lastInline?.recordedAt].filter(
-        (v): v is string => !!v
+    // X.8: Duplicate injection safety — warn if another insulin dose (a
+    // standalone injection OR an inline dose on a glucose reading) was logged
+    // < 6h ago. Shared with LogGlucoseScreen via findRecentInsulinDose so both
+    // dose-entry paths run the same guard.
+    const recent = await findRecentInsulinDose(activePet.id, administeredAt);
+    if (recent) {
+      Alert.alert(
+        t('injection.recentInjectionWarning'),
+        t('injection.recentInjectionWarningDesc', {
+          hours: recent.hours,
+          minutes: recent.minutes,
+        }),
+        [
+          { text: t('common.cancel'), style: 'cancel' },
+          {
+            text: t('common.confirm'),
+            style: 'destructive',
+            onPress: () => proceedWithDoseChecks(doseNum),
+          },
+        ]
       );
-      if (nearestTimes.length > 0) {
-        const minutesSince = Math.min(
-          ...nearestTimes.map(ts => Math.abs(differenceInMinutes(administeredAt, new Date(ts))))
-        );
-        if (minutesSince < 360) {
-          // 6 hours
-          const hours = Math.floor(minutesSince / 60);
-          const mins = minutesSince % 60;
-          Alert.alert(
-            t('injection.recentInjectionWarning'),
-            t('injection.recentInjectionWarningDesc', { hours, minutes: mins }),
-            [
-              { text: t('common.cancel'), style: 'cancel' },
-              {
-                text: t('common.confirm'),
-                style: 'destructive',
-                onPress: () => proceedWithDoseChecks(doseNum),
-              },
-            ]
-          );
-          return;
-        }
-      }
-    } catch {
-      /* if DB query fails, proceed without check */
+      return;
     }
 
     proceedWithDoseChecks(doseNum);

@@ -39,15 +39,26 @@ export default function EmergencyScreen() {
   const vetPhone = activePetId ? storage.getString(vetPhoneKey(activePetId)) : undefined;
   const vetName = activePetId ? storage.getString(vetNameKey(activePetId)) : undefined;
 
+  // A2 (audit): find the nearest clinic on the map. Opens an external maps app,
+  // so the first-aid instructions on this screen are not lost.
+  const openVetSearch = () => {
+    const query = encodeURIComponent(t('emergency.vetSearchQuery'));
+    Linking.openURL(`https://www.google.com/maps/search/?api=1&query=${query}`).catch(() => {
+      Alert.alert(t('emergency.callFailed'), t('emergency.callFailedDesc'));
+    });
+  };
+
   const callVet = () => {
     if (callingRef.current) return;
     if (!vetPhone) {
-      // Не уводим с Emergency в Settings — пользователь теряет инструкции в
-      // момент паники. Раньше здесь предлагался звонок 112, но человеческая
-      // экстренная служба с диабетом питомца не поможет — просто объясняем,
-      // где добавить контакт, и оставляем пользователя на инструкциях.
-      Alert.alert(t('emergency.noVetContact'), t('emergency.addVetContact'), [
-        { text: t('common.ok', { defaultValue: 'OK' }) },
+      // A2 (audit): this used to be a dead-end alert — the app's most prominent
+      // emergency action did nothing for users who never saved a vet. Make it
+      // actionable: offer to find the nearest clinic on the map. We still don't
+      // navigate away to Settings in the middle of a crisis (the maps app opens
+      // separately, leaving the first-aid steps intact).
+      Alert.alert(t('emergency.noVetContact'), t('emergency.noVetContactDesc'), [
+        { text: t('emergency.findClinic'), onPress: openVetSearch },
+        { text: t('common.ok', { defaultValue: 'OK' }), style: 'cancel' },
       ]);
       return;
     }
@@ -116,7 +127,7 @@ export default function EmergencyScreen() {
               </Text>
             ) : (
               <Text style={[styles.callButtonNoVet, { color: theme.colors.textTertiary }]}>
-                {t('emergency.tapToAddVet')}
+                {t('emergency.tapToFindVet')}
               </Text>
             )}
           </View>

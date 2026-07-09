@@ -40,6 +40,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useUnsavedChangesGuard } from '@shared/hooks/useUnsavedChangesGuard';
 import { useHintTrigger } from '@features/hints/hooks/useHintTrigger';
 import { clearPredictionCache } from '@features/prediction/data/predictionStorage';
+import { findRecentInsulinDose } from '../utils/recentInsulinCheck';
 import { logEvent } from '@shared/analytics/analytics';
 import type { IoniconName } from '@shared/components/ui';
 
@@ -299,6 +300,46 @@ export default function LogGlucoseScreen() {
     disableGuard,
   ]);
 
+  // MC002: species-aware high-dose thresholds. Extracted so handleSave can
+  // gate it behind the recent-insulin (double-dose) check below.
+  const proceedWithDoseChecks = useCallback(
+    (doseNum: number) => {
+      if (!activePet) return;
+      const doseThresholds = getInsulinThresholds(activePet.species, activePet.weightKg);
+      if (doseNum > doseThresholds.absoluteMax) {
+        Alert.alert(
+          t('glucose.doseAbsoluteLimit'),
+          t('glucose.doseAbsoluteLimitDesc', { context: activePet.species })
+        );
+        return;
+      }
+      if (doseNum > doseThresholds.danger) {
+        Alert.alert(
+          t('glucose.veryHighDoseWarning'),
+          t('glucose.veryHighDoseWarningDesc', { dose: doseNum, context: activePet.species }),
+          [
+            { text: t('common.cancel'), style: 'cancel' },
+            { text: t('common.confirm'), style: 'destructive', onPress: () => doSave() },
+          ]
+        );
+        return;
+      }
+      if (doseNum > doseThresholds.warning) {
+        Alert.alert(
+          t('glucose.highDoseWarning'),
+          t('glucose.highDoseWarningDesc', { dose: doseNum, context: activePet.species }),
+          [
+            { text: t('common.cancel'), style: 'cancel' },
+            { text: t('common.confirm'), onPress: () => doSave() },
+          ]
+        );
+        return;
+      }
+      doSave();
+    },
+    [activePet, doSave, t]
+  );
+
   const handleSave = useCallback(async () => {
     if (savingRef.current) return;
     if (!activePet) {
@@ -309,44 +350,39 @@ export default function LogGlucoseScreen() {
       Alert.alert(t('common.error'), t('glucose.invalidValue'));
       return;
     }
-    // MC002: Warn on unusually high insulin dose — species-aware thresholds
     const doseNum = insulinDose ? parseFloat(insulinDose.replace(',', '.')) : 0;
     if (insulinDose && (isNaN(doseNum) || doseNum <= 0)) {
       Alert.alert(t('common.error'), t('injection.doseError'));
       return;
     }
-    const doseThresholds = getInsulinThresholds(activePet.species, activePet.weightKg);
-    if (doseNum > doseThresholds.absoluteMax) {
-      Alert.alert(
-        t('glucose.doseAbsoluteLimit'),
-        t('glucose.doseAbsoluteLimitDesc', { context: activePet.species })
-      );
-      return;
+    // A1 (audit): duplicate-dose safety. The dedicated injection screen warns
+    // if insulin was given < 6h ago; when a dose is entered inline here we must
+    // run the same guard, otherwise the "safe-looking" glucose path silently
+    // skips the most important medical check. Exclude the reading being edited
+    // so it doesn't match itself.
+    if (doseNum > 0) {
+      const recent = await findRecentInsulinDose(activePet.id, recordedAt, editId);
+      if (recent) {
+        Alert.alert(
+          t('injection.recentInjectionWarning'),
+          t('injection.recentInjectionWarningDesc', {
+            hours: recent.hours,
+            minutes: recent.minutes,
+          }),
+          [
+            { text: t('common.cancel'), style: 'cancel' },
+            {
+              text: t('common.confirm'),
+              style: 'destructive',
+              onPress: () => proceedWithDoseChecks(doseNum),
+            },
+          ]
+        );
+        return;
+      }
     }
-    if (doseNum > doseThresholds.danger) {
-      Alert.alert(
-        t('glucose.veryHighDoseWarning'),
-        t('glucose.veryHighDoseWarningDesc', { dose: doseNum, context: activePet.species }),
-        [
-          { text: t('common.cancel'), style: 'cancel' },
-          { text: t('common.confirm'), style: 'destructive', onPress: () => doSave() },
-        ]
-      );
-      return;
-    }
-    if (doseNum > doseThresholds.warning) {
-      Alert.alert(
-        t('glucose.highDoseWarning'),
-        t('glucose.highDoseWarningDesc', { dose: doseNum, context: activePet.species }),
-        [
-          { text: t('common.cancel'), style: 'cancel' },
-          { text: t('common.confirm'), onPress: () => doSave() },
-        ]
-      );
-      return;
-    }
-    doSave();
-  }, [activePet, isValidValue, insulinDose, doSave, t]);
+    proceedWithDoseChecks(doseNum);
+  }, [activePet, isValidValue, insulinDose, recordedAt, editId, proceedWithDoseChecks, t]);
 
   const levelLabels: Record<string, string> = {
     severe_low: t('glucose.severeLow'),

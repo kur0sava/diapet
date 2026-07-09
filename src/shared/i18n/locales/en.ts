@@ -414,11 +414,16 @@ export const en = {
     ],
     noVetContact: 'No vet contact added',
     addVetContact: 'Add a vet contact in pet settings to enable quick calling.',
+    noVetContactDesc:
+      'No vet contact saved. You can find the nearest clinic on the map now, and add a contact later in the pet profile for quick calling.',
+    findClinic: 'Find clinic nearby',
+    vetSearchQuery: 'emergency vet clinic near me',
     call112: 'Call 112',
     callFailed: 'Call failed',
     callFailedDesc: 'Please check the vet phone number in pet settings.',
     goToSettings: 'Go to settings',
     tapToAddVet: 'No contact yet — add it in the pet profile',
+    tapToFindVet: 'No contact yet — tap to find a clinic nearby',
     disclaimer:
       'This information is for reference only. In any emergency, contact your veterinarian immediately.',
     emergencyMode: 'Emergency mode',
