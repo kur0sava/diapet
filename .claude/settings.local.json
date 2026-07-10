@@ -163,7 +163,11 @@
       "WebFetch(domain:nulo.com)",
       "Bash(curl --ssl-no-revoke -sL \"https://expo.dev/artifacts/eas/-8hdSE31kagtEH1x8QZBTaT6FJkn0r7JRnIwZNrLaos.apk\" -o \"/c/Users/Admin/Desktop/DiaPet-2.5.0-vc17.apk\")",
       "Read(//c/Users/Admin/Desktop/**)",
-      "Bash(awk '{print $5, $9}')"
+      "Bash(awk '{print $5, $9}')",
+      "Bash(echo \"===TSC EXIT $?===\")",
+      "Bash(echo \"===ESLINT EXIT $?===\")",
+      "Bash(awk 'NR>=1086 && NR<=1526' src/features/encyclopedia/data/diabeticFoods.ts)",
+      "Bash(FUZZ_SCENARIOS=300 FUZZ_ACTIONS=60 FUZZ_SEED=1 npx jest userScenarios)"
     ]
   }
 }

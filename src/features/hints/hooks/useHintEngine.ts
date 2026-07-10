@@ -7,7 +7,6 @@ import {
   HintTimeOfDay,
   HintCategory,
   HintContent,
-  HintSpecies,
 } from '../data/hintsContent';
 import { storage, StorageKeys } from '@storage/mmkv/storage';
 import type { PetSpecies } from '@storage/domain/types';

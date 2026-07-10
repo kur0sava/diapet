@@ -30,11 +30,13 @@ export async function findRecentInsulinDose(
     const iso = at.toISOString();
     const [lastInj, lastInline] = await Promise.all([
       injectionRepository.findNearestTo(petId, iso),
-      glucoseRepository.findNearestInsulinTo(petId, iso),
+      // audit L1: exclude the edited reading in SQL so the nearest OTHER inline
+      // dose is returned, not the reading being edited (which is distance 0).
+      glucoseRepository.findNearestInsulinTo(petId, iso, excludeGlucoseId),
     ]);
     const nearestTimes: string[] = [];
     if (lastInj?.administeredAt) nearestTimes.push(lastInj.administeredAt);
-    if (lastInline?.recordedAt && lastInline.id !== excludeGlucoseId) {
+    if (lastInline?.recordedAt) {
       nearestTimes.push(lastInline.recordedAt);
     }
     if (nearestTimes.length === 0) return null;

@@ -14,7 +14,6 @@ export function buildPredictionSystemPrompt(snapshot: PredictionDataSnapshot): s
   const isCat = species === 'cat';
   const isDog = species === 'dog';
   const animalWord = isCat ? 'cat' : isDog ? 'dog' : 'pet';
-  const animalAdj = isCat ? 'feline' : isDog ? 'canine' : 'domestic';
 
   const lang = language === 'ru' ? 'Russian' : 'English';
 

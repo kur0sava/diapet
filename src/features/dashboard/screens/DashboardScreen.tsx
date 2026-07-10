@@ -175,7 +175,11 @@ export default function DashboardScreen() {
   // the whole 24h alert window → alarm fatigue. Let the user acknowledge it;
   // a genuinely NEWER emergency (later recordedAt) re-shows it.
   const dismissKey = petId ? `emergencyDismissedAt_${petId}` : '';
-  const [emergencyDismissedAt, setEmergencyDismissedAt] = React.useState('');
+  // audit L5: seed from storage on the very first render (lazy initializer) so an
+  // already-dismissed banner doesn't flash for one frame before the effect runs.
+  const [emergencyDismissedAt, setEmergencyDismissedAt] = React.useState(() =>
+    dismissKey ? (storage.getString(dismissKey) ?? '') : ''
+  );
   React.useEffect(() => {
     setEmergencyDismissedAt(dismissKey ? (storage.getString(dismissKey) ?? '') : '');
   }, [dismissKey]);

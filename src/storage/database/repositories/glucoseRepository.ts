@@ -228,12 +228,20 @@ export const glucoseRepository = {
 
   /** Reading with an inline insulin dose closest in time to a given ISO datetime
    *  (duplicate-injection safety check — mirrors injectionRepository.findNearestTo). */
-  async findNearestInsulinTo(petId: string, isoDateTime: string): Promise<GlucoseReading | null> {
+  async findNearestInsulinTo(
+    petId: string,
+    isoDateTime: string,
+    excludeId?: string
+  ): Promise<GlucoseReading | null> {
     const db = await getDatabase();
+    // audit L1: exclude the reading being edited in SQL, not in JS — otherwise
+    // the edited reading itself is the nearest match (distance 0) and the true
+    // second-nearest inline dose is never returned, skipping its double-dose warn.
     const row = await db.getFirstAsync<GlucoseRow>(
       `SELECT * FROM glucose_readings WHERE pet_id = ? AND insulin_dose > 0
+       AND (? IS NULL OR id != ?)
        ORDER BY ABS(julianday(recorded_at) - julianday(?)) ASC LIMIT 1`,
-      [petId, isoDateTime]
+      [petId, excludeId ?? null, excludeId ?? null, isoDateTime]
     );
     return row ? mapRowToReading(row) : null;
   },

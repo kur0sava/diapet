@@ -73,7 +73,7 @@ export default function LogInjectionScreen() {
     const pid = petIdRef.current;
     if (!pid) return;
     if (!dose && !notes) {
-      clearEntryDraft(StorageKeys.INJECTION_DRAFT);
+      clearEntryDraft(StorageKeys.INJECTION_DRAFT, pid);
       return;
     }
     saveEntryDraft(StorageKeys.INJECTION_DRAFT, pid, {
@@ -138,7 +138,7 @@ export default function LogInjectionScreen() {
       });
       await queryClient.invalidateQueries({ queryKey: queryKeys.injections.all });
       await queryClient.invalidateQueries({ queryKey: queryKeys.diary.all });
-      clearEntryDraft(StorageKeys.INJECTION_DRAFT);
+      clearEntryDraft(StorageKeys.INJECTION_DRAFT, targetPetId);
       disableGuard();
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       triggerAfterAction('injection');

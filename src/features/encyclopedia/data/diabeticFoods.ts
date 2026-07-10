@@ -1529,51 +1529,14 @@ export const ALL_FOODS = [...ALL_CAT_FOODS, ...ALL_DOG_FOODS];
 
 type FoodSpecies = 'cat' | 'dog';
 
-/** Records without explicit species default to 'cat' for backwards compat. */
-function foodSpecies(food: DiabeticCatFood): FoodSpecies {
-  return food.species === 'dog' ? 'dog' : 'cat';
-}
-
-/**
- * Foods available in a specific region. Mirrors the live catalog filter
- * (foodCatalog.ts `foodInRegion`): a food shows when its `regions` include the
- * target region, plus DE inherits the EU market.
- *
- * B4 (audit): a bare 'GLOBAL' tag is NOT a wildcard. Treating it as one leaked
- * sanctioned brands into RU (e.g. Hill's m/d tagged ['MX','GLOBAL'] would have
- * surfaced in Russia). Every food carries explicit regions, and no food is
- * GLOBAL-only, so dropping the GLOBAL fallback hides nothing that should show.
- */
-export function getFoodsByRegion(region: Region, species: FoodSpecies = 'cat'): DiabeticCatFood[] {
-  const source = species === 'dog' ? ALL_DOG_FOODS : ALL_CAT_FOODS;
-  return source.filter(
-    f => f.regions.includes(region) || (region === 'DE' && f.regions.includes('EU'))
-  );
-}
+// audit L2: region/prescription/OTC filters that duplicated the catalog logic
+// (getFoodsByRegion / getPrescriptionFoods / getOtcFoods) were removed — they
+// were dead (the UI uses getCatalog* from foodCatalog.ts) and had drifted out of
+// sync (no DE→EU inheritance), a latent re-introduction of the B4 region leak.
 
 /** Get foods sorted by carbs (lowest first) */
 export function getFoodsByCarbs(foods: DiabeticCatFood[]): DiabeticCatFood[] {
   return [...foods].sort((a, b) => (a.carbsDM ?? 100) - (b.carbsDM ?? 100));
-}
-
-/** Get prescription foods only — species-aware */
-export function getPrescriptionFoods(
-  region?: Region,
-  species: FoodSpecies = 'cat'
-): DiabeticCatFood[] {
-  const source = species === 'dog' ? PRESCRIPTION_DOG_FOODS : PRESCRIPTION_FOODS;
-  // Filter: only true diabetic-first-line prescriptions (category='prescription').
-  // Weight-management 'veterinary' entries (e.g. Hill's w/d Feline) are shown
-  // in the OTC-adjacent list, not as primary diabetic Rx.
-  const filtered = source.filter(f => f.category === 'prescription' && foodSpecies(f) === species);
-  return region ? filtered.filter(f => f.regions.includes(region)) : filtered;
-}
-
-/** Get OTC low-carb (cat) / high-fiber (dog) foods — species-aware */
-export function getOtcFoods(region?: Region, species: FoodSpecies = 'cat'): DiabeticCatFood[] {
-  const source = species === 'dog' ? OTC_DOG_FOODS : OTC_LOW_CARB_FOODS;
-  const filtered = source.filter(f => foodSpecies(f) === species);
-  return region ? filtered.filter(f => f.regions.includes(region)) : filtered;
 }
 
 /**

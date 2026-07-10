@@ -202,7 +202,7 @@ export default function LogGlucoseScreen() {
     const pid = petIdRef.current;
     if (!pid) return;
     if (!value && !insulinDose && !notes) {
-      clearEntryDraft(StorageKeys.GLUCOSE_DRAFT);
+      clearEntryDraft(StorageKeys.GLUCOSE_DRAFT, pid);
       return;
     }
     saveEntryDraft(StorageKeys.GLUCOSE_DRAFT, pid, {
@@ -306,7 +306,7 @@ export default function LogGlucoseScreen() {
       await queryClient.invalidateQueries({ queryKey: queryKeys.glucose.all });
       await queryClient.invalidateQueries({ queryKey: queryKeys.diary.all });
       clearPredictionCache(targetPetId);
-      clearEntryDraft(StorageKeys.GLUCOSE_DRAFT);
+      clearEntryDraft(StorageKeys.GLUCOSE_DRAFT, targetPetId);
       // Disable guard for the navigation we're about to trigger
       disableGuard();
       syncInitialValues();

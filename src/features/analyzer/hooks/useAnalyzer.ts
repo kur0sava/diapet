@@ -157,9 +157,9 @@ export function useAnalyzer() {
   // Side-effect: mark alert as fired OUTSIDE of useMemo
   useEffect(() => {
     if (smartAlert) {
-      markAlertFired(smartAlert.type);
+      markAlertFired(smartAlert.type, now);
     }
-  }, [smartAlert]);
+  }, [smartAlert, now]);
 
   const emergencyAlerts = useMemo(
     () => checkEmergencyThresholds(readings, speciesConfig),
