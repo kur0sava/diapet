@@ -87,7 +87,11 @@ export default function AddPetScreen() {
 
   // Schedule state
   const [injectionTimes, setInjectionTimes] = useState<string[]>(['08:00', '20:00']);
-  const [feedingTimes, setFeedingTimes] = useState<string[]>(['08:00', '20:00']);
+  // C10 (audit): feed slightly BEFORE the injection by default (pets are fed,
+  // then insulin is given once appetite is confirmed) — the old identical
+  // 08:00/20:00 defaults fired two overlapping notifications and implied a
+  // link the user didn't set. These remain freely editable.
+  const [feedingTimes, setFeedingTimes] = useState<string[]>(['07:30', '19:30']);
   const [showPicker, setShowPicker] = useState<{
     type: 'injection' | 'feeding';
     index: number;

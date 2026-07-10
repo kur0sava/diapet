@@ -24,10 +24,20 @@ export default function FeedCalculatorScreen() {
   const [ash, setAsh] = useState('');
   const [moisture, setMoisture] = useState('');
 
-  const allFilled = protein !== '' && fat !== '' && fiber !== '' && ash !== '' && moisture !== '';
+  // C6 (audit): ash is commonly omitted on labels — requiring it dead-ended the
+  // tool. Only the other four are required; ash is estimated when blank.
+  const requiredFields: { key: string; value: string }[] = [
+    { key: 'protein', value: protein },
+    { key: 'fat', value: fat },
+    { key: 'fiber', value: fiber },
+    { key: 'moisture', value: moisture },
+  ];
+  const missingFields = requiredFields.filter(f => f.value === '').map(f => f.key);
+  const canCompute = missingFields.length === 0;
+  const ashProvided = ash !== '';
 
   const result = useMemo(() => {
-    if (!allFilled) return null;
+    if (!canCompute) return null;
     const p = (v: string) => {
       const n = parseFloat(v.replace(',', '.'));
       return isNaN(n) ? null : n;
@@ -35,9 +45,12 @@ export default function FeedCalculatorScreen() {
     const pv = p(protein);
     const fv = p(fat);
     const fbv = p(fiber);
-    const av = p(ash);
     const mv = p(moisture);
-    if (pv === null || fv === null || fbv === null || av === null || mv === null) return null;
+    if (pv === null || fv === null || fbv === null || mv === null) return null;
+    // Estimate ash when the label doesn't list it: wet foods carry little ash
+    // (~2%), dry foods more (~6%). A caveat is shown below when estimated.
+    const av = ashProvided ? p(ash) : mv >= 60 ? 2 : 6;
+    if (av === null || av < 0) return null;
     return calculateDryMatter(
       {
         protein: pv,
@@ -49,7 +62,17 @@ export default function FeedCalculatorScreen() {
       nutritionConfig,
       activePet?.species === 'dog' ? 'dog' : 'cat'
     );
-  }, [protein, fat, fiber, ash, moisture, allFilled, nutritionConfig, activePet?.species]);
+  }, [
+    protein,
+    fat,
+    fiber,
+    ash,
+    moisture,
+    canCompute,
+    ashProvided,
+    nutritionConfig,
+    activePet?.species,
+  ]);
 
   const verdictColors = {
     good: theme.colors.success,
@@ -126,13 +149,30 @@ export default function FeedCalculatorScreen() {
           />
         </Card>
 
-        {allFilled && !result && (
+        {/* C6: tell the user exactly which required fields are still missing,
+            once they've started entering values. */}
+        {!canCompute && requiredFields.some(f => f.value !== '') && (
+          <Text style={[styles.errorText, { color: theme.colors.warning }]}>
+            {t('feedCalculator.missingFields', {
+              fields: missingFields.map(k => t(`feedCalculator.${k}`)).join(', '),
+            })}
+          </Text>
+        )}
+
+        {canCompute && !result && (
           <Text style={[styles.errorText, { color: theme.colors.danger }]}>
             {t('feedCalculator.invalidInput')}
           </Text>
         )}
 
-        {allFilled && (parseFloat(ash.replace(',', '.')) || 0) === 0 && (
+        {/* C6: ash was estimated (label omitted it) — the carbs figure is approximate. */}
+        {result && !ashProvided && (
+          <Text style={[styles.errorText, { color: theme.colors.warning }]}>
+            {t('feedCalculator.ashEstimated')}
+          </Text>
+        )}
+
+        {result && ashProvided && (parseFloat(ash.replace(',', '.')) || 0) === 0 && (
           <Text style={[styles.errorText, { color: theme.colors.warning }]}>
             {t('feedCalculator.ashZeroWarning')}
           </Text>

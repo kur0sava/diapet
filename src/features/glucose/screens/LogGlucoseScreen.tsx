@@ -41,6 +41,7 @@ import { useUnsavedChangesGuard } from '@shared/hooks/useUnsavedChangesGuard';
 import { useHintTrigger } from '@features/hints/hooks/useHintTrigger';
 import { clearPredictionCache } from '@features/prediction/data/predictionStorage';
 import { findRecentInsulinDose } from '../utils/recentInsulinCheck';
+import { saveEntryDraft, loadEntryDraft, clearEntryDraft } from '../utils/entryDraft';
 import { logEvent } from '@shared/analytics/analytics';
 import type { IoniconName } from '@shared/components/ui';
 
@@ -96,15 +97,39 @@ export default function LogGlucoseScreen() {
 
   const savedUnit = (storage.getString(StorageKeys.GLUCOSE_UNIT) ?? 'mmol/L') as GlucoseUnit;
 
-  const [value, setValue] = useState('');
-  const [unit, setUnit] = useState<GlucoseUnit>(savedUnit);
-  const [mealRelation, setMealRelation] = useState<MealRelation>('unspecified');
-  const [insulinDose, setInsulinDose] = useState('');
-  const [insulinType, setInsulinType] = useState(activePet?.insulinType ?? '');
-  const [notes, setNotes] = useState('');
+  // C2 (audit): restore an interrupted draft for NEW entries only (edit mode
+  // loads the stored reading instead). Per-pet, expires after a day.
+  const initialDraft = useRef(
+    editId
+      ? null
+      : loadEntryDraft<{
+          value: string;
+          unit: GlucoseUnit;
+          mealRelation: MealRelation;
+          insulinDose: string;
+          insulinType: string;
+          notes: string;
+          recordedAt: string;
+        }>(StorageKeys.GLUCOSE_DRAFT, activePet?.id ?? '')
+  ).current;
+
+  const [value, setValue] = useState(initialDraft?.value ?? '');
+  const [unit, setUnit] = useState<GlucoseUnit>(initialDraft?.unit ?? savedUnit);
+  const [mealRelation, setMealRelation] = useState<MealRelation>(
+    initialDraft?.mealRelation ?? 'unspecified'
+  );
+  const [insulinDose, setInsulinDose] = useState(initialDraft?.insulinDose ?? '');
+  const [insulinType, setInsulinType] = useState(
+    initialDraft?.insulinType ?? activePet?.insulinType ?? ''
+  );
+  const [notes, setNotes] = useState(initialDraft?.notes ?? '');
   const [loading, setLoading] = useState(false);
   const [recordedAt, setRecordedAt] = useState(() =>
-    route.params?.presetDate ? new Date(route.params.presetDate) : new Date()
+    initialDraft?.recordedAt
+      ? new Date(initialDraft.recordedAt)
+      : route.params?.presetDate
+        ? new Date(route.params.presetDate)
+        : new Date()
   );
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [showTimePicker, setShowTimePicker] = useState(false);
@@ -169,6 +194,27 @@ export default function LogGlucoseScreen() {
       cancelled = true;
     };
   }, [editId, savedUnit]);
+
+  // C2: persist the draft as the user types (new entries only); clear when
+  // nothing meaningful remains. Cleared on successful save (see doSave).
+  useEffect(() => {
+    if (editId) return;
+    const pid = petIdRef.current;
+    if (!pid) return;
+    if (!value && !insulinDose && !notes) {
+      clearEntryDraft(StorageKeys.GLUCOSE_DRAFT);
+      return;
+    }
+    saveEntryDraft(StorageKeys.GLUCOSE_DRAFT, pid, {
+      value,
+      unit,
+      mealRelation,
+      insulinDose,
+      insulinType,
+      notes,
+      recordedAt: recordedAt.toISOString(),
+    });
+  }, [editId, value, unit, mealRelation, insulinDose, insulinType, notes, recordedAt]);
 
   const numValue = parseFloat(value.replace(',', '.'));
   const isValidValue =
@@ -260,6 +306,7 @@ export default function LogGlucoseScreen() {
       await queryClient.invalidateQueries({ queryKey: queryKeys.glucose.all });
       await queryClient.invalidateQueries({ queryKey: queryKeys.diary.all });
       clearPredictionCache(targetPetId);
+      clearEntryDraft(StorageKeys.GLUCOSE_DRAFT);
       // Disable guard for the navigation we're about to trigger
       disableGuard();
       syncInitialValues();

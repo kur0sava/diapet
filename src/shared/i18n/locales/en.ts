@@ -813,6 +813,9 @@ export const en = {
     normsDogFat: 'Fat DM: <25% (higher raises pancreatitis risk)',
     normsDogFiber: 'Fiber DM: >10% (helps glycemic control)',
     ashZeroWarning: 'Ash = 0 — carbs may be overstated by 5–8%. Check the label.',
+    missingFields: 'Still needed: {{fields}}',
+    ashEstimated:
+      'Ash not provided — estimated. Carbs are approximate; enter ash from the label for accuracy.',
   },
 
   subscription: {

@@ -109,6 +109,8 @@ export const StorageKeys = {
   COLOR_SCHEME: 'colorScheme',
   GLUCOSE_UNIT: 'glucoseUnit',
   WEIGHT_UNIT: 'weightUnit',
+  GLUCOSE_DRAFT: 'glucoseEntryDraft',
+  INJECTION_DRAFT: 'injectionEntryDraft',
   ONBOARDING_COMPLETE: 'onboardingComplete',
   ACTIVE_PET_ID: 'activePetId',
   NOTIFICATIONS_ENABLED: 'notificationsEnabled',

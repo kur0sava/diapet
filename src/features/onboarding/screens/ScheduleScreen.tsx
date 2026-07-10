@@ -54,7 +54,9 @@ export default function ScheduleScreen() {
     draft.injectionTimes ?? ['08:00', '20:00']
   );
   const [feedingTimes, setFeedingTimes] = useState<string[]>(
-    draft.feedingTimes ?? ['08:00', '20:00']
+    // C10 (audit): default feeding before injection (07:30/19:30) so the two
+    // reminders don't collide at identical times. Freely editable.
+    draft.feedingTimes ?? ['07:30', '19:30']
   );
   const [showPicker, setShowPicker] = useState<{
     type: 'injection' | 'feeding';

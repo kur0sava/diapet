@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useRef } from 'react';
+import React, { useState, useCallback, useRef, useEffect } from 'react';
 import {
   View,
   Text,
@@ -22,7 +22,9 @@ import { useTranslation } from 'react-i18next';
 import { useTheme } from '@shared/theme';
 import { Button, Input, Card } from '@shared/components/ui';
 import { injectionRepository } from '@storage/database';
+import { StorageKeys } from '@storage/mmkv/storage';
 import { findRecentInsulinDose } from '../utils/recentInsulinCheck';
+import { saveEntryDraft, loadEntryDraft, clearEntryDraft } from '../utils/entryDraft';
 import { usePetStore } from '@shared/stores/petStore';
 import { getInsulinThresholds, getSpeciesConfig } from '@shared/config/speciesConfig';
 import { useQueryClient } from '@tanstack/react-query';
@@ -44,12 +46,43 @@ export default function LogInjectionScreen() {
   // Misattributed insulin doses are dangerous in multi-pet households.
   const petIdRef = useRef<string | undefined>(activePet?.id);
 
-  const [dose, setDose] = useState('');
-  const [insulinType, setInsulinType] = useState(activePet?.insulinType ?? '');
-  const [notes, setNotes] = useState('');
-  const [administeredAt, setAdministeredAt] = useState(() =>
-    route.params?.presetDate ? new Date(route.params.presetDate) : new Date()
+  // C2 (audit): restore an interrupted draft (per-pet, expires after a day).
+  const initialDraft = useRef(
+    loadEntryDraft<{ dose: string; insulinType: string; notes: string; administeredAt: string }>(
+      StorageKeys.INJECTION_DRAFT,
+      activePet?.id ?? ''
+    )
+  ).current;
+
+  const [dose, setDose] = useState(initialDraft?.dose ?? '');
+  const [insulinType, setInsulinType] = useState(
+    initialDraft?.insulinType ?? activePet?.insulinType ?? ''
   );
+  const [notes, setNotes] = useState(initialDraft?.notes ?? '');
+  const [administeredAt, setAdministeredAt] = useState(() =>
+    initialDraft?.administeredAt
+      ? new Date(initialDraft.administeredAt)
+      : route.params?.presetDate
+        ? new Date(route.params.presetDate)
+        : new Date()
+  );
+
+  // C2: persist the draft as the user types; clear it once nothing meaningful
+  // remains. Cleared on successful save (see doSaveInjection).
+  useEffect(() => {
+    const pid = petIdRef.current;
+    if (!pid) return;
+    if (!dose && !notes) {
+      clearEntryDraft(StorageKeys.INJECTION_DRAFT);
+      return;
+    }
+    saveEntryDraft(StorageKeys.INJECTION_DRAFT, pid, {
+      dose,
+      insulinType,
+      notes,
+      administeredAt: administeredAt.toISOString(),
+    });
+  }, [dose, insulinType, notes, administeredAt]);
   const initialAdministeredAt = useRef(administeredAt.getTime());
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [showTimePicker, setShowTimePicker] = useState(false);
@@ -105,6 +138,7 @@ export default function LogInjectionScreen() {
       });
       await queryClient.invalidateQueries({ queryKey: queryKeys.injections.all });
       await queryClient.invalidateQueries({ queryKey: queryKeys.diary.all });
+      clearEntryDraft(StorageKeys.INJECTION_DRAFT);
       disableGuard();
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       triggerAfterAction('injection');
