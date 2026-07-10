@@ -294,7 +294,9 @@ export default function GlucoseListScreen() {
                 params: { screen: 'LogGlucose', params: { editId: item.id } },
               })
             }
-            onLongPress={() => handleDelete(item.id)}
+            // C7 (audit): long-press-to-delete was dropped — a slightly-too-long
+            // tap meant to open a reading fired the delete confirm. Deletion is
+            // via the explicit trash icon only.
             activeOpacity={0.8}
           >
             <Card style={styles.readingCard} shadow>

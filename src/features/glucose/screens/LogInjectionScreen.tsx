@@ -71,8 +71,26 @@ export default function LogInjectionScreen() {
   const doSaveInjection = useCallback(async () => {
     const targetPetId = petIdRef.current;
     if (!targetPetId || savingRef.current) return;
+    // C8 (audit): name the original pet and offer a one-tap recovery instead of
+    // a dead-end error when the active pet changed mid-entry.
     if (usePetStore.getState().activePet?.id !== targetPetId) {
-      Alert.alert(t('common.error'), t('injection.petChangedDuringEntry'));
+      const original = usePetStore.getState().pets.find(p => p.id === targetPetId);
+      Alert.alert(
+        t('common.error'),
+        t('injection.petChangedDuringEntry', { name: original?.name ?? '' }),
+        original
+          ? [
+              { text: t('common.cancel'), style: 'cancel' },
+              {
+                text: t('common.switchBackAndSave', { name: original.name }),
+                onPress: () => {
+                  usePetStore.getState().setActivePet(original);
+                  doSaveInjection();
+                },
+              },
+            ]
+          : undefined
+      );
       return;
     }
     savingRef.current = true;

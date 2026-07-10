@@ -35,6 +35,8 @@ export const en = {
     longPressToDelete: 'Long press an entry to delete',
     search: 'Search...',
     ok: 'OK',
+    dismiss: 'Dismiss',
+    switchBackAndSave: 'Switch back to “{{name}}” & save',
   },
 
   onboarding: {
@@ -218,7 +220,7 @@ export const en = {
     saveError: 'Failed to save data',
     petNotFound: 'Pet not found',
     petChangedDuringEntry:
-      'The active pet changed while you were entering data. Please verify and save again.',
+      'The active pet changed while you were entering data. This entry belongs to “{{name}}”.',
     emergencyHypoTitle: '⚠️ Dangerously low glucose',
     emergencyHypoBody:
       'This reading is in the hypoglycemia danger zone. Act now — hypoglycemia can be life-threatening. Open the emergency guide for step-by-step first aid.',
@@ -272,7 +274,7 @@ export const en = {
     typeError: 'Specify insulin type',
     saveError: 'Failed to save',
     petChangedDuringEntry:
-      'The active pet changed while you were entering the dose. Please verify and save again.',
+      'The active pet changed while you were entering the dose. This entry belongs to “{{name}}”.',
     notesPlaceholder: 'Optional...',
     commonInsulins: [
       'Protaphane',

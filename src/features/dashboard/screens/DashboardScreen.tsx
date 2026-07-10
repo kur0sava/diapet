@@ -171,6 +171,26 @@ export default function DashboardScreen() {
 
   const [refreshing, setRefreshing] = React.useState(false);
 
+  // C3 (audit): the emergency banner used to be undismissable and lingered for
+  // the whole 24h alert window → alarm fatigue. Let the user acknowledge it;
+  // a genuinely NEWER emergency (later recordedAt) re-shows it.
+  const dismissKey = petId ? `emergencyDismissedAt_${petId}` : '';
+  const [emergencyDismissedAt, setEmergencyDismissedAt] = React.useState('');
+  React.useEffect(() => {
+    setEmergencyDismissedAt(dismissKey ? (storage.getString(dismissKey) ?? '') : '');
+  }, [dismissKey]);
+  const latestAlertAt = React.useMemo(
+    () => emergencyAlerts.reduce((m, a) => (a.recordedAt > m ? a.recordedAt : m), ''),
+    [emergencyAlerts]
+  );
+  const showEmergency = emergencyAlerts.length > 0 && latestAlertAt > emergencyDismissedAt;
+  const dismissEmergency = React.useCallback(() => {
+    if (dismissKey && latestAlertAt) {
+      storage.set(dismissKey, latestAlertAt);
+      setEmergencyDismissedAt(latestAlertAt);
+    }
+  }, [dismissKey, latestAlertAt]);
+
   // Refetch data when tab gains focus. Also re-read the glucose unit — it can
   // change in Settings or inside LogGlucoseScreen while this screen stays
   // mounted in the tab navigator (state was initialized once at mount).
@@ -305,22 +325,42 @@ export default function DashboardScreen() {
                 last 24h with a route to first aid (analyzer emergencyAlerts).
                 Rendered INSIDE the top-safe-area hero: as the first child of the
                 ScrollView it would sit under the status bar / notch. */}
-            {emergencyAlerts.length > 0 && (
-              <TouchableOpacity
-                style={[styles.emergencyBanner, { backgroundColor: theme.colors.danger }]}
-                onPress={() => rootNavigation.navigate('Emergency')}
-                accessibilityRole="button"
-                accessibilityLabel={t('glucose.openEmergency')}
+            {showEmergency && (
+              <View
+                style={[
+                  styles.emergencyBanner,
+                  {
+                    backgroundColor: theme.colors.danger,
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                  },
+                ]}
               >
-                <Text style={styles.emergencyBannerTitle}>
-                  {emergencyAlerts.some(
-                    a => a.type === 'hypoglycemia' || a.type === 'severe_hypoglycemia'
-                  )
-                    ? t('glucose.emergencyHypoTitle')
-                    : t('glucose.emergencyHyperTitle')}
-                </Text>
-                <Text style={styles.emergencyBannerTap}>{t('glucose.emergencyBannerTap')}</Text>
-              </TouchableOpacity>
+                <TouchableOpacity
+                  style={{ flex: 1, gap: 2 }}
+                  onPress={() => rootNavigation.navigate('Emergency')}
+                  accessibilityRole="button"
+                  accessibilityLabel={t('glucose.openEmergency')}
+                >
+                  <Text style={styles.emergencyBannerTitle}>
+                    {emergencyAlerts.some(
+                      a => a.type === 'hypoglycemia' || a.type === 'severe_hypoglycemia'
+                    )
+                      ? t('glucose.emergencyHypoTitle')
+                      : t('glucose.emergencyHyperTitle')}
+                  </Text>
+                  <Text style={styles.emergencyBannerTap}>{t('glucose.emergencyBannerTap')}</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={dismissEmergency}
+                  accessibilityRole="button"
+                  accessibilityLabel={t('common.dismiss', { defaultValue: 'Dismiss' })}
+                  hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
+                  style={styles.emergencyDismiss}
+                >
+                  <Icon name="close" size={20} color="#fff" />
+                </TouchableOpacity>
+              </View>
             )}
             <View style={styles.heroTop}>
               <TouchableOpacity
@@ -751,6 +791,14 @@ const styles = StyleSheet.create({
   },
   emergencyBannerTitle: { color: '#fff', fontSize: 15, fontWeight: '700' },
   emergencyBannerTap: { color: '#fff', fontSize: 12, opacity: 0.9 },
+  emergencyDismiss: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginLeft: 8,
+  },
   // Hero
   heroGradient: {
     paddingBottom: 20,

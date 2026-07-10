@@ -206,10 +206,28 @@ export default function LogGlucoseScreen() {
   const doSave = useCallback(async () => {
     const targetPetId = petIdRef.current;
     if (!targetPetId || savingRef.current) return;
-    // UX-C2 (audit): if the active pet changed mid-input, refuse to save
-    // and warn — better to abort than to file the entry under the wrong pet.
+    // UX-C2 (audit): if the active pet changed mid-input, refuse to save and
+    // warn — better to abort than to file the entry under the wrong pet.
+    // C8 (audit): name the original pet and offer a one-tap recovery (switch
+    // back to it and save) instead of leaving the entry stuck.
     if (usePetStore.getState().activePet?.id !== targetPetId) {
-      Alert.alert(t('common.error'), t('glucose.petChangedDuringEntry'));
+      const original = usePetStore.getState().pets.find(p => p.id === targetPetId);
+      Alert.alert(
+        t('common.error'),
+        t('glucose.petChangedDuringEntry', { name: original?.name ?? '' }),
+        original
+          ? [
+              { text: t('common.cancel'), style: 'cancel' },
+              {
+                text: t('common.switchBackAndSave', { name: original.name }),
+                onPress: () => {
+                  usePetStore.getState().setActivePet(original);
+                  doSave();
+                },
+              },
+            ]
+          : undefined
+      );
       return;
     }
     savingRef.current = true;
