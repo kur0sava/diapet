@@ -75,37 +75,32 @@
 
 ## 🟠 БАТЧ B — Каталог кормов (перед релизом желательно; безопасность контента)
 
-- ⬜ **B1 (HIGH). Собачий вердикт по углеводам в FeedCalculator противоречит каталогу.**
-  `calculateDryMatter` считает вердикт ТОЛЬКО по `carbsDM` для всех видов; каталог для собак использует
-  `getFoodVerdict` (жир+клетчатка, углеводы игнор). Одна Hill's w/d canine → «good» в гиде, «bad» в калькуляторе.
-  **Фикс:** species-ветка в `calculateDryMatter`, переиспользовать общую verdict-функцию (жир+клетчатка для собак).
-  Файлы: `feedCalculator/utils/calculateDryMatter.ts:64-71`, `diabeticFoods.ts:getFoodVerdict`.
+- ✅ **B1 (HIGH). Собачий вердикт по углеводам в FeedCalculator противоречит каталогу.** [сделано 2026-07-10]
+  `calculateDryMatter` теперь принимает `species` и вычисляет headline-вердикт через `getFoodVerdict` (единый источник
+  истины: собаки — жир+клетчатка, кошки — carbs). `thresholds` остались только для вторичных чипов protein/fat/fiber.
+  FeedCalculatorScreen передаёт species активного питомца. Hill's w/d canine больше не расходится между гидом и калькулятором.
 
-- ⬜ **B2 (HIGH). Кошачий порог «good» расходится: калькулятор <10 vs каталог ≤7.**
-  Корм 7.5–9% DM → «good» в калькуляторе, «acceptable» в каталоге (реальные записи: Sheba, Catz, GranataPet, Wellness Core).
-  **Фикс:** одна константа (`carbsIdealPercent`/`carbsDMGood`) на оба call-site.
+- ✅ **B2 (HIGH). Кошачий порог «good» расходится: калькулятор <10 vs каталог ≤7.** [сделано 2026-07-10]
+  Закрыто тем же фиксом B1: калькулятор теперь использует `getFoodVerdict` (кошки ≤7 `carbsIdealPercent`), а не локальную
+  константу `carbsDMGood=10`. Один источник истины на оба call-site.
 
-- ⬜ **B3 (HIGH). Notes (вкл. safety-caveats) видны только RU.**
-  `FeedGuideRegionScreen.tsx:248` рендерит notes только при `isRu`; все не-RU регионы = `language:'en'` → англ. рынок
-  НЕ видит клинические предупреждения («Monge ~35% углеводов, НЕ рекомендован» и т.п.).
-  **Фикс:** `notes` в форме `{ru,en}` (как `feedingTips`), убрать `isRu`-гейт.
+- ⏸ **B3 (HIGH). Notes (вкл. safety-caveats) видны только RU.** — ОТЛОЖЕНО (пауза 2026-07-10).
+  Требует: смена типа `notes: string` → `{ru,en}` в `DiabeticCatFood` + схеме remote-манифеста + перевод ВСЕХ notes на EN
+  (среди них медицинские safety-caveats — «Monge ~35% углеводов, НЕ рекомендован» и т.п.). Медчувствительно → делать через
+  diapet-medical-auditor. НЕ начато. Файл: `FeedGuideRegionScreen.tsx:248`.
 
-- ⬜ **B4 (HIGH). Deprecated `getFoodsByRegion` протекает санкционный бренд в RU.**
-  `getFoodsByRegion` имеет GLOBAL-фолбэк → `hills-md-mx ['MX','GLOBAL']` всплыл бы в RU (нарушение санкц-правила).
-  Живой экран спасается тем, что использует `foodInRegion` (без GLOBAL-фолбэка). Две семантики для одного концепта.
-  **Фикс:** удалить/перенаправить `getFoodsByRegion` на `foodInRegion`, определить семантику GLOBAL один раз.
-  Файлы: `foodCatalog.ts:181-185`, `diabeticFoods.ts:1423-1426,964`.
+- ✅ **B4 (HIGH). Deprecated `getFoodsByRegion` протекает санкционный бренд в RU.** [сделано 2026-07-10]
+  `getFoodsByRegion` выровнен на семантику `foodInRegion` (region match + DE→EU, БЕЗ GLOBAL-фолбэка). Проверено: GLOBAL-only
+  кормов нет (все GLOBAL-теги идут с явными регионами) → ничего не исчезло, но Hill's m/d ['MX','GLOBAL'] больше не всплыл бы в RU.
 
-- ⬜ **B5 (MED). FeedGuideAlternativesScreen species/region-blind.**
-  `ALTERNATIVE_FOODS` без фильтра вида/региона, углеводная шкала вердикта → собачник видит кошачьи рекомендации.
-  **Фикс:** фильтровать по активному виду и региону (как FeedGuideRegionScreen).
-  Файл: `FeedGuideAlternativesScreen.tsx:29-32`.
+- ✅ **B5 (MED). FeedGuideAlternativesScreen species/region-blind.** [сделано 2026-07-10]
+  Фильтр по species активного питомца (untagged = 'cat', это кошачий OTC-список) + региону (DE→EU). Пустое состояние
+  `feedGuide.alternativesEmpty` (ru+en) для собак/пустого региона. Собачник больше не видит кошачьи углеводные рекомендации.
 
-- ⬜ **B6 (MED). Фоновое обновление каталога не доходит до смонтированного экрана региона.**
-  Мемо экрана привязано к локальному `catalogVersion` (бампается только pull-to-refresh); стартовый `refreshFoodCatalog()`
-  мутирует module-level `current`, но уже открытый экран показывает стейл до ручного pull.
-  **Фикс:** подписка/версия из `foodCatalog.ts`, рефреш бампает её, потребители перечитывают.
-  Файлы: `FeedGuideRegionScreen.tsx:70-105`, `App.tsx:76`.
+- ✅ **B6 (MED). Фоновое обновление каталога не доходит до смонтированного экрана региона.** [сделано 2026-07-10]
+  В `foodCatalog.ts` добавлены `catalogVersion` + `subscribeFoodCatalog()`; `doRefresh` при 'updated' зовёт `bumpCatalogVersion()`.
+  FeedGuideRegionScreen подписывается в `useEffect` и бампает локальную версию (pull-to-refresh теперь тоже идёт через подписку —
+  единый путь). Стартовый background-refresh, резолвящийся после монтирования экрана, теперь обновляет список.
 
 - ⬜ **B7 (HIGH, инфра). Remote-каталог без проверки подлинности.**
   Медконтент с `raw.githubusercontent.com` по plain `fetch`; `validateManifest` проверяет только структуру, не содержимое/подпись.

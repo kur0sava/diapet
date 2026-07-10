@@ -688,6 +688,8 @@ export const en = {
     alternatives: 'Alternative Foods',
     alternativesDesc: 'Non-obvious low-carb food options',
     alternativesInfo: 'Foods not marketed for diabetes but with suitable composition',
+    alternativesEmpty:
+      'No foods from this list match your pet species and region. See prescription diets in the regional guide.',
     naturalFood: 'Natural Food',
     naturalFoodDesc: 'Raw/cooked: meat, organs, fish',
     calculator: 'Portion Calculator',

@@ -1419,10 +1419,21 @@ function foodSpecies(food: DiabeticCatFood): FoodSpecies {
   return food.species === 'dog' ? 'dog' : 'cat';
 }
 
-/** Get foods available in a specific region */
+/**
+ * Foods available in a specific region. Mirrors the live catalog filter
+ * (foodCatalog.ts `foodInRegion`): a food shows when its `regions` include the
+ * target region, plus DE inherits the EU market.
+ *
+ * B4 (audit): a bare 'GLOBAL' tag is NOT a wildcard. Treating it as one leaked
+ * sanctioned brands into RU (e.g. Hill's m/d tagged ['MX','GLOBAL'] would have
+ * surfaced in Russia). Every food carries explicit regions, and no food is
+ * GLOBAL-only, so dropping the GLOBAL fallback hides nothing that should show.
+ */
 export function getFoodsByRegion(region: Region, species: FoodSpecies = 'cat'): DiabeticCatFood[] {
   const source = species === 'dog' ? ALL_DOG_FOODS : ALL_CAT_FOODS;
-  return source.filter(f => f.regions.includes(region) || f.regions.includes('GLOBAL'));
+  return source.filter(
+    f => f.regions.includes(region) || (region === 'DE' && f.regions.includes('EU'))
+  );
 }
 
 /** Get foods sorted by carbs (lowest first) */

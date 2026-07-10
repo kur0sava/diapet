@@ -132,6 +132,36 @@ const BUNDLED_STATE: FoodCatalogState = {
 
 let current: FoodCatalogState | null = null;
 
+// B6 (audit): a screen mounted BEFORE the startup background refresh resolves
+// used to keep showing stale data until a manual pull-to-refresh. Consumers now
+// subscribe and re-read when the live catalog is replaced.
+let catalogVersion = 0;
+const catalogListeners = new Set<() => void>();
+
+/** Monotonic counter bumped whenever the live catalog is replaced. */
+export function getFoodCatalogVersion(): number {
+  return catalogVersion;
+}
+
+/** Subscribe to catalog replacements. Returns an unsubscribe function. */
+export function subscribeFoodCatalog(listener: () => void): () => void {
+  catalogListeners.add(listener);
+  return () => {
+    catalogListeners.delete(listener);
+  };
+}
+
+function bumpCatalogVersion(): void {
+  catalogVersion += 1;
+  catalogListeners.forEach(l => {
+    try {
+      l();
+    } catch {
+      /* a listener error must not break the refresh */
+    }
+  });
+}
+
 function loadFromCache(): FoodCatalogState | null {
   try {
     const json = storage.getString(StorageKeys.FOOD_CATALOG_CACHE);
@@ -266,6 +296,7 @@ async function doRefresh(force: boolean): Promise<RefreshStatus> {
       generatedAt: manifest.generatedAt,
       source: 'cache',
     };
+    bumpCatalogVersion();
     return 'updated';
   } catch {
     return 'offline';

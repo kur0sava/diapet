@@ -46,9 +46,10 @@ export default function FeedCalculatorScreen() {
         ash: av,
         moisture: mv,
       },
-      nutritionConfig
+      nutritionConfig,
+      activePet?.species === 'dog' ? 'dog' : 'cat'
     );
-  }, [protein, fat, fiber, ash, moisture, allFilled, nutritionConfig]);
+  }, [protein, fat, fiber, ash, moisture, allFilled, nutritionConfig, activePet?.species]);
 
   const verdictColors = {
     good: theme.colors.success,

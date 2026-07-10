@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useCallback } from 'react';
+import React, { useMemo, useState, useCallback, useEffect } from 'react';
 import {
   View,
   Text,
@@ -27,6 +27,7 @@ import {
   getCatalogOtcFoods,
   getFoodCatalog,
   refreshFoodCatalog,
+  subscribeFoodCatalog,
 } from '../data/foodCatalog';
 import { getStoresForRegion } from '../data/regionStores';
 import type { StoreEntry } from '../types';
@@ -72,10 +73,15 @@ export default function FeedGuideRegionScreen() {
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
-    const status = await refreshFoodCatalog(true);
-    if (status === 'updated') setCatalogVersion(v => v + 1);
+    // The version bump is handled by the subscription below (fires on any
+    // catalog replacement, incl. the startup background refresh).
+    await refreshFoodCatalog(true);
     setRefreshing(false);
   }, []);
+
+  // B6 (audit): re-read when the live catalog is replaced — e.g. the startup
+  // background refresh resolving after this screen already mounted.
+  useEffect(() => subscribeFoodCatalog(() => setCatalogVersion(v => v + 1)), []);
 
   const regionStoreInfo = useMemo(() => getStoresForRegion(region), [region]);
 

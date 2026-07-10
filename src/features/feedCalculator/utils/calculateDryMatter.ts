@@ -1,4 +1,4 @@
-import type { SpeciesConfig } from '@shared/config/speciesConfig';
+import { getFoodVerdict } from '@features/encyclopedia/data/diabeticFoods';
 
 export interface MacroInput {
   protein: number;
@@ -40,7 +40,8 @@ const CAT_DEFAULTS: NutritionThresholds = {
 
 export function calculateDryMatter(
   input: MacroInput,
-  thresholds?: NutritionThresholds
+  thresholds?: NutritionThresholds,
+  species: 'cat' | 'dog' = 'cat'
 ): DryMatterResult | null {
   const { protein, fat, fiber, ash, moisture } = input;
   const t = thresholds ?? CAT_DEFAULTS;
@@ -61,14 +62,13 @@ export function calculateDryMatter(
   const fatDM = (fat / dryMatter) * 100;
   const fiberDM = (fiber / dryMatter) * 100;
 
-  let verdict: DryMatterResult['verdict'];
-  if (carbsDM < t.carbsDMGood) {
-    verdict = 'good';
-  } else if (carbsDM <= t.carbsDMAcceptable) {
-    verdict = 'acceptable';
-  } else {
-    verdict = 'bad';
-  }
+  // B1/B2 (audit): use the SAME verdict function as the food catalog so the
+  // calculator and the guide never disagree on the same food. Previously the
+  // headline verdict here was carbs-only for every species — which contradicted
+  // the dog model (fat + fibre, carbs "less important") and used a looser cat
+  // cutoff (<10% DM) than the catalog (≤7%). getFoodVerdict is the single
+  // source of truth; `thresholds` now only drives the secondary macro chips.
+  const verdict = getFoodVerdict(carbsDM, species, fatDM, fiberDM);
 
   return {
     carbs,
