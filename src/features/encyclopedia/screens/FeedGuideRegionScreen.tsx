@@ -18,6 +18,7 @@ import type { IoniconName } from '@shared/components/ui';
 import {
   getFoodsByCarbs,
   getFoodVerdict,
+  localizedNote,
   VALID_REGIONS,
   type Region,
   type DiabeticCatFood,
@@ -178,6 +179,9 @@ export default function FeedGuideRegionScreen() {
         : null;
     const verdictColor = verdict ? VERDICT_COLORS[verdict] : theme.colors.textTertiary;
     const buyList = food.whereToBuy?.[region] ?? [];
+    // B3 (audit): notes were only rendered for RU users, hiding clinical
+    // safety caveats from the entire English market. Resolve per language.
+    const noteText = localizedNote(food.notes, isRu);
 
     return (
       <View
@@ -251,10 +255,8 @@ export default function FeedGuideRegionScreen() {
           </View>
         )}
 
-        {food.notes && isRu && (
-          <Text style={[styles.foodNotes, { color: theme.colors.textSecondary }]}>
-            {food.notes}
-          </Text>
+        {noteText && (
+          <Text style={[styles.foodNotes, { color: theme.colors.textSecondary }]}>{noteText}</Text>
         )}
 
         {buyList.length > 0 && (

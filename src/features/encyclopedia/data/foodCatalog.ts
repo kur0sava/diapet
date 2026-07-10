@@ -63,8 +63,8 @@ export type RefreshStatus = 'updated' | 'not_newer' | 'throttled' | 'offline' | 
 const FOOD_TYPES = new Set(['dry', 'wet', 'both']);
 const FOOD_CATEGORIES = new Set(['prescription', 'veterinary', 'otc_low_carb']);
 
-function isFiniteOrUndefined(v: unknown): boolean {
-  return v === undefined || (typeof v === 'number' && Number.isFinite(v));
+function inRangeOrUndefined(v: unknown, min: number, max: number): boolean {
+  return v === undefined || (typeof v === 'number' && Number.isFinite(v) && v >= min && v <= max);
 }
 
 /** Structural check for one food entry. Unknown extra fields are fine. */
@@ -82,9 +82,15 @@ export function isValidFood(value: unknown): value is DiabeticCatFood {
     return false;
   if (f.species !== undefined && f.species !== 'cat' && f.species !== 'dog' && f.species !== 'all')
     return false;
-  for (const num of [f.proteinDM, f.fatDM, f.carbsDM, f.fiberDM, f.kcalPerKg]) {
-    if (!isFiniteOrUndefined(num)) return false;
+  // B7 (audit): bound the medical numbers. The remote manifest is fetched from
+  // a public, unauthenticated URL; a corrupt or malicious payload must not be
+  // able to present an implausible macro (e.g. carbsDM: 2 on a high-carb food,
+  // flipping its diabetic verdict to "good") as valid data. DM percentages are
+  // 0–100 by definition; kcalPerKg has a generous sane ceiling.
+  for (const dm of [f.proteinDM, f.fatDM, f.carbsDM, f.fiberDM]) {
+    if (!inRangeOrUndefined(dm, 0, 100)) return false;
   }
+  if (!inRangeOrUndefined(f.kcalPerKg, 0, 8000)) return false;
   return true;
 }
 

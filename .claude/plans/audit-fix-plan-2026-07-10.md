@@ -84,10 +84,12 @@
   Закрыто тем же фиксом B1: калькулятор теперь использует `getFoodVerdict` (кошки ≤7 `carbsIdealPercent`), а не локальную
   константу `carbsDMGood=10`. Один источник истины на оба call-site.
 
-- ⏸ **B3 (HIGH). Notes (вкл. safety-caveats) видны только RU.** — ОТЛОЖЕНО (пауза 2026-07-10).
-  Требует: смена типа `notes: string` → `{ru,en}` в `DiabeticCatFood` + схеме remote-манифеста + перевод ВСЕХ notes на EN
-  (среди них медицинские safety-caveats — «Monge ~35% углеводов, НЕ рекомендован» и т.п.). Медчувствительно → делать через
-  diapet-medical-auditor. НЕ начато. Файл: `FeedGuideRegionScreen.tsx:248`.
+- ✅ **B3 (HIGH). Notes (вкл. safety-caveats) видны только RU.** [сделано 2026-07-10, перевод через diapet-medical-auditor]
+  Тип `notes: string` → `LocalizedNote = string | {ru,en}` в `DiabeticCatFood`; helper `localizedNote(note, isRu)` (fallback
+  en→ru, legacy-строки проходят как ru); рендер в FeedGuideRegionScreen без `isRu`-гейта. Медагент перевёл ВСЕ 45 notes на EN
+  дословно сохранив клинические caveats («NOT recommended», % DM, ISFM-лимиты, санкц-предупреждения); 3 MX-записи были на
+  испанском → сохранены как ru + переведены. Тесты localizedNote + «все bundled-notes = {ru,en}». Англ. рынок теперь видит
+  safety-caveats. ⚠️ remote-манифест в diapet-foods-data всё ещё со string-notes — обновится при регенерации (см. follow-up).
 
 - ✅ **B4 (HIGH). Deprecated `getFoodsByRegion` протекает санкционный бренд в RU.** [сделано 2026-07-10]
   `getFoodsByRegion` выровнен на семантику `foodInRegion` (region match + DE→EU, БЕЗ GLOBAL-фолбэка). Проверено: GLOBAL-only
@@ -102,12 +104,13 @@
   FeedGuideRegionScreen подписывается в `useEffect` и бампает локальную версию (pull-to-refresh теперь тоже идёт через подписку —
   единый путь). Стартовый background-refresh, резолвящийся после монтирования экрана, теперь обновляет список.
 
-- ⬜ **B7 (HIGH, инфра). Remote-каталог без проверки подлинности.**
-  Медконтент с `raw.githubusercontent.com` по plain `fetch`; `validateManifest` проверяет только структуру, не содержимое/подпись.
-  MITM/злонамеренный PR → подмена углеводов, «плохой» корм показан «good», оседает в MMKV.
-  **Фикс:** подпись манифеста (Ed25519 против bundled-ключа) или hash-allowlist + жёсткие числовые границы (protein/fat/carbs/fiber 0–100, kcal в разумных пределах). Усилить дисклеймер (advisory).
-  Файл: `foodCatalog.ts:71-120,230-273`.
-  ⚠️ Требует изменения в repo `diapet-foods-data` (генерация подписи при публикации манифеста).
+- 🔶 **B7 (HIGH, инфра). Remote-каталог без проверки подлинности.** [частично 2026-07-10]
+  ✅ Сделано: жёсткие числовые границы в `isValidFood` (proteinDM/fatDM/carbsDM/fiberDM 0–100, kcalPerKg ≤8000) — битый/
+  вредоносный манифест не подсунет неправдоподобный макрос (напр. carbsDM:2 на высокоуглеводном → ложный «good»). Тест B7.
+  ⏸ ОТЛОЖЕНО (нужно участие пользователя): подпись Ed25519 против bundled-публичного ключа. Требует (1) новой крипто-
+  зависимости — в проекте только `expo-crypto` без асимметрии (кандидаты `@noble/ed25519`/`tweetnacl`, нужно одобрение деп);
+  (2) генерации ключей + приватный ключ у мейнтейнера; (3) правок генератора манифеста в repo `diapet-foods-data` (подписывать
+  при публикации) + верификации подписи в `validateManifest`. Файл: `foodCatalog.ts`.
 
 ---
 

@@ -19,7 +19,11 @@ import {
   MANIFEST_SCHEMA_VERSION,
   type FoodsManifest,
 } from '@features/encyclopedia/data/foodCatalog';
-import { ALL_CAT_FOODS, ALL_DOG_FOODS } from '@features/encyclopedia/data/diabeticFoods';
+import {
+  ALL_CAT_FOODS,
+  ALL_DOG_FOODS,
+  localizedNote,
+} from '@features/encyclopedia/data/diabeticFoods';
 
 function makeManifest(overrides: Partial<FoodsManifest> = {}): FoodsManifest {
   return {
@@ -109,6 +113,38 @@ describe('food catalog', () => {
       expect(isValidFood({ ...good, regions: [] })).toBe(false);
       expect(isValidFood({ ...good, carbsDM: NaN })).toBe(false);
       expect(isValidFood({ ...good, prescriptionRequired: 'yes' })).toBe(false);
+    });
+
+    it('B7: rejects out-of-range macros / kcal (implausible manifest data)', () => {
+      const good = { ...ALL_CAT_FOODS[0] };
+      expect(isValidFood({ ...good, carbsDM: -1 })).toBe(false);
+      expect(isValidFood({ ...good, carbsDM: 150 })).toBe(false);
+      expect(isValidFood({ ...good, fatDM: 101 })).toBe(false);
+      expect(isValidFood({ ...good, fiberDM: -0.5 })).toBe(false);
+      expect(isValidFood({ ...good, kcalPerKg: 99999 })).toBe(false);
+      // In-range values remain valid.
+      expect(isValidFood({ ...good, carbsDM: 7, fatDM: 12, kcalPerKg: 4000 })).toBe(true);
+    });
+  });
+
+  describe('localizedNote (B3)', () => {
+    it('picks the language, falls back en→ru, and passes through legacy strings', () => {
+      expect(localizedNote({ ru: 'привет', en: 'hello' }, true)).toBe('привет');
+      expect(localizedNote({ ru: 'привет', en: 'hello' }, false)).toBe('hello');
+      // en missing → fall back to ru so the note is never hidden.
+      expect(localizedNote({ ru: 'только рус' }, false)).toBe('только рус');
+      // legacy bare string (e.g. old remote manifest row) shows as-is.
+      expect(localizedNote('legacy', false)).toBe('legacy');
+      expect(localizedNote(undefined, true)).toBeUndefined();
+    });
+
+    it('every bundled food note is now the localized {ru,en} shape', () => {
+      for (const f of [...ALL_CAT_FOODS, ...ALL_DOG_FOODS]) {
+        if (f.notes == null) continue;
+        expect(typeof f.notes).toBe('object');
+        expect(typeof (f.notes as { ru: string }).ru).toBe('string');
+        expect(typeof (f.notes as { en?: string }).en).toBe('string');
+      }
     });
   });
 

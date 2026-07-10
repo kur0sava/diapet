@@ -29,6 +29,22 @@ export type { Region } from '@shared/config/regionConfig';
 export { VALID_REGIONS } from '@shared/config/regionConfig';
 import type { Region } from '@shared/config/regionConfig';
 
+/**
+ * A note shown on a food card. Historically a bare (Russian) string, which
+ * meant EN users never saw it (B3 audit — safety caveats like "Monge is ~35%
+ * DM carbs, NOT recommended" were invisible to the whole English market). New
+ * entries use `{ ru, en }`; a bare string is still accepted (treated as ru,
+ * e.g. legacy remote-manifest rows) and resolved via `localizedNote`.
+ */
+export type LocalizedNote = string | { ru: string; en?: string };
+
+/** Pick the note text for the current language, falling back ru→en→ru. */
+export function localizedNote(note: LocalizedNote | undefined, isRu: boolean): string | undefined {
+  if (note == null) return undefined;
+  if (typeof note === 'string') return note; // legacy single-language (ru)
+  return isRu ? note.ru : (note.en ?? note.ru);
+}
+
 export interface DiabeticCatFood {
   id: string;
   brand: string;
@@ -53,8 +69,8 @@ export interface DiabeticCatFood {
   priceHint?: string;
   /** Veterinary prescription required */
   prescriptionRequired: boolean;
-  /** Key features / notes */
-  notes?: string;
+  /** Key features / notes (localized; see LocalizedNote) */
+  notes?: LocalizedNote;
   /** Localized names */
   nameRu?: string;
   /** Species: 'cat' | 'dog' | 'all'. Defaults to 'cat' if omitted. */
@@ -178,8 +194,10 @@ export const PRESCRIPTION_FOODS: DiabeticCatFood[] = [
     },
     priceHint: 'RU: 800-1200₽/400г, 2500-3500₽/1.5кг',
     prescriptionRequired: true,
-    notes:
-      'Самый распространённый ветеринарный корм для диабетических кошек. Низкий гликемический индекс. Доступен повсеместно в РФ. Углеводы ~24% DM (пересчитано из этикетки 2026) — выше идеала ISFM (<7%), но в пределах допустимого (<15% для DS46 не выполняется строго; продукт традиционно позиционируется как приемлемый благодаря низкому ГИ источников крахмала, а не абсолютно низкому проценту).',
+    notes: {
+      ru: 'Самый распространённый ветеринарный корм для диабетических кошек. Низкий гликемический индекс. Доступен повсеместно в РФ. Углеводы ~24% DM (пересчитано из этикетки 2026) — выше идеала ISFM (<7%), но в пределах допустимого (<15% для DS46 не выполняется строго; продукт традиционно позиционируется как приемлемый благодаря низкому ГИ источников крахмала, а не абсолютно низкому проценту).',
+      en: 'The most widely used veterinary food for diabetic cats. Low glycemic index. Available everywhere in Russia. Carbs ~24% DM (recalculated from the 2026 label) — above the ISFM ideal (<7%), and does not strictly meet the acceptable range either (<15% for DS46 is not strictly met); the product is traditionally positioned as acceptable due to the low GI of its starch sources rather than an absolutely low carb percentage.',
+    },
   },
   {
     id: 'rc-diabetic-wet',
@@ -207,7 +225,10 @@ export const PRESCRIPTION_FOODS: DiabeticCatFood[] = [
     },
     priceHint: 'RU: 120-180₽/пауч 85г',
     prescriptionRequired: true,
-    notes: 'Влажные пакетики. Удобно дозировать.',
+    notes: {
+      ru: 'Влажные пакетики. Удобно дозировать.',
+      en: 'Wet pouches. Convenient for portioning.',
+    },
   },
 
   // ── Hill\'s ──
@@ -230,8 +251,10 @@ export const PRESCRIPTION_FOODS: DiabeticCatFood[] = [
       US: ['chewy.com', 'petco.com', 'petsmart.com'],
     },
     prescriptionRequired: true,
-    notes:
-      "Высокобелковый, низкоуглеводный. Один из лучших по составу для диабета. ⚠️ В РФ недоступен с 2023-24 (поставки Hill's приостановлены). Российская альтернатива: Purina DM или Royal Canin Diabetic.",
+    notes: {
+      ru: "Высокобелковый, низкоуглеводный. Один из лучших по составу для диабета. ⚠️ В РФ недоступен с 2023-24 (поставки Hill's приостановлены). Российская альтернатива: Purina DM или Royal Canin Diabetic.",
+      en: "High-protein, low-carb. One of the best formulations for diabetes management. ⚠️ Unavailable in Russia since 2023-24 (Hill's supply suspended). Russian alternative: Purina DM or Royal Canin Diabetic.",
+    },
   },
   // Hill's w/d Feline reclassified from 'prescription' (diabetic) to 'veterinary':
   // at 34% DM carbs it does not meet the feline diabetic diet criterion
@@ -258,8 +281,10 @@ export const PRESCRIPTION_FOODS: DiabeticCatFood[] = [
     },
     prescriptionRequired: true,
     species: 'cat',
-    notes:
-      '⚠️ Углеводы 34% DM — существенно выше порога для кошачьего диабета (<15% DM). НЕ рекомендуется как первая линия при сахарном диабете у кошек. Может назначаться ветеринаром при коморбидных ожирении + мягкой гипергликемии, когда контроль веса приоритетнее. Для диабета предпочтительны Purina DM, Royal Canin Diabetic или Farmina Diabetic.',
+    notes: {
+      ru: '⚠️ Углеводы 34% DM — существенно выше порога для кошачьего диабета (<15% DM). НЕ рекомендуется как первая линия при сахарном диабете у кошек. Может назначаться ветеринаром при коморбидных ожирении + мягкой гипергликемии, когда контроль веса приоритетнее. Для диабета предпочтительны Purina DM, Royal Canin Diabetic или Farmina Diabetic.',
+      en: '⚠️ Carbs 34% DM — significantly above the threshold for feline diabetes (<15% DM). NOT recommended as first-line therapy for diabetes mellitus in cats. May be prescribed by a vet for comorbid obesity + mild hyperglycemia, when weight control takes priority. For diabetes, Purina DM, Royal Canin Diabetic, or Farmina Diabetic are preferred.',
+    },
   },
 
   // ── Purina ──
@@ -288,7 +313,10 @@ export const PRESCRIPTION_FOODS: DiabeticCatFood[] = [
     },
     priceHint: 'RU: 1200-2000₽/1.5кг',
     prescriptionRequired: true,
-    notes: 'Один из самых низкоуглеводных сухих кормов (13% DM). Очень высокий белок (58%).',
+    notes: {
+      ru: 'Один из самых низкоуглеводных сухих кормов (13% DM). Очень высокий белок (58%).',
+      en: 'One of the lowest-carb dry foods (13% DM). Very high protein (58%).',
+    },
   },
   {
     id: 'purina-dm-wet',
@@ -317,8 +345,10 @@ export const PRESCRIPTION_FOODS: DiabeticCatFood[] = [
     },
     priceHint: 'RU: 130-200₽/пауч 85г, 250-350₽/банка 195г',
     prescriptionRequired: true,
-    notes:
-      'Всего ~2% углеводов на сухое вещество! Лучший показатель среди рецептурных влажных кормов. Доступен в паучах и банках. (Savory Selects — другая линейка с похожим, но не идентичным составом.)',
+    notes: {
+      ru: 'Всего ~2% углеводов на сухое вещество! Лучший показатель среди рецептурных влажных кормов. Доступен в паучах и банках. (Savory Selects — другая линейка с похожим, но не идентичным составом.)',
+      en: 'Only ~2% carbs on a dry matter basis! The best figure among prescription wet foods. Available in pouches and cans. (Savory Selects is a different line with a similar but not identical formulation.)',
+    },
   },
 
   // ── Farmina ──
@@ -348,8 +378,10 @@ export const PRESCRIPTION_FOODS: DiabeticCatFood[] = [
     // subtraction would give because Farmina's fibre blend (oat/spelt/
     // flaxseed/chicory) contributes non-starch polysaccharides not captured
     // by the crude-fibre assay.
-    notes:
-      'Источник углеводов — овёс и полба (низкий ГИ). Один из лучших по углеводам (11% DM). Итальянское производство. ⚠️ В РФ сухие корма Farmina под запретом ввоза с 2024 — недоступны.',
+    notes: {
+      ru: 'Источник углеводов — овёс и полба (низкий ГИ). Один из лучших по углеводам (11% DM). Итальянское производство. ⚠️ В РФ сухие корма Farmina под запретом ввоза с 2024 — недоступны.',
+      en: 'Carb source — oats and spelt (low GI). One of the best in terms of carb content (11% DM). Made in Italy. ⚠️ Farmina dry foods have been banned from import into Russia since 2024 — unavailable.',
+    },
   },
   {
     id: 'farmina-diabetic-wet',
@@ -377,8 +409,10 @@ export const PRESCRIPTION_FOODS: DiabeticCatFood[] = [
       UK: ['farmina.com'],
     },
     prescriptionRequired: true,
-    notes:
-      'Углеводы из семян киноа. Курица + рыба. Хороший вариант для влажного кормления. ⚠️ Ввоз в РФ ограничен.',
+    notes: {
+      ru: 'Углеводы из семян киноа. Курица + рыба. Хороший вариант для влажного кормления. ⚠️ Ввоз в РФ ограничен.',
+      en: 'Carbs from quinoa seeds. Chicken + fish. A good option for wet feeding. ⚠️ Import into Russia is restricted.',
+    },
   },
 
   // ── Craftia (Россия) ──
@@ -409,8 +443,10 @@ export const PRESCRIPTION_FOODS: DiabeticCatFood[] = [
     },
     priceHint: 'RU: 900-1300₽/1.4кг, 2500-3500₽/4.5кг',
     prescriptionRequired: false,
-    notes:
-      'Российский бренд. Доступен на маркетплейсах. Не требует рецепта. ⚠️ Углеводы ~28% DM — выше порога ISFM для диабетической диеты (<15% DM); использовать как бюджетный вариант только под контролем ветеринара, не как основной низкоуглеводный корм.',
+    notes: {
+      ru: 'Российский бренд. Доступен на маркетплейсах. Не требует рецепта. ⚠️ Углеводы ~28% DM — выше порога ISFM для диабетической диеты (<15% DM); использовать как бюджетный вариант только под контролем ветеринара, не как основной низкоуглеводный корм.',
+      en: 'Russian brand. Available on marketplaces. No prescription required. ⚠️ Carbs ~28% DM — above the ISFM threshold for a diabetic diet (<15% DM); use only as a budget option under veterinary supervision, not as the primary low-carb food.',
+    },
   },
 
   // ── Solid Natura (Россия) ──
@@ -446,8 +482,10 @@ export const PRESCRIPTION_FOODS: DiabeticCatFood[] = [
     },
     priceHint: 'RU: 100-160₽/банка 100г',
     prescriptionRequired: false,
-    notes:
-      'Курица + лосось. Российское производство. Не всегда в наличии. Углеводы (~14% DM) — оценка по крахмалу+сахару из этикетки, требует уточнения у производителя.',
+    notes: {
+      ru: 'Курица + лосось. Российское производство. Не всегда в наличии. Углеводы (~14% DM) — оценка по крахмалу+сахару из этикетки, требует уточнения у производителя.',
+      en: 'Chicken + salmon. Made in Russia. Not always in stock. Carbs (~14% DM) — estimate based on starch+sugar from the label, needs confirmation from the manufacturer.',
+    },
   },
 
   // ── Monge (Italy, EU) — added 2026 audit ──
@@ -470,8 +508,10 @@ export const PRESCRIPTION_FOODS: DiabeticCatFood[] = [
       EU: ['zooplus.de', 'monge.it', 'vet clinics'],
     },
     prescriptionRequired: true,
-    notes:
-      '⚠️ ЧЕСТНАЯ ОЦЕНКА: несмотря на название "Diabetic", реальные углеводы ~35% DM (крахмал 25% + сахар 6.2% как есть) — это существенно ВЫШЕ порога ISFM для диабетической диеты кошек (<15% DM), сопоставимо с обычным беззерновым кормом для здоровых кошек. Механизм действия у Monge основан на замедлении гликемического ответа (мелонный концентрат, пажитник, XOS), а не на низком содержании углеводов. НЕ рекомендуется как основная низкоуглеводная диета для инсулинозависимых кошек; Purina DM, Royal Canin Diabetic или Farmina Vet Life Diabetic предпочтительнее. Доступность в РФ не подтверждена — не указывать регион RU без дополнительной проверки.',
+    notes: {
+      ru: '⚠️ ЧЕСТНАЯ ОЦЕНКА: несмотря на название "Diabetic", реальные углеводы ~35% DM (крахмал 25% + сахар 6.2% как есть) — это существенно ВЫШЕ порога ISFM для диабетической диеты кошек (<15% DM), сопоставимо с обычным беззерновым кормом для здоровых кошек. Механизм действия у Monge основан на замедлении гликемического ответа (мелонный концентрат, пажитник, XOS), а не на низком содержании углеводов. НЕ рекомендуется как основная низкоуглеводная диета для инсулинозависимых кошек; Purina DM, Royal Canin Diabetic или Farmina Vet Life Diabetic предпочтительнее. Доступность в РФ не подтверждена — не указывать регион RU без дополнительной проверки.',
+      en: '⚠️ HONEST ASSESSMENT: despite the name "Diabetic", actual carbs are ~35% DM (starch 25% + sugar 6.2% as-fed) — this is significantly ABOVE the ISFM threshold for a feline diabetic diet (<15% DM), comparable to an ordinary grain-free food for healthy cats. Monge\'s mechanism of action is based on slowing the glycemic response (melon concentrate, fenugreek, XOS) rather than on low carb content. NOT recommended as the primary low-carb diet for insulin-dependent cats; Purina DM, Royal Canin Diabetic, or Farmina Vet Life Diabetic are preferable. Availability in Russia is not confirmed — do not list the RU region without further verification.',
+    },
   },
   // ── Ortipo (Russia) — added 2026 audit ──
   {
@@ -493,8 +533,10 @@ export const PRESCRIPTION_FOODS: DiabeticCatFood[] = [
     },
     priceHint: 'RU: см. ortipo.ru (0.5кг/1.5кг/6кг фасовки)',
     prescriptionRequired: false,
-    notes:
-      'Российский холистик-бренд, продаётся напрямую через ortipo.ru без рецепта. ⚠️ Углеводы ~25% DM — выше порога ISFM (<15% DM) для диабетической диеты; рассматривать как бюджетный дополнительный вариант, не как основной выбор при инсулинозависимом диабете. Обсудить с ветеринаром.',
+    notes: {
+      ru: 'Российский холистик-бренд, продаётся напрямую через ortipo.ru без рецепта. ⚠️ Углеводы ~25% DM — выше порога ISFM (<15% DM) для диабетической диеты; рассматривать как бюджетный дополнительный вариант, не как основной выбор при инсулинозависимом диабете. Обсудить с ветеринаром.',
+      en: 'Russian holistic brand, sold directly through ortipo.ru without a prescription. ⚠️ Carbs ~25% DM — above the ISFM threshold (<15% DM) for a diabetic diet; consider it a budget supplementary option, not the primary choice for insulin-dependent diabetes. Discuss with your veterinarian.',
+    },
   },
   // ── Trovet (Netherlands) — added 2026 audit ──
   {
@@ -516,8 +558,10 @@ export const PRESCRIPTION_FOODS: DiabeticCatFood[] = [
       UK: ['petfoodwarehouse.co.uk', 'vet clinics'],
     },
     prescriptionRequired: true,
-    notes:
-      'Нидерландский Rx-бренд, продукт совмещает "снижение веса" и "диабет" в одном названии (WRD). ⚠️ ЧЕСТНАЯ ОЦЕНКА: углеводы ~39% DM — высокие для кошки, НЕ соответствует низкоуглеводному подходу ISFM/Rand. Ориентирован скорее на кошек с лёгкой гипергликемией на фоне ожирения, чем на строгий контроль инсулинозависимого диабета. Не первый выбор — Purina DM, Royal Canin Diabetic или Farmina Vet Life Diabetic предпочтительнее.',
+    notes: {
+      ru: 'Нидерландский Rx-бренд, продукт совмещает "снижение веса" и "диабет" в одном названии (WRD). ⚠️ ЧЕСТНАЯ ОЦЕНКА: углеводы ~39% DM — высокие для кошки, НЕ соответствует низкоуглеводному подходу ISFM/Rand. Ориентирован скорее на кошек с лёгкой гипергликемией на фоне ожирения, чем на строгий контроль инсулинозависимого диабета. Не первый выбор — Purina DM, Royal Canin Diabetic или Farmina Vet Life Diabetic предпочтительнее.',
+      en: 'Dutch prescription brand; the product combines "weight loss" and "diabetic" in one name (WRD). ⚠️ HONEST ASSESSMENT: carbs ~39% DM — high for a cat, does NOT meet the ISFM/Rand low-carb approach. Aimed more at cats with mild hyperglycemia secondary to obesity than at strict control of insulin-dependent diabetes. Not the first choice — Purina DM, Royal Canin Diabetic, or Farmina Vet Life Diabetic are preferable.',
+    },
   },
 ];
 
@@ -546,7 +590,10 @@ export const OTC_LOW_CARB_FOODS: DiabeticCatFood[] = [
     kcalPerKg: 751,
     regions: ['US'],
     prescriptionRequired: false,
-    notes: 'Почти нулевые углеводы. Один из лучших для диабетиков. Только в США.',
+    notes: {
+      ru: 'Почти нулевые углеводы. Один из лучших для диабетиков. Только в США.',
+      en: 'Almost zero carbs. One of the best options for diabetics. US only.',
+    },
   },
   {
     id: 'fancy-feast-pate',
@@ -564,8 +611,10 @@ export const OTC_LOW_CARB_FOODS: DiabeticCatFood[] = [
     fiberDM: 7,
     regions: ['US', 'UK', 'EU'],
     prescriptionRequired: false,
-    notes:
-      'Бюджетный вариант! Серия Classic Pate имеет ~10% углеводов DM (варьируется по вкусу). Рекомендуется ветеринарами как доступная альтернатива. В UK продаётся как Purina Gourmet Gold.',
+    notes: {
+      ru: 'Бюджетный вариант! Серия Classic Pate имеет ~10% углеводов DM (варьируется по вкусу). Рекомендуется ветеринарами как доступная альтернатива. В UK продаётся как Purina Gourmet Gold.',
+      en: 'Budget option! The Classic Pate line has ~10% carbs DM (varies by flavor). Recommended by vets as an affordable alternative. In the UK it is sold as Purina Gourmet Gold.',
+    },
   },
   {
     id: 'sheba-pate',
@@ -591,8 +640,10 @@ export const OTC_LOW_CARB_FOODS: DiabeticCatFood[] = [
       DE: [],
     },
     prescriptionRequired: false,
-    notes:
-      'Широко доступен, включая Россию. Fine Flakes популярны в UK. Углеводы ~7.5% — приемлемо.',
+    notes: {
+      ru: 'Широко доступен, включая Россию. Fine Flakes популярны в UK. Углеводы ~7.5% — приемлемо.',
+      en: 'Widely available, including in Russia. Fine Flakes is popular in the UK. Carbs ~7.5% — acceptable.',
+    },
   },
   {
     id: 'dr-elseys-clean-protein',
@@ -612,7 +663,10 @@ export const OTC_LOW_CARB_FOODS: DiabeticCatFood[] = [
     kcalPerKg: 4030,
     regions: ['US'],
     prescriptionRequired: false,
-    notes: 'Рекордно низкие углеводы для сухого корма (~2% DM). Только в США.',
+    notes: {
+      ru: 'Рекордно низкие углеводы для сухого корма (~2% DM). Только в США.',
+      en: 'Record-low carbs for a dry food (~2% DM). US only.',
+    },
   },
   {
     id: 'ziwi-peak-lamb',
@@ -631,7 +685,10 @@ export const OTC_LOW_CARB_FOODS: DiabeticCatFood[] = [
     kcalPerKg: 4950,
     regions: ['US', 'EU', 'UK'],
     prescriptionRequired: false,
-    notes: 'Сублимированный корм из Новой Зеландии. Премиум, дорогой, но отличный состав.',
+    notes: {
+      ru: 'Сублимированный корм из Новой Зеландии. Премиум, дорогой, но отличный состав.',
+      en: 'Air-dried food from New Zealand. Premium, expensive, but excellent composition.',
+    },
   },
   {
     id: 'nulo-freestyle',
@@ -657,8 +714,10 @@ export const OTC_LOW_CARB_FOODS: DiabeticCatFood[] = [
     kcalPerKg: 1225,
     regions: ['US'],
     prescriptionRequired: false,
-    notes:
-      'Высокое качество. Без зерна, без искусственных добавок. Углеводы крайне низкие (~1-2% DM, зола на этикетке не указана — оценка приблизительная).',
+    notes: {
+      ru: 'Высокое качество. Без зерна, без искусственных добавок. Углеводы крайне низкие (~1-2% DM, зола на этикетке не указана — оценка приблизительная).',
+      en: 'High quality. Grain-free, no artificial additives. Carbs extremely low (~1-2% DM; ash is not listed on the label — estimate is approximate).',
+    },
   },
 
   // ── Немецкие бренды (доступны в Европе через Zooplus) ──
@@ -691,8 +750,10 @@ export const OTC_LOW_CARB_FOODS: DiabeticCatFood[] = [
       GLOBAL: [],
     },
     prescriptionRequired: false,
-    notes:
-      'Немецкое производство. Высокое содержание мяса. Углеводы ~9% DM (уточнено 2026, было ошибочно занижено до 3%) — хороший, но не идеальный показатель. Доступен через Zooplus.',
+    notes: {
+      ru: 'Немецкое производство. Высокое содержание мяса. Углеводы ~9% DM (уточнено 2026, было ошибочно занижено до 3%) — хороший, но не идеальный показатель. Доступен через Zooplus.',
+      en: 'Made in Germany. High meat content. Carbs ~9% DM (updated 2026, was previously misstated as low as 3%) — a good but not ideal figure. Available through Zooplus.',
+    },
   },
   {
     id: 'catz-finefood',
@@ -726,8 +787,10 @@ export const OTC_LOW_CARB_FOODS: DiabeticCatFood[] = [
       GLOBAL: [],
     },
     prescriptionRequired: false,
-    notes:
-      'Без зерна (кроме Pheasant & Chicken с рисом). Монобелковые варианты. Немецкий. Углеводы ~7.5% DM для варианта с курицей (уточнено 2026, было ошибочно занижено до 2%) — у других вкусов состав заметно варьируется.',
+    notes: {
+      ru: 'Без зерна (кроме Pheasant & Chicken с рисом). Монобелковые варианты. Немецкий. Углеводы ~7.5% DM для варианта с курицей (уточнено 2026, было ошибочно занижено до 2%) — у других вкусов состав заметно варьируется.',
+      en: 'Grain-free (except Pheasant & Chicken with rice). Mono-protein variants. German brand. Carbs ~7.5% DM for the chicken variant (updated 2026, was previously misstated as low as 2%) — composition varies noticeably between other flavors.',
+    },
   },
   {
     id: 'animonda-carny',
@@ -754,8 +817,10 @@ export const OTC_LOW_CARB_FOODS: DiabeticCatFood[] = [
       GLOBAL: [],
     },
     prescriptionRequired: false,
-    notes:
-      'Немецкий бренд, ДОСТУПЕН В РОССИИ. 100% мясо, без зерна, без сои. Один из лучших не-рецептурных вариантов для РФ.',
+    notes: {
+      ru: 'Немецкий бренд, ДОСТУПЕН В РОССИИ. 100% мясо, без зерна, без сои. Один из лучших не-рецептурных вариантов для РФ.',
+      en: 'German brand, AVAILABLE IN RUSSIA. 100% meat, grain-free, soy-free. One of the best over-the-counter options for Russia.',
+    },
   },
   {
     id: 'macs-cat',
@@ -767,7 +832,10 @@ export const OTC_LOW_CARB_FOODS: DiabeticCatFood[] = [
     carbsDM: 2,
     regions: ['DE', 'EU'],
     prescriptionRequired: false,
-    notes: 'Немецкий. Очень высокое содержание мяса (70%+). Доступен через Zooplus.',
+    notes: {
+      ru: 'Немецкий. Очень высокое содержание мяса (70%+). Доступен через Zooplus.',
+      en: 'German brand. Very high meat content (70%+). Available through Zooplus.',
+    },
   },
 
   // ── UK-доступные ──
@@ -781,7 +849,10 @@ export const OTC_LOW_CARB_FOODS: DiabeticCatFood[] = [
     carbsDM: 8,
     regions: ['UK', 'EU'],
     prescriptionRequired: false,
-    notes: '70% курица, низкий ГИ углеводы. Популярен в UK. Натуральные ингредиенты.',
+    notes: {
+      ru: '70% курица, низкий ГИ углеводы. Популярен в UK. Натуральные ингредиенты.',
+      en: '70% chicken, low-GI carbs. Popular in the UK. Natural ingredients.',
+    },
   },
   {
     id: 'purina-gourmet-gold',
@@ -807,8 +878,10 @@ export const OTC_LOW_CARB_FOODS: DiabeticCatFood[] = [
       DE: [],
     },
     prescriptionRequired: false,
-    notes:
-      'ШИРОКО ДОСТУПЕН В РОССИИ. UK-аналог Fancy Feast. Паштетные варианты имеют ~5% углеводов. Бюджетный вариант.',
+    notes: {
+      ru: 'ШИРОКО ДОСТУПЕН В РОССИИ. UK-аналог Fancy Feast. Паштетные варианты имеют ~5% углеводов. Бюджетный вариант.',
+      en: 'WIDELY AVAILABLE IN RUSSIA. The UK equivalent of Fancy Feast. Pate variants have ~5% carbs. A budget option.',
+    },
   },
 
   // ── Доступные в России без рецепта ──
@@ -844,7 +917,10 @@ export const OTC_LOW_CARB_FOODS: DiabeticCatFood[] = [
       DE: [],
     },
     prescriptionRequired: false,
-    notes: 'Доступен в некоторых российских магазинах. Беззерновой, высокобелковый.',
+    notes: {
+      ru: 'Доступен в некоторых российских магазинах. Беззерновой, высокобелковый.',
+      en: 'Available in some Russian stores. Grain-free, high-protein.',
+    },
   },
 
   // ── DE — сухие корма ──
@@ -870,8 +946,10 @@ export const OTC_LOW_CARB_FOODS: DiabeticCatFood[] = [
       EU: ['zooplus.de'],
     },
     prescriptionRequired: false,
-    notes:
-      '⚠️ ЧЕСТНАЯ ОЦЕНКА (обновлено 2026): реальные углеводы ~40% DM, а не заявленные ранее 12%. "Беззерновой" ≠ "низкоуглеводный" — сухие гранулы требуют крахмалистого связующего (в данном случае картофель/горох) независимо от отсутствия зерна. НЕ подходит для диабетических кошек, несмотря на позиционирование как премиум-корм. Не рекомендовать как вариант для диабетика.',
+    notes: {
+      ru: '⚠️ ЧЕСТНАЯ ОЦЕНКА (обновлено 2026): реальные углеводы ~40% DM, а не заявленные ранее 12%. "Беззерновой" ≠ "низкоуглеводный" — сухие гранулы требуют крахмалистого связующего (в данном случае картофель/горох) независимо от отсутствия зерна. НЕ подходит для диабетических кошек, несмотря на позиционирование как премиум-корм. Не рекомендовать как вариант для диабетика.',
+      en: '⚠️ HONEST ASSESSMENT (updated 2026): actual carbs are ~40% DM, not the previously stated 12%. "Grain-free" ≠ "low-carb" — dry kibble requires a starchy binder (in this case potato/pea) regardless of the absence of grain. NOT suitable for diabetic cats, despite being positioned as a premium food. Do not recommend it as an option for a diabetic cat.',
+    },
   },
   {
     id: 'josera-cat-culinesse',
@@ -894,8 +972,10 @@ export const OTC_LOW_CARB_FOODS: DiabeticCatFood[] = [
       EU: ['zooplus.de'],
     },
     prescriptionRequired: false,
-    notes:
-      '⚠️ ЧЕСТНАЯ ОЦЕНКА (обновлено 2026): реальные углеводы ~33% DM, а не заявленные ранее 11%. Беззерновой состав не означает низкоуглеводный — крахмал даёт горох/картофель. НЕ рекомендовать как вариант для диабетика, несмотря на прежнюю формулировку "один из лучших".',
+    notes: {
+      ru: '⚠️ ЧЕСТНАЯ ОЦЕНКА (обновлено 2026): реальные углеводы ~33% DM, а не заявленные ранее 11%. Беззерновой состав не означает низкоуглеводный — крахмал даёт горох/картофель. НЕ рекомендовать как вариант для диабетика, несмотря на прежнюю формулировку "один из лучших".',
+      en: '⚠️ HONEST ASSESSMENT (updated 2026): actual carbs are ~33% DM, not the previously stated 11%. A grain-free formulation does not mean low-carb — starch comes from peas/potato. Do NOT recommend it as an option for a diabetic cat, despite the previous "one of the best" description.',
+    },
   },
   {
     id: 'applaws-dry-chicken',
@@ -920,8 +1000,10 @@ export const OTC_LOW_CARB_FOODS: DiabeticCatFood[] = [
       UK: ['Amazon.co.uk', 'Pets at Home'],
     },
     prescriptionRequired: false,
-    notes:
-      '⚠️ ЧЕСТНАЯ ОЦЕНКА (обновлено 2026): реальные углеводы ~30% DM, а не заявленные ранее 10%. "80% мяса" в маркетинге не отменяет того, что оставшиеся 20% в основном крахмал, необходимый для формирования гранулы. НЕ подходит как низкоуглеводный корм для диабетической кошки.',
+    notes: {
+      ru: '⚠️ ЧЕСТНАЯ ОЦЕНКА (обновлено 2026): реальные углеводы ~30% DM, а не заявленные ранее 10%. "80% мяса" в маркетинге не отменяет того, что оставшиеся 20% в основном крахмал, необходимый для формирования гранулы. НЕ подходит как низкоуглеводный корм для диабетической кошки.',
+      en: '⚠️ HONEST ASSESSMENT (updated 2026): actual carbs are ~30% DM, not the previously stated 10%. Marketing "80% meat" does not change the fact that the remaining 20% is mostly starch needed to bind the kibble. NOT suitable as a low-carb food for a diabetic cat.',
+    },
   },
 
   // ── MX — корма доступные в Мексике ──
@@ -945,8 +1027,10 @@ export const OTC_LOW_CARB_FOODS: DiabeticCatFood[] = [
       MX: ['PetCo México', 'Petsy.mx', 'MercadoLibre'],
     },
     prescriptionRequired: true,
-    notes:
-      'Disponible en México. Requiere receta veterinaria. Ver ficha "rc-diabetic-dry"/"rc-diabetic-wet" para el desglose por formato (seco ~24% DM, húmedo ~15% DM).',
+    notes: {
+      ru: 'Disponible en México. Requiere receta veterinaria. Ver ficha "rc-diabetic-dry"/"rc-diabetic-wet" para el desglose por formato (seco ~24% DM, húmedo ~15% DM).',
+      en: 'Available in Mexico. Requires a veterinary prescription. See the "rc-diabetic-dry"/"rc-diabetic-wet" entries for the breakdown by format (dry ~24% DM, wet ~15% DM).',
+    },
   },
   {
     id: 'hills-md-mx',
@@ -966,7 +1050,10 @@ export const OTC_LOW_CARB_FOODS: DiabeticCatFood[] = [
       MX: ['PetCo México', 'Petsy.mx'],
     },
     prescriptionRequired: true,
-    notes: 'Disponible en México. Control glucémico. Requiere prescripción.',
+    notes: {
+      ru: 'Disponible en México. Control glucémico. Requiere prescripción.',
+      en: 'Available in Mexico. Glycemic control. Requires a prescription.',
+    },
   },
   {
     id: 'fancy-feast-classic-mx',
@@ -982,8 +1069,10 @@ export const OTC_LOW_CARB_FOODS: DiabeticCatFood[] = [
       US: ['Walmart', 'Target', 'chewy.com'],
     },
     prescriptionRequired: false,
-    notes:
-      'Ampliamente disponible en México. Paté clásico, bajo en carbohidratos. Opción económica.',
+    notes: {
+      ru: 'Ampliamente disponible en México. Paté clásico, bajo en carbohidratos. Opción económica.',
+      en: 'Widely available in Mexico. Classic pate, low in carbohydrates. An economical option.',
+    },
   },
 ];
 
@@ -1037,8 +1126,10 @@ export const PRESCRIPTION_DOG_FOODS: DiabeticCatFood[] = [
     priceHint: 'RU: 2500-3500₽/2кг, 6000-8000₽/7.5кг',
     prescriptionRequired: true,
     species: 'dog',
-    notes:
-      "Ранее назывался Diabetic Canine. Низкий гликемический индекс, умеренный белок, оптимизированное волокно. Один из самых назначаемых Rx для собак-диабетиков в РФ и мире. ⚠️ Клетчатка (~9% DM) ниже идеала (15% DM) — механизм контроля глюкозы у RC основан на низком ГИ крахмала, а не на объёме клетчатки, в отличие от Hill's w/d.",
+    notes: {
+      ru: "Ранее назывался Diabetic Canine. Низкий гликемический индекс, умеренный белок, оптимизированное волокно. Один из самых назначаемых Rx для собак-диабетиков в РФ и мире. ⚠️ Клетчатка (~9% DM) ниже идеала (15% DM) — механизм контроля глюкозы у RC основан на низком ГИ крахмала, а не на объёме клетчатки, в отличие от Hill's w/d.",
+      en: "Previously named Diabetic Canine. Low glycemic index, moderate protein, optimized fiber. One of the most commonly prescribed Rx diets for diabetic dogs in Russia and worldwide. ⚠️ Fiber (~9% DM) is below the ideal (15% DM) — RC's glucose-control mechanism relies on low-GI starch rather than fiber volume, unlike Hill's w/d.",
+    },
   },
 
   // ── Hill's ──
@@ -1063,8 +1154,10 @@ export const PRESCRIPTION_DOG_FOODS: DiabeticCatFood[] = [
     },
     prescriptionRequired: true,
     species: 'dog',
-    notes:
-      'Высокое содержание клетчатки (17% DM) — замедляет всплеск глюкозы после еды. Низкий жир (10% DM) = низкий риск панкреатита. AAHA 2018 — терапия первой линии. ⚠️ В РФ недоступен с 2023-24 — альтернатива Royal Canin Diabetic.',
+    notes: {
+      ru: 'Высокое содержание клетчатки (17% DM) — замедляет всплеск глюкозы после еды. Низкий жир (10% DM) = низкий риск панкреатита. AAHA 2018 — терапия первой линии. ⚠️ В РФ недоступен с 2023-24 — альтернатива Royal Canin Diabetic.',
+      en: 'High fiber content (17% DM) — slows the post-meal glucose spike. Low fat (10% DM) = low pancreatitis risk. AAHA 2018 — first-line therapy. ⚠️ Unavailable in Russia since 2023-24 — alternative: Royal Canin Diabetic.',
+    },
   },
   {
     id: 'hills-wd-canine-wet',
@@ -1085,8 +1178,10 @@ export const PRESCRIPTION_DOG_FOODS: DiabeticCatFood[] = [
     },
     prescriptionRequired: true,
     species: 'dog',
-    notes:
-      'Влажная версия w/d. Удобна при плохом аппетите или для увеличения потребления воды у собак с сопутствующими заболеваниями. ⚠️ В РФ недоступен с 2023-24.',
+    notes: {
+      ru: 'Влажная версия w/d. Удобна при плохом аппетите или для увеличения потребления воды у собак с сопутствующими заболеваниями. ⚠️ В РФ недоступен с 2023-24.',
+      en: 'Wet version of w/d. Convenient for poor appetite or to increase water intake in dogs with comorbid conditions. ⚠️ Unavailable in Russia since 2023-24.',
+    },
   },
 
   // ── Purina ──
@@ -1113,8 +1208,10 @@ export const PRESCRIPTION_DOG_FOODS: DiabeticCatFood[] = [
     },
     prescriptionRequired: true,
     species: 'dog',
-    notes:
-      "Двойное волокно (растворимое + нерастворимое) для улучшения контроля глюкозы и сытости. В РФ стабильно не поставляется — альтернатива Royal Canin Glycobalance или Hill's w/d.",
+    notes: {
+      ru: "Двойное волокно (растворимое + нерастворимое) для улучшения контроля глюкозы и сытости. В РФ стабильно не поставляется — альтернатива Royal Canin Glycobalance или Hill's w/d.",
+      en: "Dual fiber (soluble + insoluble) to improve glucose control and satiety. Not reliably supplied in Russia — alternative: Royal Canin Glycobalance or Hill's w/d.",
+    },
   },
 
   // ── Farmina ──
@@ -1143,8 +1240,10 @@ export const PRESCRIPTION_DOG_FOODS: DiabeticCatFood[] = [
     },
     prescriptionRequired: true,
     species: 'dog',
-    notes:
-      'Источник углеводов — горох + овёс (низкий ГИ). Белок 36% DM, клетчатка ~9% DM (ближе к идеалу, чем считалось ранее) — подходит собакам с чувствительным ЖКТ. ⚠️ В РФ сухие Farmina под запретом ввоза с 2024.',
+    notes: {
+      ru: 'Источник углеводов — горох + овёс (низкий ГИ). Белок 36% DM, клетчатка ~9% DM (ближе к идеалу, чем считалось ранее) — подходит собакам с чувствительным ЖКТ. ⚠️ В РФ сухие Farmina под запретом ввоза с 2024.',
+      en: 'Carb source — peas + oats (low GI). Protein 36% DM, fiber ~9% DM (closer to the ideal than previously thought) — suitable for dogs with a sensitive GI tract. ⚠️ Farmina dry foods have been banned from import into Russia since 2024.',
+    },
   },
 
   // ── Virbac ──
@@ -1171,8 +1270,10 @@ export const PRESCRIPTION_DOG_FOODS: DiabeticCatFood[] = [
     },
     prescriptionRequired: true,
     species: 'dog',
-    notes:
-      'Французский Rx. Высокая клетчатка (~16% DM) + умеренные углеводы. Хорош при коморбидном ожирении (94% животного белка). В РФ не ввозится стабильно.',
+    notes: {
+      ru: 'Французский Rx. Высокая клетчатка (~16% DM) + умеренные углеводы. Хорош при коморбидном ожирении (94% животного белка). В РФ не ввозится стабильно.',
+      en: 'French prescription diet. High fiber (~16% DM) + moderate carbs. Good for comorbid obesity (94% animal protein). Not reliably imported into Russia.',
+    },
   },
 
   // ── Brit ──
@@ -1199,8 +1300,10 @@ export const PRESCRIPTION_DOG_FOODS: DiabeticCatFood[] = [
     priceHint: 'RU: 1200-1800₽/2кг, 3500-5000₽/12кг',
     prescriptionRequired: false,
     species: 'dog',
-    notes:
-      "Чешский бренд. Доступен в РФ без рецепта (хотя производитель позиционирует как Rx). Более бюджетная альтернатива Hill's/RC. Клетчатка (~7% DM) ниже целевого порога (≥10% DM).",
+    notes: {
+      ru: "Чешский бренд. Доступен в РФ без рецепта (хотя производитель позиционирует как Rx). Более бюджетная альтернатива Hill's/RC. Клетчатка (~7% DM) ниже целевого порога (≥10% DM).",
+      en: "Czech brand. Available in Russia without a prescription (although the manufacturer positions it as Rx). A more budget-friendly alternative to Hill's/RC. Fiber (~7% DM) is below the target threshold (≥10% DM).",
+    },
   },
 
   // ── Purina (UK-branded twin of DCO) — added 2026 audit ──
@@ -1227,8 +1330,10 @@ export const PRESCRIPTION_DOG_FOODS: DiabeticCatFood[] = [
     },
     prescriptionRequired: true,
     species: 'dog',
-    notes:
-      'UK-специфичное название линейки Purina для собак-диабетиков (не путать с DCO Dual Fiber Control — другой рецептурой). Содержит экстракт белой фасоли (ингибитор амилазы) для снижения постпрандиальной гипергликемии.',
+    notes: {
+      ru: 'UK-специфичное название линейки Purina для собак-диабетиков (не путать с DCO Dual Fiber Control — другой рецептурой). Содержит экстракт белой фасоли (ингибитор амилазы) для снижения постпрандиальной гипергликемии.',
+      en: 'UK-specific name for the Purina line for diabetic dogs (not to be confused with DCO Dual Fiber Control — a different formulation). Contains white kidney bean extract (an amylase inhibitor) to reduce postprandial hyperglycemia.',
+    },
   },
   // ── Trovet (Netherlands) — added 2026 audit ──
   {
@@ -1253,8 +1358,10 @@ export const PRESCRIPTION_DOG_FOODS: DiabeticCatFood[] = [
     },
     prescriptionRequired: true,
     species: 'dog',
-    notes:
-      'Нидерландский Rx-бренд, совмещает "снижение веса" и "диабет" в одном названии (WRD). Жир исключительно низкий (~6.5% DM) — существенно ниже порога риска панкреатита (25% DM), что особенно ценно для собак с диабетом на фоне панкреатита. Рекомендуется распределять корм на 3-5 приёмов в день для стабилизации гликемии.',
+    notes: {
+      ru: 'Нидерландский Rx-бренд, совмещает "снижение веса" и "диабет" в одном названии (WRD). Жир исключительно низкий (~6.5% DM) — существенно ниже порога риска панкреатита (25% DM), что особенно ценно для собак с диабетом на фоне панкреатита. Рекомендуется распределять корм на 3-5 приёмов в день для стабилизации гликемии.',
+      en: 'Dutch prescription brand; combines "weight loss" and "diabetic" in one name (WRD). Fat is exceptionally low (~6.5% DM) — well below the pancreatitis risk threshold (25% DM), which is especially valuable for dogs with diabetes secondary to pancreatitis. It is recommended to split the food into 3-5 meals per day to stabilize glycemia.',
+    },
   },
 ];
 
@@ -1297,8 +1404,10 @@ export const OTC_DOG_FOODS: DiabeticCatFood[] = [
     priceHint: 'RU: 2200-3200₽/1.5кг, 6500-9000₽/12кг',
     prescriptionRequired: false,
     species: 'dog',
-    notes:
-      'Не помечен как "диабетический", но профиль (низкий жир ~11% DM, высокая клетчатка ~19% DM — уточнено 2026) близок к Rx для диабета. Используется, когда Glycobalance недоступен. Обсуди с ветеринаром.',
+    notes: {
+      ru: 'Не помечен как "диабетический", но профиль (низкий жир ~11% DM, высокая клетчатка ~19% DM — уточнено 2026) близок к Rx для диабета. Используется, когда Glycobalance недоступен. Обсуди с ветеринаром.',
+      en: 'Not labeled as "diabetic", but its profile (low fat ~11% DM, high fiber ~19% DM — updated 2026) is close to a diabetic Rx diet. Used when Glycobalance is unavailable. Discuss with your veterinarian.',
+    },
   },
   {
     id: 'hills-science-plan-perfect-weight',
@@ -1329,8 +1438,10 @@ export const OTC_DOG_FOODS: DiabeticCatFood[] = [
     },
     prescriptionRequired: false,
     species: 'dog',
-    notes:
-      'OTC без рецепта. Профиль ближе к диабетическим Rx, чем стандартный adult-корм (клетчатка ~10% DM — уточнено 2026, было завышено до 13%). При лёгкой гипергликемии + ожирении — приемлемая опция при согласовании с врачом. ⚠️ В РФ недоступен с 2023-24.',
+    notes: {
+      ru: 'OTC без рецепта. Профиль ближе к диабетическим Rx, чем стандартный adult-корм (клетчатка ~10% DM — уточнено 2026, было завышено до 13%). При лёгкой гипергликемии + ожирении — приемлемая опция при согласовании с врачом. ⚠️ В РФ недоступен с 2023-24.',
+      en: 'Over-the-counter, no prescription needed. Profile is closer to diabetic Rx diets than a standard adult food (fiber ~10% DM — updated 2026, was previously overstated at 13%). For mild hyperglycemia + obesity — an acceptable option when agreed with your veterinarian. ⚠️ Unavailable in Russia since 2023-24.',
+    },
   },
   {
     id: 'purina-pro-plan-overweight',
@@ -1366,8 +1477,10 @@ export const OTC_DOG_FOODS: DiabeticCatFood[] = [
     priceHint: 'RU: 900-1400₽/1.5кг, 3500-5000₽/14кг',
     prescriptionRequired: false,
     species: 'dog',
-    notes:
-      "⚠️ ЧЕСТНАЯ ОЦЕНКА (обновлено 2026): клетчатка всего ~4% DM (было ошибочно указано 9%) — существенно ниже целевого порога (≥10% DM) для контроля гликемии у собак. Бюджетный OTC вариант для контроля веса, но НЕ рекомендуется как диабетическая диета — ни по клетчатке, ни по низкому жиру не даёт клинического преимущества. Обсуди с ветеринаром альтернативы (Royal Canin Satiety, Hill's Perfect Weight).",
+    notes: {
+      ru: "⚠️ ЧЕСТНАЯ ОЦЕНКА (обновлено 2026): клетчатка всего ~4% DM (было ошибочно указано 9%) — существенно ниже целевого порога (≥10% DM) для контроля гликемии у собак. Бюджетный OTC вариант для контроля веса, но НЕ рекомендуется как диабетическая диета — ни по клетчатке, ни по низкому жиру не даёт клинического преимущества. Обсуди с ветеринаром альтернативы (Royal Canin Satiety, Hill's Perfect Weight).",
+      en: "⚠️ HONEST ASSESSMENT (updated 2026): fiber is only ~4% DM (was previously misstated as 9%) — significantly below the target threshold (≥10% DM) for glycemic control in dogs. A budget OTC weight-control option, but NOT recommended as a diabetic diet — it offers no clinical advantage in either fiber or low fat. Discuss alternatives with your veterinarian (Royal Canin Satiety, Hill's Perfect Weight).",
+    },
   },
   {
     id: 'acana-light-fit',
@@ -1399,8 +1512,10 @@ export const OTC_DOG_FOODS: DiabeticCatFood[] = [
     priceHint: 'RU: 2500-3500₽/2кг, 6500-9000₽/11.4кг',
     prescriptionRequired: false,
     species: 'dog',
-    notes:
-      'Канадский холистик. Беззерновой, с мясом. Углеводы из бобовых — ниже ГИ, чем у кукурузы/пшеницы. При отсутствии Rx — одна из лучших OTC опций для собак.',
+    notes: {
+      ru: 'Канадский холистик. Беззерновой, с мясом. Углеводы из бобовых — ниже ГИ, чем у кукурузы/пшеницы. При отсутствии Rx — одна из лучших OTC опций для собак.',
+      en: 'Canadian holistic brand. Grain-free, meat-based. Carbs from legumes — lower GI than corn/wheat. When an Rx diet is unavailable — one of the best OTC options for dogs.',
+    },
   },
 ];
 
