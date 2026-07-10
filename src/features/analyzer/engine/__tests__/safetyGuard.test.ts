@@ -76,6 +76,24 @@ describe('checkEmergencyThresholds', () => {
     expect(alerts[0].value).toBe(2.5);
   });
 
+  it('D1: distinguishes severe hypoglycemia (< 2.2 mmol/L)', () => {
+    const readings = [
+      {
+        id: 's1',
+        petId: 'p1',
+        valueMmol: 1.9,
+        valueMgdl: 34,
+        recordedAt: now,
+        mealRelation: 'before_meal' as const,
+        createdAt: now,
+        updatedAt: now,
+      },
+    ];
+    const alerts = checkEmergencyThresholds(readings);
+    expect(alerts).toHaveLength(1);
+    expect(alerts[0].type).toBe('severe_hypoglycemia');
+  });
+
   it('detects severe hyperglycemia (> 30 mmol/L)', () => {
     const readings = [
       {

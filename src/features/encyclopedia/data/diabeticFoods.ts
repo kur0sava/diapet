@@ -1621,28 +1621,30 @@ export function getFoodVerdict(
 // ────────────────────────────────────────────────────
 
 /**
- * ДОСТУПНОСТЬ В РОССИИ (краткая сводка):
+ * ДОСТУПНОСТЬ В РОССИИ (краткая dev-сводка). Источник истины — поле `regions`
+ * у каждой записи; этот блок лишь ориентир.
  *
- * РЕЦЕПТУРНЫЕ (нужна рекомендация ветеринара):
- * 1. Royal Canin Diabetic DS46      — ЛЕГКО найти (royalcanin.ru, 4lapy, Ozon)
- * 2. Purina DM                       — ЛЕГКО найти (purina.ru, 4lapy, markvet)
- * 3. Farmina Vet Life Diabetic       — СРЕДНЕ (4lapy, Ozon, holistic-shop)
- * 4. Hill's m/d                      — СЛОЖНЕЕ (наличие нестабильное после 2022)
- * 5. Craftia Galena Diabetic Care    — ЛЕГКО (Ozon, WB) — российский бренд
- * 6. Solid Natura Vet Diet Diabetic  — СРЕДНЕ (бывает нет в наличии)
+ * D8 (audit): обновлено под санкц-реальность 2023-24. Hill's (заводы NL/IT
+ * ушли из РФ) и сухие Farmina (запрет Россельхознадзора) БОЛЬШЕ НЕ считаются
+ * доступными в РФ — RU снят с их записей. Не возвращать их в RU без проверки.
+ *
+ * РЕЦЕПТУРНЫЕ (локально производимые / ввозимые, RU-доступные):
+ * 1. Royal Canin Diabetic DS46      — завод Дмитров (royalcanin.ru, 4lapy, Ozon)
+ * 2. Purina DM                       — завод Калуга (purina.ru, 4lapy, markvet)
+ * 3. Craftia Galena Diabetic Care    — российский бренд (Ozon, WB)
+ * 4. Solid Natura Vet Diet Diabetic  — российский бренд (бывает нет в наличии)
+ * 5. Ortipo Vet Diet                 — российский бренд
+ *   ⚠️ Hill's m/d и Farmina Vet Life Diabetic — НЕ доступны в РФ (санкции).
  *
  * БЕЗ РЕЦЕПТА (низкоуглеводные):
  * 1. Purina Gourmet Gold паштет      — ВЕЗДЕ (любой супермаркет)
  * 2. Sheba паштет                    — ВЕЗДЕ
  * 3. Animonda Carny                  — СРЕДНЕ (Ozon, 4lapy)
- * 4. Wellness Core                   — СЛОЖНЕЕ (Ozon, holistic-shop)
  *
  * МАГАЗИНЫ:
  * - 4lapy.ru — крупнейшая сеть, доставка по РФ
  * - Ozon / Wildberries — маркетплейсы
  * - ZooMag.ru, ZooZavr.ru — онлайн зоомагазины
- * - royalcanin.ru — официальный магазин
- * - shop.purina.ru — официальный магазин
- * - holistic-shop.ru — холистик и ветеринарные корма
+ * - royalcanin.ru / shop.purina.ru — официальные магазины
  * - markvet.ru — ветеринарная аптека
  */

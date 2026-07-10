@@ -187,8 +187,12 @@ export async function runMigrations(db: SQLiteDatabase): Promise<void> {
   for (const migration of MIGRATIONS) {
     if (migration.version > currentVersion) {
       if (__DEV__) console.log(`Migration ${migration.version}: ${migration.name}`);
-      // H005: run DDL+data inside transaction; set user_version AFTER commit
-      // so a failed migration keeps old version and retries next launch
+      // H005 + D2 (audit): run DDL + data AND bump user_version inside ONE
+      // transaction. PRAGMA user_version is transactional in SQLite, so a failed
+      // migration rolls back everything (incl. the version) and retries next
+      // launch — while a kill in the instant after commit can no longer leave
+      // the version lagging the schema (which would re-run the migration; only
+      // safe today because every migration is idempotent).
       await db.withTransactionAsync(async () => {
         for (const sql of migration.up) {
           await db.execAsync(sql);
@@ -196,8 +200,8 @@ export async function runMigrations(db: SQLiteDatabase): Promise<void> {
         if (migration.afterSql) {
           await migration.afterSql(db);
         }
+        await db.execAsync(`PRAGMA user_version = ${migration.version}`);
       });
-      await db.execAsync(`PRAGMA user_version = ${migration.version}`);
     }
   }
 }

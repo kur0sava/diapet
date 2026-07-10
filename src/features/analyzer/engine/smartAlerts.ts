@@ -16,7 +16,6 @@ const STORAGE_KEY = 'analyzer_alert_history';
 
 export type AlertType =
   | 'glucose_low_streak'
-  | 'weight_loss'
   | 'food_insight'
   | 'no_readings'
   | 'remission_possible'
@@ -106,14 +105,16 @@ function canFireAlert(type: AlertType, now: Date): boolean {
   return true;
 }
 
-function markFired(type: AlertType): void {
+function markFired(type: AlertType, now: Date): void {
   // Idempotent per day: useAnalyzer runs in two screens (Dashboard and
   // AnalyzerDashboard), each firing markAlertFired for the same alert —
   // without this guard one alert consumed the daily quota twice and reset
   // its cooldown on every recompute.
   if (firedToday(type)) return;
   const history = getAlertHistory();
-  history[type] = new Date().toISOString();
+  // D3 (audit): stamp with the injected `now` (not wall-clock) so the cooldown
+  // is time-consistent with canFireAlert and testable.
+  history[type] = now.toISOString();
   saveAlertHistory(history);
   incrementTodayCount();
 }
@@ -242,6 +243,6 @@ export function generateSmartAlerts(
 /**
  * Mark an alert as fired. Call this from useEffect, NOT from render/useMemo.
  */
-export function markAlertFired(type: AlertType): void {
-  markFired(type);
+export function markAlertFired(type: AlertType, now: Date = new Date()): void {
+  markFired(type, now);
 }

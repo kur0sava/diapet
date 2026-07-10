@@ -313,7 +313,9 @@ export default function DashboardScreen() {
                 accessibilityLabel={t('glucose.openEmergency')}
               >
                 <Text style={styles.emergencyBannerTitle}>
-                  {emergencyAlerts.some(a => a.type === 'hypoglycemia')
+                  {emergencyAlerts.some(
+                    a => a.type === 'hypoglycemia' || a.type === 'severe_hypoglycemia'
+                  )
                     ? t('glucose.emergencyHypoTitle')
                     : t('glucose.emergencyHyperTitle')}
                 </Text>

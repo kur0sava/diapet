@@ -8,6 +8,7 @@ import { DetectedPattern } from './patternDetector';
 
 /** Default cat emergency thresholds — used when no species config provided */
 const DEFAULT_EMERGENCY_LOW = 2.8; // mmol/L — hypoglycemia emergency
+const DEFAULT_SEVERE_LOW = 2.2; // mmol/L — severe (neuroglycopenic) hypoglycemia
 const DEFAULT_EMERGENCY_HIGH = 30; // mmol/L — severe hyperglycemia
 
 /**
@@ -47,7 +48,7 @@ const FORBIDDEN_PATTERNS = [
 ];
 
 export interface EmergencyAlert {
-  type: 'hypoglycemia' | 'severe_hyperglycemia';
+  type: 'hypoglycemia' | 'severe_hypoglycemia' | 'severe_hyperglycemia';
   value: number;
   readingId: string;
   recordedAt: string;
@@ -99,6 +100,7 @@ export function checkEmergencyThresholds(
   config?: SpeciesConfig
 ): EmergencyAlert[] {
   const emergencyLow = config?.glucose.emergencyLow ?? DEFAULT_EMERGENCY_LOW;
+  const severeLow = config?.glucose.severeLow ?? DEFAULT_SEVERE_LOW;
   const emergencyHigh = config?.glucose.emergencyHigh ?? DEFAULT_EMERGENCY_HIGH;
   const alerts: EmergencyAlert[] = [];
 
@@ -108,7 +110,18 @@ export function checkEmergencyThresholds(
   for (const reading of readings) {
     if (new Date(reading.recordedAt).getTime() < cutoff) continue;
 
-    if (reading.valueMmol < emergencyLow) {
+    // D1 (audit): distinguish a severe (neuroglycopenic) hypo below severeLow
+    // from a milder hypo. Both surface as a hypo emergency; the severe tier
+    // lets the UI/analytics escalate. severeLow was previously defined but
+    // never read as a threshold.
+    if (reading.valueMmol < severeLow) {
+      alerts.push({
+        type: 'severe_hypoglycemia',
+        value: reading.valueMmol,
+        readingId: reading.id,
+        recordedAt: reading.recordedAt,
+      });
+    } else if (reading.valueMmol < emergencyLow) {
       alerts.push({
         type: 'hypoglycemia',
         value: reading.valueMmol,

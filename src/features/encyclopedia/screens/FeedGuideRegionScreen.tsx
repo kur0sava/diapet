@@ -182,6 +182,11 @@ export default function FeedGuideRegionScreen() {
     // B3 (audit): notes were only rendered for RU users, hiding clinical
     // safety caveats from the entire English market. Resolve per language.
     const noteText = localizedNote(food.notes, isRu);
+    // D9 (audit): for dogs the verdict is driven by fat+fibre, not carbs — so
+    // tinting the carbs% badge with the verdict colour made a high-carb-but-good
+    // dog food (e.g. Hill's w/d 50%) render "50%" in green, visually
+    // contradicting the number. Keep verdict colour for cats; neutral for dogs.
+    const carbBadgeColor = foodSpecies === 'dog' ? theme.colors.textTertiary : verdictColor;
 
     return (
       <View
@@ -200,11 +205,11 @@ export default function FeedGuideRegionScreen() {
             <View
               style={[
                 styles.carbsBadge,
-                { backgroundColor: verdictColor + '20', borderColor: verdictColor },
+                { backgroundColor: carbBadgeColor + '20', borderColor: carbBadgeColor },
               ]}
             >
-              <Text style={[styles.carbsValue, { color: verdictColor }]}>{food.carbsDM}%</Text>
-              <Text style={[styles.carbsLabel, { color: verdictColor }]}>
+              <Text style={[styles.carbsValue, { color: carbBadgeColor }]}>{food.carbsDM}%</Text>
+              <Text style={[styles.carbsLabel, { color: carbBadgeColor }]}>
                 {t('feedGuide.carbsDM')}
               </Text>
             </View>
