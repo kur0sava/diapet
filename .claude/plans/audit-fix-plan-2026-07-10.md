@@ -198,3 +198,26 @@
 Конверсии единиц централизованы (`MGDL_PER_MMOLL=18.0156`), DMB-гварды, композитные `(ts,id)` курсоры во всех 4 репозиториях,
 C001/H002 фиксы, тройное подтверждение delete-pet, защита double-tap save, блок будущих дат, softened risk-score для новичков,
 species-aware дашборд/TIR, откат orphan-питомца при сбое расписания.
+
+---
+
+## 🔴 Пост-аудит: diashizo (2026-07-10, коммит `bc27f90`)
+Гиперпараноидальный прогон по всем 6 фазам. **Крит/high НЕ найдено.** Закрыто:
+- **M1** черновик логирования per-pet ключ (`<base>_<petId>`) — единый слот стирался при переключении питомца.
+- **L1** edit double-dose: исключение редактируемой записи ушло в SQL (`id != ?`) — возвращается истинно ближайший ДРУГОЙ inline-приём.
+- **L2** удалены мёртвые `getFoodsByRegion/getPrescriptionFoods/getOtcFoods` (+хелпер foodSpecies) — латентный возврат B4.
+- **L3** unused-vars (HintSpecies/animalAdj). **L4** `now` в markAlertFired. **L5** ленивая инициализация emergencyDismissedAt (не мелькает).
+
+## 🟢 Пост-аудит: DiaStore store-readiness (2026-07-10, коммит `792dabf`)
+Технически к выкладке готов. Исправлено:
+- **B1** store-listing.md — убраны ложные «нет интернета/облаков» + «SQLCipher» (в проекте нет — `database.ts:5` PRAGMA key no-op); privacy-блок ↔ privacy-policy.html / Data Safety.
+- **B2** листинг кот-онли → кошки+собаки (описание/ключевики/short desc RU/EN). **B3** меддисклеймер. **W1** release notes 2.5.0 RU+EN.
+- **W3** eas.json submit-путь → `play-service-account.json`. **README** актуализирован. **W4** GitHub описание+topics+тег `v2.5.0`.
+
+## ▶️ ОСТАЛОСЬ К РЕЛИЗУ (детали и девайс-чеклист → [[project-roadmap-2026-07-09]] §🎯 ОСТАЛОСЬ К РЕЛИЗУ)
+0. [если ещё не] запушить `bc27f90`+`792dabf` + тег `v2.5.0`.
+1. **W2** (за пользователем): ограничить Firebase API-ключ в Google Cloud Console (`google-services.json` в публичном репо).
+2. **Пересборка vc17 с HEAD `792dabf`** (артефакты в MEMORY.md устарели — собраны с `80916a6`).
+3. **Девайс-тест**: медбезопасность A (двойная доза/экстрим/emergency-фолбэк), kg/lb, черновики M1/C2, регион в онбординге C4, пейволл в unlocked не тупик, каталог кормов, C001-миграция, H002 + ранее непроверенное.
+4. **Скриншоты dog+cat + выгрузка** (за пользователем): AAB→Google Play, APK→RuStore; тексты из обновлённого store-listing.md.
+5. (опц.) low-confidence флаги кормов; B7 Ed25519-подпись манифеста.
