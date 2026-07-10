@@ -129,16 +129,19 @@ describe('regionConfig', () => {
       expect(getRegionDefaults('US')).toEqual({
         language: 'en',
         glucoseUnit: 'mg/dL',
+        weightUnit: 'lb',
         currency: 'USD',
       });
       expect(getRegionDefaults('UK')).toEqual({
         language: 'en',
         glucoseUnit: 'mmol/L',
+        weightUnit: 'kg',
         currency: 'GBP',
       });
       expect(getRegionDefaults('RU')).toEqual({
         language: 'ru',
         glucoseUnit: 'mmol/L',
+        weightUnit: 'kg',
         currency: 'RUB',
       });
     });

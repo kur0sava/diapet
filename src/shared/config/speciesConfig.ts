@@ -386,13 +386,20 @@ const DOG_CONFIG: SpeciesConfig = {
     // (8.0) is the ideal nadir, kept separate. Was 10.0 — too tight, it
     // systematically under-counted TIR and inflated risk for normal dogs.
     rangeHigh: 13.9,
-    emergencyLow: 3.3,
+    // A6 (audit + diapet-medical-auditor): emergencyLow was 3.3 — identical to
+    // normalLow, which collapsed the middle "hypoglycaemia, needs treatment"
+    // tier to zero width (below_target.min == emergencyLow). Lowered to 2.8
+    // (50 mg/dL), the same neuroglycopenia threshold already used for cats and
+    // clinically supported for dogs (Nelson & Couto; Feldman & Nelson). Now the
+    // escalation mirrors the cat: severeLow(2.2) < emergencyLow(2.8) <
+    // normalLow(3.3) < targetLow(4.4). normalLow/targetLow/severeLow unchanged.
+    emergencyLow: 2.8,
     severeLow: 2.2,
     emergencyHigh: 30,
     highControlThreshold: 16.7,
     ranges: [
-      { key: 'severe_low', max: 2.2, color: '#CC0000' },
-      { key: 'low', min: 2.2, max: 3.3, color: '#FF3B30' },
+      { key: 'severe_low', max: 2.8, color: '#CC0000' },
+      { key: 'low', min: 2.8, max: 3.3, color: '#FF3B30' },
       { key: 'below_target', min: 3.3, max: 4.4, color: '#FF9500' },
       { key: 'normal', min: 4.4, max: 8.0, color: '#34C759' },
       { key: 'high', min: 8.0, max: 16.7, color: '#FF9500' },

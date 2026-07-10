@@ -18,6 +18,14 @@ import { getSpeciesConfig } from '@shared/config/speciesConfig';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { storage, StorageKeys } from '@storage/mmkv/storage';
 import { parseDateOnly, toDateOnly } from '@shared/utils/dateUtils';
+import { WeightUnitToggle } from '@shared/components/WeightUnitToggle';
+import {
+  getWeightUnit,
+  setWeightUnit,
+  inputToKg,
+  convertInput,
+  type WeightUnit,
+} from '@shared/utils/weight';
 
 export default function PetInfoScreen() {
   const navigation = useOnboardingNavigation();
@@ -39,7 +47,11 @@ export default function PetInfoScreen() {
   const [species, setSpecies] = useState<PetSpecies>(draft?.species ?? 'cat');
   const [name, setName] = useState(draft?.name ?? '');
   const [gender, setGender] = useState<'male' | 'female'>(draft?.gender ?? 'male');
+  // A3: weightKg holds the value as typed in the selected unit; stored in kg.
   const [weightKg, setWeightKg] = useState(draft?.weightKg ?? '');
+  const [weightUnit, setWeightUnitState] = useState<WeightUnit>(
+    draft?.weightUnit === 'kg' || draft?.weightUnit === 'lb' ? draft.weightUnit : getWeightUnit()
+  );
   const [age, setAge] = useState(draft?.age ?? '');
   const [diabetesType, setDiabetesType] = useState<'type1' | 'type2' | 'unknown'>(
     draft?.diabetesType ?? 'unknown'
@@ -58,12 +70,19 @@ export default function PetInfoScreen() {
     storage.set(StorageKeys.ACTIVE_SPECIES, s);
   };
 
+  const handleWeightUnitChange = (u: WeightUnit) => {
+    if (u === weightUnit) return;
+    setWeightKg(convertInput(weightKg, weightUnit, u));
+    setWeightUnitState(u);
+    setWeightUnit(u);
+  };
+
   const validate = () => {
     const newErrors: Record<string, string> = {};
     if (!name.trim()) newErrors.name = t('onboarding.nameRequired');
     if (weightKg) {
-      const w = parseFloat(weightKg.replace(',', '.'));
-      if (isNaN(w) || w <= 0 || w > speciesValidation.maxWeightKg)
+      const w = inputToKg(weightKg, weightUnit);
+      if (w == null || w > speciesValidation.maxWeightKg)
         newErrors.weightKg = t('pets.invalidWeight');
     }
     if (age) {
@@ -85,6 +104,7 @@ export default function PetInfoScreen() {
         name: name.trim(),
         gender,
         weightKg,
+        weightUnit,
         age,
         diabetesType,
         diagnosisDate: diagnosisDate?.toISOString(),
@@ -95,7 +115,7 @@ export default function PetInfoScreen() {
         species,
         name: name.trim(),
         gender,
-        weightKg: weightKg ? parseFloat(weightKg.replace(',', '.')) : undefined,
+        weightKg: inputToKg(weightKg, weightUnit),
         birthYear: age ? new Date().getFullYear() - parseInt(age) : undefined,
         diabetesType,
         // toDateOnly: preserve the LOCAL date user picked (toISOString would
@@ -229,9 +249,12 @@ export default function PetInfoScreen() {
               </View>
             </View>
 
+            <View style={{ flexDirection: 'row', justifyContent: 'flex-start' }}>
+              <WeightUnitToggle unit={weightUnit} onChange={handleWeightUnitChange} />
+            </View>
             <View style={styles.rowInputs}>
               <Input
-                label={t('onboarding.petWeight')}
+                label={`${t('onboarding.petWeight')} (${t(`common.${weightUnit}`)})`}
                 value={weightKg}
                 onChangeText={setWeightKg}
                 placeholder={species === 'dog' ? '15' : '4.5'}

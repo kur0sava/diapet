@@ -24,6 +24,7 @@ export const ru = {
     mmol_l: 'ммоль/л',
     units: 'ед.',
     kg: 'кг',
+    lb: 'фунт',
     grams: 'г',
     notFound: 'Не найдено',
     export: 'Экспорт',

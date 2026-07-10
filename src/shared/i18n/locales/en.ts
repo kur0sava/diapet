@@ -24,6 +24,7 @@ export const en = {
     mmol_l: 'mmol/L',
     units: 'units',
     kg: 'kg',
+    lb: 'lb',
     grams: 'g',
     notFound: 'Not found',
     export: 'Export',

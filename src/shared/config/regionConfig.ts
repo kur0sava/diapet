@@ -110,6 +110,9 @@ export function setAppRegion(region: Region): void {
 export interface RegionDefaults {
   language: 'ru' | 'en';
   glucoseUnit: GlucoseUnit;
+  /** Default pet-weight unit. Only the US market thinks in pounds; every other
+   *  supported region (incl. metric MX/CA-as-US) uses kilograms. */
+  weightUnit: 'kg' | 'lb';
   /** ISO 4217 code used for the FIRST expense row (later rows inherit it). */
   currency: string;
 }
@@ -117,19 +120,19 @@ export interface RegionDefaults {
 export function getRegionDefaults(region: Region): RegionDefaults {
   switch (region) {
     case 'RU':
-      return { language: 'ru', glucoseUnit: 'mmol/L', currency: 'RUB' };
+      return { language: 'ru', glucoseUnit: 'mmol/L', weightUnit: 'kg', currency: 'RUB' };
     case 'US':
-      return { language: 'en', glucoseUnit: 'mg/dL', currency: 'USD' };
+      return { language: 'en', glucoseUnit: 'mg/dL', weightUnit: 'lb', currency: 'USD' };
     case 'MX':
-      return { language: 'en', glucoseUnit: 'mg/dL', currency: 'MXN' };
+      return { language: 'en', glucoseUnit: 'mg/dL', weightUnit: 'kg', currency: 'MXN' };
     case 'UK':
-      return { language: 'en', glucoseUnit: 'mmol/L', currency: 'GBP' };
+      return { language: 'en', glucoseUnit: 'mmol/L', weightUnit: 'kg', currency: 'GBP' };
     case 'DE':
     case 'EU':
-      return { language: 'en', glucoseUnit: 'mmol/L', currency: 'EUR' };
+      return { language: 'en', glucoseUnit: 'mmol/L', weightUnit: 'kg', currency: 'EUR' };
     case 'GLOBAL':
     default:
-      return { language: 'en', glucoseUnit: 'mmol/L', currency: 'USD' };
+      return { language: 'en', glucoseUnit: 'mmol/L', weightUnit: 'kg', currency: 'USD' };
   }
 }
 

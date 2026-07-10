@@ -23,6 +23,15 @@ import { MAX_SCHEDULE_TIMES } from '@storage/domain/types';
 import type { PetGender, DiabetesType } from '@storage/domain/types';
 import { toDateOnly } from '@shared/utils/dateUtils';
 import { getSpeciesConfig } from '@shared/config/speciesConfig';
+import { WeightUnitToggle } from '@shared/components/WeightUnitToggle';
+import {
+  getWeightUnit,
+  setWeightUnit,
+  inputToKg,
+  kgToInput,
+  convertInput,
+  type WeightUnit,
+} from '@shared/utils/weight';
 import { Icon } from '@shared/components/ui/Icon';
 import { storage, StorageKeys, vetNameKey, vetPhoneKey } from '@storage/mmkv/storage';
 import { useUnsavedChangesGuard } from '@shared/hooks/useUnsavedChangesGuard';
@@ -36,9 +45,18 @@ export default function EditPetScreen() {
   const refreshActivePet = usePetStore(s => s.refreshActivePet);
   const queryClient = useQueryClient();
 
+  const initialWeightUnit = getWeightUnit();
   const [name, setName] = useState(activePet?.name ?? '');
   const [gender, setGender] = useState<PetGender>(activePet?.gender ?? 'unknown');
-  const [weightKg, setWeightKg] = useState(activePet?.weightKg?.toString() ?? '');
+  // A3: for kg keep full stored precision (no rounding drift); lb is derived.
+  const [weightKg, setWeightKg] = useState(
+    initialWeightUnit === 'kg'
+      ? activePet?.weightKg != null && activePet.weightKg > 0
+        ? activePet.weightKg.toString()
+        : ''
+      : kgToInput(activePet?.weightKg, initialWeightUnit)
+  );
+  const [weightUnit, setWeightUnitState] = useState<WeightUnit>(initialWeightUnit);
   const [age, setAge] = useState(
     activePet?.birthYear ? String(new Date().getFullYear() - activePet.birthYear) : ''
   );
@@ -58,6 +76,13 @@ export default function EditPetScreen() {
   const [isDirty, setIsDirty] = useState(false);
   const initialLoaded = useRef(false);
   const disableGuard = useUnsavedChangesGuard(isDirty);
+
+  const handleWeightUnitChange = (u: WeightUnit) => {
+    if (u === weightUnit) return;
+    setWeightKg(convertInput(weightKg, weightUnit, u));
+    setWeightUnitState(u);
+    setWeightUnit(u);
+  };
 
   // Track changes after initial load
   useEffect(() => {
@@ -121,13 +146,17 @@ export default function EditPetScreen() {
     // blocked by a value they typed but don't want.
     const weightTrimmed = weightKg.trim();
     if (weightTrimmed) {
-      const parsedWeight = parseFloat(weightTrimmed.replace(',', '.'));
+      const rawNum = parseFloat(weightTrimmed.replace(',', '.'));
       const maxWeight = getSpeciesConfig(activePet.species).validation.maxWeightKg;
-      if (parsedWeight === 0) {
+      if (rawNum === 0) {
         // treat as cleared
-      } else if (isNaN(parsedWeight) || parsedWeight < 0 || parsedWeight > maxWeight) {
-        Alert.alert(t('common.error'), t('pets.invalidWeight'));
-        return;
+      } else {
+        // A3: validate the kg-equivalent so lb entries are checked correctly.
+        const wKg = inputToKg(weightTrimmed, weightUnit);
+        if (wKg == null || wKg > maxWeight) {
+          Alert.alert(t('common.error'), t('pets.invalidWeight'));
+          return;
+        }
       }
     }
     // Validate age (optional): 0..species max
@@ -160,7 +189,8 @@ export default function EditPetScreen() {
     savingRef.current = true;
     setLoading(true);
     try {
-      const parsedWeight = weightTrimmed ? parseFloat(weightTrimmed.replace(',', '.')) : NaN;
+      // A3: inputToKg returns undefined for empty/0/invalid → stored as no weight.
+      const parsedWeightKg = weightTrimmed ? inputToKg(weightTrimmed, weightUnit) : undefined;
       // UX-017 + M003: profile AND schedules are both SQLite — write them in
       // ONE transaction so a mid-save failure can't leave the profile updated
       // with the old schedule (the user sees "save error" and assumes nothing
@@ -171,7 +201,7 @@ export default function EditPetScreen() {
         await petRepository.update(activePet.id, {
           name: name.trim(),
           gender,
-          weightKg: parsedWeight > 0 ? parsedWeight : undefined,
+          weightKg: parsedWeightKg,
           birthYear: ageTrimmed ? new Date().getFullYear() - parseInt(ageTrimmed, 10) : undefined,
           diabetesType,
           diagnosisDate: diagnosisDate ? toDateOnly(diagnosisDate) : undefined,
@@ -356,9 +386,12 @@ export default function EditPetScreen() {
               ))}
             </View>
           </View>
+          <View style={{ flexDirection: 'row', justifyContent: 'flex-start', marginBottom: 8 }}>
+            <WeightUnitToggle unit={weightUnit} onChange={handleWeightUnitChange} />
+          </View>
           <View style={styles.rowInputs}>
             <Input
-              label={`${t('pets.weight')} (${t('common.kg')})`}
+              label={`${t('pets.weight')} (${t(`common.${weightUnit}`)})`}
               value={weightKg}
               onChangeText={setWeightKg}
               placeholder={activePet?.species === 'dog' ? '15' : '4.5'}

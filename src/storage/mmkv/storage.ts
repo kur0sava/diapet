@@ -108,6 +108,7 @@ export const StorageKeys = {
   LANGUAGE: 'language',
   COLOR_SCHEME: 'colorScheme',
   GLUCOSE_UNIT: 'glucoseUnit',
+  WEIGHT_UNIT: 'weightUnit',
   ONBOARDING_COMPLETE: 'onboardingComplete',
   ACTIVE_PET_ID: 'activePetId',
   NOTIFICATIONS_ENABLED: 'notificationsEnabled',

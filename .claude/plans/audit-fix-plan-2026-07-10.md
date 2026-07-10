@@ -37,10 +37,13 @@
   инструкций в момент паники»; maps открывается отдельным приложением, инструкции остаются. Лейбл
   `tapToAddVet`→`tapToFindVet`. Новые ключи ru+en (noVetContactDesc/findClinic/vetSearchQuery/tapToFindVet).
 
-- ⬜ **A3 (HIGH). Вес только в кг — US/UK вводят фунты в поле кг.**
-  Пороги предупреждения дозы per-kg (`getInsulinThresholds`); «66» (lbs) в поле кг → пороги считаются как для 66-кг собаки, safety-net молча ломается.
-  **Фикс:** kg/lb-переключатель, привязанный к дефолту региона, хранить каноничные кг; минимум — sanity-check веса против видовых диапазонов + предупреждение.
-  Файлы: `PetInfoScreen.tsx`, `EditPetScreen.tsx`, `AddPetScreen.tsx`; потребитель `speciesConfig.ts:getInsulinThresholds`.
+- ✅ **A3 (HIGH). Вес только в кг — US/UK вводят фунты в поле кг.** [сделано 2026-07-10, полный kg/lb]
+  Инфра: `src/shared/utils/weight.ts` (kgToLb/lbToKg/kgToInput/inputToKg/convertInput, getWeightUnit/setWeightUnit —
+  дефолт из региона), `WeightUnitToggle` компонент, `StorageKeys.WEIGHT_UNIT`, `weightUnit` в RegionDefaults
+  (только US='lb', остальные 'kg'), `common.lb` ru+en. Интеграция в 3 экрана (AddPet/EditPet/PetInfo): переключатель
+  kg/lb, конверсия на toggle/save, валидация против maxWeightKg в кг-эквиваленте, хранение каноничных кг. EditPet в
+  kg-режиме сохраняет полную точность (без drift). PetInfo пишет weightUnit в ONBOARDING_DRAFT. Тесты weight.test.ts (5),
+  обновлён regionConfig.test.ts. tsc 0, jest 115/116, eslint чисто.
 
 - ✅ **A4 (HIGH). Экстремальная глюкоза сохраняется ДО подтверждения.** [сделано 2026-07-10]
   handleSave разбит: значение в emergency-зоне (< emergencyLow / > emergencyHigh, species-aware) → confirm-before-save
@@ -56,6 +59,13 @@
   `checkEmergencyThresholds` фаерит гипо при <3.3 = ниже заявленной нормы. Разные пути классифицируют по-разному.
   **Фикс:** согласовать; hypo-emergency-порог логичнее ниже терапевтического `targetLow`, а не равен полу референс-интервала.
   Файл: `speciesConfig.ts:378-400`, `safetyGuard.ts:111`.
+
+- ✅ **A6 (MED). Dog-конфиг: `normalLow`/`emergencyLow` (3.3) vs `targetLow`/ranges (4.4).** [сделано 2026-07-10, через diapet-medical-auditor]
+  Медагент подтвердил: `emergencyLow==normalLow==3.3` схлопывало средний ярус «гипогликемия, нужно лечение» в нулевую
+  ширину (below_target.min==emergencyLow), ломая 3-уровневую модель aiSystemPrompt. Правка: `emergencyLow 3.3→2.8`
+  (50 mg/dL — тот же порог нейрогликопении, что у кошки; Nelson&Couto, Feldman&Nelson), ranges severe_low/low граница
+  `2.2→2.8` для зеркала кошки. `normalLow/targetLow/severeLow` не тронуты (клинически корректны). Эскалация теперь:
+  severeLow(2.2)<emergencyLow(2.8)<normalLow(3.3)<targetLow(4.4). Источники в комментарии кода.
 
 - ⏭ **A7 (MED). Собака без веса: доза 18 IU проходит по confirmable, `absoluteMax=20` высок для тоя.**
   Обсудить: снижать `absoluteMax` для unknown-weight собак или требовать вес. (Осознанный trade-off в коде — решить отдельно.)
