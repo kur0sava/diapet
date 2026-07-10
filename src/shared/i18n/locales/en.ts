@@ -43,6 +43,7 @@ export const en = {
     welcome: 'Welcome to DiaPet',
     welcomeSubtitle: "Manage your pet's diabetes simply and effectively",
     selectLanguage: 'Select Language',
+    selectRegion: 'Your region (affects units & food catalog)',
     selectSpecies: 'What is your pet?',
     speciesCat: 'Cat',
     speciesDog: 'Dog',
@@ -598,6 +599,8 @@ export const en = {
     languageSection: 'LANGUAGE',
     glucoseUnitsSection: 'GLUCOSE UNITS',
     regionSection: 'REGION',
+    unitChanged: 'Glucose unit: {{unit}}',
+    regionChanged: 'Region: {{region}}',
     regionDescription:
       'Affects the food catalog, stores and regional medication guidance. Detected automatically, can be changed.',
     hintsSection: 'HINTS',

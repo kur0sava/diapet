@@ -301,5 +301,12 @@ const styles = StyleSheet.create({
   callButtonSub: { fontSize: 14, marginTop: 2 },
   callButtonPhone: { fontSize: 16, fontWeight: '600', marginTop: 2 },
   callButtonNoVet: { fontSize: 13, marginTop: 2, fontStyle: 'italic' },
-  disclaimer: { fontSize: 12, color: 'rgba(255,255,255,0.7)', textAlign: 'center', lineHeight: 18 },
+  // D4 (audit): raise contrast of the safety disclaimer (was 70% white on red —
+  // hard to read for low-vision users in a stressful moment).
+  disclaimer: {
+    fontSize: 12.5,
+    color: 'rgba(255,255,255,0.95)',
+    textAlign: 'center',
+    lineHeight: 18,
+  },
 });

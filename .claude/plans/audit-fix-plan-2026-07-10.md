@@ -130,10 +130,10 @@
   **Фикс:** сделать баннер закрываемым/acknowledge и/или авто-сброс при последующем in-range чтении.
   Файл: `DashboardScreen.tsx`.
 
-- ⬜ **C4 (HIGH). Регион молча автодетектится и спрятан в Settings.**
-  RU-юзер на en-US телефоне получает mg/dL + USD + US-каталог без шанса поправить в онбординге.
-  **Фикс:** шаг подтверждения региона в онбординге (pre-fill из locale), т.к. он задаёт дефолт единицы глюкозы.
-  Файлы: `regionConfig.ts:initRegionOnFirstRun`, онбординг.
+- ✅ **C4 (HIGH). Регион молча автодетектится и спрятан в Settings.** [сделано 2026-07-10]
+  В LanguageScreen онбординга добавлен селектор региона (pre-fill из locale через getAppRegion). При смене —
+  setAppRegion + применение дефолтов GLUCOSE_UNIT/WEIGHT_UNIT (онбординг не завершён → это ещё дефолты, безопасно).
+  RU-юзер на en-US телефоне теперь видит и правит регион до того, как он молча задаст mg/dL. Файл: `LanguageScreen.tsx`.
 
 - ✅ **C5 (MED). Дрейф точности глюкозы при edit без изменений.** [сделано 2026-07-10]
   Edit-prefill mmol теперь `parseFloat(valueMmol.toFixed(2)).toString()` (сохраняет 2-знач. точность хранилища) вместо
@@ -169,16 +169,16 @@
 
 ## 🟢 БАТЧ D — Low (косметика/харденинг)
 
-- ⬜ D1. `severeLow` определён, но severe-hypo tier не реализован (только severe-hyper) — добавить tier или убрать поле. `safetyGuard.ts:97-131`.
-- ⬜ D2. `user_version` ставится вне транзакции миграции (сейчас безопасно — идемпотентно; хрупко для будущих не-идемпотентных). `migrations.ts:192-201`.
-- ⬜ D3. `markFired` на wall-clock `new Date()` вместо injected `now` — cooldown нетестируем. `smartAlerts.ts:116`.
-- ⬜ D4. Контраст emergency-дисклеймера (white 70% на красном). `EmergencyScreen.tsx`.
-- ⬜ D5. Emoji как единственный сигнификатор (пол/вид/флаги) — accessibility-лейблы.
-- ⬜ D6. Нет тоста подтверждения смены региона/единиц. `SettingsScreen.tsx`.
-- ⬜ D7. Нет индикатора прогресса онбординга (6 экранов). `OnboardingNavigator.tsx`.
-- ⬜ D8. Устаревший dev-facing RU-summary противоречит санкц-данным. `diabeticFoods.ts:1500-1512`.
-- ⬜ D9. Dead-типы алертов (`weight_loss`) + косметический зелёный `50%` бейдж на собачьем корме. `smartAlerts.ts:17-24`, `FeedGuideRegionScreen.tsx:189-201`.
-- ⬜ D10. Untagged-хинты показываются всем видам (структурное условие исторической протечки кот→собака) — дефолт вида или обязательное поле. `useHintEngine.ts:119-126`.
+- ✅ D1. severe-hypo tier добавлен (severeLow теперь читается как порог; type `severe_hypoglycemia`; Dashboard трактует как гипо). `safetyGuard.ts`. [2026-07-10]
+- ✅ D2. `user_version` перенесён внутрь транзакции миграции (транзакционен в SQLite). `migrations.ts`. [2026-07-10]
+- ✅ D3. `now` прокинут в `markFired`/`markAlertFired` (деф. new Date()) — cooldown время-консистентен/тестируем. `smartAlerts.ts`. [2026-07-10]
+- ✅ D4. Контраст emergency-дисклеймера 70%→95% white. `EmergencyScreen.tsx`. [2026-07-10]
+- ✅ D5. accessibilityRole/Label/state на emoji-селекторах (пол/вид в PetInfo, языковые карточки). [2026-07-10] (scoped на онбординг-критичные; текст-лейблы и так рядом).
+- ✅ D6. ToastAndroid при смене единиц/региона в Settings (проект Android-only). Ключи unitChanged/regionChanged. `SettingsScreen.tsx`. [2026-07-10]
+- ⏸ D7. Индикатор прогресса онбординга — ОТЛОЖЕН. native-stack headerShown:false, нет общего хедера → требует правки 5 экранов с разными лейаутами + девайс-тест; LOW-косметика. Ключ `onboarding.stepOf` уже есть для будущей реализации.
+- ✅ D8. Устаревшая dev-сводка «доступность в РФ» обновлена под санкц-реальность 2023-24. `diabeticFoods.ts`. [2026-07-10]
+- ✅ D9. Мёртвый AlertType `weight_loss` удалён; углеводный бейдж собак нейтрального цвета (не verdict). `smartAlerts.ts`, `FeedGuideRegionScreen.tsx`. [2026-07-10]
+- ⏸ D10. Untagged-хинты = универсальные (показ всем видам) — ОТЛОЖЕНО ОСОЗНАННО. Смена дефолта на species СКРЫЛА БЫ легитимные универсальные хинты (регресс). Инвариант уже защищён завершённым species-аудитом контента ([[project-roadmap-2026-07-09]]). `useHintEngine.ts`.
 
 ---
 

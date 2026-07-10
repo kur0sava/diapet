@@ -185,6 +185,9 @@ export default function PetInfoScreen() {
                     ]}
                     onPress={() => handleSpeciesSelect(opt.value)}
                     activeOpacity={0.7}
+                    accessibilityRole="button"
+                    accessibilityLabel={opt.label}
+                    accessibilityState={{ selected: species === opt.value }}
                   >
                     <Text style={styles.speciesEmoji}>{opt.emoji}</Text>
                     <Text
@@ -235,6 +238,9 @@ export default function PetInfoScreen() {
                       },
                     ]}
                     onPress={() => setGender(opt.value as 'male' | 'female')}
+                    accessibilityRole="button"
+                    accessibilityLabel={opt.label}
+                    accessibilityState={{ selected: gender === opt.value }}
                   >
                     <Text
                       style={{

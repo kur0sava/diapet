@@ -43,6 +43,7 @@ export const ru = {
     welcome: 'Добро пожаловать в DiaPet',
     welcomeSubtitle: 'Управляй диабетом питомца просто и эффективно',
     selectLanguage: 'Выберите язык',
+    selectRegion: 'Ваш регион (влияет на единицы и корма)',
     selectSpecies: 'Кто ваш питомец?',
     speciesCat: 'Кошка',
     speciesDog: 'Собака',
@@ -598,6 +599,8 @@ export const ru = {
     languageSection: 'ЯЗЫК',
     glucoseUnitsSection: 'ЕДИНИЦЫ ГЛЮКОЗЫ',
     regionSection: 'РЕГИОН',
+    unitChanged: 'Единица глюкозы: {{unit}}',
+    regionChanged: 'Регион: {{region}}',
     regionDescription:
       'Влияет на каталог кормов, магазины и региональные рекомендации по препаратам. Определяется автоматически, можно изменить.',
     hintsSection: 'ПОДСКАЗКИ',

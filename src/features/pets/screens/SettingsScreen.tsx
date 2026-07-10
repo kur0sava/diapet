@@ -1,5 +1,15 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert, Switch } from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  TouchableOpacity,
+  Alert,
+  Switch,
+  ToastAndroid,
+  Platform,
+} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useMoreNavigation, useRootNavigation } from '@navigation/hooks';
 import { useTranslation } from 'react-i18next';
@@ -262,6 +272,10 @@ export default function SettingsScreen() {
                   storage.set(StorageKeys.GLUCOSE_UNIT, unit);
                   setGlucoseUnit(unit);
                   queryClient.invalidateQueries({ queryKey: queryKeys.glucose.all });
+                  // D6 (audit): confirm the change (was silent — only a highlight).
+                  if (Platform.OS === 'android') {
+                    ToastAndroid.show(t('settings.unitChanged', { unit }), ToastAndroid.SHORT);
+                  }
                 }}
               >
                 <Text
@@ -294,6 +308,13 @@ export default function SettingsScreen() {
                 onPress={() => {
                   setAppRegion(r);
                   setRegion(r);
+                  // D6 (audit): confirm the region switch (catalog/currency).
+                  if (Platform.OS === 'android') {
+                    ToastAndroid.show(
+                      t('settings.regionChanged', { region: t(`feedGuide.regions.${r}`) }),
+                      ToastAndroid.SHORT
+                    );
+                  }
                 }}
               >
                 <Text

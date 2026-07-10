@@ -10,6 +10,13 @@ import { changeLanguage } from '@shared/i18n';
 import { storage, StorageKeys } from '@storage/mmkv/storage';
 import { useTheme } from '@shared/theme';
 import { Button } from '@shared/components/ui';
+import {
+  getAppRegion,
+  setAppRegion,
+  getRegionDefaults,
+  VALID_REGIONS,
+  type Region,
+} from '@shared/config/regionConfig';
 
 const LANGUAGES = [
   { code: 'ru', label: 'Русский', flag: '🇷🇺', subtitle: 'Russian' },
@@ -23,6 +30,21 @@ export default function LanguageScreen() {
   const [selected, setSelected] = useState<'ru' | 'en'>(
     storage.getString(StorageKeys.LANGUAGE) === 'en' ? 'en' : 'ru'
   );
+  // C4 (audit): region was silently auto-detected from locale and only
+  // changeable deep in Settings — yet it drives the DEFAULT glucose unit and
+  // food catalog. Surface it here (pre-filled from the device) so a user on a
+  // mismatched locale (e.g. RU speaker on an en-US phone) can correct it before
+  // it quietly sets mg/dL. Language stays the user's explicit choice above.
+  const [region, setRegion] = useState<Region>(getAppRegion());
+
+  const handleRegionChange = (r: Region) => {
+    setRegion(r);
+    setAppRegion(r);
+    // Onboarding isn't complete yet → these are still defaults, safe to update.
+    const d = getRegionDefaults(r);
+    storage.set(StorageKeys.GLUCOSE_UNIT, d.glucoseUnit);
+    storage.set(StorageKeys.WEIGHT_UNIT, d.weightUnit);
+  };
 
   const handleContinue = () => {
     changeLanguage(selected);
@@ -74,6 +96,9 @@ export default function LanguageScreen() {
                 changeLanguage(code);
               }}
               activeOpacity={0.8}
+              accessibilityRole="button"
+              accessibilityLabel={lang.label}
+              accessibilityState={{ selected: selected === lang.code }}
             >
               <Text style={styles.flag}>{lang.flag}</Text>
               <View>
@@ -103,12 +128,47 @@ export default function LanguageScreen() {
           ))}
         </View>
 
+        <Text
+          style={[
+            styles.regionTitle,
+            { color: theme.colors.textSecondary, fontFamily: theme.fonts.medium },
+          ]}
+        >
+          {t('onboarding.selectRegion')}
+        </Text>
+        <View style={styles.regions}>
+          {VALID_REGIONS.map(r => (
+            <TouchableOpacity
+              key={r}
+              onPress={() => handleRegionChange(r)}
+              style={[
+                styles.regionChip,
+                {
+                  backgroundColor: region === r ? theme.colors.primary : theme.colors.surface,
+                  borderColor: region === r ? theme.colors.primary : theme.colors.border,
+                },
+              ]}
+              activeOpacity={0.8}
+            >
+              <Text
+                style={{
+                  color: region === r ? '#fff' : theme.colors.text,
+                  fontSize: 13,
+                  fontWeight: '600',
+                }}
+              >
+                {t(`feedGuide.regions.${r}`)}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </View>
+
         <Button
           title={t('onboarding.next')}
           onPress={handleContinue}
           fullWidth
           size="lg"
-          style={{ marginTop: 32 }}
+          style={{ marginTop: 24 }}
         />
       </Animated.View>
     </SafeAreaView>
@@ -130,6 +190,9 @@ const styles = StyleSheet.create({
   title: { fontSize: 32, marginBottom: 8 },
   subtitle: { fontSize: 18 },
   languages: { gap: 12 },
+  regionTitle: { fontSize: 14, marginTop: 28, marginBottom: 10, textAlign: 'center' },
+  regions: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, justifyContent: 'center' },
+  regionChip: { paddingHorizontal: 14, paddingVertical: 8, borderRadius: 18, borderWidth: 1 },
   langCard: {
     flexDirection: 'row',
     alignItems: 'center',
