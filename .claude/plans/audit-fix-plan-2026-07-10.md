@@ -116,11 +116,10 @@
 
 ## 🟡 БАТЧ C — Полировка UX и логики (можно после релиза)
 
-- ⬜ **C1 (MED/пересечение). `PREMIUM_MODE='hidden'` — вечная блокировка без выхода.**
-  В `hidden` монетизация off, но лимиты (canAddPet<1, PDF off, история off) активны → фичи заперты за покупкой, которой нет.
-  Soft-launch держится ТОЛЬКО на EAS-переопределении `unlocked`; любой dev/билд без `extra.premiumMode` молча запирается.
-  **Фикс:** гейтить лимиты на `isMonetizationEnabled()` (billing) → `hidden` = «всё доступно, premium-UI скрыт».
-  Файлы: `runtimeConfig.ts:12-30`, `useSubscription.ts:18-35`.
+- ✅ **C1 (MED/пересечение). `PREMIUM_MODE='hidden'` — вечная блокировка без выхода.** [сделано 2026-07-10]
+  `useSubscription`: `effectivePro = !monetizationEnabled || isPaidPro || trialActive` — не-billing (hidden/unlocked) = всё
+  доступно; billing = гейтинг по покупке/триалу. Любой билд без `extra.premiumMode` (дефолт hidden) больше не запирается. AI
+  остаётся отдельно скрыт через isAiFeature*. Убран мёртвый `featuresUnlocked`.
 
 - ⬜ **C2 (HIGH). Нет черновика в экранах логирования.**
   Онбординг пишет `ONBOARDING_DRAFT`, а более частые LogGlucose/LogInjection держат всё в React-стейте → звонок/OOM-kill = потеря ввода.
@@ -136,10 +135,9 @@
   **Фикс:** шаг подтверждения региона в онбординге (pre-fill из locale), т.к. он задаёт дефолт единицы глюкозы.
   Файлы: `regionConfig.ts:initRegionOnFirstRun`, онбординг.
 
-- ⬜ **C5 (MED). Дрейф точности глюкозы при edit без изменений.**
-  Поле pre-fill `toFixed(1)`, хранилище 2 знака; пересохранение неизменного 6.49 → 6.5.
-  **Фикс:** сохранять полную точность в поле edit или пропускать write при равенстве в пределах толеранса.
-  Файл: `LogGlucoseScreen.tsx:139,219-234`.
+- ✅ **C5 (MED). Дрейф точности глюкозы при edit без изменений.** [сделано 2026-07-10]
+  Edit-prefill mmol теперь `parseFloat(valueMmol.toFixed(2)).toString()` (сохраняет 2-знач. точность хранилища) вместо
+  `toFixed(1)` → пересохранение неизменного 6.49 больше не даёт 6.5. Файл: `LogGlucoseScreen.tsx`.
 
 - ⬜ **C6 (MED). FeedCalculator требует все 5 макросов.**
   Нет ash на этикетке → результат не показывается без пояснения.
@@ -153,15 +151,17 @@
   `petChangedDuringEntry` отказывает в save без указания как вернуться.
   **Фикс:** назвать исходного питомца в алерте + «Вернуться к <pet> и сохранить».
 
-- ⬜ **C9 (MED). Доза без типа инсулина в LogGlucose (асимметрия с LogInjection).**
-  **Фикс:** prefill типа из `activePet.insulinType`, требовать при непустой дозе.
+- ✅ **C9 (MED). Доза без типа инсулина в LogGlucose (асимметрия с LogInjection).** [сделано 2026-07-10]
+  Тип уже prefill из `activePet.insulinType`; добавлено требование типа при непустой дозе в `continueAfterValueChecks`
+  (`injection.typeError`, как в LogInjection). Файл: `LogGlucoseScreen.tsx`.
 
 - ⬜ **C10 (MED). Онбординг-дефолты инъекция+кормление в одно время 08:00/20:00.**
   Два накладывающихся уведомления. **Фикс:** сместить дефолт кормления или подать как явно-редактируемые примеры.
 
-- ⬜ **C11 (MED). `no_readings`/trendEngine на неявном ASC-контракте сортировки.**
-  Сейчас верно (репозиторий ASC), но без guard. **Фикс:** `Math.max(...map(recordedAt))` вместо позиционного доступа, либо assert на границе.
-  Файлы: `smartAlerts.ts:193-195`, `trendEngine.ts:215-219`.
+- ✅ **C11 (MED). `no_readings`/trendEngine на неявном ASC-контракте сортировки.** [сделано 2026-07-10]
+  smartAlerts: latest ts через `reduce(Math.max, Date.parse)` вместо `readings[len-1]`; trendEngine: earliest ts через
+  `reduce(Math.min)` вместо `readings[0]`. Корректно при любом порядке, без spread-стек-риска. Убран мёртвый импорт
+  `getSpeciesConfig` в trendEngine. Файлы: `smartAlerts.ts`, `trendEngine.ts`.
 
 - ⏭ **C12. weight_trend risk-фактор инертен** (нет истории веса) — дать вес-историю ИЛИ выкинуть фактор и перенормировать веса. Известный отложенный gap.
 

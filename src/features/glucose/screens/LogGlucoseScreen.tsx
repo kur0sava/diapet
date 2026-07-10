@@ -136,8 +136,13 @@ export default function LogGlucoseScreen() {
     if (editId) {
       glucoseRepository.findById(editId).then(reading => {
         if (cancelled || !reading) return;
+        // C5 (audit): preserve the stored precision (mmol is kept to 2 dp) so
+        // re-saving an unchanged reading doesn't round-drift it (e.g. a reading
+        // entered as 117 mg/dL = 6.49 mmol showed "6.5" and was rewritten as 6.5).
         const displayValue =
-          savedUnit === 'mmol/L' ? reading.valueMmol.toFixed(1) : reading.valueMgdl.toString();
+          savedUnit === 'mmol/L'
+            ? parseFloat(reading.valueMmol.toFixed(2)).toString()
+            : reading.valueMgdl.toString();
         const loadedDose = reading.insulinDose ? reading.insulinDose.toString() : '';
         const loadedNotes = reading.notes ?? '';
         setValue(displayValue);
@@ -349,6 +354,13 @@ export default function LogGlucoseScreen() {
       Alert.alert(t('common.error'), t('injection.doseError'));
       return;
     }
+    // C9 (audit): match LogInjection — a dose with no insulin type produces a
+    // history/PDF row with an unidentified insulin. Type is prefilled from the
+    // active pet; require it whenever a dose is entered.
+    if (doseNum > 0 && !insulinType.trim()) {
+      Alert.alert(t('common.error'), t('injection.typeError'));
+      return;
+    }
     // A1 (audit): duplicate-dose safety. The dedicated injection screen warns
     // if insulin was given < 6h ago; when a dose is entered inline here we must
     // run the same guard, otherwise the "safe-looking" glucose path silently
@@ -376,7 +388,7 @@ export default function LogGlucoseScreen() {
       }
     }
     proceedWithDoseChecks(doseNum);
-  }, [activePet, insulinDose, recordedAt, editId, proceedWithDoseChecks, t]);
+  }, [activePet, insulinDose, insulinType, recordedAt, editId, proceedWithDoseChecks, t]);
 
   const handleSave = useCallback(() => {
     if (savingRef.current) return;

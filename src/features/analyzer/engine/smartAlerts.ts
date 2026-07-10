@@ -191,8 +191,11 @@ export function generateSmartAlerts(
 
   // No readings for 5+ days
   if (readings.length > 0) {
-    const lastReading = new Date(readings[readings.length - 1].recordedAt);
-    const daysSince = (now.getTime() - lastReading.getTime()) / (24 * 60 * 60 * 1000);
+    // C11 (audit): don't assume the array is sorted ASC (positional access to
+    // "the last reading"). Compute the true latest timestamp so a DESC-ordered
+    // caller can't mis-fire (or suppress) this alert.
+    const latestTs = readings.reduce((max, r) => Math.max(max, Date.parse(r.recordedAt)), 0);
+    const daysSince = (now.getTime() - latestTs) / (24 * 60 * 60 * 1000);
     if (daysSince >= 5) {
       candidates.push({
         type: 'no_readings',

@@ -15,9 +15,15 @@ export function useSubscription() {
   const trialExpired = isTrialExpired();
   const premiumMode = getPremiumMode();
   const monetizationEnabled = isMonetizationEnabled();
-  const featuresUnlocked = premiumMode === 'unlocked';
 
-  const effectivePro = featuresUnlocked || (monetizationEnabled && (isPaidPro || trialActive));
+  // C1 (audit): gate the free-tier LIMITS on billing mode only. Previously
+  // `hidden` (monetization off, no paywall) still evaluated effectivePro=false,
+  // so canAddPet/canExportPDF/unlimited-history were locked behind a purchase
+  // that cannot be made — a dead end. Any build without an explicit
+  // extra.premiumMode defaults to 'hidden', so this also protected dev runs.
+  // Now: not-billing (hidden OR unlocked) → everything available; billing →
+  // real gating by purchase/trial. AI stays separately gated via isAiFeature*.
+  const effectivePro = !monetizationEnabled || isPaidPro || trialActive;
   const aiAccess = isAiFeatureEnabled() && effectivePro;
 
   return {

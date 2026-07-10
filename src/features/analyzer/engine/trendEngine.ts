@@ -4,7 +4,7 @@
  */
 import { GlucoseReading } from '@storage/domain/types';
 import type { SpeciesConfig } from '@shared/config/speciesConfig';
-import { getSpeciesConfig, getTirBounds } from '@shared/config/speciesConfig';
+import { getTirBounds } from '@shared/config/speciesConfig';
 /** Morning window: readings recorded between 05:00-09:00 */
 const MORNING_HOUR_START = 5;
 const MORNING_HOUR_END = 9;
@@ -210,15 +210,16 @@ export function analyzeTrends(
   const { low: targetLow, high: targetHigh } = getTirBounds(config);
 
   // Clamp: a reading recorded "in the future" (device clock changed) must
-  // not produce a negative tracking period
+  // not produce a negative tracking period.
+  // C11 (audit): use the true earliest timestamp instead of positional
+  // readings[0], so the period is correct regardless of array order.
+  const earliestTs =
+    readings.length > 0
+      ? readings.reduce((min, r) => Math.min(min, Date.parse(r.recordedAt)), Infinity)
+      : 0;
   const periodDays =
     readings.length > 0
-      ? Math.max(
-          0,
-          Math.ceil(
-            (now.getTime() - new Date(readings[0].recordedAt).getTime()) / (24 * 60 * 60 * 1000)
-          )
-        )
+      ? Math.max(0, Math.ceil((now.getTime() - earliestTs) / (24 * 60 * 60 * 1000)))
       : 0;
 
   const morning = calculateMorningTrend(readings, now);
