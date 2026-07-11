@@ -9,6 +9,7 @@ import { __resetAllMmkvStores } from '../test/mocks/mmkvMock';
 import {
   getFoodCatalog,
   getCatalogFoods,
+  getCatalogFoodsForRegion,
   getCatalogPrescriptionFoods,
   getCatalogOtcFoods,
   refreshFoodCatalog,
@@ -200,6 +201,20 @@ describe('food catalog', () => {
       // But Royal Canin + Purina (locally produced) stay available
       expect(ruCat.some(f => f.brand === 'Royal Canin')).toBe(true);
       expect(ruCat.some(f => f.brand === 'Purina Pro Plan')).toBe(true);
+    });
+
+    it('getCatalogFoodsForRegion (feeding-log picker) region-filters like the guide', () => {
+      // RU picker: no sanctioned brands, but keeps locally produced ones.
+      const ru = getCatalogFoodsForRegion('cat', 'RU');
+      expect(ru.length).toBeGreaterThan(0);
+      expect(ru.every(f => f.regions.includes('RU'))).toBe(true);
+      expect(ru.some(f => f.brand === "Hill's")).toBe(false);
+      expect(ru.some(f => f.brand === 'Farmina')).toBe(false);
+      expect(ru.some(f => f.brand === 'Royal Canin')).toBe(true);
+      // DE→EU widening applies here too (Royal Canin Diabetic is tagged EU).
+      const de = getCatalogFoodsForRegion('cat', 'DE');
+      expect(de.some(f => f.brand === 'Royal Canin')).toBe(true);
+      expect(de.some(f => f.brand === "Hill's")).toBe(true);
     });
 
     it('DE users see EU-market prescription foods (DE→EU visibility)', () => {

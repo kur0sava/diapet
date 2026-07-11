@@ -93,8 +93,12 @@ export default function DashboardScreen() {
     setActivePet(pet);
     setPickerVisible(false);
   };
+  // Open the picker whenever there is a pet: with one pet the sheet still
+  // exposes the "Add pet" row, which is the ONLY reachable path to AddPet.
+  // Gating this behind hasMultiplePets used to strand single-pet users with
+  // no way to add a second pet (the MoreMenu card had the same dead-end).
   const handleOpenPicker = () => {
-    if (hasMultiplePets) {
+    if (pets.length > 0) {
       setPickerVisible(true);
     }
   };
@@ -370,9 +374,8 @@ export default function DashboardScreen() {
               <TouchableOpacity
                 style={styles.heroLeft}
                 onPress={handleOpenPicker}
-                activeOpacity={hasMultiplePets ? 0.7 : 1}
-                disabled={!hasMultiplePets}
-                accessibilityRole={hasMultiplePets ? 'button' : 'none'}
+                activeOpacity={0.7}
+                accessibilityRole="button"
                 accessibilityLabel={
                   hasMultiplePets
                     ? t('pets.switchPet', { defaultValue: 'Switch pet' })
@@ -395,9 +398,7 @@ export default function DashboardScreen() {
                     >
                       {activePet?.name ?? 'DiaPet'}
                     </Text>
-                    {hasMultiplePets && (
-                      <Icon name="chevron-down" size={18} color="rgba(255,255,255,0.85)" />
-                    )}
+                    <Icon name="chevron-down" size={18} color="rgba(255,255,255,0.85)" />
                   </View>
                 </View>
               </TouchableOpacity>

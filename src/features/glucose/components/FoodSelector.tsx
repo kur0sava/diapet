@@ -14,7 +14,8 @@ import { useTranslation } from 'react-i18next';
 import i18n from '@shared/i18n';
 import { useTheme } from '@shared/theme';
 import { getFoodVerdict } from '@features/encyclopedia/data/diabeticFoods';
-import { getCatalogFoods } from '@features/encyclopedia/data/foodCatalog';
+import { getCatalogFoods, getCatalogFoodsForRegion } from '@features/encyclopedia/data/foodCatalog';
+import { getAppRegion, type Region } from '@shared/config/regionConfig';
 import { ALTERNATIVE_FOODS } from '@features/encyclopedia/data/alternativeFoods';
 import { NATURAL_FEEDING_GUIDE } from '@features/encyclopedia/data/naturalFoods';
 import { usePetStore } from '@shared/stores/petStore';
@@ -51,11 +52,11 @@ type FoodSpecies = 'cat' | 'dog';
  * and verdicts come from getFoodVerdict (fat/fiber-driven for dogs).
  * Alternative + natural datasets are cat-specific and hidden for dogs.
  */
-function buildUnifiedList(species: FoodSpecies): UnifiedFood[] {
+function buildUnifiedList(species: FoodSpecies, region: Region): UnifiedFood[] {
   const lang = i18n.language;
   const items: UnifiedFood[] = [];
 
-  const commercial = getCatalogFoods(species);
+  const commercial = getCatalogFoodsForRegion(species, region);
   for (const f of commercial) {
     items.push({
       id: f.id,
@@ -160,8 +161,14 @@ export default function FoodSelector({ visible, onClose, onSelect, filterCategor
   const species: FoodSpecies = usePetStore(s => s.activePet?.species) === 'dog' ? 'dog' : 'cat';
 
   const currentLang = i18n.language;
-  // eslint-disable-next-line react-hooks/exhaustive-deps -- rebuild list when language changes
-  const allFoods = useMemo(() => buildUnifiedList(species), [currentLang, species]);
+  // Region is read per-open (the picker is a fresh modal each time it is shown);
+  // `visible` is a dep so re-opening after a Settings region change rebuilds.
+  const region = getAppRegion();
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- rebuild list when language/region/species changes
+  const allFoods = useMemo(
+    () => buildUnifiedList(species, region),
+    [currentLang, species, region, visible]
+  );
 
   const filtered = useMemo(() => {
     let items = allFoods;

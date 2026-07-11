@@ -225,6 +225,17 @@ export function getCatalogFoods(species: FoodSpecies): DiabeticCatFood[] {
   return species === 'dog' ? state.dog : state.cat;
 }
 
+/**
+ * Species catalog filtered to a region — same availability logic as the
+ * feed-guide screen (foodInRegion, incl. the DE→EU widening). Used by the
+ * feeding log picker so a user who set region=RU doesn't see brands the app
+ * itself flags as unavailable there (Hill's/Farmina left the RU market). The
+ * "enter manually" fallback still covers parallel-imported/leftover stock.
+ */
+export function getCatalogFoodsForRegion(species: FoodSpecies, region: Region): DiabeticCatFood[] {
+  return getCatalogFoods(species).filter(f => foodInRegion(f, region));
+}
+
 export function getCatalogPrescriptionFoods(
   region?: Region,
   species: FoodSpecies = 'cat'

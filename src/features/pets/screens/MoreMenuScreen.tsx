@@ -60,12 +60,12 @@ export default function MoreMenuScreen() {
     setPickerVisible(false);
   };
 
+  // Always open the picker: it is the reachable entry point to "Add pet"
+  // (with a single pet the sheet shows that pet + the Add row). The pet's
+  // own profile stays reachable via the dedicated "Pet profile" menu row
+  // below, so this no longer strands single-pet users without an add path.
   const handlePetCardPress = () => {
-    if (hasMultiplePets) {
-      setPickerVisible(true);
-    } else {
-      navigation.navigate('PetProfile');
-    }
+    setPickerVisible(true);
   };
 
   const authUser = useAuthStore(s => s.user);
@@ -231,11 +231,7 @@ export default function MoreMenuScreen() {
                   : ''}
               </Text>
             </View>
-            <Icon
-              name={hasMultiplePets ? 'chevron-down' : 'chevron-forward'}
-              size={20}
-              color="rgba(255,255,255,0.7)"
-            />
+            <Icon name="chevron-down" size={20} color="rgba(255,255,255,0.7)" />
           </LinearGradient>
         </TouchableOpacity>
       )}
