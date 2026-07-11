@@ -146,7 +146,29 @@ export default function ArticleDetailScreen() {
   };
 
   const renderContent = (content: string) => {
-    return content.split('\n').map((line, i) => {
+    const lines = content.split('\n');
+    // Bundled articles open with "# <title>" that duplicates the header title
+    // shown above. Drop that leading H1 so the title isn't shown twice — and so
+    // it isn't rendered as a raw "# ..." paragraph (the parser had no h1 case,
+    // so a single-hash heading previously leaked its literal "# " to the user).
+    const firstIdx = lines.findIndex(l => l.trim() !== '');
+    if (firstIdx !== -1 && lines[firstIdx].startsWith('# ') && !lines[firstIdx].startsWith('## ')) {
+      lines[firstIdx] = '';
+    }
+    return lines.map((line, i) => {
+      // h1 (single hash) — defensive for remote/manifest content; bundled
+      // articles have their duplicate leading h1 stripped above.
+      if (line.startsWith('# ') && !line.startsWith('## ')) {
+        return (
+          <Text
+            key={`line-${i}`}
+            style={[styles.h1, { color: theme.colors.text }]}
+            onLayout={e => handleHeadingLayout(i, e)}
+          >
+            {line.replace('# ', '')}
+          </Text>
+        );
+      }
       if (line.startsWith('## ')) {
         return (
           <Text
@@ -456,6 +478,7 @@ const styles = StyleSheet.create({
   },
   disclaimerText: { fontSize: 12, lineHeight: 18, flex: 1 },
   articleContent: { gap: 4 },
+  h1: { fontSize: 23, fontWeight: '800', marginTop: 20, marginBottom: 10 },
   h2: { fontSize: 20, fontWeight: '800', marginTop: 20, marginBottom: 8 },
   h3: { fontSize: 17, fontWeight: '700', marginTop: 16, marginBottom: 6 },
   bold: { fontSize: 15, fontWeight: '700', marginTop: 4 },
