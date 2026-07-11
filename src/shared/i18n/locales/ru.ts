@@ -54,7 +54,7 @@ export const ru = {
     petNamePlaceholderDog: 'Рекс',
     petAge: 'Возраст (лет)',
     petAgeHint: 'Полных лет',
-    petWeight: 'Вес (кг)',
+    petWeight: 'Вес',
     petGender: 'Пол',
     diagnosisDate: 'Дата постановки диагноза',
     diabetesType: 'Тип диабета',

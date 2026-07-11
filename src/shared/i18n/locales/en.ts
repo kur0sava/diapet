@@ -54,7 +54,7 @@ export const en = {
     petNamePlaceholderDog: 'Buddy',
     petAge: 'Age (years)',
     petAgeHint: 'Full years',
-    petWeight: 'Weight (kg)',
+    petWeight: 'Weight',
     petGender: 'Gender',
     diagnosisDate: 'Diagnosis date',
     diabetesType: 'Diabetes type',
