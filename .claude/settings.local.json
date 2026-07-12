@@ -167,7 +167,16 @@
       "Bash(echo \"===TSC EXIT $?===\")",
       "Bash(echo \"===ESLINT EXIT $?===\")",
       "Bash(awk 'NR>=1086 && NR<=1526' src/features/encyclopedia/data/diabeticFoods.ts)",
-      "Bash(FUZZ_SCENARIOS=300 FUZZ_ACTIONS=60 FUZZ_SEED=1 npx jest userScenarios)"
+      "Bash(FUZZ_SCENARIOS=300 FUZZ_ACTIONS=60 FUZZ_SEED=1 npx jest userScenarios)",
+      "Bash(ls -la app.config.*)",
+      "Bash(ls app.config.js app.config.ts app.config.cjs)",
+      "Bash(gh release *)",
+      "Bash(bash \"C:/Users/Admin/AppData/Local/Temp/claude/C--Users-Admin-DIAPET/38516132-3b22-4c93-9a9f-8f0f053d8b79/scratchpad/poll-builds.sh\")",
+      "Bash(curl -L --ssl-no-revoke -o DiaPet-vc17-888148e.apk \"https://expo.dev/artifacts/eas/jd5Bu8urgkIDMixNzWwHdc7N1btSjNabelldAjyIy3A.apk\")",
+      "Bash(xxd)",
+      "Bash(echo \"=== EXIT: $? ===\")",
+      "Bash(echo \"=== tsc EXIT: $? ===\")",
+      "Bash(curl -L --ssl-no-revoke -s -o DiaPet-fix-9a35.apk \"https://expo.dev/artifacts/eas/SAag1qyplGSmDKySD265liqS3Sgao8xxu5kjYtlYUys.apk\")"
     ]
   }
 }
