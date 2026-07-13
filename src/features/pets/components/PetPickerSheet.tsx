@@ -9,6 +9,7 @@ import {
   ScrollView,
 } from 'react-native';
 import { useTranslation } from 'react-i18next';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTheme } from '@shared/theme';
 import { Icon } from '@shared/components/ui/Icon';
 import type { Pet } from '@storage/domain/types';
@@ -34,6 +35,7 @@ interface Props {
 export function PetPickerSheet({ visible, pets, activePetId, onSelect, onAddPet, onClose }: Props) {
   const { t } = useTranslation();
   const { theme } = useTheme();
+  const insets = useSafeAreaInsets();
 
   return (
     <Modal
@@ -45,7 +47,13 @@ export function PetPickerSheet({ visible, pets, activePetId, onSelect, onAddPet,
     >
       <Pressable style={styles.backdrop} onPress={onClose}>
         <Pressable
-          style={[styles.sheet, { backgroundColor: theme.colors.surface }]}
+          style={[
+            styles.sheet,
+            {
+              backgroundColor: theme.colors.surface,
+              paddingBottom: Math.max(insets.bottom, 16) + 16,
+            },
+          ]}
           onPress={() => {}}
         >
           <View style={[styles.handle, { backgroundColor: theme.colors.border }]} />
@@ -150,7 +158,6 @@ const styles = StyleSheet.create({
   sheet: {
     paddingHorizontal: 16,
     paddingTop: 12,
-    paddingBottom: 32,
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
     gap: 8,

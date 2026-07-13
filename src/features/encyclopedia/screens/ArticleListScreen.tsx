@@ -159,7 +159,7 @@ export default function ArticleListScreen() {
         data={categories}
         keyExtractor={item => item}
         showsHorizontalScrollIndicator={false}
-        style={{ flexShrink: 0, minHeight: 44 }}
+        style={{ flexGrow: 0, flexShrink: 0, minHeight: 44 }}
         contentContainerStyle={styles.categories}
         ListHeaderComponent={
           <TouchableOpacity
@@ -273,7 +273,7 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   searchInput: { flex: 1, fontSize: 15 },
-  categories: { paddingHorizontal: 16, gap: 8, paddingBottom: 12 },
+  categories: { paddingHorizontal: 16, gap: 8, paddingBottom: 12, alignItems: 'center' },
   categoryChip: {
     flexDirection: 'row',
     alignItems: 'center',
