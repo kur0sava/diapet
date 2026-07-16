@@ -176,7 +176,9 @@
       "Bash(xxd)",
       "Bash(echo \"=== EXIT: $? ===\")",
       "Bash(echo \"=== tsc EXIT: $? ===\")",
-      "Bash(curl -L --ssl-no-revoke -s -o DiaPet-fix-9a35.apk \"https://expo.dev/artifacts/eas/SAag1qyplGSmDKySD265liqS3Sgao8xxu5kjYtlYUys.apk\")"
+      "Bash(curl -L --ssl-no-revoke -s -o DiaPet-fix-9a35.apk \"https://expo.dev/artifacts/eas/SAag1qyplGSmDKySD265liqS3Sgao8xxu5kjYtlYUys.apk\")",
+      "PowerShell(git *)",
+      "PowerShell(Set-Location *)"
     ]
   }
 }
