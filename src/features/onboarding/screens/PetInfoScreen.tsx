@@ -56,9 +56,12 @@ export default function PetInfoScreen() {
   const [diabetesType, setDiabetesType] = useState<'type1' | 'type2' | 'unknown'>(
     draft?.diabetesType ?? 'unknown'
   );
-  const [diagnosisDate, setDiagnosisDate] = useState<Date | null>(
-    draft?.diagnosisDate ? parseDateOnly(draft.diagnosisDate) : null
-  );
+  const [diagnosisDate, setDiagnosisDate] = useState<Date | null>(() => {
+    if (!draft?.diagnosisDate) return null;
+    const d = parseDateOnly(draft.diagnosisDate);
+    // Corrupted draft → Invalid Date, and toISOString() on it throws on save.
+    return isNaN(d.getTime()) ? null : d;
+  });
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
 

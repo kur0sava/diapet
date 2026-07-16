@@ -139,8 +139,8 @@ export default function ExpensesScreen() {
   };
 
   const handleSaveBudget = () => {
-    const num = parseFloat(budgetText);
-    if (!budgetText.trim() || isNaN(num) || num < 0) {
+    const num = parseFloat(budgetText.replace(',', '.'));
+    if (!budgetText.trim() || isNaN(num) || !isFinite(num) || num < 0) {
       storage.set(StorageKeys.EXPENSE_BUDGET_MONTHLY, 0);
     } else {
       storage.set(StorageKeys.EXPENSE_BUDGET_MONTHLY, num);
