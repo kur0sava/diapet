@@ -1,5 +1,5 @@
 import React, { useRef, useState } from 'react';
-import { View, Text, StyleSheet, Alert, Linking, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, Alert, Linking, TouchableOpacity, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRoute, RouteProp } from '@react-navigation/native';
 import { useOnboardingNavigation } from '@navigation/hooks';
@@ -162,7 +162,9 @@ export default function NotificationsScreen() {
       <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backBtn}>
         <Text style={{ color: theme.colors.primary, fontSize: 16 }}>← {t('common.back')}</Text>
       </TouchableOpacity>
-      <View style={styles.content}>
+      {/* Scroll needed on short screens (360×640) and large font scale so the
+          Allow/Skip buttons stay reachable. */}
+      <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
         <Icon
           name="notifications-outline"
           size={72}
@@ -209,7 +211,7 @@ export default function NotificationsScreen() {
           fullWidth
           disabled={loading}
         />
-      </View>
+      </ScrollView>
     </SafeAreaView>
   );
 }
@@ -223,7 +225,7 @@ const styles = StyleSheet.create({
     minWidth: 44,
     justifyContent: 'center',
   },
-  content: { flex: 1, padding: 24, alignItems: 'center', justifyContent: 'center' },
+  content: { flexGrow: 1, padding: 24, alignItems: 'center', justifyContent: 'center' },
   title: { fontSize: 28, fontWeight: '800', textAlign: 'center', marginBottom: 12 },
   subtitle: { fontSize: 15, lineHeight: 22, textAlign: 'center', marginBottom: 40 },
   features: { width: '100%', gap: 10, marginBottom: 40 },

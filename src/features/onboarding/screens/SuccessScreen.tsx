@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo } from 'react';
-import { View, Text, StyleSheet, Animated, Easing } from 'react-native';
+import { View, Text, StyleSheet, Animated, Easing, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRoute, RouteProp } from '@react-navigation/native';
 import { useRootNavigation } from '@navigation/hooks';
@@ -75,7 +75,9 @@ export default function SuccessScreen() {
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.background }]}>
-      <View style={styles.content}>
+      {/* Scroll keeps the promises readable at large font scale / short
+          screens; the CTA footer stays pinned below. */}
+      <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
         <Animated.View
           style={[
             styles.checkCircle,
@@ -135,7 +137,7 @@ export default function SuccessScreen() {
             </View>
           )}
         </Animated.View>
-      </View>
+      </ScrollView>
 
       <View style={styles.footer}>
         <Button title={t('onboarding.success.cta')} onPress={handleStart} fullWidth size="lg" />
@@ -146,7 +148,7 @@ export default function SuccessScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
-  content: { flex: 1, padding: 24, alignItems: 'center', justifyContent: 'center' },
+  content: { flexGrow: 1, padding: 24, alignItems: 'center', justifyContent: 'center' },
   checkCircle: {
     width: 120,
     height: 120,
