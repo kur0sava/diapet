@@ -1,14 +1,6 @@
 import React, { useState, useMemo } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  Modal,
-  FlatList,
-  TouchableOpacity,
-  TextInput,
-  SafeAreaView,
-} from 'react-native';
+import { View, Text, StyleSheet, Modal, FlatList, TouchableOpacity, TextInput } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Icon } from '@shared/components/ui/Icon';
 import { useTranslation } from 'react-i18next';
 import i18n from '@shared/i18n';
@@ -157,6 +149,7 @@ const CATEGORY_ORDER: UnifiedFood['category'][] = ['prescription', 'otc', 'alter
 export default function FoodSelector({ visible, onClose, onSelect, filterCategory }: Props) {
   const { t } = useTranslation();
   const { theme } = useTheme();
+  const insets = useSafeAreaInsets();
   const [search, setSearch] = useState('');
   const species: FoodSpecies = usePetStore(s => s.activePet?.species) === 'dog' ? 'dog' : 'cat';
 
@@ -234,7 +227,16 @@ export default function FoodSelector({ visible, onClose, onSelect, filterCategor
 
   return (
     <Modal visible={visible} animationType="slide" onRequestClose={onClose}>
-      <SafeAreaView style={[styles.modal, { backgroundColor: theme.colors.background }]}>
+      <View
+        style={[
+          styles.modal,
+          {
+            backgroundColor: theme.colors.background,
+            paddingTop: insets.top,
+            paddingBottom: Math.max(insets.bottom, 16),
+          },
+        ]}
+      >
         <View style={[styles.header, { borderBottomColor: theme.colors.border }]}>
           <Text style={[styles.title, { color: theme.colors.text }]}>
             {t('feeding.selectFood', {
@@ -337,7 +339,7 @@ export default function FoodSelector({ visible, onClose, onSelect, filterCategor
             })}
           </Text>
         </TouchableOpacity>
-      </SafeAreaView>
+      </View>
     </Modal>
   );
 }

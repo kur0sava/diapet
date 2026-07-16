@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import Animated, { FadeOut, SlideInDown, Easing } from 'react-native-reanimated';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Icon } from '@shared/components/ui/Icon';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '@shared/theme';
@@ -47,8 +48,15 @@ export function HintCard() {
   const { currentHint, dismissHint } = useHintStore();
   const { t } = useTranslation();
   const { theme } = useTheme();
+  const insets = useSafeAreaInsets();
 
-  const styles = useMemo(() => makeStyles(theme.colors.card, theme.colors.text, theme.isDark), [theme.colors.card, theme.colors.text, theme.isDark]);
+  const styles = useMemo(
+    () => makeStyles(theme.colors.card, theme.colors.text, theme.isDark),
+    [theme.colors.card, theme.colors.text, theme.isDark]
+  );
+
+  // Tab bar in MainNavigator is 64 + max(insets.bottom, 8) tall — keep the card above it
+  const bottomOffset = 64 + Math.max(insets.bottom, 8) + 16;
 
   // Auto-dismiss after 10 seconds
   useEffect(() => {
@@ -65,14 +73,12 @@ export function HintCard() {
     <Animated.View
       entering={SlideInDown.duration(400).easing(Easing.out(Easing.cubic))}
       exiting={FadeOut.duration(250)}
-      style={styles.card}
+      style={[styles.card, { bottom: bottomOffset }]}
     >
       {/* Header row: icon + category label */}
       <View style={styles.header}>
         <Icon name={config.icon} size={18} color={config.color} />
-        <Text style={[styles.categoryLabel, { color: config.color }]}>
-          {t(config.labelKey)}
-        </Text>
+        <Text style={[styles.categoryLabel, { color: config.color }]}>{t(config.labelKey)}</Text>
       </View>
 
       {/* Hint text */}
@@ -96,15 +102,10 @@ export function HintCard() {
 // is called at most once per distinct theme combination)
 // ---------------------------------------------------------------------------
 
-function makeStyles(
-  cardBg: string,
-  textColor: string,
-  isDark: boolean,
-) {
+function makeStyles(cardBg: string, textColor: string, isDark: boolean) {
   return StyleSheet.create({
     card: {
       position: 'absolute',
-      bottom: 100,
       left: 16,
       right: 16,
       backgroundColor: cardBg,
