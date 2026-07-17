@@ -471,16 +471,21 @@ const DOG_CONFIG: SpeciesConfig = {
   },
 
   theme: {
-    primary: '#E67E22',
-    primaryDark: '#C0652A',
-    primaryLight: '#FFF3E0',
+    // Warm bronze-gold, deliberately NOT the #E67E22 amber it used to be:
+    // that hue was indistinguishable from warning/glucoseHigh (#FF9500), so
+    // for dog owners the entire brand chrome read as a permanent warning and
+    // real warnings drowned. Bronze keeps the warm dog identity while leaving
+    // bright orange to mean "attention" only. Also better white-text contrast.
+    primary: '#B07A3C',
+    primaryDark: '#8F5F2C',
+    primaryLight: '#F6EEDF',
     secondary: '#8B6914',
     secondaryLight: '#FFF8E1',
-    gradientHeader: ['#E67E22', '#D35400'] as const,
+    gradientHeader: ['#B07A3C', '#8F5F2C'] as const,
     gradientHeaderDark: ['#2E1A0E', '#3D2814'] as const,
-    gradientHeaderRich: ['#E67E22', '#D35400', '#8B6914'] as const,
+    gradientHeaderRich: ['#B07A3C', '#8F5F2C', '#8B6914'] as const,
     gradientHeaderRichDark: ['#2E1A0E', '#3D2814', '#4A3510'] as const,
-    gradientCardAccent: ['#E67E22', '#D35400'] as const,
+    gradientCardAccent: ['#B07A3C', '#8F5F2C'] as const,
   },
 };
 
