@@ -608,6 +608,13 @@ export const en = {
     regionChanged: 'Region: {{region}}',
     regionDescription:
       'Affects the food catalog, stores and regional medication guidance. Detected automatically, can be changed.',
+    remindersSection: 'REMINDERS',
+    glucoseReminder: 'Glucose check reminder',
+    glucoseReminderDescription:
+      'Daily reminders at the times you choose. Regular checks are the foundation of diabetes control.',
+    glucoseReminderAddTime: '+ Time',
+    glucoseReminderRemove: 'Remove {{time}} reminder',
+    glucoseReminderPermission: 'Allow notifications in system settings to receive reminders.',
     hintsSection: 'HINTS',
     showHints: 'Show hints',
     hintsDescription: 'Pop-up hints help during the first 30 days of using the app',
@@ -909,6 +916,8 @@ export const en = {
     injectionBody: "Don't forget to give the insulin injection!",
     feedingTitle: '🍽️ Feeding time for {{petName}}',
     feedingBody: 'Time to feed your pet!',
+    glucoseTitle: '🩸 Time to check glucose',
+    glucoseBody: 'A minute of care: measure glucose and log the result in DiaPet.',
     batteryTitle: 'Keep reminders on time',
     batteryBody:
       'Some phones stop background apps to save battery, which can silently delay or cancel injection and feeding reminders — especially after a reboot. To keep them reliable, exclude DiaPet from battery optimization.',

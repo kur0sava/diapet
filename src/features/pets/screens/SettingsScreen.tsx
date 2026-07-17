@@ -25,6 +25,14 @@ import { queryKeys } from '@shared/utils/queryKeys';
 import Constants from 'expo-constants';
 import { CommonActions } from '@react-navigation/native';
 import { isAnalyticsEnabled, setAnalyticsOptOut } from '@shared/analytics/analytics';
+import DateTimePicker from '@react-native-community/datetimepicker';
+import {
+  useNotifications,
+  scheduleGlucoseReminders,
+  cancelGlucoseReminders,
+  getGlucoseReminderTimes,
+  MAX_GLUCOSE_REMINDER_TIMES,
+} from '@shared/hooks/useNotifications';
 import {
   getAppRegion,
   setAppRegion,
@@ -51,6 +59,41 @@ export default function SettingsScreen() {
   );
   const [analyticsEnabled, setAnalyticsEnabled] = useState(() => isAnalyticsEnabled());
   const [region, setRegion] = useState<Region>(() => getAppRegion());
+  const { requestPermissions } = useNotifications();
+  const [glucoseReminderEnabled, setGlucoseReminderEnabled] = useState(
+    () => storage.getBoolean(StorageKeys.GLUCOSE_REMINDER_ENABLED) === true
+  );
+  const [glucoseReminderTimes, setGlucoseReminderTimes] = useState<string[]>(() =>
+    getGlucoseReminderTimes()
+  );
+  const [showReminderPicker, setShowReminderPicker] = useState(false);
+
+  const handleGlucoseReminderToggle = async (enabled: boolean) => {
+    if (enabled) {
+      const granted = await requestPermissions();
+      if (!granted) {
+        Alert.alert(t('common.error'), t('settings.glucoseReminderPermission'));
+        return;
+      }
+      storage.set(StorageKeys.GLUCOSE_REMINDER_ENABLED, true);
+      setGlucoseReminderEnabled(true);
+      await scheduleGlucoseReminders().catch(() => {});
+    } else {
+      storage.set(StorageKeys.GLUCOSE_REMINDER_ENABLED, false);
+      setGlucoseReminderEnabled(false);
+      await cancelGlucoseReminders().catch(() => {});
+    }
+  };
+
+  const persistReminderTimes = async (times: string[]) => {
+    const sorted = [...new Set(times)].sort();
+    if (sorted.length === 0) return;
+    setGlucoseReminderTimes(sorted);
+    storage.set(StorageKeys.GLUCOSE_REMINDER_TIMES, JSON.stringify(sorted));
+    if (glucoseReminderEnabled) {
+      await scheduleGlucoseReminders().catch(() => {});
+    }
+  };
 
   const handleDeleteAllData = () => {
     // UX-015: First confirmation with explicit irreversibility warning
@@ -77,6 +120,8 @@ export default function SettingsScreen() {
                   // C001: delete only data keys, preserve user preferences (language, theme, glucose unit)
                   storage.delete(StorageKeys.ACTIVE_PET_ID);
                   storage.delete(StorageKeys.NOTIFICATIONS_ENABLED);
+                  storage.delete(StorageKeys.GLUCOSE_REMINDER_ENABLED);
+                  storage.delete(StorageKeys.GLUCOSE_REMINDER_TIMES);
                   storage.delete(StorageKeys.VET_NAME);
                   storage.delete(StorageKeys.VET_PHONE);
                   // Must clear ACTIVE_SPECIES — ThemeContext falls back to this MMKV
@@ -324,6 +369,82 @@ export default function SettingsScreen() {
           </Text>
         </Card>
         <Text style={[styles.sectionHeader, { color: theme.colors.textSecondary }]}>
+          {t('settings.remindersSection')}
+        </Text>
+        <Card style={styles.card}>
+          <View style={styles.switchRow}>
+            <Text style={[styles.settingLabel, { color: theme.colors.text, flex: 1 }]}>
+              {t('settings.glucoseReminder')}
+            </Text>
+            <Switch
+              value={glucoseReminderEnabled}
+              onValueChange={v => {
+                void handleGlucoseReminderToggle(v);
+              }}
+              trackColor={{ false: theme.colors.border, true: theme.colors.primary }}
+              thumbColor="#fff"
+            />
+          </View>
+          {glucoseReminderEnabled && (
+            <View style={styles.reminderTimesRow}>
+              {glucoseReminderTimes.map(time => (
+                <View
+                  key={time}
+                  style={[styles.reminderChip, { backgroundColor: theme.colors.surfaceSecondary }]}
+                >
+                  <Text style={{ color: theme.colors.text, fontWeight: '600', fontSize: 14 }}>
+                    {time}
+                  </Text>
+                  {glucoseReminderTimes.length > 1 && (
+                    <TouchableOpacity
+                      onPress={() => {
+                        void persistReminderTimes(glucoseReminderTimes.filter(x => x !== time));
+                      }}
+                      hitSlop={{ top: 10, bottom: 10, left: 6, right: 6 }}
+                      accessibilityRole="button"
+                      accessibilityLabel={t('settings.glucoseReminderRemove', { time })}
+                    >
+                      <Icon name="close-circle" size={18} color={theme.colors.textTertiary} />
+                    </TouchableOpacity>
+                  )}
+                </View>
+              ))}
+              {glucoseReminderTimes.length < MAX_GLUCOSE_REMINDER_TIMES && (
+                <TouchableOpacity
+                  style={[
+                    styles.reminderChip,
+                    { borderWidth: 1, borderColor: theme.colors.primary },
+                  ]}
+                  onPress={() => setShowReminderPicker(true)}
+                  accessibilityRole="button"
+                >
+                  <Text style={{ color: theme.colors.primary, fontWeight: '600', fontSize: 14 }}>
+                    {t('settings.glucoseReminderAddTime')}
+                  </Text>
+                </TouchableOpacity>
+              )}
+            </View>
+          )}
+          {showReminderPicker && (
+            <DateTimePicker
+              value={new Date()}
+              mode="time"
+              is24Hour
+              onChange={(_, date) => {
+                setShowReminderPicker(false);
+                if (date) {
+                  const hh = date.getHours().toString().padStart(2, '0');
+                  const mm = date.getMinutes().toString().padStart(2, '0');
+                  void persistReminderTimes([...glucoseReminderTimes, `${hh}:${mm}`]);
+                }
+              }}
+            />
+          )}
+          <Text style={[styles.hintDesc, { color: theme.colors.textTertiary }]}>
+            {t('settings.glucoseReminderDescription')}
+          </Text>
+        </Card>
+        <Text style={[styles.sectionHeader, { color: theme.colors.textSecondary }]}>
           {t('settings.hintsSection')}
         </Text>
         <Card style={styles.card}>
@@ -427,6 +548,15 @@ const styles = StyleSheet.create({
   regionGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginBottom: 10 },
   regionBtn: { paddingHorizontal: 12, paddingVertical: 9, borderRadius: 10 },
   switchRow: { flexDirection: 'row', alignItems: 'center', gap: 12 },
+  reminderTimesRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
+  reminderChip: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 10,
+  },
   hintDesc: { fontSize: 12, lineHeight: 16 },
   dangerBtn: { padding: 14, borderRadius: 12, borderWidth: 1.5, alignItems: 'center' },
   dangerText: { fontSize: 15, fontWeight: '600' },

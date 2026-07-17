@@ -158,6 +158,11 @@ export const StorageKeys = {
    * See @features/encyclopedia/data/foodCatalog. */
   FOOD_CATALOG_CACHE: 'foodCatalogCache',
   FOOD_CATALOG_FETCHED_AT: 'foodCatalogFetchedAt',
+  /** v2.6 retention: daily glucose-measurement reminders (Settings toggle,
+   * independent of the injection/feeding NOTIFICATIONS_ENABLED flag). */
+  GLUCOSE_REMINDER_ENABLED: 'glucoseReminderEnabled',
+  /** JSON array of "HH:mm" strings for glucose reminders. */
+  GLUCOSE_REMINDER_TIMES: 'glucoseReminderTimes',
 } as const;
 
 /** Per-pet vet contact key. See {@link StorageKeys.VET_NAME} for legacy migration. */

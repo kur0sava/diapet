@@ -1,6 +1,7 @@
 import * as Notifications from 'expo-notifications';
 import { Alert, Linking, Platform } from 'react-native';
 import i18n from '@shared/i18n';
+import { storage as mmkvStorage, StorageKeys as MMKVKeys } from '@storage/mmkv/storage';
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -40,6 +41,12 @@ export function useNotifications() {
         importance: Notifications.AndroidImportance.DEFAULT,
         vibrationPattern: [0, 250],
         lightColor: '#FFD700',
+      });
+      await Notifications.setNotificationChannelAsync('glucose', {
+        name: 'Замеры глюкозы / Glucose checks',
+        importance: Notifications.AndroidImportance.HIGH,
+        vibrationPattern: [0, 250, 250, 250],
+        lightColor: '#FF9500',
       });
 
       // Follow-up guidance only makes sense when the user actually granted
@@ -256,12 +263,19 @@ async function doRestoreScheduleNotifications(): Promise<void> {
   const { storage, StorageKeys } = await import('@storage/mmkv/storage');
   const { scheduleRepository, petRepository } = await import('@storage/database');
 
-  // Only restore if user explicitly enabled notifications
-  if (storage.getBoolean(StorageKeys.NOTIFICATIONS_ENABLED) !== true) return;
-
   // Check permissions without prompting
   const { status } = await Notifications.getPermissionsAsync();
   if (status !== 'granted') return;
+
+  // Glucose-measurement reminders sit behind their own Settings toggle,
+  // independent of the injection/feeding master flag below — a user may want
+  // only measurement nudges without ever enabling schedule reminders.
+  if (storage.getBoolean(StorageKeys.GLUCOSE_REMINDER_ENABLED) === true) {
+    await scheduleGlucoseReminders().catch(() => {});
+  }
+
+  // Only restore schedule reminders if user explicitly enabled notifications
+  if (storage.getBoolean(StorageKeys.NOTIFICATIONS_ENABLED) !== true) return;
 
   const pets = await petRepository.findActive();
   if (pets.length === 0) return;
@@ -332,5 +346,74 @@ async function doRestoreScheduleNotifications(): Promise<void> {
         },
       });
     }
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Glucose-measurement reminders (v2.6 retention, batch 3.1)
+// ---------------------------------------------------------------------------
+
+export const DEFAULT_GLUCOSE_REMINDER_TIMES = ['08:00', '20:00'];
+export const MAX_GLUCOSE_REMINDER_TIMES = 6;
+
+/** Read the configured reminder times ("HH:mm") from MMKV, with fallback. */
+export function getGlucoseReminderTimes(): string[] {
+  try {
+    const raw = mmkvStorage.getString(MMKVKeys.GLUCOSE_REMINDER_TIMES);
+    if (!raw) return [...DEFAULT_GLUCOSE_REMINDER_TIMES];
+    const parsed = JSON.parse(raw);
+    if (!Array.isArray(parsed)) return [...DEFAULT_GLUCOSE_REMINDER_TIMES];
+    const valid = parsed.filter(
+      (t): t is string => typeof t === 'string' && /^\d{1,2}:\d{2}$/.test(t)
+    );
+    return valid.length > 0 ? valid : [...DEFAULT_GLUCOSE_REMINDER_TIMES];
+  } catch {
+    return [...DEFAULT_GLUCOSE_REMINDER_TIMES];
+  }
+}
+
+export async function cancelGlucoseReminders(): Promise<void> {
+  const scheduled = await Notifications.getAllScheduledNotificationsAsync();
+  for (const n of scheduled) {
+    if ((n.content.data as { type?: string })?.type === 'glucose_reminder') {
+      await Notifications.cancelScheduledNotificationAsync(n.identifier);
+    }
+  }
+}
+
+/**
+ * (Re)schedule daily glucose-measurement reminders from MMKV state.
+ * Idempotent: cancels existing glucose reminders first, so it is safe to call
+ * from both the Settings toggle and every restore pass.
+ */
+export async function scheduleGlucoseReminders(): Promise<void> {
+  if (Platform.OS === 'android') {
+    await Notifications.setNotificationChannelAsync('glucose', {
+      name: 'Замеры глюкозы / Glucose checks',
+      importance: Notifications.AndroidImportance.HIGH,
+      vibrationPattern: [0, 250, 250, 250],
+      lightColor: '#FF9500',
+    });
+  }
+
+  await cancelGlucoseReminders();
+
+  for (const time of getGlucoseReminderTimes().slice(0, MAX_GLUCOSE_REMINDER_TIMES)) {
+    const [hours, minutes] = time.split(':').map(Number);
+    if (isNaN(hours) || isNaN(minutes)) continue;
+    await Notifications.scheduleNotificationAsync({
+      content: {
+        title: i18n.t('notifications.glucoseTitle'),
+        body: i18n.t('notifications.glucoseBody'),
+        sound: true,
+        data: { type: 'glucose_reminder' },
+      },
+      trigger: {
+        type: Notifications.SchedulableTriggerInputTypes.DAILY,
+        hour: hours,
+        minute: minutes,
+        channelId: 'glucose',
+      },
+    });
   }
 }
