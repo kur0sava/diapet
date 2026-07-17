@@ -26,6 +26,7 @@ import {
   mgdlToMmol,
   getGlucoseLevelFromRanges,
   getGlucoseColorFromRanges,
+  getGlucoseArrow,
 } from '@storage/domain/types';
 import { getInsulinThresholds, getSpeciesConfig } from '@shared/config/speciesConfig';
 import { useQueryClient } from '@tanstack/react-query';
@@ -600,7 +601,7 @@ export default function LogGlucoseScreen() {
                     { color: glucosePreview.color, fontFamily: theme.fonts.bold },
                   ]}
                 >
-                  ● {levelLabels[glucosePreview.level]}
+                  {getGlucoseArrow(glucosePreview.level) || '●'} {levelLabels[glucosePreview.level]}
                 </Text>
               </View>
             )}

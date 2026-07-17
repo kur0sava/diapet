@@ -226,13 +226,15 @@ const CAT_CONFIG: SpeciesConfig = {
     severeLow: 2.2,
     emergencyHigh: 30,
     highControlThreshold: 14.0,
+    // Colour encodes danger direction: red family = hypo only, hyper goes
+    // orange → purple. See GLUCOSE_RANGES comment in storage/domain/types.ts.
     ranges: [
       { key: 'severe_low', max: 2.8, color: '#CC0000' },
       { key: 'low', min: 2.8, max: 3.3, color: '#FF3B30' },
-      { key: 'below_target', min: 3.3, max: 4.0, color: '#FF9500' },
+      { key: 'below_target', min: 3.3, max: 4.0, color: '#FF6B5E' },
       { key: 'normal', min: 4.0, max: 9.0, color: '#34C759' },
       { key: 'high', min: 9.0, max: 14.0, color: '#FF9500' },
-      { key: 'very_high', min: 14.0, color: '#FF3B30' },
+      { key: 'very_high', min: 14.0, color: '#AF52DE' },
     ],
   },
 
@@ -397,13 +399,14 @@ const DOG_CONFIG: SpeciesConfig = {
     severeLow: 2.2,
     emergencyHigh: 30,
     highControlThreshold: 16.7,
+    // Same direction-encoded palette as the cat ranges (red = hypo only).
     ranges: [
       { key: 'severe_low', max: 2.8, color: '#CC0000' },
       { key: 'low', min: 2.8, max: 3.3, color: '#FF3B30' },
-      { key: 'below_target', min: 3.3, max: 4.4, color: '#FF9500' },
+      { key: 'below_target', min: 3.3, max: 4.4, color: '#FF6B5E' },
       { key: 'normal', min: 4.4, max: 8.0, color: '#34C759' },
       { key: 'high', min: 8.0, max: 16.7, color: '#FF9500' },
-      { key: 'very_high', min: 16.7, color: '#FF3B30' },
+      { key: 'very_high', min: 16.7, color: '#AF52DE' },
     ],
   },
 

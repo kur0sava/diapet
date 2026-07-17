@@ -20,7 +20,12 @@ import { queryKeys } from '@shared/utils/queryKeys';
 import { glucoseRepository, injectionRepository, symptomRepository } from '@storage/database';
 import { usePetStore } from '@shared/stores/petStore';
 import { GlucoseReading, MealRelation } from '../types';
-import { GlucoseFilter, mmolToMgdl, getGlucoseColorFromRanges } from '@storage/domain/types';
+import {
+  GlucoseFilter,
+  mmolToMgdl,
+  getGlucoseColorFromRanges,
+  getGlucoseArrowFromRanges,
+} from '@storage/domain/types';
 import { getSpeciesConfig } from '@shared/config/speciesConfig';
 import { formatDateTime, formatFullDate, formatFullDateTime } from '@shared/utils/dateUtils';
 import { EmptyState, Card, AnimatedListItem } from '@shared/components/ui';
@@ -284,6 +289,7 @@ export default function GlucoseListScreen() {
     ({ item, index }: { item: GlucoseReading; index: number }) => {
       const displayValue = unit === 'mmol/L' ? `${item.valueMmol.toFixed(1)}` : `${item.valueMgdl}`;
       const color = getGlucoseColorFromRanges(item.valueMmol, speciesRanges);
+      const arrow = getGlucoseArrowFromRanges(item.valueMmol, speciesRanges);
 
       return (
         <AnimatedListItem index={index}>
@@ -309,6 +315,7 @@ export default function GlucoseListScreen() {
                       { color: theme.colors.text, fontFamily: theme.fonts.bold },
                     ]}
                   >
+                    {arrow ? <Text style={{ color }}>{arrow} </Text> : null}
                     {displayValue}{' '}
                     <Text
                       style={{

@@ -184,13 +184,47 @@ export interface CreateFeedingDTO {
 
 /** @deprecated Use getSpeciesConfig(species).glucose.ranges instead */
 export const GLUCOSE_RANGES = {
-  severe_low: { max: 2.8, color: '#CC0000' }, // Deep red — emergency
+  // Colour encodes danger DIRECTION, not just severity: the red family is
+  // reserved for hypo ("act now"), hyper escalates orange → purple. Hypo and
+  // hyper must never share a hue — "red" has to mean exactly one thing.
+  severe_low: { max: 2.8, color: '#CC0000' }, // Deep red — emergency hypo
   low: { min: 2.8, max: 3.3, color: '#FF3B30' }, // Red — hypoglycemia
-  below_target: { min: 3.3, max: 4.0, color: '#FF9500' }, // Orange — below target
+  below_target: { min: 3.3, max: 4.0, color: '#FF6B5E' }, // Coral — mildly low
   normal: { min: 4.0, max: 9.0, color: '#34C759' }, // Green — target
   high: { min: 9.0, max: 14.0, color: '#FF9500' }, // Orange — hyperglycemia
-  very_high: { min: 14.0, color: '#FF3B30' }, // Red — severe hyper
+  very_high: { min: 14.0, color: '#AF52DE' }, // Purple — severe hyper
 };
+
+export type GlucoseDirection = 'low' | 'normal' | 'high';
+
+export function getGlucoseDirection(level: GlucoseLevel): GlucoseDirection {
+  if (level === 'severe_low' || level === 'low' || level === 'below_target') return 'low';
+  if (level === 'high' || level === 'very_high') return 'high';
+  return 'normal';
+}
+
+/**
+ * Danger direction duplicated in a non-colour channel (▼ hypo / ▲ hyper) so
+ * out-of-range values stay readable for colour-blind users. Empty for normal.
+ */
+export function getGlucoseArrow(level: GlucoseLevel): string {
+  const dir = getGlucoseDirection(level);
+  return dir === 'low' ? '▼' : dir === 'high' ? '▲' : '';
+}
+
+export function getGlucoseDirectionFromRanges(
+  valueMmol: number,
+  ranges: readonly { key: string; min?: number; max?: number; color: string }[]
+): GlucoseDirection {
+  return getGlucoseDirection(getGlucoseLevelFromRanges(valueMmol, ranges));
+}
+
+export function getGlucoseArrowFromRanges(
+  valueMmol: number,
+  ranges: readonly { key: string; min?: number; max?: number; color: string }[]
+): string {
+  return getGlucoseArrow(getGlucoseLevelFromRanges(valueMmol, ranges));
+}
 
 export function mmolToMgdl(valueMmol: number): number {
   return Math.round(valueMmol * MGDL_PER_MMOLL);

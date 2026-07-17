@@ -1,4 +1,10 @@
-import { getGlucoseLevel, getGlucoseColor, GLUCOSE_RANGES } from '../types';
+import {
+  getGlucoseLevel,
+  getGlucoseColor,
+  getGlucoseDirection,
+  getGlucoseArrow,
+  GLUCOSE_RANGES,
+} from '../types';
 
 describe('getGlucoseLevel', () => {
   it('returns proper levels for hypo ranges', () => {
@@ -43,9 +49,40 @@ describe('getGlucoseColor', () => {
     expect(getGlucoseColor(12.0)).toBe('#FF9500');
   });
 
-  it('returns red for very high glucose', () => {
+  it('returns purple for very high glucose (red is reserved for hypo)', () => {
     expect(getGlucoseColor(16.0)).toBe(GLUCOSE_RANGES.very_high.color);
-    expect(getGlucoseColor(16.0)).toBe('#FF3B30');
+    expect(getGlucoseColor(16.0)).toBe('#AF52DE');
+  });
+
+  it('never reuses a hypo colour for a hyper tier (direction encoding)', () => {
+    const hypoColors = [
+      GLUCOSE_RANGES.severe_low.color,
+      GLUCOSE_RANGES.low.color,
+      GLUCOSE_RANGES.below_target.color,
+    ];
+    expect(hypoColors).not.toContain(GLUCOSE_RANGES.high.color);
+    expect(hypoColors).not.toContain(GLUCOSE_RANGES.very_high.color);
+  });
+});
+
+describe('getGlucoseDirection / getGlucoseArrow', () => {
+  it('maps hypo tiers to low / ▼', () => {
+    for (const level of ['severe_low', 'low', 'below_target'] as const) {
+      expect(getGlucoseDirection(level)).toBe('low');
+      expect(getGlucoseArrow(level)).toBe('▼');
+    }
+  });
+
+  it('maps hyper tiers to high / ▲', () => {
+    for (const level of ['high', 'very_high'] as const) {
+      expect(getGlucoseDirection(level)).toBe('high');
+      expect(getGlucoseArrow(level)).toBe('▲');
+    }
+  });
+
+  it('maps normal to normal / empty arrow', () => {
+    expect(getGlucoseDirection('normal')).toBe('normal');
+    expect(getGlucoseArrow('normal')).toBe('');
   });
 });
 

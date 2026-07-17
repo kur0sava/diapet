@@ -218,7 +218,8 @@ export const ru = {
     readings: 'измерений',
     deleteConfirm: 'Удалить это измерение?',
     chartNormal: 'Норма 4–9 ммоль/л',
-    chartOutOfRange: 'Вне нормы',
+    chartLow: 'Низкая',
+    chartHigh: 'Высокая',
     saveError: 'Не удалось сохранить данные',
     petNotFound: 'Питомец не найден',
     petChangedDuringEntry:

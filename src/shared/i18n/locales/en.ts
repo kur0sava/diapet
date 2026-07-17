@@ -217,7 +217,8 @@ export const en = {
     readings: 'readings',
     deleteConfirm: 'Delete this reading?',
     chartNormal: 'Normal 4–9 mmol/L',
-    chartOutOfRange: 'Out of range',
+    chartLow: 'Low',
+    chartHigh: 'High',
     saveError: 'Failed to save data',
     petNotFound: 'Pet not found',
     petChangedDuringEntry:

@@ -18,11 +18,12 @@ export const Colors = {
   info: '#5AC8FA',
   infoLight: '#E8F7FF',
 
-  // Glucose levels
+  // Glucose levels — colour encodes danger direction: red family is reserved
+  // for hypo, hyper escalates orange → purple (never red).
   glucoseLow: '#FF3B30',
   glucoseNormal: '#34C759',
   glucoseHigh: '#FF9500',
-  glucoseVeryHigh: '#FF3B30',
+  glucoseVeryHigh: '#AF52DE',
 
   // Gradients
   gradients: {

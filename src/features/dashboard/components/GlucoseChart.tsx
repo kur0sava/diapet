@@ -2,11 +2,15 @@ import React from 'react';
 import { View, Text, StyleSheet, useWindowDimensions } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '@shared/theme';
-import { GlucoseReading, getGlucoseColorFromRanges } from '@storage/domain/types';
+import {
+  GlucoseReading,
+  getGlucoseColorFromRanges,
+  getGlucoseDirectionFromRanges,
+} from '@storage/domain/types';
 import type { PetSpecies } from '@storage/domain/types';
 import { getSpeciesConfig } from '@shared/config/speciesConfig';
 import { formatShortDate } from '@shared/utils/dateUtils';
-import Svg, { Path } from 'react-native-svg';
+import Svg, { Path, Circle, Polygon } from 'react-native-svg';
 
 const CHART_HEIGHT = 120;
 const Y_AXIS_WIDTH = 30;
@@ -229,24 +233,35 @@ export function GlucoseChart({ data, species }: Props) {
           </Svg>
         )}
 
-        {/* Data points (daily averages) */}
+        {/* Data points (daily averages). Marker SHAPE duplicates the danger
+            direction so colour-blind users can still tell hypo from hyper:
+            ▼ below range, ● in range, ▲ above range. */}
         {daily.map((day, i) => {
           const x = getX(i);
           const y = getY(day.avg);
           const color = getGlucoseColorFromRanges(day.avg, speciesRanges);
+          const direction = getGlucoseDirectionFromRanges(day.avg, speciesRanges);
           return (
             <View key={`dot-${day.date}`}>
-              <View
-                style={[
-                  styles.dot,
-                  {
-                    left: x - 5,
-                    top: y - 5,
-                    backgroundColor: color,
-                    borderColor: theme.colors.surface,
-                  },
-                ]}
-              />
+              <Svg width={12} height={12} style={{ position: 'absolute', left: x - 6, top: y - 6 }}>
+                {direction === 'normal' ? (
+                  <Circle
+                    cx={6}
+                    cy={6}
+                    r={4}
+                    fill={color}
+                    stroke={theme.colors.surface}
+                    strokeWidth={1.5}
+                  />
+                ) : (
+                  <Polygon
+                    points={direction === 'low' ? '1,2 11,2 6,11' : '6,1 11,10 1,10'}
+                    fill={color}
+                    stroke={theme.colors.surface}
+                    strokeWidth={1.5}
+                  />
+                )}
+              </Svg>
               {/* Show count badge when >1 reading per day */}
               {day.count > 1 && (
                 <View
@@ -294,8 +309,14 @@ export function GlucoseChart({ data, species }: Props) {
         })}
       </View>
 
-      {/* Legend */}
+      {/* Legend — mirrors the marker shapes (▼ hypo / ● normal / ▲ hyper) */}
       <View style={styles.legend}>
+        <View style={styles.legendItem}>
+          <Text style={[styles.legendGlyph, { color: theme.colors.glucoseLow }]}>▼</Text>
+          <Text style={[styles.legendText, { color: theme.colors.textSecondary }]}>
+            {t('glucose.chartLow')}
+          </Text>
+        </View>
         <View style={styles.legendItem}>
           <View style={[styles.legendDot, { backgroundColor: theme.colors.success }]} />
           <Text style={[styles.legendText, { color: theme.colors.textSecondary }]}>
@@ -303,9 +324,9 @@ export function GlucoseChart({ data, species }: Props) {
           </Text>
         </View>
         <View style={styles.legendItem}>
-          <View style={[styles.legendDot, { backgroundColor: theme.colors.danger }]} />
+          <Text style={[styles.legendGlyph, { color: theme.colors.glucoseHigh }]}>▲</Text>
           <Text style={[styles.legendText, { color: theme.colors.textSecondary }]}>
-            {t('glucose.chartOutOfRange')}
+            {t('glucose.chartHigh')}
           </Text>
         </View>
       </View>
@@ -319,7 +340,6 @@ const styles = StyleSheet.create({
   axisLabel: { fontSize: 9 },
   chart: { marginLeft: Y_AXIS_WIDTH + 4, position: 'relative' },
   normalZone: { position: 'absolute', left: 0, right: 0 },
-  dot: { position: 'absolute', width: 10, height: 10, borderRadius: 5, borderWidth: 2 },
   rangeBar: { position: 'absolute', width: 3, borderRadius: 1.5 },
   countBadge: { position: 'absolute', borderRadius: 6, paddingHorizontal: 3, paddingVertical: 0.5 },
   countText: { fontSize: 8, fontWeight: '600' },
@@ -332,5 +352,6 @@ const styles = StyleSheet.create({
   legend: { flexDirection: 'row', gap: 16, marginTop: 8 },
   legendItem: { flexDirection: 'row', alignItems: 'center', gap: 4 },
   legendDot: { width: 8, height: 8, borderRadius: 4 },
+  legendGlyph: { fontSize: 11, lineHeight: 13 },
   legendText: { fontSize: 11 },
 });
