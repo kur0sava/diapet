@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import Animated, { FadeOut, SlideInDown, Easing } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -38,7 +38,11 @@ const CATEGORY_CONFIG: Record<HintCategory, CategoryConfig> = {
   },
 };
 
-const AUTO_DISMISS_MS = 10_000;
+// Y6 (design audit 2026-07-17): was 10s — 2-3 lines of medical text vanished
+// before an owner with their hands full of pet could read them, and hints
+// have no history to bring them back. 25s, and any touch on the card cancels
+// the timer for good (the user is reading; only «Понятно» closes it then).
+const AUTO_DISMISS_MS = 25_000;
 
 // ---------------------------------------------------------------------------
 // Component
@@ -58,12 +62,14 @@ export function HintCard() {
   // Tab bar in MainNavigator is 64 + max(insets.bottom, 8) tall — keep the card above it
   const bottomOffset = 64 + Math.max(insets.bottom, 8) + 16;
 
-  // Auto-dismiss after 10 seconds
+  // Auto-dismiss, unless the user has touched this hint's card
+  const [touchedHintId, setTouchedHintId] = useState<string | null>(null);
+  const paused = currentHint !== null && touchedHintId === currentHint.id;
   useEffect(() => {
-    if (!currentHint) return;
+    if (!currentHint || paused) return;
     const timer = setTimeout(dismissHint, AUTO_DISMISS_MS);
     return () => clearTimeout(timer);
-  }, [currentHint, dismissHint]);
+  }, [currentHint, paused, dismissHint]);
 
   if (!currentHint) return null;
 
@@ -74,6 +80,7 @@ export function HintCard() {
       entering={SlideInDown.duration(400).easing(Easing.out(Easing.cubic))}
       exiting={FadeOut.duration(250)}
       style={[styles.card, { bottom: bottomOffset }]}
+      onTouchStart={() => setTouchedHintId(currentHint.id)}
     >
       {/* Header row: icon + category label */}
       <View style={styles.header}>
