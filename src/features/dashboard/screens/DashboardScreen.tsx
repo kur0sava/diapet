@@ -605,8 +605,9 @@ export default function DashboardScreen() {
           </TouchableOpacity>
         )}
 
-        {/* H9 First Win — pinned onboarding card */}
-        <FirstStepsCard />
+        {/* H9 First Win — pinned onboarding card. Banner budget (Y5): at most
+            one auxiliary block at a time — the trial banner wins. */}
+        {!showTrialBanner && <FirstStepsCard />}
 
         {/* Quick Actions */}
         <View style={styles.section}>

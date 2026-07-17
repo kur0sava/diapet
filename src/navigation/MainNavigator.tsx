@@ -21,6 +21,7 @@ import LogFeedingScreen from '@features/glucose/screens/LogFeedingScreen';
 import GlucoseListScreen from '@features/glucose/screens/GlucoseListScreen';
 import SymptomsListScreen from '@features/symptoms/screens/SymptomsListScreen';
 import AddSymptomScreen from '@features/symptoms/screens/AddSymptomScreen';
+import { QuickAddButton } from './components/QuickAddButton';
 import SymptomDetailScreen from '@features/symptoms/screens/SymptomDetailScreen';
 import ArticleListScreen from '@features/encyclopedia/screens/ArticleListScreen';
 import ArticleDetailScreen from '@features/encyclopedia/screens/ArticleDetailScreen';
@@ -294,6 +295,10 @@ function MoreStackNavigator() {
   );
 }
 
+function NullScreen() {
+  return null;
+}
+
 export default function MainNavigator() {
   const { theme } = useTheme();
   const { t } = useTranslation();
@@ -350,6 +355,18 @@ export default function MainNavigator() {
         name="SymptomsTab"
         component={SymptomsStackNavigator}
         options={{ title: t('navigation.symptoms') }}
+      />
+      <Tab.Screen
+        name="AddTab"
+        component={NullScreen}
+        options={{
+          title: '',
+          tabBarButton: () => <QuickAddButton />,
+        }}
+        listeners={{
+          // Safety net: the custom button never navigates, but block it anyway
+          tabPress: e => e.preventDefault(),
+        }}
       />
       {showAiTab && (
         <Tab.Screen
