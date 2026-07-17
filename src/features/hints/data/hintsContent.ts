@@ -50,8 +50,8 @@ export const HINTS: HintContent[] = [
     stage: 'week1',
     category: 'support',
     timeOfDay: 'evening',
-    ru: 'Первые дни — самые сложные. Волнение совершенно нормально, и у тебя уже есть всё, что нужно, чтобы справиться. 💪',
-    en: 'The first days are the hardest. Feeling nervous is completely normal, and you already have everything it takes to get through this. 💪',
+    ru: 'Первые дни — самые сложные. Волнение совершенно нормально, и у тебя уже есть всё, что нужно, чтобы справиться.',
+    en: 'The first days are the hardest. Feeling nervous is completely normal, and you already have everything it takes to get through this.',
   },
   {
     id: 'inj_w1_d2m',
@@ -113,8 +113,8 @@ export const HINTS: HintContent[] = [
     stage: 'week1',
     category: 'medical_fact',
     timeOfDay: 'morning',
-    ru: 'Регулярность важнее точности минуты. Постарайся делать уколы в одно и то же время с отклонением не более 1 часа — это помогает стабилизировать уровень глюкозы. 🐱',
-    en: 'Consistency matters more than hitting the exact minute. Try to give injections at the same time each day, within a 1-hour window — this helps stabilize glucose levels. 🐱',
+    ru: 'Регулярность важнее точности минуты. Постарайся делать уколы в одно и то же время с отклонением не более 1 часа — это помогает стабилизировать уровень глюкозы.',
+    en: 'Consistency matters more than hitting the exact minute. Try to give injections at the same time each day, within a 1-hour window — this helps stabilize glucose levels.',
   },
   {
     id: 'inj_w1_d5e',
@@ -158,8 +158,8 @@ export const HINTS: HintContent[] = [
     stage: 'week1',
     category: 'support',
     timeOfDay: 'evening',
-    ru: 'Ты уже завершил первую неделю. Это не просто цифра — это 14 уколов, 14 раз ты выбрал здоровье своего питомца. ❤️',
-    en: "You've just finished your first week. That's not just a number — it's 14 injections, 14 times you chose your pet's health. ❤️",
+    ru: 'Ты уже завершил первую неделю. Это не просто цифра — это 14 уколов, 14 раз ты выбрал здоровье своего питомца.',
+    en: "You've just finished your first week. That's not just a number — it's 14 injections, 14 times you chose your pet's health.",
   },
 
   // ===========================================================================
@@ -289,8 +289,8 @@ export const HINTS: HintContent[] = [
     stage: 'week2',
     category: 'support',
     timeOfDay: 'evening',
-    ru: 'Две недели позади. Ты справился со всем, что казалось невозможным в первый день. 💪',
-    en: "Two weeks down. You've handled everything that seemed impossible on day one. 💪",
+    ru: 'Две недели позади. Ты справился со всем, что казалось невозможным в первый день.',
+    en: "Two weeks down. You've handled everything that seemed impossible on day one.",
   },
 
   // ===========================================================================
@@ -375,8 +375,8 @@ export const HINTS: HintContent[] = [
     stage: 'week3',
     category: 'support',
     timeOfDay: 'morning',
-    ru: 'На третьей неделе многие замечают: питомец сам приходит к месту кормления в нужное время. Рутина работает для вас обоих. 🐾',
-    en: 'By week three, many people notice their pet starts coming to the feeding spot on its own. The routine works for both of you. 🐾',
+    ru: 'На третьей неделе многие замечают: питомец сам приходит к месту кормления в нужное время. Рутина работает для вас обоих.',
+    en: 'By week three, many people notice their pet starts coming to the feeding spot on its own. The routine works for both of you.',
   },
   {
     id: 'inj_w3_d5e',
@@ -471,8 +471,8 @@ export const HINTS: HintContent[] = [
     stage: 'week4',
     category: 'support',
     timeOfDay: 'morning',
-    ru: 'На четвёртой неделе многие замечают, что уколы занимают меньше умственных сил. Это потому что ты стал настоящим специалистом. 💉',
-    en: "By week four, many people notice injections take less mental effort. That's because you've become genuinely skilled. 💉",
+    ru: 'На четвёртой неделе многие замечают, что уколы занимают меньше умственных сил. Это потому что ты стал настоящим специалистом.',
+    en: "By week four, many people notice injections take less mental effort. That's because you've become genuinely skilled.",
   },
   {
     id: 'inj_w4_d3e',
@@ -525,8 +525,8 @@ export const HINTS: HintContent[] = [
     stage: 'week4',
     category: 'support',
     timeOfDay: 'morning',
-    ru: 'Ты стал частью небольшого, но очень преданного сообщества людей, которые каждый день делают всё возможное для своих питомцев. ❤️',
-    en: "You've become part of a small but deeply dedicated community of people who do everything they can for their pets every single day. ❤️",
+    ru: 'Ты стал частью небольшого, но очень преданного сообщества людей, которые каждый день делают всё возможное для своих питомцев.',
+    en: "You've become part of a small but deeply dedicated community of people who do everything they can for their pets every single day.",
   },
   {
     id: 'inj_w4_d6e',
@@ -584,8 +584,8 @@ export const HINTS: HintContent[] = [
     stage: 'days29_30',
     category: 'medical_fact',
     timeOfDay: 'morning',
-    ru: 'Первый месяц — критический для стабилизации. Ты его прошёл. Продолжай в том же ритме — питомец это оценит. 🐾',
-    en: 'The first month is critical for stabilisation. You made it through. Keep the same rhythm — your pet will feel the difference. 🐾',
+    ru: 'Первый месяц — критический для стабилизации. Ты его прошёл. Продолжай в том же ритме — питомец это оценит.',
+    en: 'The first month is critical for stabilisation. You made it through. Keep the same rhythm — your pet will feel the difference.',
   },
   {
     id: 'inj_w5_d2e',
@@ -593,8 +593,8 @@ export const HINTS: HintContent[] = [
     stage: 'days29_30',
     category: 'support',
     timeOfDay: 'evening',
-    ru: '30 дней. Твой питомец не может сказать спасибо, но каждый день, когда он ест, играет и спит рядом — это его ответ тебе. ❤️',
-    en: "30 days. Your pet can't say thank you, but every day they eat, play, and sleep beside you — that's their answer to you. ❤️",
+    ru: '30 дней. Твой питомец не может сказать спасибо, но каждый день, когда он ест, играет и спит рядом — это его ответ тебе.',
+    en: "30 days. Your pet can't say thank you, but every day they eat, play, and sleep beside you — that's their answer to you.",
   },
 
   // ===========================================================================
@@ -809,8 +809,8 @@ export const HINTS: HintContent[] = [
     stage: 'week4',
     category: 'support',
     timeOfDay: 'any',
-    ru: 'Мониторинг глюкозы — это не бесконечная тревога. Это инструмент контроля, который даёт уверенность. Ты умеешь им пользоваться. 💪',
-    en: "Monitoring glucose isn't endless anxiety. It's a control tool that gives you confidence. You know how to use it. 💪",
+    ru: 'Мониторинг глюкозы — это не бесконечная тревога. Это инструмент контроля, который даёт уверенность. Ты умеешь им пользоваться.',
+    en: "Monitoring glucose isn't endless anxiety. It's a control tool that gives you confidence. You know how to use it.",
   },
   {
     id: 'glu_w4_04',
@@ -877,8 +877,8 @@ export const HINTS: HintContent[] = [
     stage: 'days29_30',
     category: 'support',
     timeOfDay: 'any',
-    ru: 'Питомец не знает слова "диабет". Он знает только одно: ты здесь, каждый день, рядом. ❤️',
-    en: 'Your pet doesn\'t know the word "diabetes." They only know one thing: you\'re here, every day, right beside them. ❤️',
+    ru: 'Питомец не знает слова "диабет". Он знает только одно: ты здесь, каждый день, рядом.',
+    en: 'Your pet doesn\'t know the word "diabetes." They only know one thing: you\'re here, every day, right beside them.',
   },
   {
     id: 'glu_w5_05',
@@ -1049,8 +1049,8 @@ export const HINTS: HintContent[] = [
     stage: 'week3',
     category: 'support',
     timeOfDay: 'any',
-    ru: 'Строгое расписание — это не тюрьма для питомца, а его безопасность. С каждой неделей ты видишь, как стабильность помогает. 🐾',
-    en: "A strict schedule isn't a prison for your pet — it's their safety. Each week you can see how consistency helps. 🐾",
+    ru: 'Строгое расписание — это не тюрьма для питомца, а его безопасность. С каждой неделей ты видишь, как стабильность помогает.',
+    en: "A strict schedule isn't a prison for your pet — it's their safety. Each week you can see how consistency helps.",
   },
   {
     id: 'feed_w3_04',
@@ -1135,8 +1135,8 @@ export const HINTS: HintContent[] = [
     stage: 'week4',
     category: 'support',
     timeOfDay: 'any',
-    ru: 'Четыре недели строгого расписания кормления. Ты сделал это. Твой питомец в хороших руках. ❤️',
-    en: 'Four weeks of strict feeding schedule. You did it. Your pet is in good hands. ❤️',
+    ru: 'Четыре недели строгого расписания кормления. Ты сделал это. Твой питомец в хороших руках.',
+    en: 'Four weeks of strict feeding schedule. You did it. Your pet is in good hands.',
   },
 
   // ===========================================================================
@@ -1194,8 +1194,8 @@ export const HINTS: HintContent[] = [
     stage: 'days29_30',
     category: 'support',
     timeOfDay: 'any',
-    ru: 'Финальный день. Питомец ел вовремя все 30 дней — во многом благодаря тебе. 🐾',
-    en: 'Final day. Your pet ate on time for all 30 days — largely because of you. 🐾',
+    ru: 'Финальный день. Питомец ел вовремя все 30 дней — во многом благодаря тебе.',
+    en: 'Final day. Your pet ate on time for all 30 days — largely because of you.',
   },
 
   // ===========================================================================
@@ -1226,8 +1226,8 @@ export const HINTS: HintContent[] = [
     stage: 'week1',
     category: 'support',
     timeOfDay: 'any',
-    ru: 'Каждое утро ты начинаешь день с заботы о своём питомце. Это уже говорит о тебе всё. ❤️',
-    en: 'Every morning you start your day by caring for your pet. That already says everything about you. ❤️',
+    ru: 'Каждое утро ты начинаешь день с заботы о своём питомце. Это уже говорит о тебе всё.',
+    en: 'Every morning you start your day by caring for your pet. That already says everything about you.',
   },
 
   // ===========================================================================
@@ -1290,8 +1290,8 @@ export const HINTS: HintContent[] = [
     stage: 'week3',
     category: 'support',
     timeOfDay: 'any',
-    ru: 'Утро — хорошее время напомнить себе: ты делаешь всё возможное. Этого достаточно. 💪',
-    en: "Morning is a good time to remind yourself: you're doing everything possible. That's enough. 💪",
+    ru: 'Утро — хорошее время напомнить себе: ты делаешь всё возможное. Этого достаточно.',
+    en: "Morning is a good time to remind yourself: you're doing everything possible. That's enough.",
   },
 
   // ===========================================================================
@@ -1313,8 +1313,8 @@ export const HINTS: HintContent[] = [
     stage: 'days29_30',
     category: 'support',
     timeOfDay: 'any',
-    ru: 'Почти финиш. Сегодня — ещё один день, который ты проведёшь рядом со своим питомцем. Это и есть главное. ❤️',
-    en: "Almost there. Today is one more day you'll spend beside your pet. That's what matters most. ❤️",
+    ru: 'Почти финиш. Сегодня — ещё один день, который ты проведёшь рядом со своим питомцем. Это и есть главное.',
+    en: "Almost there. Today is one more day you'll spend beside your pet. That's what matters most.",
   },
   {
     id: 'morn_w5_03',
