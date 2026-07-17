@@ -626,7 +626,7 @@ export default function DashboardScreen() {
           </View>
           <Card>
             {glucoseHistory && glucoseHistory.length > 0 ? (
-              <GlucoseChart data={glucoseHistory} species={activePet?.species} />
+              <GlucoseChart data={glucoseHistory} species={activePet?.species} unit={glucoseUnit} />
             ) : (
               <View style={styles.noData}>
                 <Icon

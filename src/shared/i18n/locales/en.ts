@@ -216,7 +216,7 @@ export const en = {
     average: 'Average',
     readings: 'readings',
     deleteConfirm: 'Delete this reading?',
-    chartNormal: 'Normal 4–9 mmol/L',
+    chartNormal: 'Normal {{low}}–{{high}}',
     chartLow: 'Low',
     chartHigh: 'High',
     saveError: 'Failed to save data',

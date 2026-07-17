@@ -6,8 +6,9 @@ import {
   GlucoseReading,
   getGlucoseColorFromRanges,
   getGlucoseDirectionFromRanges,
+  mmolToMgdl,
 } from '@storage/domain/types';
-import type { PetSpecies } from '@storage/domain/types';
+import type { PetSpecies, GlucoseUnit } from '@storage/domain/types';
 import { getSpeciesConfig } from '@shared/config/speciesConfig';
 import { formatShortDate } from '@shared/utils/dateUtils';
 import Svg, { Path, Circle, Polygon } from 'react-native-svg';
@@ -28,6 +29,8 @@ interface DailyPoint {
 interface Props {
   data: GlucoseReading[];
   species?: PetSpecies;
+  /** Display unit for axis labels. Internal math always runs in mmol/L. */
+  unit?: GlucoseUnit;
 }
 
 /** Aggregate readings by calendar day (local timezone). */
@@ -57,11 +60,18 @@ function aggregateByDay(readings: GlucoseReading[]): DailyPoint[] {
     }));
 }
 
-export function GlucoseChart({ data, species }: Props) {
+export function GlucoseChart({ data, species, unit = 'mmol/L' }: Props) {
   const glucoseConfig = getSpeciesConfig(species ?? 'cat').glucose;
   const speciesRanges = glucoseConfig.ranges;
   const { t } = useTranslation();
   const { theme } = useTheme();
+  // The chart computes everything in mmol/L; only the LABELS convert. Before
+  // this, a mg/dL user saw "117 mg/dL" on the status card and a bare "4…9"
+  // axis next to it (R4, design audit 2026-07-17).
+  const isMgdl = unit === 'mg/dL';
+  const axisValue = (vMmol: number) => (isMgdl ? String(mmolToMgdl(vMmol)) : vMmol.toFixed(0));
+  const rangeValue = (vMmol: number) => (isMgdl ? String(mmolToMgdl(vMmol)) : String(vMmol));
+  const unitLabel = isMgdl ? t('common.mg_dl') : t('common.mmol_l');
   const { width: screenWidth } = useWindowDimensions();
   const CHART_WIDTH = Math.max(screenWidth - 80 - Y_AXIS_WIDTH, 50);
 
@@ -150,7 +160,7 @@ export function GlucoseChart({ data, species }: Props) {
               { color: theme.colors.textTertiary, position: 'absolute', top: getY(maxVal) - 5 },
             ]}
           >
-            {maxVal.toFixed(0)}
+            {axisValue(maxVal)}
           </Text>
         )}
         <Text
@@ -159,7 +169,7 @@ export function GlucoseChart({ data, species }: Props) {
             { color: theme.colors.success, position: 'absolute', top: getY(normalMax) - 5 },
           ]}
         >
-          {normalMax}
+          {rangeValue(normalMax)}
         </Text>
         <Text
           style={[
@@ -167,7 +177,7 @@ export function GlucoseChart({ data, species }: Props) {
             { color: theme.colors.success, position: 'absolute', top: getY(normalMin) - 5 },
           ]}
         >
-          {normalMin}
+          {rangeValue(normalMin)}
         </Text>
         {showMinLabel && (
           <Text
@@ -176,13 +186,15 @@ export function GlucoseChart({ data, species }: Props) {
               { color: theme.colors.textTertiary, position: 'absolute', top: getY(minVal) - 5 },
             ]}
           >
-            {minVal.toFixed(0)}
+            {axisValue(minVal)}
           </Text>
         )}
       </View>
 
       {/* Chart area */}
       <View style={[styles.chart, { width: CHART_WIDTH, height: CHART_HEIGHT }]}>
+        {/* Unit caption — axis numbers are meaningless without it */}
+        <Text style={[styles.unitLabel, { color: theme.colors.textTertiary }]}>{unitLabel}</Text>
         {/* Normal zone band */}
         <View
           style={[
@@ -320,7 +332,11 @@ export function GlucoseChart({ data, species }: Props) {
         <View style={styles.legendItem}>
           <View style={[styles.legendDot, { backgroundColor: theme.colors.success }]} />
           <Text style={[styles.legendText, { color: theme.colors.textSecondary }]}>
-            {t('glucose.chartNormal')}
+            {t('glucose.chartNormal', {
+              low: rangeValue(normalMin),
+              high: rangeValue(normalMax),
+              unit: unitLabel,
+            })}
           </Text>
         </View>
         <View style={styles.legendItem}>
@@ -353,5 +369,6 @@ const styles = StyleSheet.create({
   legendItem: { flexDirection: 'row', alignItems: 'center', gap: 4 },
   legendDot: { width: 8, height: 8, borderRadius: 4 },
   legendGlyph: { fontSize: 11, lineHeight: 13 },
+  unitLabel: { position: 'absolute', top: 0, right: 2, fontSize: 9, zIndex: 1 },
   legendText: { fontSize: 11 },
 });

@@ -217,7 +217,7 @@ export const ru = {
     average: 'Среднее',
     readings: 'измерений',
     deleteConfirm: 'Удалить это измерение?',
-    chartNormal: 'Норма 4–9 ммоль/л',
+    chartNormal: 'Норма {{low}}–{{high}}',
     chartLow: 'Низкая',
     chartHigh: 'Высокая',
     saveError: 'Не удалось сохранить данные',
