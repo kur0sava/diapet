@@ -21,6 +21,7 @@ import { useTranslation } from 'react-i18next';
 import i18n from '@shared/i18n';
 import { useTheme } from '@shared/theme';
 import { Button, Input } from '@shared/components/ui';
+import { useSuccessToast } from '@shared/components/ui/SuccessToast';
 import { expenseRepository } from '@storage/database';
 import { usePetStore } from '@shared/stores/petStore';
 import { ExpenseCategory, EXPENSE_ICON_NAMES, EXPENSE_COLORS } from '../types';
@@ -138,6 +139,7 @@ export default function AddExpenseScreen() {
       await queryClient.invalidateQueries({ queryKey: queryKeys.expenses.all });
       disableGuard();
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+      useSuccessToast.getState().show(t('common.saved'));
       navigation.goBack();
     } catch {
       Alert.alert(t('common.error'), t('expenses.saveError'));

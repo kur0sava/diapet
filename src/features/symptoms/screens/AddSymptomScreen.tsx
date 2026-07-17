@@ -17,6 +17,7 @@ import { useRoute, RouteProp } from '@react-navigation/native';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '@shared/theme';
 import { Button, Input } from '@shared/components/ui';
+import { useSuccessToast } from '@shared/components/ui/SuccessToast';
 import { symptomRepository, glucoseRepository } from '@storage/database';
 import { usePetStore } from '@shared/stores/petStore';
 import { storage, StorageKeys } from '@storage/mmkv/storage';
@@ -180,6 +181,7 @@ export default function AddSymptomScreen() {
       await queryClient.invalidateQueries({ queryKey: queryKeys.symptoms.all });
       disableGuard();
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+      useSuccessToast.getState().show(t('common.saved'));
       navigation.goBack();
     } catch {
       Alert.alert(t('common.error'), t('symptoms.saveError'));

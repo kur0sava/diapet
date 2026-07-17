@@ -2,6 +2,7 @@ import React, { ReactNode } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { HintCard } from './HintCard';
 import { AchievementModal } from './AchievementModal';
+import { SuccessToast } from '@shared/components/ui/SuccessToast';
 
 interface Props {
   children: ReactNode;
@@ -23,6 +24,7 @@ export function HintProvider({ children }: Props) {
       {children}
       <HintCard />
       <AchievementModal />
+      <SuccessToast />
     </View>
   );
 }

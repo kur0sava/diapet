@@ -423,9 +423,17 @@ export default function DashboardScreen() {
                   </View>
                 </View>
               </TouchableOpacity>
+              {/* Y7: SOS screams red only during an actual emergency alert;
+                  in the calm state it's a quiet outline — the owner shouldn't
+                  see alarm colour every time they open the app */}
               <TouchableOpacity
                 onPress={() => rootNavigation.navigate('Emergency')}
-                style={[styles.sosButton, { backgroundColor: theme.colors.danger }]}
+                style={[
+                  styles.sosButton,
+                  {
+                    backgroundColor: showEmergency ? theme.colors.danger : 'rgba(255,255,255,0.14)',
+                  },
+                ]}
               >
                 <Icon name="warning" size={16} color="#FFFFFF" style={{ marginRight: 4 }} />
                 <Text style={[styles.sosText, { fontFamily: theme.fonts.bold }]}>SOS</Text>

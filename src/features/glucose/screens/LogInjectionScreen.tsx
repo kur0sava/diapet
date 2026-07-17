@@ -21,6 +21,7 @@ import type { HomeStackParamList } from '@navigation/types';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '@shared/theme';
 import { Button, Input, Card } from '@shared/components/ui';
+import { useSuccessToast } from '@shared/components/ui/SuccessToast';
 import { injectionRepository } from '@storage/database';
 import { StorageKeys } from '@storage/mmkv/storage';
 import { findRecentInsulinDose } from '../utils/recentInsulinCheck';
@@ -141,6 +142,7 @@ export default function LogInjectionScreen() {
       clearEntryDraft(StorageKeys.INJECTION_DRAFT, targetPetId);
       disableGuard();
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+      useSuccessToast.getState().show(t('common.saved'));
       triggerAfterAction('injection');
       navigation.goBack();
     } catch {

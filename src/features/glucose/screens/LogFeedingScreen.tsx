@@ -20,6 +20,7 @@ import type { HomeStackParamList } from '@navigation/types';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '@shared/theme';
 import { Button, Input, Card } from '@shared/components/ui';
+import { useSuccessToast } from '@shared/components/ui/SuccessToast';
 import { feedingRepository } from '@storage/database';
 import { usePetStore } from '@shared/stores/petStore';
 import { useQueryClient } from '@tanstack/react-query';
@@ -194,6 +195,7 @@ export default function LogFeedingScreen() {
       await queryClient.invalidateQueries({ queryKey: queryKeys.diary.all });
       disableGuard();
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+      useSuccessToast.getState().show(t('common.saved'));
       triggerAfterAction('feeding');
       navigation.goBack();
     } catch {

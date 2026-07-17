@@ -16,6 +16,7 @@ import type { HomeStackParamList } from '@navigation/types';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '@shared/theme';
 import { Button, Input, Card } from '@shared/components/ui';
+import { useSuccessToast } from '@shared/components/ui/SuccessToast';
 import { glucoseRepository } from '@storage/database';
 import { usePetStore } from '@shared/stores/petStore';
 import { MealRelation, GlucoseUnit } from '../types';
@@ -348,6 +349,8 @@ export default function LogGlucoseScreen() {
           ]
         );
       } else {
+        // Y7: acknowledge the save — silence reads as "did it work?"
+        useSuccessToast.getState().show(t('common.saved'));
         navigation.goBack();
       }
     } catch {
