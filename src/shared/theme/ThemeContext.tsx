@@ -72,22 +72,29 @@ export type Theme = {
 const buildTheme = (isDark: boolean, species: PetSpecies = 'cat'): Theme => {
   const scheme = isDark ? Colors.dark : Colors.light;
   const speciesTheme = getSpeciesConfig(species).theme;
+  // In dark mode the pastel *Light fills from the light palette (#F0EBFF,
+  // #E8FBF0, …) punch bright holes into near-black surfaces. Derive them as
+  // translucent tints of the base colour instead — the same `color + alpha`
+  // technique the rest of the code already uses for tinted chips. *Light is
+  // only ever used as a background fill (verified: no text/icon usages), so
+  // alpha is safe.
+  const tint = (base: string) => `${base}26`;
   return {
     colors: {
       ...scheme,
       primary: speciesTheme.primary,
       primaryDark: speciesTheme.primaryDark,
-      primaryLight: speciesTheme.primaryLight,
+      primaryLight: isDark ? tint(speciesTheme.primary) : speciesTheme.primaryLight,
       secondary: speciesTheme.secondary,
-      secondaryLight: speciesTheme.secondaryLight,
+      secondaryLight: isDark ? tint(speciesTheme.secondary) : speciesTheme.secondaryLight,
       success: Colors.success,
-      successLight: Colors.successLight,
+      successLight: isDark ? tint(Colors.success) : Colors.successLight,
       warning: Colors.warning,
-      warningLight: Colors.warningLight,
+      warningLight: isDark ? tint(Colors.warning) : Colors.warningLight,
       danger: Colors.danger,
-      dangerLight: Colors.dangerLight,
+      dangerLight: isDark ? tint(Colors.danger) : Colors.dangerLight,
       info: Colors.info,
-      infoLight: Colors.infoLight,
+      infoLight: isDark ? tint(Colors.info) : Colors.infoLight,
       glucoseLow: Colors.glucoseLow,
       glucoseNormal: Colors.glucoseNormal,
       glucoseHigh: Colors.glucoseHigh,
