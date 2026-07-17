@@ -553,6 +553,9 @@ export const ru = {
     enterName: 'Введите имя',
     invalidTimeFormat: 'Введите время в формате ЧЧ:ММ',
     invalidWeight: 'Введите корректный вес (0–30 кг)',
+    photoGallery: 'Галерея',
+    photoCamera: 'Камера',
+    photoRemove: 'Убрать фото',
     saveError: 'Ошибка сохранения',
     deletePet: 'Удалить питомца',
     cantDeleteLastPet:

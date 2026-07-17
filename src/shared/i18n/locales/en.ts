@@ -553,6 +553,9 @@ export const en = {
     enterName: 'Enter name',
     invalidTimeFormat: 'Please enter time in HH:MM format',
     invalidWeight: 'Enter a valid weight (0–30 kg)',
+    photoGallery: 'Gallery',
+    photoCamera: 'Camera',
+    photoRemove: 'Remove photo',
     saveError: 'Save error',
     deletePet: 'Delete pet',
     cantDeleteLastPet:

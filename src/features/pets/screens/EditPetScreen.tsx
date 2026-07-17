@@ -13,7 +13,8 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useMoreNavigation } from '@navigation/hooks';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '@shared/theme';
-import { Button, Input } from '@shared/components/ui';
+import { Button, Input, PetAvatar } from '@shared/components/ui';
+import { pickPetPhoto, deletePetPhotoFile } from '../utils/petPhoto';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { petRepository, scheduleRepository, getDatabase } from '@storage/database';
 import { usePetStore } from '@shared/stores/petStore';
@@ -68,6 +69,13 @@ export default function EditPetScreen() {
   );
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [insulinType, setInsulinType] = useState(activePet?.insulinType ?? '');
+  const [photoUri, setPhotoUri] = useState<string | null>(activePet?.photoUri ?? null);
+  const originalPhotoUri = useRef<string | null>(activePet?.photoUri ?? null);
+  const handlePhotoPicked = (uri: string | null) => {
+    // A picked-but-not-yet-saved photo being replaced is an orphan file
+    if (photoUri && photoUri !== originalPhotoUri.current) void deletePetPhotoFile(photoUri);
+    setPhotoUri(uri);
+  };
   const [vetName, setVetName] = useState('');
   const [vetPhone, setVetPhone] = useState('');
   const [injectionTimes, setInjectionTimes] = useState<string[]>([]);
@@ -95,6 +103,7 @@ export default function EditPetScreen() {
     diabetesType,
     diagnosisDate,
     insulinType,
+    photoUri,
     vetName,
     vetPhone,
     injectionTimes,
@@ -206,6 +215,8 @@ export default function EditPetScreen() {
           diabetesType,
           diagnosisDate: diagnosisDate ? toDateOnly(diagnosisDate) : undefined,
           insulinType: insulinType || undefined,
+          // Key must be present even when null-ish so removal clears the column
+          photoUri: photoUri ?? undefined,
         });
         const existingInjections = await scheduleRepository.getInjectionTimes(activePet.id);
         for (const s of existingInjections) await scheduleRepository.deleteInjectionTime(s.id);
@@ -234,6 +245,11 @@ export default function EditPetScreen() {
       if (storage.getBoolean(StorageKeys.NOTIFICATIONS_ENABLED) === true) {
         await restoreScheduleNotifications().catch(() => {});
       }
+      // Photo replaced or removed → the old file is unreferenced now
+      if (originalPhotoUri.current && originalPhotoUri.current !== photoUri) {
+        void deletePetPhotoFile(originalPhotoUri.current);
+      }
+      originalPhotoUri.current = photoUri;
       await refreshActivePet();
       await queryClient.invalidateQueries({ queryKey: queryKeys.schedule.all });
       disableGuard();
@@ -340,6 +356,56 @@ export default function EditPetScreen() {
           <View style={{ width: 60 }} />
         </View>
         <ScrollView contentContainerStyle={styles.content}>
+          {/* Pet photo — the cheapest, strongest emotional hook in a pet app
+              (design audit 2026-07-17, "чего не хватает" №1) */}
+          <View style={styles.photoSection}>
+            <View style={[styles.photoCircle, { backgroundColor: theme.colors.primaryLight }]}>
+              <PetAvatar
+                photoUri={photoUri}
+                species={activePet?.species}
+                size={84}
+                faceSize={44}
+                faceColor={theme.colors.primary}
+              />
+            </View>
+            <View style={styles.photoButtons}>
+              <TouchableOpacity
+                style={[styles.photoBtn, { backgroundColor: theme.colors.surfaceSecondary }]}
+                onPress={async () => {
+                  const uri = await pickPetPhoto('gallery');
+                  if (uri) handlePhotoPicked(uri);
+                }}
+              >
+                <Icon name="images-outline" size={16} color={theme.colors.primary} />
+                <Text style={[styles.photoBtnText, { color: theme.colors.text }]}>
+                  {t('pets.photoGallery')}
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.photoBtn, { backgroundColor: theme.colors.surfaceSecondary }]}
+                onPress={async () => {
+                  const uri = await pickPetPhoto('camera');
+                  if (uri) handlePhotoPicked(uri);
+                }}
+              >
+                <Icon name="camera-outline" size={16} color={theme.colors.primary} />
+                <Text style={[styles.photoBtnText, { color: theme.colors.text }]}>
+                  {t('pets.photoCamera')}
+                </Text>
+              </TouchableOpacity>
+              {photoUri ? (
+                <TouchableOpacity
+                  style={[styles.photoBtn, { backgroundColor: theme.colors.surfaceSecondary }]}
+                  onPress={() => handlePhotoPicked(null)}
+                >
+                  <Icon name="trash-outline" size={16} color={theme.colors.danger} />
+                  <Text style={[styles.photoBtnText, { color: theme.colors.danger }]}>
+                    {t('pets.photoRemove')}
+                  </Text>
+                </TouchableOpacity>
+              ) : null}
+            </View>
+          </View>
           <Input
             label={t('pets.name')}
             value={name}
@@ -577,6 +643,25 @@ const styles = StyleSheet.create({
     borderBottomWidth: 0.5,
   },
   content: { padding: 20, gap: 14, paddingBottom: 40 },
+  photoSection: { alignItems: 'center', gap: 12, marginBottom: 4 },
+  photoCircle: {
+    width: 84,
+    height: 84,
+    borderRadius: 42,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  photoButtons: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center', gap: 8 },
+  photoBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 16,
+    minHeight: 36,
+  },
+  photoBtnText: { fontSize: 13, fontWeight: '500' },
   sectionHeader: { flexDirection: 'row', alignItems: 'center', marginTop: 8 },
   sectionTitle: { fontSize: 16 },
   timeRow: { flexDirection: 'row', alignItems: 'center' },

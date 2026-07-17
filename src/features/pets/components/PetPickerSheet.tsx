@@ -12,7 +12,7 @@ import { useTranslation } from 'react-i18next';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTheme } from '@shared/theme';
 import { Icon } from '@shared/components/ui/Icon';
-import { PetFace } from '@shared/components/ui/PetFace';
+import { PetAvatar } from '@shared/components/ui/PetAvatar';
 import type { Pet } from '@storage/domain/types';
 
 interface Props {
@@ -91,10 +91,12 @@ export function PetPickerSheet({ visible, pets, activePetId, onSelect, onAddPet,
                       },
                     ]}
                   >
-                    <PetFace
+                    <PetAvatar
+                      photoUri={pet.photoUri}
                       species={pet.species}
-                      size={26}
-                      color={isActive ? '#FFFFFF' : theme.colors.textSecondary}
+                      size={44}
+                      faceSize={26}
+                      faceColor={isActive ? '#FFFFFF' : theme.colors.textSecondary}
                     />
                   </View>
                   <View style={{ flex: 1 }}>

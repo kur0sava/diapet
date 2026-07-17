@@ -13,7 +13,8 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '@shared/theme';
 import { useMoreNavigation } from '@navigation/hooks';
-import { Button, Input, PetFace } from '@shared/components/ui';
+import { Button, Input, PetFace, PetAvatar } from '@shared/components/ui';
+import { pickPetPhoto, deletePetPhotoFile } from '../utils/petPhoto';
 import { Icon } from '@shared/components/ui/Icon';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { petRepository, scheduleRepository } from '@storage/database';
@@ -68,6 +69,12 @@ export default function AddPetScreen() {
   const [species, setSpecies] = useState<PetSpecies>('cat');
   const [name, setName] = useState('');
   const [gender, setGender] = useState<'male' | 'female'>('male');
+  const [photoUri, setPhotoUri] = useState<string | null>(null);
+  const handlePhotoPicked = (uri: string | null) => {
+    // Replacing a not-yet-saved photo leaves an orphan file — clean it up
+    if (photoUri) void deletePetPhotoFile(photoUri);
+    setPhotoUri(uri);
+  };
   // A3: weight is stored canonically in kg; this string holds the value as
   // typed in the currently-selected unit.
   const [weightKg, setWeightKg] = useState('');
@@ -190,6 +197,7 @@ export default function AddPetScreen() {
         birthYear: age ? new Date().getFullYear() - parseInt(age) : undefined,
         diabetesType,
         diagnosisDate: diagnosisDate ? toDateOnly(diagnosisDate) : undefined,
+        photoUri: photoUri ?? undefined,
       });
       try {
         for (const time of injectionTimes) {
@@ -279,6 +287,54 @@ export default function AddPetScreen() {
 
   const renderInfoStep = () => (
     <>
+      <View style={styles.photoSection}>
+        <View style={[styles.photoCircle, { backgroundColor: theme.colors.primaryLight }]}>
+          <PetAvatar
+            photoUri={photoUri}
+            species={species}
+            size={84}
+            faceSize={44}
+            faceColor={theme.colors.primary}
+          />
+        </View>
+        <View style={styles.photoButtons}>
+          <TouchableOpacity
+            style={[styles.photoBtn, { backgroundColor: theme.colors.surfaceSecondary }]}
+            onPress={async () => {
+              const uri = await pickPetPhoto('gallery');
+              if (uri) handlePhotoPicked(uri);
+            }}
+          >
+            <Icon name="images-outline" size={16} color={theme.colors.primary} />
+            <Text style={[styles.photoBtnText, { color: theme.colors.text }]}>
+              {t('pets.photoGallery')}
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.photoBtn, { backgroundColor: theme.colors.surfaceSecondary }]}
+            onPress={async () => {
+              const uri = await pickPetPhoto('camera');
+              if (uri) handlePhotoPicked(uri);
+            }}
+          >
+            <Icon name="camera-outline" size={16} color={theme.colors.primary} />
+            <Text style={[styles.photoBtnText, { color: theme.colors.text }]}>
+              {t('pets.photoCamera')}
+            </Text>
+          </TouchableOpacity>
+          {photoUri ? (
+            <TouchableOpacity
+              style={[styles.photoBtn, { backgroundColor: theme.colors.surfaceSecondary }]}
+              onPress={() => handlePhotoPicked(null)}
+            >
+              <Icon name="trash-outline" size={16} color={theme.colors.danger} />
+              <Text style={[styles.photoBtnText, { color: theme.colors.danger }]}>
+                {t('pets.photoRemove')}
+              </Text>
+            </TouchableOpacity>
+          ) : null}
+        </View>
+      </View>
       <View style={styles.field}>
         <Text style={[styles.label, { color: theme.colors.textSecondary }]}>
           {t('onboarding.selectSpecies')}
@@ -704,6 +760,25 @@ const styles = StyleSheet.create({
   content: { padding: 24, gap: 20, paddingBottom: 80 },
   field: { gap: 8 },
   label: { fontSize: 13, fontWeight: '500' },
+  photoSection: { alignItems: 'center', gap: 12, marginBottom: 4 },
+  photoCircle: {
+    width: 84,
+    height: 84,
+    borderRadius: 42,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  photoButtons: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center', gap: 8 },
+  photoBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 16,
+    minHeight: 36,
+  },
+  photoBtnText: { fontSize: 13, fontWeight: '500' },
   row: { flexDirection: 'row', gap: 12 },
   rowInputs: { flexDirection: 'row', gap: 12 },
   optionBtn: { padding: 14, borderRadius: 12, alignItems: 'center' },
