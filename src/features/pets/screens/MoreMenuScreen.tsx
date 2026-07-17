@@ -15,6 +15,7 @@ import { useTranslation } from 'react-i18next';
 import { useTheme } from '@shared/theme';
 import { usePetStore } from '@shared/stores/petStore';
 import { Icon } from '@shared/components/ui/Icon';
+import { PetFace } from '@shared/components/ui/PetFace';
 import type { IoniconName } from '@shared/components/ui';
 import { useSubscription } from '@features/subscription/hooks/useSubscription';
 import { isBackendConfigured } from '@shared/stores/subscriptionStore';
@@ -201,7 +202,7 @@ export default function MoreMenuScreen() {
             style={styles.petCard}
           >
             <View style={styles.petAvatar}>
-              <Icon name="paw" size={28} color="#fff" />
+              <PetFace species={activePet.species} size={30} color="#fff" />
             </View>
             <View style={styles.petInfo}>
               <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>

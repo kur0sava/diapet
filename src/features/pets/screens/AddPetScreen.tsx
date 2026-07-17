@@ -13,7 +13,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '@shared/theme';
 import { useMoreNavigation } from '@navigation/hooks';
-import { Button, Input } from '@shared/components/ui';
+import { Button, Input, PetFace } from '@shared/components/ui';
 import { Icon } from '@shared/components/ui/Icon';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { petRepository, scheduleRepository } from '@storage/database';
@@ -286,8 +286,8 @@ export default function AddPetScreen() {
         <View style={styles.speciesRow}>
           {(
             [
-              { value: 'cat' as PetSpecies, label: t('onboarding.speciesCat'), emoji: '🐱' },
-              { value: 'dog' as PetSpecies, label: t('onboarding.speciesDog'), emoji: '🐶' },
+              { value: 'cat' as PetSpecies, label: t('onboarding.speciesCat') },
+              { value: 'dog' as PetSpecies, label: t('onboarding.speciesDog') },
             ] as const
           ).map(opt => (
             <TouchableOpacity
@@ -305,7 +305,12 @@ export default function AddPetScreen() {
               onPress={() => setSpecies(opt.value)}
               activeOpacity={0.7}
             >
-              <Text style={styles.speciesEmoji}>{opt.emoji}</Text>
+              <PetFace
+                species={opt.value}
+                size={36}
+                color={species === opt.value ? theme.colors.primary : theme.colors.textSecondary}
+                style={{ marginBottom: 6 }}
+              />
               <Text
                 style={[
                   styles.speciesLabel,
@@ -342,8 +347,8 @@ export default function AddPetScreen() {
         <View style={styles.row}>
           {(
             [
-              { value: 'male', label: t('common.male'), icon: '♂️' },
-              { value: 'female', label: t('common.female'), icon: '♀️' },
+              { value: 'male', label: t('common.male'), icon: 'mars' },
+              { value: 'female', label: t('common.female'), icon: 'venus' },
             ] as const
           ).map(opt => (
             <TouchableOpacity
@@ -354,17 +359,25 @@ export default function AddPetScreen() {
                   backgroundColor:
                     gender === opt.value ? theme.colors.primary : theme.colors.surfaceSecondary,
                   flex: 1,
+                  flexDirection: 'row',
+                  justifyContent: 'center',
+                  gap: 6,
                 },
               ]}
               onPress={() => setGender(opt.value as 'male' | 'female')}
             >
+              <Icon
+                name={opt.icon}
+                size={16}
+                color={gender === opt.value ? '#fff' : theme.colors.text}
+              />
               <Text
                 style={{
                   color: gender === opt.value ? '#fff' : theme.colors.text,
                   fontWeight: '600',
                 }}
               >
-                {opt.icon} {opt.label}
+                {opt.label}
               </Text>
             </TouchableOpacity>
           ))}
@@ -703,7 +716,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 8,
   },
-  speciesEmoji: { fontSize: 40 },
   speciesLabel: { fontSize: 16 },
   dateBtn: { borderRadius: 12, overflow: 'hidden' },
   radioRow: {

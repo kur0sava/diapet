@@ -24,6 +24,7 @@ import {
 } from '@storage/domain/types';
 import { getSpeciesConfig } from '@shared/config/speciesConfig';
 import { Icon } from '@shared/components/ui/Icon';
+import { PetFace } from '@shared/components/ui/PetFace';
 import { usePetStore } from '@shared/stores/petStore';
 import { useSubscription } from '@features/subscription/hooks/useSubscription';
 import { TRIAL_REMINDER_DAYS } from '@features/subscription/utils/trial';
@@ -398,7 +399,7 @@ export default function DashboardScreen() {
                 }
               >
                 <View style={styles.petAvatar}>
-                  <Icon name="paw" size={20} color="#FFFFFF" />
+                  <PetFace species={activePet?.species} size={22} color="#FFFFFF" />
                 </View>
                 <View style={{ flexShrink: 1 }}>
                   <Text style={[styles.greeting, { fontFamily: theme.fonts.medium }]}>

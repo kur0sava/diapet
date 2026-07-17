@@ -73,6 +73,10 @@ import {
   Dumbbell,
   Pill,
   Activity,
+  Cat,
+  Dog,
+  Mars,
+  Venus,
   Clipboard,
   Scale,
   CircleHelp,
@@ -112,6 +116,12 @@ const ICON_MAP: Record<string, LucideIcon> = {
   // "Sign in with Google" label without imitating the trademark.
   'logo-google': AtSign,
   'swap-horizontal': ArrowLeftRight,
+
+  // Species & gender (v2.6: emoji → line-art sprites)
+  cat: Cat,
+  dog: Dog,
+  mars: Mars,
+  venus: Venus,
 
   // Navigation tabs
   home: House,

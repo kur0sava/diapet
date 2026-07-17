@@ -12,7 +12,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useOnboardingNavigation } from '@navigation/hooks';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '@shared/theme';
-import { Button, Input } from '@shared/components/ui';
+import { Button, Input, Icon, PetFace } from '@shared/components/ui';
 import type { PetSpecies } from '@storage/domain/types';
 import { getSpeciesConfig } from '@shared/config/speciesConfig';
 import DateTimePicker from '@react-native-community/datetimepicker';
@@ -129,8 +129,8 @@ export default function PetInfoScreen() {
   };
 
   const genderOptions = [
-    { value: 'male', label: t('common.male'), icon: '♂️' },
-    { value: 'female', label: t('common.female'), icon: '♀️' },
+    { value: 'male', label: t('common.male'), icon: 'mars' },
+    { value: 'female', label: t('common.female'), icon: 'venus' },
   ];
 
   const diabetesOptions = [
@@ -170,8 +170,8 @@ export default function PetInfoScreen() {
               <View style={styles.speciesRow}>
                 {(
                   [
-                    { value: 'cat' as PetSpecies, label: t('onboarding.speciesCat'), emoji: '🐱' },
-                    { value: 'dog' as PetSpecies, label: t('onboarding.speciesDog'), emoji: '🐶' },
+                    { value: 'cat' as PetSpecies, label: t('onboarding.speciesCat') },
+                    { value: 'dog' as PetSpecies, label: t('onboarding.speciesDog') },
                   ] as const
                 ).map(opt => (
                   <TouchableOpacity
@@ -192,7 +192,14 @@ export default function PetInfoScreen() {
                     accessibilityLabel={opt.label}
                     accessibilityState={{ selected: species === opt.value }}
                   >
-                    <Text style={styles.speciesEmoji}>{opt.emoji}</Text>
+                    <PetFace
+                      species={opt.value}
+                      size={36}
+                      color={
+                        species === opt.value ? theme.colors.primary : theme.colors.textSecondary
+                      }
+                      style={{ marginBottom: 6 }}
+                    />
                     <Text
                       style={[
                         styles.speciesLabel,
@@ -245,14 +252,21 @@ export default function PetInfoScreen() {
                     accessibilityLabel={opt.label}
                     accessibilityState={{ selected: gender === opt.value }}
                   >
-                    <Text
-                      style={{
-                        color: gender === opt.value ? '#fff' : theme.colors.text,
-                        fontWeight: '600',
-                      }}
-                    >
-                      {opt.icon} {opt.label}
-                    </Text>
+                    <View style={{ flexDirection: 'row', justifyContent: 'center', gap: 6 }}>
+                      <Icon
+                        name={opt.icon}
+                        size={16}
+                        color={gender === opt.value ? '#fff' : theme.colors.text}
+                      />
+                      <Text
+                        style={{
+                          color: gender === opt.value ? '#fff' : theme.colors.text,
+                          fontWeight: '600',
+                        }}
+                      >
+                        {opt.label}
+                      </Text>
+                    </View>
                   </TouchableOpacity>
                 ))}
               </View>
@@ -391,7 +405,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 8,
   },
-  speciesEmoji: { fontSize: 40 },
   speciesLabel: { fontSize: 16 },
   dateBtn: { overflow: 'hidden' },
   radioRow: {

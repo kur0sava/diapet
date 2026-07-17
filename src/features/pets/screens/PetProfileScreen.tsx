@@ -11,6 +11,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Icon } from '@shared/components/ui/Icon';
+import { PetFace } from '@shared/components/ui/PetFace';
 import { useMoreNavigation } from '@navigation/hooks';
 import { useTranslation } from 'react-i18next';
 import i18n from '@shared/i18n';
@@ -159,7 +160,7 @@ export default function PetProfileScreen() {
             colors={theme.gradients.primary as [string, string]}
             style={styles.avatar}
           >
-            <Icon name="paw" size={48} color="#fff" />
+            <PetFace species={activePet.species} size={52} color="#fff" />
           </LinearGradient>
           <Text
             style={[styles.petName, { color: theme.colors.text, fontFamily: theme.fonts.bold }]}

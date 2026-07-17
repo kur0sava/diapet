@@ -358,8 +358,8 @@ export default function EditPetScreen() {
             <View style={styles.row}>
               {(
                 [
-                  { value: 'male', label: t('common.male'), icon: '♂️' },
-                  { value: 'female', label: t('common.female'), icon: '♀️' },
+                  { value: 'male', label: t('common.male'), icon: 'mars' },
+                  { value: 'female', label: t('common.female'), icon: 'venus' },
                 ] as const
               ).map(opt => (
                 <TouchableOpacity
@@ -370,17 +370,25 @@ export default function EditPetScreen() {
                       backgroundColor:
                         gender === opt.value ? theme.colors.primary : theme.colors.surfaceSecondary,
                       flex: 1,
+                      flexDirection: 'row',
+                      justifyContent: 'center',
+                      gap: 6,
                     },
                   ]}
                   onPress={() => setGender(opt.value as PetGender)}
                 >
+                  <Icon
+                    name={opt.icon}
+                    size={16}
+                    color={gender === opt.value ? '#fff' : theme.colors.text}
+                  />
                   <Text
                     style={{
                       color: gender === opt.value ? '#fff' : theme.colors.text,
                       fontWeight: '600',
                     }}
                   >
-                    {opt.icon} {opt.label}
+                    {opt.label}
                   </Text>
                 </TouchableOpacity>
               ))}
