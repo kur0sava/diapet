@@ -13,10 +13,15 @@ import { GlucoseUnit } from '@storage/domain/types';
 import { Card } from '@shared/components/ui';
 import { GlucoseChart } from '../components/GlucoseChart';
 import { StatusCard } from '../components/StatusCard';
+import { GlucoseHeroCard } from '../components/GlucoseHeroCard';
 import { QuickActionButton } from '../components/QuickActionButton';
 import { FirstStepsCard } from '../components/FirstStepsCard';
 import { formatRelative, minutesUntil, formatCountdown, hoursSince } from '@shared/utils/dateUtils';
-import { getGlucoseColorFromRanges } from '@storage/domain/types';
+import {
+  getGlucoseColorFromRanges,
+  getGlucoseArrowFromRanges,
+  getGlucoseLevelFromRanges,
+} from '@storage/domain/types';
 import { getSpeciesConfig } from '@shared/config/speciesConfig';
 import { Icon } from '@shared/components/ui/Icon';
 import { usePetStore } from '@shared/stores/petStore';
@@ -264,6 +269,16 @@ export default function DashboardScreen() {
   );
   const trendArrow = getTrendArrow(trend);
   const trendLabel = getTrendLabel(trend, t);
+  const glucoseLevelLabel = latestGlucose
+    ? {
+        severe_low: t('glucose.severeLow'),
+        low: t('glucose.low'),
+        below_target: t('glucose.belowTarget'),
+        normal: t('glucose.normal'),
+        high: t('glucose.high'),
+        very_high: t('glucose.veryHigh'),
+      }[getGlucoseLevelFromRanges(latestGlucose.valueMmol, speciesRanges)]
+    : undefined;
 
   const quickActions = [
     {
@@ -411,32 +426,34 @@ export default function DashboardScreen() {
               </TouchableOpacity>
             </View>
 
-            {/* Status Cards inside gradient */}
+            {/* Glucose hero (R1) \u2014 the answer the owner opens the app for,
+                full-width and 42px; injection/feeding drop to a second row */}
+            <GlucoseHeroCard
+              label={t('dashboard.lastGlucose')}
+              value={
+                latestGlucose
+                  ? glucoseUnit === 'mg/dL'
+                    ? `${latestGlucose.valueMgdl}`
+                    : `${latestGlucose.valueMmol.toFixed(1)}`
+                  : '\u2014'
+              }
+              unitLabel={glucoseUnit === 'mg/dL' ? t('common.mg_dl') : t('common.mmol_l')}
+              color={
+                latestGlucose
+                  ? getGlucoseColorFromRanges(latestGlucose.valueMmol, speciesRanges)
+                  : theme.colors.textTertiary
+              }
+              statusLabel={glucoseLevelLabel}
+              dangerArrow={
+                latestGlucose
+                  ? getGlucoseArrowFromRanges(latestGlucose.valueMmol, speciesRanges)
+                  : undefined
+              }
+              trendArrow={latestGlucose ? trendArrow : undefined}
+              timeAgo={latestGlucose ? formatRelative(latestGlucose.recordedAt) : undefined}
+              style={{ marginTop: 4 }}
+            />
             <View style={styles.statusRow}>
-              <StatusCard
-                iconName="water-outline"
-                iconColor={
-                  latestGlucose
-                    ? getGlucoseColorFromRanges(latestGlucose.valueMmol, speciesRanges)
-                    : theme.colors.textTertiary
-                }
-                label={t('dashboard.lastGlucose')}
-                value={
-                  latestGlucose
-                    ? glucoseUnit === 'mg/dL'
-                      ? `${latestGlucose.valueMgdl}${trendArrow}`
-                      : `${latestGlucose.valueMmol.toFixed(1)}${trendArrow}`
-                    : '\u2014'
-                }
-                unit={glucoseUnit === 'mg/dL' ? t('common.mg_dl') : t('common.mmol_l')}
-                color={
-                  latestGlucose
-                    ? getGlucoseColorFromRanges(latestGlucose.valueMmol, speciesRanges)
-                    : theme.colors.textTertiary
-                }
-                subtitle={latestGlucose ? formatRelative(latestGlucose.recordedAt) : undefined}
-                index={0}
-              />
               <StatusCard
                 iconName="medkit-outline"
                 iconColor={
