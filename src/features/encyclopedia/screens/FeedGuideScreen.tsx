@@ -116,7 +116,7 @@ export default function FeedGuideScreen() {
           activeOpacity={0.7}
         >
           <View style={[styles.sectionCardIcon, { backgroundColor: theme.colors.primary + '15' }]}>
-            <Text style={{ fontSize: 24 }}>🧮</Text>
+            <Icon name="calculator" size={24} color={theme.colors.primary} />
           </View>
           <View style={styles.sectionCardContent}>
             <Text style={[styles.sectionCardTitle, { color: theme.colors.text }]}>
@@ -139,7 +139,7 @@ export default function FeedGuideScreen() {
           activeOpacity={0.7}
         >
           <View style={[styles.sectionCardIcon, { backgroundColor: theme.colors.warning + '15' }]}>
-            <Text style={{ fontSize: 24 }}>🔍</Text>
+            <Icon name="search" size={24} color={theme.colors.warning} />
           </View>
           <View style={styles.sectionCardContent}>
             <Text style={[styles.sectionCardTitle, { color: theme.colors.text }]}>
@@ -165,7 +165,7 @@ export default function FeedGuideScreen() {
             <View
               style={[styles.sectionCardIcon, { backgroundColor: theme.colors.success + '15' }]}
             >
-              <Text style={{ fontSize: 24 }}>🥩</Text>
+              <Icon name="beef" size={24} color={theme.colors.success} />
             </View>
             <View style={styles.sectionCardContent}>
               <Text style={[styles.sectionCardTitle, { color: theme.colors.text }]}>

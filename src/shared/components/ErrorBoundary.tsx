@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 import i18n from '@shared/i18n';
 import { Colors } from '@shared/theme/colors';
+import { AlertTriangle } from 'lucide-react-native';
 
 interface ErrorBoundaryProps {
   children: ReactNode;
@@ -83,13 +84,18 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
       return (
         <View style={[styles.container, { backgroundColor: c.background }]}>
           <View style={styles.content}>
-            <Text style={styles.icon}>⚠</Text>
+            <View style={styles.iconCircle}>
+              <AlertTriangle size={40} color="#FF3B30" strokeWidth={1.75} />
+            </View>
             <Text style={[styles.title, { color: c.text }]}>{i18n.t('errors.title')}</Text>
             <Text style={[styles.subtitle, { color: c.textSecondary }]}>
               {i18n.t('errors.subtitle')}
             </Text>
 
-            <TouchableOpacity style={[styles.button, { backgroundColor: c.primary }]} onPress={this.handleReset}>
+            <TouchableOpacity
+              style={[styles.button, { backgroundColor: c.primary }]}
+              onPress={this.handleReset}
+            >
               <Text style={styles.buttonText}>{i18n.t('errors.retry')}</Text>
             </TouchableOpacity>
 
@@ -102,10 +108,7 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
               </Text>
             </TouchableOpacity>
 
-            <TouchableOpacity
-              style={styles.detailsToggle}
-              onPress={this.toggleDetails}
-            >
+            <TouchableOpacity style={styles.detailsToggle} onPress={this.toggleDetails}>
               <Text style={[styles.detailsToggleText, { color: c.textTertiary }]}>
                 {showDetails ? i18n.t('errors.hideDetails') : i18n.t('errors.showDetails')}
               </Text>
@@ -144,8 +147,13 @@ const styles = StyleSheet.create({
     maxWidth: 400,
     width: '100%',
   },
-  icon: {
-    fontSize: 48,
+  iconCircle: {
+    width: 72,
+    height: 72,
+    borderRadius: 36,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#FF3B3015',
     marginBottom: 16,
   },
   title: {

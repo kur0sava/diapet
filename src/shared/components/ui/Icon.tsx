@@ -77,6 +77,9 @@ import {
   Dog,
   Mars,
   Venus,
+  Beef,
+  Fish,
+  Egg,
   Clipboard,
   Scale,
   CircleHelp,
@@ -183,6 +186,10 @@ const ICON_MAP: Record<string, LucideIcon> = {
   'leaf-outline': Leaf,
   leaf: Leaf,
   'cafe-outline': UtensilsCrossed,
+  beef: Beef,
+  fish: Fish,
+  egg: Egg,
+  organ: HeartPulse,
 
   // UI elements
   'alert-circle-outline': AlertCircle,

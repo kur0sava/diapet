@@ -16,7 +16,7 @@ import { useTranslation } from 'react-i18next';
 import { useTheme, ColorScheme } from '@shared/theme';
 import { storage, StorageKeys } from '@storage/mmkv/storage';
 import { changeLanguage } from '@shared/i18n';
-import { Card } from '@shared/components/ui';
+import { Card, Icon } from '@shared/components/ui';
 import { getDatabase } from '@storage/database';
 import { usePetStore } from '@shared/stores/petStore';
 import * as Notifications from 'expo-notifications';
@@ -31,16 +31,6 @@ import {
   VALID_REGIONS,
   type Region,
 } from '@shared/config/regionConfig';
-
-const REGION_EMOJI: Record<Region, string> = {
-  RU: '🇷🇺',
-  US: '🇺🇸',
-  EU: '🇪🇺',
-  UK: '🇬🇧',
-  DE: '🇩🇪',
-  MX: '🇲🇽',
-  GLOBAL: '🌍',
-};
 
 export default function SettingsScreen() {
   const navigation = useMoreNavigation();
@@ -324,7 +314,7 @@ export default function SettingsScreen() {
                     fontWeight: '600',
                   }}
                 >
-                  {REGION_EMOJI[r]} {t(`feedGuide.regions.${r}`)}
+                  {t(`feedGuide.regions.${r}`)}
                 </Text>
               </TouchableOpacity>
             ))}
@@ -382,11 +372,21 @@ export default function SettingsScreen() {
         </Text>
         <Card style={styles.card}>
           <TouchableOpacity
-            style={[styles.dangerBtn, { borderColor: theme.colors.danger }]}
+            style={[
+              styles.dangerBtn,
+              {
+                borderColor: theme.colors.danger,
+                flexDirection: 'row',
+                justifyContent: 'center',
+                alignItems: 'center',
+                gap: 8,
+              },
+            ]}
             onPress={handleDeleteAllData}
           >
+            <Icon name="trash-outline" size={18} color={theme.colors.danger} />
             <Text style={[styles.dangerText, { color: theme.colors.danger }]}>
-              🗑 {t('settings.deleteData')}
+              {t('settings.deleteData')}
             </Text>
           </TouchableOpacity>
         </Card>

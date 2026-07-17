@@ -18,9 +18,11 @@ import {
   type Region,
 } from '@shared/config/regionConfig';
 
+// G8 (design audit): flag emoji render as bare "RU"/"GB" text on several
+// Android skins — a styled two-letter badge is deterministic everywhere.
 const LANGUAGES = [
-  { code: 'ru', label: 'Русский', flag: '🇷🇺', subtitle: 'Russian' },
-  { code: 'en', label: 'English', flag: '🇬🇧', subtitle: 'Английский' },
+  { code: 'ru', label: 'Русский', badge: 'RU', subtitle: 'Russian' },
+  { code: 'en', label: 'English', badge: 'EN', subtitle: 'Английский' },
 ];
 
 export default function LanguageScreen() {
@@ -105,7 +107,29 @@ export default function LanguageScreen() {
                 accessibilityLabel={lang.label}
                 accessibilityState={{ selected: selected === lang.code }}
               >
-                <Text style={styles.flag}>{lang.flag}</Text>
+                <View
+                  style={[
+                    styles.langBadge,
+                    {
+                      backgroundColor:
+                        selected === lang.code
+                          ? theme.colors.primary
+                          : theme.colors.surfaceSecondary,
+                    },
+                  ]}
+                >
+                  <Text
+                    style={[
+                      styles.langBadgeText,
+                      {
+                        color: selected === lang.code ? '#FFFFFF' : theme.colors.textSecondary,
+                        fontFamily: theme.fonts.bold,
+                      },
+                    ]}
+                  >
+                    {lang.badge}
+                  </Text>
+                </View>
                 <View>
                   <Text
                     style={[
@@ -206,7 +230,14 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     gap: 16,
   },
-  flag: { fontSize: 36 },
+  langBadge: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  langBadgeText: { fontSize: 16, letterSpacing: 1 },
   langLabel: { fontSize: 18 },
   langSub: { fontSize: 13, marginTop: 2 },
   check: {
