@@ -224,6 +224,10 @@ export default function LogGlucoseScreen() {
     numValue < (unit === 'mmol/L' ? MAX_REASONABLE_GLUCOSE_MMOL : MAX_REASONABLE_GLUCOSE_MGDL);
 
   const speciesRanges = getSpeciesConfig(activePet?.species ?? 'cat').glucose.ranges;
+  // Same species-curated quick-select list as LogInjection (first-line first).
+  const commonInsulins = getSpeciesConfig(activePet?.species ?? 'cat').insulin.commonTypes.map(
+    ct => ct.name
+  );
   const glucosePreview = isValidValue
     ? {
         level: getGlucoseLevelFromRanges(
@@ -775,6 +779,34 @@ export default function LogGlucoseScreen() {
               containerStyle={{ flex: 1 }}
             />
           </View>
+          {/* Y4 (design audit): same quick-select chips as LogInjection —
+              free-typed names ("Лантус"/"lantus"/"гларгин") fragment the
+              analyzer's insulin grouping and the PDF report. */}
+          <View style={styles.insulinChips}>
+            {commonInsulins.map(ins => (
+              <TouchableOpacity
+                key={ins}
+                style={[
+                  styles.insulinChip,
+                  {
+                    backgroundColor:
+                      insulinType === ins ? theme.colors.primary : theme.colors.surfaceSecondary,
+                  },
+                ]}
+                onPress={() => setInsulinType(insulinType === ins ? '' : ins)}
+              >
+                <Text
+                  style={{
+                    color: insulinType === ins ? '#fff' : theme.colors.text,
+                    fontSize: 13,
+                    fontWeight: '500',
+                  }}
+                >
+                  {ins}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </View>
 
           {/* Notes */}
           <Input
@@ -803,6 +835,8 @@ export default function LogGlucoseScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
+  insulinChips: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginBottom: 16 },
+  insulinChip: { paddingHorizontal: 14, paddingVertical: 8, borderRadius: 20 },
   navHeader: {
     flexDirection: 'row',
     alignItems: 'center',
