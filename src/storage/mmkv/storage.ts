@@ -170,7 +170,15 @@ export const StorageKeys = {
    * (see @features/hints/data/eventHints). Per-event daily throttle lives in
    * dynamic `eventHintDate_<trigger>` keys. */
   EVENT_HINTS_SHOWN_IDS: 'eventHintsShownIds',
+  /** v2.6 community: preferred chat display name (nickname). */
+  COMMUNITY_DISPLAY_NAME: 'communityDisplayName',
 } as const;
+
+/** Per-(target-lang, hash) cache key for on-demand message translation
+ *  (@shared/translation). Kept out of StorageKeys since it's dynamic. */
+export function translationCacheKey(targetLang: string, hash: string): string {
+  return `xlt_${targetLang}_${hash}`;
+}
 
 /** Per-pet vet contact key. See {@link StorageKeys.VET_NAME} for legacy migration. */
 export function vetNameKey(petId: string): string {
