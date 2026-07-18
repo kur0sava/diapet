@@ -227,6 +227,8 @@ export const en = {
     chartNormal: 'Normal {{low}}–{{high}}',
     chartLow: 'Low',
     chartHigh: 'High',
+    chartCount: 'Readings that day',
+    chartSpread: 'Min–max spread',
     saveError: 'Failed to save data',
     petNotFound: 'Pet not found',
     petChangedDuringEntry:

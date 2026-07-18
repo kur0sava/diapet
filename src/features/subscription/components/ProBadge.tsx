@@ -21,6 +21,6 @@ const styles = StyleSheet.create({
   sm: { paddingHorizontal: 6, paddingVertical: 2 },
   md: { paddingHorizontal: 10, paddingVertical: 4 },
   text: { color: '#fff', fontWeight: '700', letterSpacing: 0.5 },
-  textSm: { fontSize: 9 },
+  textSm: { fontSize: 11 },
   textMd: { fontSize: 12 },
 });

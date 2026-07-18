@@ -443,8 +443,8 @@ const styles = StyleSheet.create({
   macroRow: { flexDirection: 'row', alignItems: 'center', gap: 14, flexWrap: 'wrap' },
   macroItem: { alignItems: 'center' },
   macroValue: { fontSize: 15, fontWeight: '700' },
-  macroLabel: { fontSize: 10, marginTop: 1 },
-  per100g: { fontSize: 10 },
+  macroLabel: { fontSize: 11, marginTop: 1 },
+  per100g: { fontSize: 11 },
   tipRow: { flexDirection: 'row', alignItems: 'flex-start', gap: 6 },
   tipText: { flex: 1, fontSize: 13, lineHeight: 18 },
   warningRow: {

@@ -516,5 +516,5 @@ const styles = StyleSheet.create({
     borderRadius: 6,
     backgroundColor: 'rgba(255,255,255,0.25)',
   },
-  proBadgeText: { fontSize: 10, color: '#fff', letterSpacing: 0.5 },
+  proBadgeText: { fontSize: 11, color: '#fff', letterSpacing: 0.5 },
 });

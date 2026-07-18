@@ -5,8 +5,6 @@ export const FontFamily = {
   medium: 'Manrope_500Medium',
   semibold: 'Manrope_600SemiBold',
   bold: 'Manrope_700Bold',
-  display: 'CormorantGaramond_600SemiBold',
-  displayBold: 'CormorantGaramond_700Bold',
   mono: Platform.OS === 'ios' ? 'Courier' : 'monospace',
 };
 

@@ -279,7 +279,7 @@ export function GlucoseChart({ data, species, unit = 'mmol/L' }: Props) {
                 <View
                   style={[
                     styles.countBadge,
-                    { left: x + 2, top: y - 14, backgroundColor: theme.colors.surfaceSecondary },
+                    { left: x + 2, top: y - 16, backgroundColor: theme.colors.surfaceSecondary },
                   ]}
                 >
                   <Text style={[styles.countText, { color: theme.colors.textSecondary }]}>
@@ -346,6 +346,27 @@ export function GlucoseChart({ data, species, unit = 'mmol/L' }: Props) {
           </Text>
         </View>
       </View>
+      {/* Second legend row explains the non-colour marks: the per-day count
+          badge and the vertical min–max spread bar (G6 — every mark on the
+          chart must be legible without guessing). */}
+      <View style={[styles.legend, { marginTop: 4 }]}>
+        <View style={styles.legendItem}>
+          <View
+            style={[styles.countBadgeLegend, { backgroundColor: theme.colors.surfaceSecondary }]}
+          >
+            <Text style={[styles.countText, { color: theme.colors.textSecondary }]}>N</Text>
+          </View>
+          <Text style={[styles.legendText, { color: theme.colors.textSecondary }]}>
+            {t('glucose.chartCount')}
+          </Text>
+        </View>
+        <View style={styles.legendItem}>
+          <View style={[styles.legendBar, { backgroundColor: `${theme.colors.primary}30` }]} />
+          <Text style={[styles.legendText, { color: theme.colors.textSecondary }]}>
+            {t('glucose.chartSpread')}
+          </Text>
+        </View>
+      </View>
     </View>
   );
 }
@@ -353,22 +374,24 @@ export function GlucoseChart({ data, species, unit = 'mmol/L' }: Props) {
 const styles = StyleSheet.create({
   container: { paddingVertical: 8 },
   yAxis: { position: 'absolute', left: 0, top: 0, height: CHART_HEIGHT, width: Y_AXIS_WIDTH },
-  axisLabel: { fontSize: 9 },
+  axisLabel: { fontSize: 11 },
   chart: { marginLeft: Y_AXIS_WIDTH + 4, position: 'relative' },
   normalZone: { position: 'absolute', left: 0, right: 0 },
   rangeBar: { position: 'absolute', width: 3, borderRadius: 1.5 },
   countBadge: { position: 'absolute', borderRadius: 6, paddingHorizontal: 3, paddingVertical: 0.5 },
-  countText: { fontSize: 8, fontWeight: '600' },
+  countText: { fontSize: 10, fontWeight: '600', fontVariant: ['tabular-nums'] },
   xAxis: {
     height: 14,
     marginTop: 4,
     marginLeft: Y_AXIS_WIDTH + 4,
   },
-  xLabel: { fontSize: 9, textAlign: 'center' },
+  xLabel: { fontSize: 11, textAlign: 'center' },
   legend: { flexDirection: 'row', gap: 16, marginTop: 8 },
   legendItem: { flexDirection: 'row', alignItems: 'center', gap: 4 },
   legendDot: { width: 8, height: 8, borderRadius: 4 },
   legendGlyph: { fontSize: 11, lineHeight: 13 },
-  unitLabel: { position: 'absolute', top: 0, right: 2, fontSize: 9, zIndex: 1 },
+  countBadgeLegend: { borderRadius: 6, paddingHorizontal: 4, paddingVertical: 0.5 },
+  legendBar: { width: 3, height: 12, borderRadius: 1.5 },
+  unitLabel: { position: 'absolute', top: 0, right: 2, fontSize: 11, zIndex: 1 },
   legendText: { fontSize: 11 },
 });

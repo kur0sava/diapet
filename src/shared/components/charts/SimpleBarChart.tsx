@@ -23,27 +23,26 @@ export function SimpleBarChart({ data, title, height = 140, unit }: Props) {
 
   const vals = data.map(d => d.value);
   const maxVal = vals.reduce((a, b) => Math.max(a, b), 1);
-  const barWidth = Math.max(
-    Math.min((screenWidth - 80) / data.length - 4, 32),
-    4,
-  );
+  const barWidth = Math.max(Math.min((screenWidth - 80) / data.length - 4, 32), 4);
 
   return (
     <View style={styles.container}>
-      {title && (
-        <Text style={[styles.title, { color: theme.colors.textSecondary }]}>{title}</Text>
-      )}
+      {title && <Text style={[styles.title, { color: theme.colors.textSecondary }]}>{title}</Text>}
       <View style={[styles.chartArea, { height }]}>
         {/* Y-axis labels */}
         <View style={styles.yAxis}>
-          <Text style={[styles.axisLabel, { color: theme.colors.textTertiary }]}>{maxVal.toFixed(0)}</Text>
-          <Text style={[styles.axisLabel, { color: theme.colors.textTertiary }]}>{(maxVal / 2).toFixed(0)}</Text>
+          <Text style={[styles.axisLabel, { color: theme.colors.textTertiary }]}>
+            {maxVal.toFixed(0)}
+          </Text>
+          <Text style={[styles.axisLabel, { color: theme.colors.textTertiary }]}>
+            {(maxVal / 2).toFixed(0)}
+          </Text>
           <Text style={[styles.axisLabel, { color: theme.colors.textTertiary }]}>0</Text>
         </View>
 
         {/* Bars */}
         <View style={styles.barsContainer}>
-          {data.map((item) => {
+          {data.map(item => {
             const barHeight = (item.value / maxVal) * (height - 24);
             const color = item.color ?? theme.colors.primary;
             return (
@@ -77,9 +76,7 @@ export function SimpleBarChart({ data, title, height = 140, unit }: Props) {
           })}
         </View>
       </View>
-      {unit && (
-        <Text style={[styles.unit, { color: theme.colors.textTertiary }]}>{unit}</Text>
-      )}
+      {unit && <Text style={[styles.unit, { color: theme.colors.textTertiary }]}>{unit}</Text>}
     </View>
   );
 }
@@ -104,15 +101,10 @@ export function SimpleHorizontalBarChart({ data, title }: HBarProps) {
 
   return (
     <View style={styles.container}>
-      {title && (
-        <Text style={[styles.title, { color: theme.colors.textSecondary }]}>{title}</Text>
-      )}
-      {data.map((item) => (
+      {title && <Text style={[styles.title, { color: theme.colors.textSecondary }]}>{title}</Text>}
+      {data.map(item => (
         <View key={item.label} style={styles.hBarRow}>
-          <Text
-            style={[styles.hBarLabel, { color: theme.colors.text }]}
-            numberOfLines={1}
-          >
+          <Text style={[styles.hBarLabel, { color: theme.colors.text }]} numberOfLines={1}>
             {item.label}
           </Text>
           <View style={[styles.hBarTrack, { backgroundColor: theme.colors.surfaceSecondary }]}>
@@ -140,13 +132,18 @@ const styles = StyleSheet.create({
   title: { fontSize: 13, fontWeight: '700', marginBottom: 8 },
   chartArea: { flexDirection: 'row' },
   yAxis: { width: 28, justifyContent: 'space-between', paddingBottom: 18 },
-  axisLabel: { fontSize: 9, textAlign: 'right' },
-  barsContainer: { flex: 1, flexDirection: 'row', justifyContent: 'space-around', alignItems: 'flex-end' },
+  axisLabel: { fontSize: 11, textAlign: 'right' },
+  barsContainer: {
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    alignItems: 'flex-end',
+  },
   barCol: { alignItems: 'center', flex: 1 },
   bar: { minHeight: 2 },
-  barValue: { fontSize: 9, marginBottom: 2 },
-  barLabel: { fontSize: 8, marginTop: 4, textAlign: 'center' },
-  unit: { fontSize: 10, textAlign: 'center', marginTop: 4 },
+  barValue: { fontSize: 11, marginBottom: 2, fontVariant: ['tabular-nums'] },
+  barLabel: { fontSize: 11, marginTop: 4, textAlign: 'center' },
+  unit: { fontSize: 11, textAlign: 'center', marginTop: 4 },
   // Horizontal bar styles
   hBarRow: { flexDirection: 'row', alignItems: 'center', marginVertical: 3, gap: 8 },
   hBarLabel: { width: 80, fontSize: 11, fontWeight: '500' },

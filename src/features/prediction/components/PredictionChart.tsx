@@ -311,7 +311,7 @@ export function PredictionChart({ actualData, predictions, species }: Props) {
 const styles = StyleSheet.create({
   container: { paddingVertical: 8 },
   yAxis: { position: 'absolute', left: 0, top: 0, height: CHART_HEIGHT, width: Y_AXIS_WIDTH },
-  axisLabel: { fontSize: 9 },
+  axisLabel: { fontSize: 11 },
   chart: { marginLeft: Y_AXIS_WIDTH + 4, position: 'relative' },
   normalZone: { position: 'absolute', left: 0, right: 0 },
   dot: { position: 'absolute', width: 10, height: 10, borderRadius: 5, borderWidth: 2 },
@@ -322,7 +322,7 @@ const styles = StyleSheet.create({
     marginTop: 4,
     marginLeft: Y_AXIS_WIDTH + 4,
   },
-  xLabel: { fontSize: 9, textAlign: 'center' },
+  xLabel: { fontSize: 11, textAlign: 'center' },
   legend: { flexDirection: 'row', gap: 14, marginTop: 8, flexWrap: 'wrap' },
   legendItem: { flexDirection: 'row', alignItems: 'center', gap: 4 },
   legendLine: { width: 14, height: 2, borderRadius: 1 },

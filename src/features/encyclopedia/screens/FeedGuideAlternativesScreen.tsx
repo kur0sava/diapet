@@ -272,7 +272,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
   },
   carbsValue: { fontSize: 16, fontWeight: '800' },
-  carbsLabel: { fontSize: 9, fontWeight: '500', marginTop: 1 },
+  carbsLabel: { fontSize: 11, fontWeight: '500', marginTop: 1 },
   verdictBadge: {
     flexDirection: 'row',
     alignItems: 'center',

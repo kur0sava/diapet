@@ -136,7 +136,13 @@ export function FirstStepsCard() {
             {allDone ? t('firstSteps.completedDesc') : t('firstSteps.subtitle')}
           </Text>
         </View>
-        <TouchableOpacity onPress={handleDismiss} style={styles.closeBtn} hitSlop={10}>
+        <TouchableOpacity
+          onPress={handleDismiss}
+          style={styles.closeBtn}
+          hitSlop={8}
+          accessibilityRole="button"
+          accessibilityLabel={t('common.dismiss')}
+        >
           <Icon name="close" size={18} color={theme.colors.textTertiary} />
         </TouchableOpacity>
       </View>
@@ -220,7 +226,15 @@ const styles = StyleSheet.create({
   header: { flexDirection: 'row', alignItems: 'flex-start', marginBottom: 12 },
   title: { fontSize: 15, marginBottom: 2 },
   subtitle: { fontSize: 12, lineHeight: 16 },
-  closeBtn: { padding: 4, marginLeft: 8 },
+  closeBtn: {
+    width: 44,
+    height: 44,
+    marginLeft: 8,
+    marginTop: -10,
+    marginRight: -10,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   progressTrack: {
     height: 6,
     borderRadius: 3,

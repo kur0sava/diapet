@@ -238,7 +238,7 @@ const styles = StyleSheet.create({
   regionEmoji: { fontSize: 20 },
   regionLabel: { flex: 1, fontSize: 14, fontWeight: '600' },
   yourBadge: { paddingHorizontal: 6, paddingVertical: 2, borderRadius: 6 },
-  yourBadgeText: { fontSize: 10, fontWeight: '700' },
+  yourBadgeText: { fontSize: 11, fontWeight: '700' },
   sectionCard: {
     flexDirection: 'row',
     alignItems: 'center',

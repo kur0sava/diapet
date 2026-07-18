@@ -16,7 +16,6 @@
     "prepare": "husky"
   },
   "dependencies": {
-    "@expo-google-fonts/cormorant-garamond": "^0.4.1",
     "@expo-google-fonts/manrope": "^0.4.2",
     "@react-native-community/datetimepicker": "8.4.4",
     "@react-native-firebase/analytics": "^24.0.0",

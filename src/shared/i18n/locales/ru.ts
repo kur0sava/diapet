@@ -228,6 +228,8 @@ export const ru = {
     chartNormal: 'Норма {{low}}–{{high}}',
     chartLow: 'Низкая',
     chartHigh: 'Высокая',
+    chartCount: 'Замеров за день',
+    chartSpread: 'Разброс мин–макс',
     saveError: 'Не удалось сохранить данные',
     petNotFound: 'Питомец не найден',
     petChangedDuringEntry:

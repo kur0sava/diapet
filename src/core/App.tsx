@@ -33,10 +33,6 @@ import {
   Manrope_600SemiBold,
   Manrope_700Bold,
 } from '@expo-google-fonts/manrope';
-import {
-  CormorantGaramond_600SemiBold,
-  CormorantGaramond_700Bold,
-} from '@expo-google-fonts/cormorant-garamond';
 import * as SplashScreen from 'expo-splash-screen';
 import { useSubscriptionStore } from '@shared/stores/subscriptionStore';
 import { getDeviceId } from '@shared/utils/deviceId';
@@ -106,8 +102,6 @@ export default function App() {
     Manrope_500Medium,
     Manrope_600SemiBold,
     Manrope_700Bold,
-    CormorantGaramond_600SemiBold,
-    CormorantGaramond_700Bold,
   });
 
   // Full startup sequence — shared by the mount effect AND the storage-error
