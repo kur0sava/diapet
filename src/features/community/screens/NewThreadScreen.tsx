@@ -57,7 +57,7 @@ export default function NewThreadScreen() {
       return;
     }
     if (title.trim().length < 3 || validateMessageText(message) !== 'ok') {
-      Alert.alert(t('common.error'), t('community.threadTitlePlaceholder'));
+      Alert.alert(t('common.error'), t('community.threadIncomplete'));
       return;
     }
     const rate = checkRateLimit();
@@ -86,7 +86,7 @@ export default function NewThreadScreen() {
       if (e instanceof Error && e.message === 'blocked') {
         Alert.alert(t('common.info'), t('community.blockedMessage'));
       } else {
-        Alert.alert(t('common.error'), t('community.translationUnavailable'));
+        Alert.alert(t('common.error'), t('community.sendError'));
       }
     } finally {
       postingRef.current = false;

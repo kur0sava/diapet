@@ -1138,7 +1138,9 @@ export const en = {
     reportConfirm: 'Report this message?',
     reported: 'Thanks, the report was sent for review',
     flaggedNotice: 'Dubious advice — check with your vet',
-    blockedMessage: 'Message not sent: looks like abuse or spam.',
+    blockedMessage:
+      'Message not sent: it looks like abuse/spam or contains specific dosing advice. Share experience, but the vet sets the dose.',
+    threadIncomplete: 'Add a title (3+ chars) and a message.',
     rateLimited: 'Too fast. Please take a short break.',
     disclaimer: 'Member advice is not a substitute for your vet. In a crisis — see a vet.',
     emptyThread: 'Be the first in this topic',
@@ -1189,5 +1191,7 @@ export const en = {
     blockConfirm: 'Hide all messages from this member? You won’t see them in the chat anymore.',
     blocked: 'Member blocked',
     messageActions: 'Message actions',
+    sendError: 'Could not send. Check your connection and try again.',
+    tooLong: 'Message is too long',
   },
 };

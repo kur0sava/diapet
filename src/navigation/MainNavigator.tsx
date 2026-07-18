@@ -54,7 +54,7 @@ import AiAssistantScreen from '@features/hints/screens/AiAssistantScreen';
 import AdvancedAnalyticsScreen from '@features/prediction/screens/AdvancedAnalyticsScreen';
 import AnalyzerDashboardScreen from '@features/analyzer/screens/AnalyzerDashboardScreen';
 import AccountScreen from '@features/auth/screens/AccountScreen';
-import { isAiFeatureVisible } from '@shared/config/runtimeConfig';
+import { isAiFeatureVisible, isChatFeatureEnabled } from '@shared/config/runtimeConfig';
 import { isAiConfigured } from '@features/hints/utils/aiClient';
 
 const Tab = createBottomTabNavigator<MainTabParamList>();
@@ -331,6 +331,9 @@ export default function MainNavigator() {
   const { t } = useTranslation();
   const insets = useSafeAreaInsets();
   const showAiTab = isAiFeatureVisible() && isAiConfigured();
+  // PM launch-readiness (2026-07-18): чат скрыт в проде за флагом (как AiTab).
+  // Клиент готов, но бэкенд-инфра/юр-часть не готовы — включать не раньше v3.1.
+  const showChatTab = isChatFeatureEnabled();
 
   return (
     <Tab.Navigator
@@ -403,11 +406,13 @@ export default function MainNavigator() {
           options={{ title: t('navigation.ai') }}
         />
       )}
-      <Tab.Screen
-        name="ChatTab"
-        component={CommunityStackNavigator}
-        options={{ title: t('community.tab') }}
-      />
+      {showChatTab && (
+        <Tab.Screen
+          name="ChatTab"
+          component={CommunityStackNavigator}
+          options={{ title: t('community.tab') }}
+        />
+      )}
       <Tab.Screen
         name="EncyclopediaTab"
         component={EncyclopediaStackNavigator}

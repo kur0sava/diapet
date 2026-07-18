@@ -66,7 +66,7 @@ export default function ThreadScreen() {
     const valid = validateMessageText(text);
     if (valid === 'empty') return;
     if (valid === 'too_long') {
-      Alert.alert(t('common.error'), t('common.error'));
+      Alert.alert(t('common.error'), t('community.tooLong'));
       return;
     }
     const rate = checkRateLimit();
@@ -87,7 +87,8 @@ export default function ThreadScreen() {
       if (e instanceof Error && e.message === 'blocked') {
         Alert.alert(t('common.info'), t('community.blockedMessage'));
       } else {
-        Alert.alert(t('common.error'), t('community.translationUnavailable'));
+        // Не «перевод недоступен» — это ошибка ОТПРАВКИ (сеть/правила Firestore)
+        Alert.alert(t('common.error'), t('community.sendError'));
       }
     } finally {
       sendingRef.current = false;

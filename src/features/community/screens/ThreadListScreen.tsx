@@ -114,7 +114,7 @@ export default function ThreadListScreen() {
             accessibilityRole="button"
           >
             <Text style={{ color: theme.colors.primary, fontFamily: theme.fonts.semibold }}>
-              {t('common.refresh', { defaultValue: 'Retry' })}
+              {t('errors.retry')}
             </Text>
           </TouchableOpacity>
         </View>
