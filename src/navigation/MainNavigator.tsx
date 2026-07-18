@@ -38,6 +38,7 @@ import ThreadListScreen from '@features/community/screens/ThreadListScreen';
 import ThreadScreen from '@features/community/screens/ThreadScreen';
 import NewThreadScreen from '@features/community/screens/NewThreadScreen';
 import GuidelinesScreen from '@features/community/screens/GuidelinesScreen';
+import MyPostsScreen from '@features/community/screens/MyPostsScreen';
 import EditPetScreen from '@features/pets/screens/EditPetScreen';
 import AddPetScreen from '@features/pets/screens/AddPetScreen';
 import ExpensesScreen from '@features/expenses/screens/ExpensesScreen';
@@ -73,6 +74,7 @@ function CommunityStackNavigator() {
       <CommunityStack.Screen name="Thread" component={ThreadScreen} />
       <CommunityStack.Screen name="NewThread" component={NewThreadScreen} />
       <CommunityStack.Screen name="Guidelines" component={GuidelinesScreen} />
+      <CommunityStack.Screen name="MyPosts" component={MyPostsScreen} />
     </CommunityStack.Navigator>
   );
 }

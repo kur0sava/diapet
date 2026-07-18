@@ -1182,5 +1182,8 @@ export const en = {
     displayNameBody: 'What name should others see?',
     displayNamePlaceholder: 'Name or nickname',
     saveName: 'Save',
+    myPosts: 'My topics',
+    noMyThreads: 'You haven’t created any topics yet',
+    nameSaved: 'Name saved',
   },
 };

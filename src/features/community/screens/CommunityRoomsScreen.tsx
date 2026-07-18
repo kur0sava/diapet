@@ -49,9 +49,19 @@ export default function CommunityRoomsScreen() {
       edges={['top', 'left', 'right']}
     >
       <View style={styles.header}>
-        <Text style={[styles.title, { color: theme.colors.text, fontFamily: theme.fonts.bold }]}>
-          {t('community.title')}
-        </Text>
+        <View style={styles.headerRow}>
+          <Text style={[styles.title, { color: theme.colors.text, fontFamily: theme.fonts.bold }]}>
+            {t('community.title')}
+          </Text>
+          <TouchableOpacity
+            onPress={() => navigation.navigate('MyPosts')}
+            style={styles.profileBtn}
+            accessibilityRole="button"
+            accessibilityLabel={t('community.myPosts')}
+          >
+            <Icon name="person-circle-outline" size={28} color={theme.colors.primary} />
+          </TouchableOpacity>
+        </View>
         <Text style={[styles.subtitle, { color: theme.colors.textSecondary }]}>
           {t('community.subtitle')}
         </Text>
@@ -133,6 +143,8 @@ export default function CommunityRoomsScreen() {
 const styles = StyleSheet.create({
   container: { flex: 1 },
   header: { paddingHorizontal: 20, paddingTop: 8, paddingBottom: 4, gap: 4 },
+  headerRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
+  profileBtn: { minWidth: 44, minHeight: 44, alignItems: 'flex-end', justifyContent: 'center' },
   title: { fontSize: 24 },
   subtitle: { fontSize: 14 },
   intlBadge: {

@@ -199,11 +199,9 @@ export async function reportMessage(threadId: string, messageId: string): Promis
   });
 }
 
-/** История своих сообщений (для экрана «мои сообщения»). */
-export async function getMyMessages(uid: string, max = 100): Promise<Message[]> {
-  // collectionGroup был бы точнее, но требует индекса; для MVP — по последним
-  // тредам пользователя. Здесь берём из корневого collectionGroup-подобного
-  // обхода не делаем — оставляем заглушку под серверный индекс.
+/** Свои темы (экран «Мои темы»). Требует индекс authorUid+lastMessageAt
+ *  (см. firestore.indexes.json). */
+export async function getMyThreads(uid: string, max = 100): Promise<Thread[]> {
   const q = query(
     collection(db, THREADS),
     where('authorUid', '==', uid),
@@ -211,19 +209,7 @@ export async function getMyMessages(uid: string, max = 100): Promise<Message[]> 
     limit(max)
   );
   const snap = await getDocs(q);
-  // Возвращаем «псевдо-сообщения» из тредов пользователя как его историю тем.
-  return snap.docs.map(d => {
-    const t = d.data() as Thread;
-    return {
-      id: d.id,
-      threadId: d.id,
-      authorUid: t.authorUid,
-      authorName: t.authorName,
-      text: t.title,
-      createdAt: t.createdAt,
-      moderation: t.moderation,
-    } as Message;
-  });
+  return snap.docs.map(d => ({ id: d.id, ...(d.data() as Omit<Thread, 'id'>) }));
 }
 
 async function bumpProfileMessageCount(uid: string): Promise<void> {

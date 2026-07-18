@@ -40,12 +40,30 @@ export function needsTranslation(text: string, userLang: ContentLang): boolean {
   return detectLang(text) !== userLang;
 }
 
+// Audit L1: кэш переводов не должен расти вечно (MMKV грузится в память на
+// старте). Держим индекс ключей и подрезаем по FIFO при переполнении.
+const CACHE_INDEX_KEY = 'xlt_index';
+const CACHE_MAX = 500;
+
 function readCache(targetLang: ContentLang, hash: string): string | undefined {
   return storage.getString(translationCacheKey(targetLang, hash));
 }
 
 function writeCache(targetLang: ContentLang, hash: string, value: string): void {
-  storage.set(translationCacheKey(targetLang, hash), value);
+  const key = translationCacheKey(targetLang, hash);
+  storage.set(key, value);
+  try {
+    const raw = storage.getString(CACHE_INDEX_KEY);
+    const index: string[] = raw ? JSON.parse(raw) : [];
+    if (!index.includes(key)) index.push(key);
+    while (index.length > CACHE_MAX) {
+      const evicted = index.shift();
+      if (evicted) storage.delete(evicted);
+    }
+    storage.set(CACHE_INDEX_KEY, JSON.stringify(index));
+  } catch {
+    // индекс — best-effort; сам перевод уже записан
+  }
 }
 
 export interface TranslateResult {

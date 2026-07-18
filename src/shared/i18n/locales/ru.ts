@@ -1189,5 +1189,8 @@ export const ru = {
     displayNameBody: 'Под каким именем общаться? Его увидят другие участники.',
     displayNamePlaceholder: 'Имя или ник',
     saveName: 'Сохранить',
+    myPosts: 'Мои темы',
+    noMyThreads: 'Вы ещё не создавали тем',
+    nameSaved: 'Имя сохранено',
   },
 };
