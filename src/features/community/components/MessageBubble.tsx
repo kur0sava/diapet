@@ -106,7 +106,9 @@ export function MessageBubble({ message, threadId, isOwn, userLang }: Props) {
         <View style={styles.footer}>
           <Text style={[styles.time, { color: theme.colors.textTertiary }]}>
             {isOwn ? t('community.you') : ''}{' '}
-            {formatRelative(new Date(message.createdAt).toISOString())}
+            {Number.isFinite(message.createdAt)
+              ? formatRelative(new Date(message.createdAt).toISOString())
+              : ''}
           </Text>
           <View style={styles.actions}>
             {canTranslate && (

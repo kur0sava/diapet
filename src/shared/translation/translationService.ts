@@ -61,7 +61,10 @@ export async function translateText(
   text: string,
   targetLang: ContentLang
 ): Promise<TranslateResult> {
-  const hash = hashText(text);
+  // Audit L2: 32-битный djb2 может коллизировать — при совпадении хеша юзер
+  // увидел бы ЧУЖОЙ перевод (в мед-чате скверно). Добавляем длину оригинала в
+  // ключ, резко снижая шанс коллизии практически без затрат.
+  const hash = `${hashText(text)}${text.length.toString(36)}`;
   const cached = readCache(targetLang, hash);
   if (cached !== undefined) return { text: cached, fromCache: true };
 

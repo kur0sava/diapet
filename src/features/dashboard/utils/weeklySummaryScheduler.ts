@@ -35,7 +35,22 @@ function nextSunday(now = new Date()): Date {
   return next;
 }
 
+// Audit L4: re-entrancy guard. Вызывается на каждый AppState 'active'; два
+// близких foreground-события могут проскочить cancel→schedule друг друга и
+// оставить дубль воскресного пуша (как было с restoreScheduleNotifications).
+let refreshingWeekly = false;
+
 export async function refreshWeeklySummaryPush(): Promise<void> {
+  if (refreshingWeekly) return;
+  refreshingWeekly = true;
+  try {
+    await doRefreshWeeklySummaryPush();
+  } finally {
+    refreshingWeekly = false;
+  }
+}
+
+async function doRefreshWeeklySummaryPush(): Promise<void> {
   const { status } = await Notifications.getPermissionsAsync();
   if (status !== 'granted') return;
 

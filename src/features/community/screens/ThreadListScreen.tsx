@@ -21,6 +21,12 @@ import { getRoomById } from '../data/rooms';
 import { listThreads } from '../api/communityApi';
 import type { Thread } from '../types';
 
+/** Audit L3: guard against a corrupt/missing timestamp — new Date(NaN)
+ *  .toISOString() throws RangeError and would white-screen the row. */
+function safeRelative(ts: number): string {
+  return Number.isFinite(ts) ? formatRelative(new Date(ts).toISOString()) : '';
+}
+
 export default function ThreadListScreen() {
   const { t } = useTranslation();
   const { theme } = useTheme();
@@ -32,12 +38,14 @@ export default function ThreadListScreen() {
   const {
     data: threads = [],
     isLoading,
+    isError,
     refetch,
   } = useQuery({
     queryKey: ['community', 'threads', roomId],
     // Международный чат — без языкового фильтра (перевод по кнопке в треде)
     queryFn: () => listThreads(roomId),
     enabled: !!roomId,
+    retry: 1,
   });
 
   // Обновляем список при возврате с экрана треда/создания темы
@@ -69,8 +77,7 @@ export default function ThreadListScreen() {
             style={[styles.threadMeta, { color: theme.colors.textSecondary }]}
             numberOfLines={1}
           >
-            {item.authorName} · {formatRelative(new Date(item.lastMessageAt).toISOString())} ·{' '}
-            {item.messageCount}
+            {item.authorName} · {safeRelative(item.lastMessageAt)} · {item.messageCount}
           </Text>
         </View>
         <Icon name="chevron-forward" size={18} color={theme.colors.textTertiary} />
@@ -90,6 +97,25 @@ export default function ThreadListScreen() {
       {isLoading ? (
         <View style={styles.center}>
           <ActivityIndicator size="large" color={theme.colors.primary} />
+        </View>
+      ) : isError ? (
+        // Audit H1: без составных индексов / до деплоя правил getDocs бросает.
+        // Раньше ошибка глоталась и экран показывал «нет тем» навсегда —
+        // теперь явная ошибка с повтором.
+        <View style={styles.center}>
+          <Icon name="cloud-outline" size={40} color={theme.colors.textTertiary} />
+          <Text style={[styles.errorText, { color: theme.colors.textSecondary }]}>
+            {t('common.error')}
+          </Text>
+          <TouchableOpacity
+            style={[styles.retryBtn, { borderColor: theme.colors.primary }]}
+            onPress={() => refetch()}
+            accessibilityRole="button"
+          >
+            <Text style={{ color: theme.colors.primary, fontFamily: theme.fonts.semibold }}>
+              {t('common.refresh', { defaultValue: 'Retry' })}
+            </Text>
+          </TouchableOpacity>
         </View>
       ) : (
         <FlatList
@@ -121,7 +147,9 @@ export default function ThreadListScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
-  center: { flex: 1, alignItems: 'center', justifyContent: 'center' },
+  center: { flex: 1, alignItems: 'center', justifyContent: 'center', gap: 12, padding: 24 },
+  errorText: { fontSize: 15, textAlign: 'center' },
+  retryBtn: { paddingHorizontal: 20, paddingVertical: 10, borderRadius: 12, borderWidth: 1.5 },
   list: { padding: 16, gap: 10, paddingBottom: 100, flexGrow: 1 },
   threadCard: { flexDirection: 'row', alignItems: 'center', gap: 12, padding: 14 },
   threadTitle: { fontSize: 15 },

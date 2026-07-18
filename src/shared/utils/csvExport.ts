@@ -47,7 +47,11 @@ const HEADER = [
 
 function esc(v: string | number | null | undefined): string {
   if (v === null || v === undefined) return '';
-  const s = String(v);
+  let s = String(v);
+  // Audit M1: CSV formula injection — ячейка, начинающаяся с = + - @ (или
+  // tab/CR), исполняется как формула в Excel/Sheets. notes/name/food — ввод
+  // пользователя, а файл шарится (в т.ч. ветеринару). Нейтрализуем ведущим "'".
+  if (/^[=+\-@\t\r]/.test(s)) s = `'${s}`;
   return /[",\n\r]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
 }
 

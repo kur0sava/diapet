@@ -381,12 +381,27 @@ export async function cancelGlucoseReminders(): Promise<void> {
   }
 }
 
+// Audit L4: re-entrancy guard — вызывается из тумблера настроек И из каждого
+// restore-прохода на foreground; два близких вызова могут проскочить
+// cancel→schedule и продублировать напоминания.
+let schedulingGlucose = false;
+
 /**
  * (Re)schedule daily glucose-measurement reminders from MMKV state.
  * Idempotent: cancels existing glucose reminders first, so it is safe to call
  * from both the Settings toggle and every restore pass.
  */
 export async function scheduleGlucoseReminders(): Promise<void> {
+  if (schedulingGlucose) return;
+  schedulingGlucose = true;
+  try {
+    await doScheduleGlucoseReminders();
+  } finally {
+    schedulingGlucose = false;
+  }
+}
+
+async function doScheduleGlucoseReminders(): Promise<void> {
   if (Platform.OS === 'android') {
     await Notifications.setNotificationChannelAsync('glucose', {
       name: 'Замеры глюкозы / Glucose checks',

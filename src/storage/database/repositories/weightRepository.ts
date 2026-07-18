@@ -90,9 +90,15 @@ export const weightRepository = {
     if (!row) return;
     await db.runAsync('DELETE FROM weight_entries WHERE id = ?', [id]);
     const latest = await this.findLatest(row.pet_id);
-    if (latest && latest.recordedAt >= row.recorded_at) return; // deleted entry wasn't the latest
+    // Audit H2: NEVER null pets.weight_kg. A null weight silently drops the
+    // dog per-kg insulin-overdose guard (getInsulinThresholds falls back to a
+    // flat absoluteMaxDose=20 IU), so deleting the pet's only weight entry
+    // would remove a medical safety limit. If nothing remains, keep the last
+    // known weight on the pet; only re-sync DOWN to a real earlier entry.
+    if (!latest) return;
+    if (latest.recordedAt >= row.recorded_at) return; // deleted entry wasn't the latest
     await db.runAsync('UPDATE pets SET weight_kg = ?, updated_at = ? WHERE id = ?', [
-      latest ? latest.weightKg : null,
+      latest.weightKg,
       new Date().toISOString(),
       row.pet_id,
     ]);

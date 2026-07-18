@@ -1,5 +1,9 @@
 # DiaPet Audit Memory
 
+## Topic files
+- [v2.6 community/translation/retention audit](v26_community_audit.md) — chat ships enabled, Firestore-index/rules broken out-of-box, weight-delete nulls dose safety, CSV formula injection. Hermes lookbehind VERIFIED safe.
+
+
 ## Audit 2026-07-08/09 (HEAD 0dd722c) — persistence/deferred-crash focus
 - **NEW CRITICAL (not previously flagged): silent total data loss via App.tsx orphan-pet purge + MMKV key loss.**
   App.tsx bootstrap deletes ALL pets from SQLite when `ONBOARDING_COMPLETE` reads false. MMKV is encrypted with a

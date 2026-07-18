@@ -89,10 +89,12 @@ export function moderateText(text: string, room?: RoomDef): ModerationResult {
     escalate('warn');
   }
   if (DOSE_RE.test(text)) {
-    // В критичных по модерации комнатах дозовый совет особенно опасен —
-    // но и в остальных он идёт в serverую проверку.
+    // Audit M3: в max-модерации комнатах (инсулин/осложнения) конкретный
+    // дозовый совет — главная мед-угроза, и серверного AI-модератора пока нет.
+    // Здесь блокируем на клиенте (не даём отправить число дозы); в остальных
+    // комнатах — warn (сообщение помечается flagged для серверной проверки).
     reasons.push('dose_advice');
-    escalate(room && (room.moderation === 'high' || room.moderation === 'max') ? 'warn' : 'warn');
+    escalate(room?.moderation === 'max' ? 'block' : 'warn');
   }
   if (FLOOD_RE.test(text) || isMostlyUppercase(text)) {
     reasons.push('flood');

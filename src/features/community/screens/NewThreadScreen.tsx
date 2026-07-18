@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   Text,
   StyleSheet,
@@ -37,6 +37,7 @@ export default function NewThreadScreen() {
   const [title, setTitle] = useState('');
   const [message, setMessage] = useState('');
   const [posting, setPosting] = useState(false);
+  const postingRef = useRef(false); // audit M2: ref-гард от даблтапа (дубль темы)
 
   // Гейт правил сообщества — при первом постинге
   useEffect(() => {
@@ -46,7 +47,11 @@ export default function NewThreadScreen() {
   }, [navigation]);
 
   const onPost = async () => {
-    if (!room || posting) return;
+    if (!room || postingRef.current) return;
+    if (!uid) {
+      Alert.alert(t('common.info'), t('community.loginRequiredBody'));
+      return;
+    }
     if (!areGuidelinesAccepted()) {
       navigation.navigate('Guidelines');
       return;
@@ -60,6 +65,7 @@ export default function NewThreadScreen() {
       Alert.alert(t('common.info'), t('community.rateLimited'));
       return;
     }
+    postingRef.current = true;
     setPosting(true);
     try {
       if (uid) await ensureProfile(uid, displayName, species).catch(() => {});
@@ -83,6 +89,7 @@ export default function NewThreadScreen() {
         Alert.alert(t('common.error'), t('community.translationUnavailable'));
       }
     } finally {
+      postingRef.current = false;
       setPosting(false);
     }
   };

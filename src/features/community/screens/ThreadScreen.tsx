@@ -37,6 +37,10 @@ export default function ThreadScreen() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [text, setText] = useState('');
   const [sending, setSending] = useState(false);
+  // Audit M2: ref-гард от даблтапа (state обновляется после ре-рендера —
+  // два быстрых тапа оба читают sending=false и шлют дубль). Как savingRef
+  // во всех формах проекта.
+  const sendingRef = useRef(false);
   const listRef = useRef<FlatList<Message>>(null);
 
   useEffect(() => {
@@ -49,7 +53,13 @@ export default function ThreadScreen() {
   }, [threadId]);
 
   const onSend = async () => {
-    if (!room || sending) return;
+    if (!room || sendingRef.current) return;
+    // Audit L5: сессия могла отвалиться внутри треда — без uid писать нельзя
+    // (правила отклонят, но лучше не пытаться и не плодить '' -авторов).
+    if (!uid) {
+      Alert.alert(t('common.info'), t('community.loginRequiredBody'));
+      return;
+    }
     const valid = validateMessageText(text);
     if (valid === 'empty') return;
     if (valid === 'too_long') {
@@ -61,6 +71,7 @@ export default function ThreadScreen() {
       Alert.alert(t('common.info'), t('community.rateLimited'));
       return;
     }
+    sendingRef.current = true;
     setSending(true);
     try {
       const mod = await sendMessage(threadId, room, text, uid, displayName);
@@ -76,6 +87,7 @@ export default function ThreadScreen() {
         Alert.alert(t('common.error'), t('community.translationUnavailable'));
       }
     } finally {
+      sendingRef.current = false;
       setSending(false);
     }
   };

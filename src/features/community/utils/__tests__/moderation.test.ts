@@ -29,14 +29,20 @@ describe('moderateText', () => {
     expect(r.reasons).toContain('contact');
   });
 
-  it('flags dose advice (RU) in any room', () => {
+  it('BLOCKS dose advice (RU) in max-moderation rooms (insulin)', () => {
     const r = moderateText('коли 5 единиц утром и всё будет ок', insulinRoom);
-    expect(r.level).toBe('warn');
+    expect(r.level).toBe('block');
     expect(r.reasons).toContain('dose_advice');
   });
 
-  it('flags dose advice (EN)', () => {
+  it('BLOCKS dose advice (EN) in max-moderation rooms', () => {
     const r = moderateText('just give 3 units twice a day', insulinRoom);
+    expect(r.level).toBe('block');
+    expect(r.reasons).toContain('dose_advice');
+  });
+
+  it('only WARNS on dose advice in non-max rooms (lounge)', () => {
+    const r = moderateText('коли 5 единиц утром', loungeRoom);
     expect(r.level).toBe('warn');
     expect(r.reasons).toContain('dose_advice');
   });
