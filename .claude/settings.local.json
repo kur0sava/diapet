@@ -220,7 +220,9 @@
       "PowerShell(npx tsc --noEmit 2>&1 | Select-Object -First 15; \"---LINT---\"; npx eslint src/features/community src/shared/translation 2>&1 | Select-Object -First 15)",
       "PowerShell(npx tsc --noEmit 2>&1 | Select-Object -First 15; \"---LINT---\"; npx eslint src/features/community 2>&1 | Select-Object -First 12)",
       "PowerShell(git status --short; \"---\"; git log --oneline origin/master..HEAD | Measure-Object -Line | Select-Object -ExpandProperty Lines | ForEach-Object { \"Локальных коммитов \\(не запушено\\): $_\" }; \"---\"; git log --oneline -1)",
-      "PowerShell(git status --short; \"clean: $\\(\\(git status --short\\).Length -eq 0\\)\"; \"---\"; git log --oneline -4)"
+      "PowerShell(git status --short; \"clean: $\\(\\(git status --short\\).Length -eq 0\\)\"; \"---\"; git log --oneline -4)",
+      "PowerShell(npx jest community 2>&1 | Select-Object -Last 10)",
+      "PowerShell(npx tsc --noEmit 2>&1 | Select-Object -First 15; if \\($LASTEXITCODE -eq 0\\) { \"TSC OK\" }; \"---LINT---\"; npx eslint src/features/community src/features/hints src/features/dashboard src/features/pets/screens/WeightHistoryScreen.tsx src/features/dashboard/components/GlucoseHeroCard.tsx 2>&1 | Select-Object -First 15)"
     ]
   }
 }

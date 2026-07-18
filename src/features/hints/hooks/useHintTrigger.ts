@@ -26,6 +26,18 @@ export function useHintTrigger() {
 
   const triggerAfterAction = useCallback(
     (trigger: HintTrigger, context?: HintActionContext) => {
+      // H1 (UX+logic audit): a glucose reading IN THE EMERGENCY BAND fires the
+      // SOS Alert in LogGlucose. Popping a gold achievement modal or a chatty
+      // hint on top of a life-threatening crisis is emotionally jarring and
+      // buries the alert. Suppress BOTH here for emergencies; the achievement
+      // is idempotent and re-fires on the next save / next morning, so nothing
+      // is permanently lost.
+      if (trigger === 'glucose' && context?.valueMmol != null) {
+        const g = getSpeciesConfig(species ?? 'cat').glucose;
+        const v = context.valueMmol;
+        if (v < g.emergencyLow || v > g.emergencyHigh) return;
+      }
+
       // v2.6: achievements are evaluated on every log action (DB counts +
       // streak, see achievementEngine). Slight delay so the modal doesn't
       // pop in the same frame as navigation/toast; NOT gated on

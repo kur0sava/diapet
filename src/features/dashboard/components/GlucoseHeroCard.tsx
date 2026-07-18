@@ -76,15 +76,19 @@ export function GlucoseHeroCard({
       </View>
 
       <View style={styles.mainRow}>
+        {/* C1 (дизайн-ревью): 42px-число рисуем цветом ТЕКСТА, а не диапазона —
+            зелёный/оранжевый на белом surface давали ~2:1 (ниже WCAG-порога
+            для крупного текста, критично для возрастной аудитории). Семантику
+            цвета несут borderLeft + бейдж (фон+статус-слово) + стрелка ▼/▲. */}
         <Text
-          style={[styles.value, { color, fontFamily: theme.fonts.bold }]}
+          style={[styles.value, { color: theme.colors.text, fontFamily: theme.fonts.bold }]}
           numberOfLines={1}
           adjustsFontSizeToFit
           minimumFontScale={0.5}
           maxFontSizeMultiplier={1.4}
         >
           {value}
-          {trendArrow ? <Text style={styles.trend}>{` ${trendArrow}`}</Text> : null}
+          {trendArrow ? <Text style={[styles.trend, { color }]}>{` ${trendArrow}`}</Text> : null}
         </Text>
         <View style={styles.rightCol}>
           <Text style={[styles.unit, { color: theme.colors.textSecondary }]} numberOfLines={1}>

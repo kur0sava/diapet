@@ -9,7 +9,7 @@
 
 ## Key UX Patterns (Updated 2026-03-21)
 - **Delete**: Visible trash icons + long-press + confirmation dialog on list screens (with item details)
-- **Delete all data**: DOUBLE confirmation, BUT MMKV deletes before SQL transaction (BUG-020 CRITICAL)
+- **Delete all data**: DOUBLE confirmation. As of v2.6 SQL transaction runs BEFORE storage.delete (BUG-020 order now correct in SettingsScreen.handleDeleteAllData)
 - **Forms**: useUnsavedChangesGuard on LogGlucose, LogInjection, LogFeeding, AddSymptom, EditPet, Assessment, AddExpense
 - **AddExpense guard bug**: HAS guard now but triggers falsely in edit mode (no isDirty pattern)
 - **Validation**: Glucose >0 to <35 mmol / <630 mg/dL; insulin hard limit 10 IU
@@ -27,6 +27,14 @@
 - ExpensesScreen: missing long-press hint (inconsistent with SymptomsListScreen)
 - Touch targets < 44px: AI back button (36px), trash icons (~34px), bookmark button
 
+## v2.6 New Surfaces (audited 2026-07-18, static)
+- **Retention (LIVE in prod)**: achievementEngine + hintStore (id-based achievements, queued modals), weeklySummary + Sunday push scheduler, streak chip, event hints (hypo/hyper/new-food), WeightHistoryScreen.
+- **KEY LIVE BUG**: AchievementModal (gold celebration, global via HintProvider) can pop OVER Emergency screen / right after a scary glucose reading. `useHintTrigger.ts:33` schedules checkAchievements 3s AFTER any log, "NOT gated", fires even in emergency path (LogGlucoseScreen:324 triggerAfterAction BEFORE emergency alert:333). Emotional tone-clash. FIX: suppress achievement when emergency.
+- **WeightHistory**: add-only (no edit, delete+add to fix typo). lossWarning (`:282`) ignores time gap → false vet-call panic on same-day re-weigh. Unit toggle changes GLOBAL weight unit silently.
+- **Community stack (GATED OFF in prod via isChatFeatureEnabled)**: 7 screens under CommunityStack. Reviewed for future. Key issues: dose advice ("уколи 5 ед") only WARN (posted+flagged, not blocked) in newly_diagnosed/questions/diet rooms — only insulin/complications are moderation:'max'→block; no server AI moderator deployed. Own messages have NO delete/edit (MessageBubble actions are !isOwn only). NewThread/Thread composer have NO unsaved-changes guard. Google signIn errors swallowed silently (CommunityRoomsScreen:33). moderation.ts DOSE_RE/ABUSE_WORDS heuristic; rateLimit 40/day+5s cooldown (cooldown & daily_limit share one message).
+- **QuickAddButton FAB**: AddTab center, tabBarButton, preventDefault on press; navigates Home>LogX. Clean.
+- **ScreenHeader**: canonical, 44x44 back, centered title. Clean.
+
 ## Audit History
 - 2026-03-03: 6 Critical, 11 High, 16 Medium, 14 Low
 - 2026-03-07: Full re-audit with focus on restructure + visual/layout audit
@@ -35,3 +43,4 @@
 - 2026-03-21 (AM): Glucose & Diary focused: 3C, 5H, 8M, 4L. See `audit-glucose-diary-2026-03-21.md`
 - 2026-03-21 (PM): More/AI/Encyclopedia/FeedCalc/Assessment: 1C, 4H, 10M, 5L. See `audit-2026-03-21.md`
 - 2026-03-21 (PM2): Onboarding+Dashboard: 2C, 5M, 3L. See `audit-onboarding-dashboard-2026-03-21.md`
+- 2026-07-18: v2.6 new surfaces (retention + community + FAB/header/export): 0C, 2H, 6M, 5L. Top: H1 achievement modal over emergency (LIVE); H2 community dose-advice warn-not-block (gated).

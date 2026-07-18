@@ -19,7 +19,6 @@ import {
   getDoc,
   getDocs,
   setDoc,
-  addDoc,
   updateDoc,
   query,
   where,
@@ -28,6 +27,7 @@ import {
   onSnapshot,
   increment,
   serverTimestamp,
+  writeBatch,
 } from 'firebase/firestore';
 import { db } from '@features/auth/utils/firebaseConfig';
 import type { Thread, Message, CommunityProfile, RoomSpecies, ModerationStatus } from '../types';
@@ -101,21 +101,30 @@ export interface NewThreadInput {
   lang: 'ru' | 'en';
 }
 
+const LEVEL_RANK = { ok: 0, warn: 1, block: 2 } as const;
+
 /**
- * Создать тред + первое сообщение. Возвращает id треда и вердикт модерации
- * первого сообщения (caller показывает мягкое предупреждение при 'warn').
- * При 'block' бросает — caller не должен был дать отправить.
+ * Создать тред + первое сообщение атомарно (writeBatch — иначе при обрыве сети
+ * между записями оставался бы орфан-тред с messageCount:1 и нулём сообщений).
+ * Модерируем И заголовок, И первое сообщение (заголовок — самый видимый текст,
+ * раньше проходил мимо проверок): берём худший вердикт. При 'block' бросает.
  */
 export async function createThread(
   input: NewThreadInput
 ): Promise<{ threadId: string; moderation: ModerationResult }> {
-  const mod = moderateText(input.firstMessage, input.room);
-  if (mod.level === 'block') {
+  const titleMod = moderateText(input.title, input.room);
+  const msgMod = moderateText(input.firstMessage, input.room);
+  const worst = LEVEL_RANK[titleMod.level] >= LEVEL_RANK[msgMod.level] ? titleMod : msgMod;
+  if (worst.level === 'block') {
     throw new Error('blocked');
   }
   const now = Date.now();
-  const status: ModerationStatus = mod.level === 'warn' ? 'flagged' : 'visible';
-  const threadRef = await addDoc(collection(db, THREADS), {
+  const threadStatus: ModerationStatus = worst.level === 'warn' ? 'flagged' : 'visible';
+  const msgStatus: ModerationStatus = msgMod.level === 'warn' ? 'flagged' : 'visible';
+
+  const batch = writeBatch(db);
+  const threadRef = doc(collection(db, THREADS));
+  batch.set(threadRef, {
     roomId: input.room.id,
     title: input.title.trim().slice(0, 140),
     authorUid: input.authorUid,
@@ -125,20 +134,22 @@ export async function createThread(
     createdAt: now,
     lastMessageAt: now,
     messageCount: 1,
-    moderation: 'visible' as ModerationStatus,
+    moderation: threadStatus,
   });
-  await addDoc(collection(db, THREADS, threadRef.id, 'messages'), {
+  const msgRef = doc(collection(db, THREADS, threadRef.id, 'messages'));
+  batch.set(msgRef, {
     threadId: threadRef.id,
     authorUid: input.authorUid,
     authorName: input.authorName,
     text: input.firstMessage.trim(),
     createdAt: now,
-    moderation: status,
-    ...(mod.reasons.length > 0 ? { flagReason: mod.reasons[0] } : {}),
+    moderation: msgStatus,
+    ...(msgMod.reasons.length > 0 ? { flagReason: msgMod.reasons[0] } : {}),
     serverTs: serverTimestamp(),
   });
+  await batch.commit();
   await bumpProfileMessageCount(input.authorUid);
-  return { threadId: threadRef.id, moderation: mod };
+  return { threadId: threadRef.id, moderation: worst };
 }
 
 // ---------------------------------------------------------------------------
@@ -174,7 +185,11 @@ export async function sendMessage(
   if (mod.level === 'block') throw new Error('blocked');
   const now = Date.now();
   const status: ModerationStatus = mod.level === 'warn' ? 'flagged' : 'visible';
-  await addDoc(collection(db, THREADS, threadId, 'messages'), {
+  // Атомарно: сообщение + счётчик/время треда одним батчем (иначе счётчик мог
+  // разъехаться с реальным числом сообщений при обрыве между записями).
+  const batch = writeBatch(db);
+  const msgRef = doc(collection(db, THREADS, threadId, 'messages'));
+  batch.set(msgRef, {
     threadId,
     authorUid,
     authorName,
@@ -184,10 +199,11 @@ export async function sendMessage(
     ...(mod.reasons.length > 0 ? { flagReason: mod.reasons[0] } : {}),
     serverTs: serverTimestamp(),
   });
-  await updateDoc(doc(db, THREADS, threadId), {
+  batch.update(doc(db, THREADS, threadId), {
     lastMessageAt: now,
     messageCount: increment(1),
   });
+  await batch.commit();
   await bumpProfileMessageCount(authorUid);
   return mod;
 }

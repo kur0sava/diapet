@@ -379,7 +379,7 @@ const styles = StyleSheet.create({
   normalZone: { position: 'absolute', left: 0, right: 0 },
   rangeBar: { position: 'absolute', width: 3, borderRadius: 1.5 },
   countBadge: { position: 'absolute', borderRadius: 6, paddingHorizontal: 3, paddingVertical: 0.5 },
-  countText: { fontSize: 10, fontWeight: '600', fontVariant: ['tabular-nums'] },
+  countText: { fontSize: 11, fontWeight: '600', fontVariant: ['tabular-nums'] },
   xAxis: {
     height: 14,
     marginTop: 4,

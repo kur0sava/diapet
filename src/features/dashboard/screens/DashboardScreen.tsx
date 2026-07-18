@@ -546,15 +546,17 @@ export default function DashboardScreen() {
                 : t('dashboard.notMeasured')}
             </Text>
           </View>
-          {/* Streak chip (3.3) — from 2 days up; a "1-day streak" is just today */}
+          {/* Streak chip (3.3) — from 2 days up; a "1-day streak" is just today.
+              Design M2: цвет БРЕНДА (primary), не warning — стрик это награда,
+              а оранжевый в приложении = «внимание/тревога». */}
           {streakDays >= 2 && (
-            <View style={[styles.trendBadge, { backgroundColor: theme.colors.warning + '18' }]}>
+            <View style={[styles.trendBadge, { backgroundColor: theme.colors.primary + '18' }]}>
               <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
-                <Icon name="flame" size={13} color={theme.colors.warning} />
+                <Icon name="flame" size={13} color={theme.colors.primary} />
                 <Text
                   style={[
                     styles.trendText,
-                    { color: theme.colors.warning, fontFamily: theme.fonts.semibold },
+                    { color: theme.colors.primary, fontFamily: theme.fonts.semibold },
                   ]}
                 >
                   {t('dashboard.streakDays', { count: streakDays })}
@@ -837,7 +839,11 @@ export default function DashboardScreen() {
                                 : theme.colors.warning,
                           }}
                         >
+                          {/* L2: единый формат с TIR — стрелка + величина */}
                           {weeklySummary.avgDeltaMmol > 0 ? '▲' : '▼'}
+                          {glucoseUnit === 'mg/dL'
+                            ? Math.abs(mmolToMgdl(weeklySummary.avgDeltaMmol))
+                            : Math.abs(weeklySummary.avgDeltaMmol).toFixed(1)}
                         </Text>
                       )}
                   </View>

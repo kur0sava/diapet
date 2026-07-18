@@ -41,14 +41,21 @@ const ABUSE_WORDS = [
 const LINK_RE = /(https?:\/\/|www\.)|\b[a-z0-9-]+\.(com|ru|net|org|io|рф)\b/i;
 // Телефоны: 7+ цифр подряд (с разделителями) — попытка увести контакт наружу.
 const PHONE_RE = /(?:\+?\d[\s()-]?){7,}/;
-// Совет по дозам — главная мед-угроза домена. «5 единиц», «10 ед», «2 units»,
-// «уколи 3», «N мл/ml». Ловим число рядом с дозовым словом. Unicode-флаг +
-// \p{L}-границы: обычный \b не работает вокруг кириллицы (ц/л — не \w), из-за
-// чего «5 единиц» раньше не ловилось.
-const DOSE_RE =
-  /\d+([.,]\d+)?\s*(единиц[а-яё]*|ед|units?|iu|мл|ml)(?![\p{L}])|(?<![\p{L}])(колот[иь]|уколи[а-яё]*|вколи[а-яё]*|inject|give)\s+\d+/iu;
+// Дозы — главная мед-угроза домена, но НЕ всякое упоминание дозы опасно.
+// Развели (logic+UX аудит): ИМПЕРАТИВНЫЙ совет («колите 5», «give 3») — это
+// опасная инструкция «сделай так» → block в комнатах high/max. ОПИСАТЕЛЬНОЕ
+// упоминание («врач назначил 2 ед», «5 единиц») — обмен опытом → только warn,
+// иначе комната «Инсулин» блокировала бы ровно ту тему, ради которой создана.
+// Unicode-флаг + \p{L}-границы: обычный \b не работает вокруг кириллицы.
+const IMPERATIVE_DOSE_RE =
+  /(?<![\p{L}])(колот[иь]|коли|уколи[а-яё]*|вколи[а-яё]*|inject|give)\s+\d+/iu;
+const DESCRIPTIVE_DOSE_RE = /\d+([.,]\d+)?\s*(единиц[а-яё]*|ед|units?|iu|мл|ml)(?![\p{L}])/iu;
 // Флуд: один символ ≥6 раз подряд ИЛИ строка почти вся в верхнем регистре.
 const FLOOD_RE = /(.)\1{5,}/;
+
+function escapeRe(s: string): string {
+  return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
 
 function isMostlyUppercase(text: string): boolean {
   const letters = text.replace(/[^\p{L}]/gu, '');
@@ -65,7 +72,6 @@ function isMostlyUppercase(text: string): boolean {
 export function moderateText(text: string, room?: RoomDef): ModerationResult {
   const reasons: string[] = [];
   let level: ModerationLevel = 'ok';
-  const lower = text.toLowerCase();
 
   const escalate = (next: ModerationLevel) => {
     const rank = { ok: 0, warn: 1, block: 2 } as const;
@@ -73,7 +79,10 @@ export function moderateText(text: string, room?: RoomDef): ModerationResult {
   };
 
   for (const w of ABUSE_WORDS) {
-    if (lower.includes(w)) {
+    // \p{L}-границы: подстрочный includes ловил ложные срабатывания внутри
+    // слов; матчим слово целиком (учёт кириллицы через unicode-класс).
+    const re = new RegExp(`(?<![\\p{L}])${escapeRe(w)}(?![\\p{L}])`, 'iu');
+    if (re.test(text)) {
       reasons.push('abuse');
       escalate('block');
       break;
@@ -88,13 +97,17 @@ export function moderateText(text: string, room?: RoomDef): ModerationResult {
     reasons.push('contact');
     escalate('warn');
   }
-  if (DOSE_RE.test(text)) {
-    // Audit M3: в max-модерации комнатах (инсулин/осложнения) конкретный
-    // дозовый совет — главная мед-угроза, и серверного AI-модератора пока нет.
-    // Здесь блокируем на клиенте (не даём отправить число дозы); в остальных
-    // комнатах — warn (сообщение помечается flagged для серверной проверки).
+  const highOrMax = room?.moderation === 'high' || room?.moderation === 'max';
+  if (IMPERATIVE_DOSE_RE.test(text)) {
+    // Императивный совет по дозе — опасная инструкция. Блок в комнатах, где
+    // сидят паникующие новички и обсуждается инсулин (high/max); в офтоп-
+    // комнатах — warn.
     reasons.push('dose_advice');
-    escalate(room?.moderation === 'max' ? 'block' : 'warn');
+    escalate(highOrMax ? 'block' : 'warn');
+  } else if (DESCRIPTIVE_DOSE_RE.test(text)) {
+    // Описательное упоминание дозы — обмен опытом, видно как flagged, не блок.
+    reasons.push('dose_advice');
+    escalate('warn');
   }
   if (FLOOD_RE.test(text) || isMostlyUppercase(text)) {
     reasons.push('flood');

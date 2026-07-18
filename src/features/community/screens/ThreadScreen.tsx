@@ -10,7 +10,7 @@ import {
   Platform,
   Alert,
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRoute, RouteProp } from '@react-navigation/native';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '@shared/theme';
@@ -34,6 +34,7 @@ export default function ThreadScreen() {
   const { threadId, roomId, title } = route.params;
   const room = getRoomById(roomId);
   const { uid, displayName, userLang, species } = useCommunityUser();
+  const insets = useSafeAreaInsets();
 
   const [messages, setMessages] = useState<Message[]>([]);
   const [text, setText] = useState('');
@@ -131,7 +132,13 @@ export default function ThreadScreen() {
         <View
           style={[
             styles.composer,
-            { backgroundColor: theme.colors.surface, borderTopColor: theme.colors.border },
+            {
+              backgroundColor: theme.colors.surface,
+              borderTopColor: theme.colors.border,
+              // Design M3: SafeAreaView исключает bottom → на Android
+              // 3-кнопочной навигации композер заезжал под системную панель.
+              paddingBottom: 8 + insets.bottom,
+            },
           ]}
         >
           <TextInput

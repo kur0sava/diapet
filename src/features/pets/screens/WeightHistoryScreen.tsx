@@ -387,7 +387,7 @@ const styles = StyleSheet.create({
   container: { flex: 1 },
   unitToggle: {
     minWidth: 44,
-    minHeight: 32,
+    minHeight: 44,
     paddingHorizontal: 12,
     borderRadius: 10,
     borderWidth: 1,

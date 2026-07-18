@@ -41,10 +41,25 @@ describe('moderateText', () => {
     expect(r.reasons).toContain('dose_advice');
   });
 
-  it('only WARNS on dose advice in non-max rooms (lounge)', () => {
+  it('only WARNS on imperative dose advice in non-max rooms (lounge)', () => {
     const r = moderateText('коли 5 единиц утром', loungeRoom);
     expect(r.level).toBe('warn');
     expect(r.reasons).toContain('dose_advice');
+  });
+
+  it('only WARNS (not blocks) on DESCRIPTIVE dose in insulin room — sharing experience', () => {
+    // «врач назначил 2 ед» — обмен опытом, не императив; комната «Инсулин»
+    // существует ровно для таких разговоров, блокировать нельзя.
+    const r = moderateText('нам врач назначил 2 единицы дважды в день', insulinRoom);
+    expect(r.level).toBe('warn');
+    expect(r.reasons).toContain('dose_advice');
+  });
+
+  it('does not false-block words that merely contain an abuse substring', () => {
+    // «stupidity» содержит «stupid», но это не оскорбление — граница \p{L}.
+    const r = moderateText('this whole stupidity is exhausting honestly', loungeRoom);
+    expect(r.level).toBe('ok');
+    expect(r.reasons).not.toContain('abuse');
   });
 
   it('warns on flood / shouting', () => {

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '@shared/theme';
@@ -30,7 +30,13 @@ export default function CommunityRoomsScreen() {
           </Text>
           <TouchableOpacity
             style={[styles.signInBtn, { backgroundColor: theme.colors.primary }]}
-            onPress={() => void signIn().catch(() => {})}
+            onPress={() => {
+              // UX-аудит: молчаливый .catch(()=>{}) скрывал ошибку входа —
+              // юзер жал кнопку, ничего не происходило. Показываем ошибку.
+              void signIn().catch(() => {
+                Alert.alert(t('common.error'), t('auth.sessionNotReadyBody'));
+              });
+            }}
             accessibilityRole="button"
           >
             <Icon name="logo-google" size={18} color="#fff" />
