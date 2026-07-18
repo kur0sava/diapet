@@ -99,6 +99,9 @@ import {
   ArrowLeftRight,
   UserCircle,
   AtSign,
+  Flame,
+  Trophy,
+  Medal,
   type LucideIcon,
 } from 'lucide-react-native';
 
@@ -311,6 +314,11 @@ const ICON_MAP: Record<string, LucideIcon> = {
   'ellipsis-vertical': MoreVertical,
   'scale-outline': Scale,
   'barbell-outline': Dumbbell,
+
+  // Achievements & streaks (v2.6)
+  flame: Flame,
+  trophy: Trophy,
+  medal: Medal,
 };
 
 export type IconName = keyof typeof ICON_MAP | (string & {});

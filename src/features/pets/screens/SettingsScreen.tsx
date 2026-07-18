@@ -154,6 +154,7 @@ export default function SettingsScreen() {
                   storage.delete(StorageKeys.HINTS_ACHIEVEMENT_SHOWN);
                   storage.delete(StorageKeys.HINTS_PUSH_SHOWN_IDS);
                   storage.delete(StorageKeys.HINTS_PUSH_LAST_SCHEDULED);
+                  storage.delete(StorageKeys.ACHIEVEMENTS_UNLOCKED);
                   storage.delete('hintsMissedCheckDate');
                   // Smart-alert throttling must reset with the data it was
                   // computed from, or the fresh pet inherits old cooldowns

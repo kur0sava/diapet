@@ -142,6 +142,7 @@ export const en = {
     trendUp: 'Rising',
     trendDown: 'Falling',
     trendStable: 'Stable',
+    streakDays: '{{count}}-day streak',
     feedGuide: 'Feeding Guide',
     feedGuideSub: 'Diets, natural food, therapeutic nutrition',
     dailyDiary: 'Day Diary',

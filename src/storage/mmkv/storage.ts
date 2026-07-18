@@ -163,6 +163,9 @@ export const StorageKeys = {
   GLUCOSE_REMINDER_ENABLED: 'glucoseReminderEnabled',
   /** JSON array of "HH:mm" strings for glucose reminders. */
   GLUCOSE_REMINDER_TIMES: 'glucoseReminderTimes',
+  /** v2.6 retention: JSON array of unlocked achievement ids
+   * (see @features/hints/data/achievements). */
+  ACHIEVEMENTS_UNLOCKED: 'achievementsUnlocked',
 } as const;
 
 /** Per-pet vet contact key. See {@link StorageKeys.VET_NAME} for legacy migration. */

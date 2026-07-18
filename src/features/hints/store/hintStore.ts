@@ -16,20 +16,25 @@ const PENDING_QUEUE_LIMIT = 5;
 interface HintState {
   currentHint: Hint | null;
   pendingHints: Hint[];
-  showAchievement: boolean;
+  /** v2.6: achievements are id-based (see data/achievements). Several can
+   * unlock from one save (e.g. streak_7 + glucose_50) — queue them so the
+   * modal shows one at a time on dismiss. */
+  currentAchievementId: string | null;
+  pendingAchievements: string[];
 }
 
 interface HintActions {
   showHint: (hint: Hint) => void;
   dismissHint: () => void;
-  triggerAchievement: () => void;
+  showAchievementById: (id: string) => void;
   dismissAchievement: () => void;
 }
 
 export const useHintStore = create<HintState & HintActions>((set, get) => ({
   currentHint: null,
   pendingHints: [],
-  showAchievement: false,
+  currentAchievementId: null,
+  pendingAchievements: [],
   showHint: hint => {
     if (get().currentHint) {
       const queue = get().pendingHints;
@@ -51,6 +56,22 @@ export const useHintStore = create<HintState & HintActions>((set, get) => ({
       set({ currentHint: next, pendingHints: rest });
     }
   },
-  triggerAchievement: () => set({ showAchievement: true }),
-  dismissAchievement: () => set({ showAchievement: false }),
+  showAchievementById: id => {
+    const { currentAchievementId, pendingAchievements } = get();
+    if (currentAchievementId === id || pendingAchievements.includes(id)) return;
+    if (currentAchievementId) {
+      set({ pendingAchievements: [...pendingAchievements, id] });
+    } else {
+      set({ currentAchievementId: id });
+    }
+  },
+  dismissAchievement: () => {
+    const queue = get().pendingAchievements;
+    if (queue.length === 0) {
+      set({ currentAchievementId: null });
+    } else {
+      const [next, ...rest] = queue;
+      set({ currentAchievementId: next, pendingAchievements: rest });
+    }
+  },
 }));

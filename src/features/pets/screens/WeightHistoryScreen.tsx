@@ -33,6 +33,7 @@ import {
 } from '@shared/utils/weight';
 import { formatShortDate } from '@shared/utils/dateUtils';
 import { getSpeciesConfig } from '@shared/config/speciesConfig';
+import { checkAchievements } from '@features/hints/utils/achievementEngine';
 import type { WeightEntry } from '@storage/domain/types';
 
 const CHART_HEIGHT = 140;
@@ -179,6 +180,9 @@ export default function WeightHistoryScreen() {
       await refreshActivePet();
       await queryClient.invalidateQueries({ queryKey: queryKeys.weight.all });
       useSuccessToast.getState().show(t('common.saved'));
+      setTimeout(() => {
+        void checkAchievements(activePet.id);
+      }, 2000);
     } catch {
       Alert.alert(t('common.error'), t('pets.saveError'));
     } finally {

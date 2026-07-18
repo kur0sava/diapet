@@ -142,6 +142,7 @@ export const ru = {
     trendUp: 'Растёт',
     trendDown: 'Снижается',
     trendStable: 'Стабильно',
+    streakDays: '{{count}} дн. подряд',
     feedGuide: 'Гид по питанию',
     feedGuideSub: 'Корма, натуралка, лечебное питание',
     dailyDiary: 'Дневник дня',

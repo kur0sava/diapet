@@ -1,16 +1,10 @@
 import React, { useMemo } from 'react';
-import {
-  Modal,
-  View,
-  Text,
-  TouchableOpacity,
-  StyleSheet,
-} from 'react-native';
+import { Modal, View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { Icon } from '@shared/components/ui/Icon';
 import { useTheme } from '@shared/theme';
 import { useHintStore } from '../store/hintStore';
-import { ACHIEVEMENT_HERO } from '../data/hintsContent';
+import { getAchievementById } from '../data/achievements';
 import i18n from '@shared/i18n';
 
 const GOLD = '#FFD700';
@@ -18,52 +12,48 @@ const GOLD_LIGHT = '#FFF3B0';
 const GOLD_DARK = '#B8860B';
 
 export function AchievementModal() {
-  const { showAchievement, dismissAchievement } = useHintStore();
+  const currentAchievementId = useHintStore(s => s.currentAchievementId);
+  const dismissAchievement = useHintStore(s => s.dismissAchievement);
   const { t } = useTranslation();
   const { theme } = useTheme();
 
   const styles = useMemo(
-    () => makeStyles(theme.colors.card, theme.colors.text, theme.colors.textSecondary, theme.isDark),
-    [theme.colors.card, theme.colors.text, theme.colors.textSecondary, theme.isDark],
+    () =>
+      makeStyles(theme.colors.card, theme.colors.text, theme.colors.textSecondary, theme.isDark),
+    [theme.colors.card, theme.colors.text, theme.colors.textSecondary, theme.isDark]
   );
 
-  if (!showAchievement) return null;
+  const achievement = currentAchievementId ? getAchievementById(currentAchievementId) : undefined;
+  if (!achievement) return null;
 
   const lang = i18n.language?.startsWith('en') ? 'en' : 'ru';
 
   return (
-    <Modal
-      visible={showAchievement}
-      transparent
-      animationType="fade"
-      onRequestClose={dismissAchievement}
-    >
+    <Modal visible transparent animationType="fade" onRequestClose={dismissAchievement}>
       {/* Semi-transparent backdrop */}
       <View style={styles.overlay}>
         {/* Achievement card */}
         <View style={styles.card}>
-          {/* Gold star decoration */}
+          {/* Gold decoration — icon comes from the achievement definition */}
           <View style={styles.iconWrapper}>
-            <Icon name="star" size={48} color={GOLD} />
+            <Icon name={achievement.icon} size={48} color={GOLD} />
           </View>
 
           {/* Achievement label */}
           <Text style={styles.achievementLabel}>{t('hints.achievementTitle')}</Text>
 
           {/* Title from content */}
-          <Text style={styles.title}>{ACHIEVEMENT_HERO.title[lang]}</Text>
+          <Text style={styles.title}>{achievement.title[lang]}</Text>
 
           {/* Congratulation text */}
-          {ACHIEVEMENT_HERO.congratulation[lang] ? (
-            <Text style={styles.congratulation}>
-              {ACHIEVEMENT_HERO.congratulation[lang]}
-            </Text>
+          {achievement.congratulation[lang] ? (
+            <Text style={styles.congratulation}>{achievement.congratulation[lang]}</Text>
           ) : null}
 
           {/* Card text */}
-          {ACHIEVEMENT_HERO.cardText[lang] ? (
+          {achievement.cardText[lang] ? (
             <View style={styles.cardTextWrapper}>
-              <Text style={styles.cardText}>{ACHIEVEMENT_HERO.cardText[lang]}</Text>
+              <Text style={styles.cardText}>{achievement.cardText[lang]}</Text>
             </View>
           ) : null}
 
@@ -81,12 +71,7 @@ export function AchievementModal() {
   );
 }
 
-function makeStyles(
-  cardBg: string,
-  textColor: string,
-  textSecondary: string,
-  isDark: boolean,
-) {
+function makeStyles(cardBg: string, textColor: string, textSecondary: string, isDark: boolean) {
   return StyleSheet.create({
     overlay: {
       flex: 1,

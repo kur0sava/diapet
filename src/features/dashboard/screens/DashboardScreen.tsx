@@ -30,6 +30,7 @@ import { useSubscription } from '@features/subscription/hooks/useSubscription';
 import { TRIAL_REMINDER_DAYS } from '@features/subscription/utils/trial';
 import { useFocusEffect } from '@react-navigation/native';
 import { useAnalyzer } from '@features/analyzer/hooks/useAnalyzer';
+import { computeStreakDays } from '@features/hints/utils/achievementEngine';
 import { RiskScoreWidget } from '@features/analyzer/components/RiskScoreWidget';
 import { TrendIndicator } from '@features/analyzer/components/TrendIndicator';
 import { SmartInsightCard } from '@features/analyzer/components/SmartInsightCard';
@@ -171,6 +172,13 @@ export default function DashboardScreen() {
     enabled: !!petId,
   });
 
+  // v2.6 (3.3): logging streak — consecutive days with at least one record
+  const { data: streakDays = 0, refetch: refetchStreak } = useQuery({
+    queryKey: ['streak', petId],
+    queryFn: () => computeStreakDays(petId),
+    enabled: !!petId,
+  });
+
   const {
     trends: analyzerTrends,
     riskScore,
@@ -215,7 +223,8 @@ export default function DashboardScreen() {
       refetchGlucose();
       refetchHistory();
       refetchLastInjection();
-    }, [refetchGlucose, refetchHistory, refetchLastInjection])
+      refetchStreak();
+    }, [refetchGlucose, refetchHistory, refetchLastInjection, refetchStreak])
   );
 
   const onRefresh = useCallback(async () => {
@@ -528,6 +537,22 @@ export default function DashboardScreen() {
                 : t('dashboard.notMeasured')}
             </Text>
           </View>
+          {/* Streak chip (3.3) — from 2 days up; a "1-day streak" is just today */}
+          {streakDays >= 2 && (
+            <View style={[styles.trendBadge, { backgroundColor: theme.colors.warning + '18' }]}>
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
+                <Icon name="flame" size={13} color={theme.colors.warning} />
+                <Text
+                  style={[
+                    styles.trendText,
+                    { color: theme.colors.warning, fontFamily: theme.fonts.semibold },
+                  ]}
+                >
+                  {t('dashboard.streakDays', { count: streakDays })}
+                </Text>
+              </View>
+            </View>
+          )}
           {trend && (
             <View
               style={[
