@@ -218,7 +218,8 @@
       "Bash(echo \"=== unicode prop escapes \\\\\\\\p{ ===\")",
       "PowerShell(npx tsc --noEmit 2>&1 | Select-Object -First 15; \"---TESTS---\"; npx jest community translation 2>&1 | Select-Object -Last 8)",
       "PowerShell(npx tsc --noEmit 2>&1 | Select-Object -First 15; \"---LINT---\"; npx eslint src/features/community src/shared/translation 2>&1 | Select-Object -First 15)",
-      "PowerShell(npx tsc --noEmit 2>&1 | Select-Object -First 15; \"---LINT---\"; npx eslint src/features/community 2>&1 | Select-Object -First 12)"
+      "PowerShell(npx tsc --noEmit 2>&1 | Select-Object -First 15; \"---LINT---\"; npx eslint src/features/community 2>&1 | Select-Object -First 12)",
+      "PowerShell(git status --short; \"---\"; git log --oneline origin/master..HEAD | Measure-Object -Line | Select-Object -ExpandProperty Lines | ForEach-Object { \"Локальных коммитов \\(не запушено\\): $_\" }; \"---\"; git log --oneline -1)"
     ]
   }
 }
