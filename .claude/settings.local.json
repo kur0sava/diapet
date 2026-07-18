@@ -208,7 +208,10 @@
       "PowerShell(npx eslint src 2>&1 | Select-Object -First 40)",
       "PowerShell(Write-Host \"=== ESLINT \\(full src\\) ===\"; npx eslint src 2>&1 | Select-Object -First 40)",
       "PowerShell(Write-Host \"=== FUZZ ROBOT \\(300 scenarios x 80 actions\\) ===\"; $env:FUZZ_SCENARIOS=300; $env:FUZZ_ACTIONS=80; npx jest userScenarios --silent 2>&1 | Select-Object -Last 8)",
-      "PowerShell($env:FUZZ_SCENARIOS=$null; $env:FUZZ_ACTIONS=$null; Write-Host \"=== EXPO-DOCTOR ===\"; $env:NODE_OPTIONS='--use-system-ca'; npx expo-doctor 2>&1 | Select-Object -Last 25)"
+      "PowerShell($env:FUZZ_SCENARIOS=$null; $env:FUZZ_ACTIONS=$null; Write-Host \"=== EXPO-DOCTOR ===\"; $env:NODE_OPTIONS='--use-system-ca'; npx expo-doctor 2>&1 | Select-Object -Last 25)",
+      "PowerShell(npx jest community 2>&1 | Select-Object -Last 15)",
+      "PowerShell(npx jest community 2>&1 | Select-Object -Last 12ъ)",
+      "PowerShell(npx jest community 2>&1 | Select-Object -Last 8)"
     ]
   }
 }
