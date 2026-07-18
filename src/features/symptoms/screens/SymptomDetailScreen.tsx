@@ -1,5 +1,13 @@
 import React from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image, ActivityIndicator } from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  TouchableOpacity,
+  Image,
+  ActivityIndicator,
+} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Icon } from '@shared/components/ui/Icon';
 import { useRoute, RouteProp } from '@react-navigation/native';
@@ -12,7 +20,7 @@ import { queryKeys } from '@shared/utils/queryKeys';
 import { symptomRepository } from '@storage/database';
 import { SYMPTOM_ICONS, SYMPTOM_COLORS } from '../types';
 import { formatDateTime } from '@shared/utils/dateUtils';
-import { Card } from '@shared/components/ui';
+import { Card, ScreenHeader } from '@shared/components/ui';
 
 export default function SymptomDetailScreen() {
   const navigation = useSymptomsNavigation();
@@ -25,47 +33,73 @@ export default function SymptomDetailScreen() {
     queryFn: () => symptomRepository.findById(route.params.id),
   });
 
-  if (isLoading) return (
-    <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.background }]}>
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-        <ActivityIndicator size="large" color={theme.colors.primary} />
-      </View>
-    </SafeAreaView>
-  );
+  if (isLoading)
+    return (
+      <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.background }]}>
+        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+          <ActivityIndicator size="large" color={theme.colors.primary} />
+        </View>
+      </SafeAreaView>
+    );
 
-  if (!symptom) return (
-    <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.background }]}>
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-        <Text style={{ color: theme.colors.textSecondary, fontSize: 16 }}>{t('common.notFound')}</Text>
-        <TouchableOpacity onPress={() => navigation.goBack()} style={{ marginTop: 16 }}>
-          <Text style={{ color: theme.colors.primary }}>{t('common.back')}</Text>
-        </TouchableOpacity>
-      </View>
-    </SafeAreaView>
-  );
+  if (!symptom)
+    return (
+      <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.background }]}>
+        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+          <Text style={{ color: theme.colors.textSecondary, fontSize: 16 }}>
+            {t('common.notFound')}
+          </Text>
+          <TouchableOpacity onPress={() => navigation.goBack()} style={{ marginTop: 16 }}>
+            <Text style={{ color: theme.colors.primary }}>{t('common.back')}</Text>
+          </TouchableOpacity>
+        </View>
+      </SafeAreaView>
+    );
 
-  const severityColors = { mild: theme.colors.success, moderate: theme.colors.warning, severe: theme.colors.danger };
-  const severityLabels = { mild: t('symptoms.mild'), moderate: t('symptoms.moderate'), severe: t('symptoms.severe') };
+  const severityColors = {
+    mild: theme.colors.success,
+    moderate: theme.colors.warning,
+    severe: theme.colors.danger,
+  };
+  const severityLabels = {
+    mild: t('symptoms.mild'),
+    moderate: t('symptoms.moderate'),
+    severe: t('symptoms.severe'),
+  };
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.background }]}>
-      <View style={[styles.navHeader, { borderBottomColor: theme.colors.border }]}>
-        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.navBtn}>
-          <Icon name="chevron-back" size={22} color={theme.colors.primary} />
-          <Text style={{ color: theme.colors.primary }}>{t('common.back')}</Text>
-        </TouchableOpacity>
-        <Text style={[styles.title, { color: theme.colors.text, fontFamily: theme.fonts.semibold }]} numberOfLines={1}>{t('symptoms.detailTitle')}</Text>
-        <TouchableOpacity onPress={() => navigation.navigate('AddSymptom', { editId: symptom.id })} style={styles.navBtn}>
-          <Text style={{ color: theme.colors.primary }} numberOfLines={1}>{t('common.edit')}</Text>
-        </TouchableOpacity>
-      </View>
+      <ScreenHeader
+        title={t('symptoms.detailTitle')}
+        onBack={() => navigation.goBack()}
+        right={
+          <TouchableOpacity
+            onPress={() => navigation.navigate('AddSymptom', { editId: symptom.id })}
+            style={styles.navBtn}
+            accessibilityRole="button"
+          >
+            <Text style={{ color: theme.colors.primary }} numberOfLines={1}>
+              {t('common.edit')}
+            </Text>
+          </TouchableOpacity>
+        }
+      />
 
       <ScrollView contentContainerStyle={styles.content}>
-        <Text style={[styles.date, { color: theme.colors.textSecondary }]}>{formatDateTime(symptom.recordedAt)}</Text>
+        <Text style={[styles.date, { color: theme.colors.textSecondary }]}>
+          {formatDateTime(symptom.recordedAt)}
+        </Text>
 
         <Card style={styles.card}>
-          <Text style={[styles.sectionLabel, { color: theme.colors.textSecondary }]}>{t('symptoms.severity')}</Text>
-          <View style={[styles.severityBadge, { backgroundColor: `${severityColors[symptom.severity]}20` }]}>
+          <Text style={[styles.sectionLabel, { color: theme.colors.textSecondary }]}>
+            {t('symptoms.severity')}
+          </Text>
+          <View
+            style={[
+              styles.severityBadge,
+              { backgroundColor: `${severityColors[symptom.severity]}20` },
+            ]}
+          >
             <Text style={[styles.severityText, { color: severityColors[symptom.severity] }]}>
               {severityLabels[symptom.severity]}
             </Text>
@@ -73,29 +107,39 @@ export default function SymptomDetailScreen() {
         </Card>
 
         <Card style={styles.card}>
-          <Text style={[styles.sectionLabel, { color: theme.colors.textSecondary }]}>{t('symptoms.title')}</Text>
+          <Text style={[styles.sectionLabel, { color: theme.colors.textSecondary }]}>
+            {t('symptoms.title')}
+          </Text>
           {symptom.symptomTypes.map(type => (
             <View key={type} style={styles.symptomRow}>
-              <View style={[styles.symptomIconCircle, { backgroundColor: `${SYMPTOM_COLORS[type]}15` }]}>
+              <View
+                style={[styles.symptomIconCircle, { backgroundColor: `${SYMPTOM_COLORS[type]}15` }]}
+              >
                 <Icon name={SYMPTOM_ICONS[type]} size={20} color={SYMPTOM_COLORS[type]} />
               </View>
-              <Text style={[styles.symptomText, { color: theme.colors.text }]}>{t(`symptoms.types.${type}`)}</Text>
+              <Text style={[styles.symptomText, { color: theme.colors.text }]}>
+                {t(`symptoms.types.${type}`)}
+              </Text>
             </View>
           ))}
         </Card>
 
         {symptom.notes && (
           <Card style={styles.card}>
-            <Text style={[styles.sectionLabel, { color: theme.colors.textSecondary }]}>{t('glucose.notes')}</Text>
+            <Text style={[styles.sectionLabel, { color: theme.colors.textSecondary }]}>
+              {t('glucose.notes')}
+            </Text>
             <Text style={[styles.notes, { color: theme.colors.text }]}>{symptom.notes}</Text>
           </Card>
         )}
 
         {symptom.photoUris.length > 0 && (
           <Card style={styles.card}>
-            <Text style={[styles.sectionLabel, { color: theme.colors.textSecondary }]}>{t('symptoms.photo')}</Text>
+            <Text style={[styles.sectionLabel, { color: theme.colors.textSecondary }]}>
+              {t('symptoms.photo')}
+            </Text>
             <View style={styles.photosGrid}>
-              {symptom.photoUris.map((uri) => (
+              {symptom.photoUris.map(uri => (
                 <Image key={uri} source={{ uri }} style={styles.photo} />
               ))}
             </View>
@@ -108,17 +152,33 @@ export default function SymptomDetailScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
-  navHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', padding: 16, borderBottomWidth: 0.5, gap: 8 },
-  navBtn: { flexDirection: 'row', alignItems: 'center', gap: 2, minHeight: 44, minWidth: 44 },
-  title: { fontSize: 17, flex: 1, textAlign: 'center' },
+  navBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'flex-end',
+    gap: 2,
+    minHeight: 44,
+    minWidth: 44,
+  },
   content: { padding: 20, gap: 14, paddingBottom: 40 },
   date: { fontSize: 14, textAlign: 'center', marginBottom: 4 },
   card: { gap: 12 },
   sectionLabel: { fontSize: 12, fontWeight: '600', textTransform: 'uppercase', letterSpacing: 0.5 },
-  severityBadge: { alignSelf: 'flex-start', paddingHorizontal: 14, paddingVertical: 8, borderRadius: 20 },
+  severityBadge: {
+    alignSelf: 'flex-start',
+    paddingHorizontal: 14,
+    paddingVertical: 8,
+    borderRadius: 20,
+  },
   severityText: { fontWeight: '700', fontSize: 15 },
   symptomRow: { flexDirection: 'row', alignItems: 'center', gap: 12, paddingVertical: 6 },
-  symptomIconCircle: { width: 36, height: 36, borderRadius: 18, alignItems: 'center', justifyContent: 'center' },
+  symptomIconCircle: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   symptomText: { fontSize: 15 },
   notes: { fontSize: 15, lineHeight: 22 },
   photosGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },

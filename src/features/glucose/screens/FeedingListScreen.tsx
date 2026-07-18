@@ -19,7 +19,7 @@ import { feedingRepository } from '@storage/database';
 import { usePetStore } from '@shared/stores/petStore';
 import { FeedingLog } from '@storage/domain/types';
 import { formatDateTime, formatShortDate, formatFullDateTime } from '@shared/utils/dateUtils';
-import { EmptyState, Card, AnimatedListItem } from '@shared/components/ui';
+import { EmptyState, Card, AnimatedListItem, ScreenHeader } from '@shared/components/ui';
 import { SimpleBarChart, BarData } from '@shared/components/charts/SimpleBarChart';
 import { LinearGradient } from 'expo-linear-gradient';
 import { parseISO, subDays, isAfter } from 'date-fns';
@@ -147,24 +147,7 @@ export default function FeedingListScreen() {
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.background }]}>
-      <View style={[styles.navHeader, { borderBottomColor: theme.colors.border }]}>
-        <TouchableOpacity
-          onPress={() => navigation.goBack()}
-          style={{ minHeight: 44, minWidth: 44, justifyContent: 'center' }}
-        >
-          <Text style={{ color: theme.colors.primary }}>
-            {'← '}
-            {t('common.back')}
-          </Text>
-        </TouchableOpacity>
-        <Text
-          numberOfLines={1}
-          style={[styles.headerTitle, { color: theme.colors.text, fontFamily: theme.fonts.bold }]}
-        >
-          {t('feeding.history')}
-        </Text>
-        <View style={{ width: 60 }} />
-      </View>
+      <ScreenHeader title={t('feeding.history')} onBack={() => navigation.goBack()} />
 
       <FlatList
         data={feedings}
@@ -218,15 +201,6 @@ export default function FeedingListScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
-  navHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    padding: 16,
-    borderBottomWidth: 0.5,
-    gap: 8,
-  },
-  headerTitle: { fontSize: 17, fontWeight: '600', flex: 1, textAlign: 'center' },
   list: { padding: 16, gap: 8, paddingBottom: 100 },
   chartCard: { marginBottom: 8 },
   card: { padding: 0, flexDirection: 'row', overflow: 'hidden' },

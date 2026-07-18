@@ -19,7 +19,7 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { queryKeys } from '@shared/utils/queryKeys';
 import { weightRepository } from '@storage/database';
 import { usePetStore } from '@shared/stores/petStore';
-import { Card, Input } from '@shared/components/ui';
+import { Card, Input, ScreenHeader } from '@shared/components/ui';
 import { Icon } from '@shared/components/ui/Icon';
 import { useSuccessToast } from '@shared/components/ui/SuccessToast';
 import {
@@ -219,32 +219,21 @@ export default function WeightHistoryScreen() {
       style={{ flex: 1 }}
     >
       <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.background }]}>
-        <View style={[styles.navHeader, { borderBottomColor: theme.colors.border }]}>
-          <TouchableOpacity onPress={() => navigation.goBack()} style={styles.navBtn}>
-            <Icon name="chevron-back" size={22} color={theme.colors.primary} />
-            <Text style={{ color: theme.colors.primary, fontFamily: theme.fonts.medium }}>
-              {t('common.back')}
-            </Text>
-          </TouchableOpacity>
-          <Text
-            style={[
-              styles.headerTitle,
-              { color: theme.colors.text, fontFamily: theme.fonts.semibold },
-            ]}
-            numberOfLines={1}
-          >
-            {t('weight.title')}
-          </Text>
-          <TouchableOpacity
-            onPress={toggleUnit}
-            style={[styles.unitToggle, { borderColor: theme.colors.primary + '40' }]}
-            accessibilityRole="button"
-          >
-            <Text style={{ color: theme.colors.primary, fontFamily: theme.fonts.semibold }}>
-              {unit}
-            </Text>
-          </TouchableOpacity>
-        </View>
+        <ScreenHeader
+          title={t('weight.title')}
+          onBack={() => navigation.goBack()}
+          right={
+            <TouchableOpacity
+              onPress={toggleUnit}
+              style={[styles.unitToggle, { borderColor: theme.colors.primary + '40' }]}
+              accessibilityRole="button"
+            >
+              <Text style={{ color: theme.colors.primary, fontFamily: theme.fonts.semibold }}>
+                {unit}
+              </Text>
+            </TouchableOpacity>
+          }
+        />
         <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
           {/* Current weight + trend */}
           <Card style={styles.card}>
@@ -396,16 +385,6 @@ export default function WeightHistoryScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
-  navHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    padding: 16,
-    borderBottomWidth: 0.5,
-    gap: 8,
-  },
-  navBtn: { flexDirection: 'row', alignItems: 'center', gap: 2, minHeight: 44, minWidth: 44 },
-  headerTitle: { fontSize: 17, flex: 1, textAlign: 'center' },
   unitToggle: {
     minWidth: 44,
     minHeight: 32,

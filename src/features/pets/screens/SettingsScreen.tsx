@@ -16,7 +16,7 @@ import { useTranslation } from 'react-i18next';
 import { useTheme, ColorScheme } from '@shared/theme';
 import { storage, StorageKeys } from '@storage/mmkv/storage';
 import { changeLanguage } from '@shared/i18n';
-import { Card, Icon } from '@shared/components/ui';
+import { Card, Icon, ScreenHeader } from '@shared/components/ui';
 import { getDatabase } from '@storage/database';
 import { usePetStore } from '@shared/stores/petStore';
 import * as Notifications from 'expo-notifications';
@@ -204,18 +204,7 @@ export default function SettingsScreen() {
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.background }]}>
-      <View style={[styles.navHeader, { borderBottomColor: theme.colors.border }]}>
-        <TouchableOpacity
-          onPress={() => navigation.goBack()}
-          style={{ minHeight: 44, minWidth: 44, justifyContent: 'center' }}
-        >
-          <Text style={{ color: theme.colors.primary }}>← {t('common.back')}</Text>
-        </TouchableOpacity>
-        <Text numberOfLines={1} style={[styles.headerTitle, { color: theme.colors.text }]}>
-          {t('settings.title')}
-        </Text>
-        <View style={{ width: 60 }} />
-      </View>
+      <ScreenHeader title={t('settings.title')} onBack={() => navigation.goBack()} />
       <ScrollView contentContainerStyle={styles.content}>
         <Text style={[styles.sectionHeader, { color: theme.colors.textSecondary }]}>
           {t('settings.appearance')}
@@ -525,15 +514,6 @@ export default function SettingsScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
-  navHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    padding: 16,
-    borderBottomWidth: 0.5,
-    gap: 8,
-  },
-  headerTitle: { fontSize: 17, fontWeight: '600', flex: 1, textAlign: 'center' },
   content: { padding: 16, gap: 8, paddingBottom: 40 },
   sectionHeader: {
     fontSize: 11,

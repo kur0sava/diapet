@@ -21,7 +21,7 @@ import { usePetStore } from '@shared/stores/petStore';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { queryKeys } from '@shared/utils/queryKeys';
 import { scheduleRepository, petRepository } from '@storage/database';
-import { Card } from '@shared/components/ui';
+import { Card, ScreenHeader } from '@shared/components/ui';
 import { restoreScheduleNotifications } from '@shared/hooks/useNotifications';
 
 export default function PetProfileScreen() {
@@ -129,31 +129,24 @@ export default function PetProfileScreen() {
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.background }]}>
-      <View style={[styles.navHeader, { borderBottomColor: theme.colors.border }]}>
-        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.navBtn}>
-          <Icon name="chevron-back" size={22} color={theme.colors.primary} />
-          <Text style={{ color: theme.colors.primary, fontFamily: theme.fonts.medium }}>
-            {t('common.back')}
-          </Text>
-        </TouchableOpacity>
-        <Text
-          style={[
-            styles.headerTitle,
-            { color: theme.colors.text, fontFamily: theme.fonts.semibold },
-          ]}
-          numberOfLines={1}
-        >
-          {t('pets.title')}
-        </Text>
-        <TouchableOpacity onPress={() => navigation.navigate('EditPet')} style={styles.navBtn}>
-          <Text
-            style={{ color: theme.colors.primary, fontFamily: theme.fonts.medium }}
-            numberOfLines={1}
+      <ScreenHeader
+        title={t('pets.title')}
+        onBack={() => navigation.goBack()}
+        right={
+          <TouchableOpacity
+            onPress={() => navigation.navigate('EditPet')}
+            style={styles.navBtn}
+            accessibilityRole="button"
           >
-            {t('common.edit')}
-          </Text>
-        </TouchableOpacity>
-      </View>
+            <Text
+              style={{ color: theme.colors.primary, fontFamily: theme.fonts.medium }}
+              numberOfLines={1}
+            >
+              {t('common.edit')}
+            </Text>
+          </TouchableOpacity>
+        }
+      />
       <ScrollView contentContainerStyle={styles.content}>
         <View style={styles.avatarSection}>
           <LinearGradient
@@ -358,16 +351,14 @@ export default function PetProfileScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
-  navHeader: {
+  navBtn: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
-    padding: 16,
-    borderBottomWidth: 0.5,
-    gap: 8,
+    justifyContent: 'flex-end',
+    gap: 2,
+    minHeight: 44,
+    minWidth: 44,
   },
-  navBtn: { flexDirection: 'row', alignItems: 'center', gap: 2, minHeight: 44, minWidth: 44 },
-  headerTitle: { fontSize: 17, flex: 1, textAlign: 'center' },
   content: { padding: 20, gap: 16, paddingBottom: 40 },
   avatarSection: { alignItems: 'center', paddingVertical: 16 },
   avatar: {
