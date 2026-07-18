@@ -217,7 +217,8 @@
       "PowerShell(npx eslint src/features/community src/shared/translation src/navigation/MainNavigator.tsx 2>&1 | Select-Object -First 40)",
       "Bash(echo \"=== unicode prop escapes \\\\\\\\p{ ===\")",
       "PowerShell(npx tsc --noEmit 2>&1 | Select-Object -First 15; \"---TESTS---\"; npx jest community translation 2>&1 | Select-Object -Last 8)",
-      "PowerShell(npx tsc --noEmit 2>&1 | Select-Object -First 15; \"---LINT---\"; npx eslint src/features/community src/shared/translation 2>&1 | Select-Object -First 15)"
+      "PowerShell(npx tsc --noEmit 2>&1 | Select-Object -First 15; \"---LINT---\"; npx eslint src/features/community src/shared/translation 2>&1 | Select-Object -First 15)",
+      "PowerShell(npx tsc --noEmit 2>&1 | Select-Object -First 15; \"---LINT---\"; npx eslint src/features/community 2>&1 | Select-Object -First 12)"
     ]
   }
 }

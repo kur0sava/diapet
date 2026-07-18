@@ -19,6 +19,7 @@ import type { CommunityStackParamList } from '@navigation/types';
 import { formatRelative } from '@shared/utils/dateUtils';
 import { getRoomById } from '../data/rooms';
 import { listThreads } from '../api/communityApi';
+import { isBlocked } from '../utils/blocklist';
 import type { Thread } from '../types';
 
 /** Audit L3: guard against a corrupt/missing timestamp — new Date(NaN)
@@ -119,7 +120,7 @@ export default function ThreadListScreen() {
         </View>
       ) : (
         <FlatList
-          data={threads}
+          data={threads.filter(th => !isBlocked(th.authorUid))}
           keyExtractor={item => item.id}
           renderItem={renderItem}
           contentContainerStyle={styles.list}

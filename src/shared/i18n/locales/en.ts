@@ -1185,5 +1185,9 @@ export const en = {
     myPosts: 'My topics',
     noMyThreads: 'You haven’t created any topics yet',
     nameSaved: 'Name saved',
+    blockUser: 'Block',
+    blockConfirm: 'Hide all messages from this member? You won’t see them in the chat anymore.',
+    blocked: 'Member blocked',
+    messageActions: 'Message actions',
   },
 };

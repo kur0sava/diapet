@@ -21,6 +21,7 @@ import { getRoomById } from '../data/rooms';
 import { subscribeMessages, sendMessage, ensureProfile } from '../api/communityApi';
 import { validateMessageText } from '../utils/moderation';
 import { checkRateLimit, recordSend } from '../utils/rateLimit';
+import { isBlocked } from '../utils/blocklist';
 import { useCommunityUser } from '../hooks/useCommunityUser';
 import { MessageBubble } from '../components/MessageBubble';
 import type { Message } from '../types';
@@ -37,6 +38,8 @@ export default function ThreadScreen() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [text, setText] = useState('');
   const [sending, setSending] = useState(false);
+  // Инкрементируем при блокировке автора — форсирует пере-фильтр ленты.
+  const [blockTick, setBlockTick] = useState(0);
   // Audit M2: ref-гард от даблтапа (state обновляется после ре-рендера —
   // два быстрых тапа оба читают sending=false и шлют дубль). Как savingRef
   // во всех формах проекта.
@@ -104,7 +107,8 @@ export default function ThreadScreen() {
         <ScreenHeader title={title} onBack={() => navigation.goBack()} />
         <FlatList
           ref={listRef}
-          data={messages}
+          data={messages.filter(m => !isBlocked(m.authorUid))}
+          extraData={blockTick}
           keyExtractor={m => m.id}
           renderItem={({ item }) => (
             <MessageBubble
@@ -112,6 +116,7 @@ export default function ThreadScreen() {
               threadId={threadId}
               isOwn={item.authorUid === uid}
               userLang={userLang}
+              onBlocked={() => setBlockTick(v => v + 1)}
             />
           )}
           contentContainerStyle={styles.list}

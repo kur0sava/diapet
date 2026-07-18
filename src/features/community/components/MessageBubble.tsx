@@ -11,6 +11,7 @@ import {
   type ContentLang,
 } from '@shared/translation';
 import { reportMessage } from '../api/communityApi';
+import { blockUser } from '../utils/blocklist';
 import type { Message } from '../types';
 
 interface Props {
@@ -18,9 +19,11 @@ interface Props {
   threadId: string;
   isOwn: boolean;
   userLang: ContentLang;
+  /** Вызывается после блокировки автора — родитель пере-фильтрует ленту. */
+  onBlocked?: () => void;
 }
 
-export function MessageBubble({ message, threadId, isOwn, userLang }: Props) {
+export function MessageBubble({ message, threadId, isOwn, userLang, onBlocked }: Props) {
   const { t } = useTranslation();
   const { theme } = useTheme();
   const [translated, setTranslated] = useState<string | null>(null);
@@ -48,12 +51,11 @@ export function MessageBubble({ message, threadId, isOwn, userLang }: Props) {
     }
   };
 
-  const onReport = () => {
-    Alert.alert(t('community.report'), t('community.reportConfirm'), [
+  const onActions = () => {
+    Alert.alert(t('community.messageActions'), message.authorName, [
       { text: t('common.cancel'), style: 'cancel' },
       {
         text: t('community.report'),
-        style: 'destructive',
         onPress: async () => {
           try {
             await reportMessage(threadId, message.id);
@@ -61,6 +63,24 @@ export function MessageBubble({ message, threadId, isOwn, userLang }: Props) {
           } catch {
             /* best-effort */
           }
+        },
+      },
+      {
+        text: t('community.blockUser'),
+        style: 'destructive',
+        onPress: () => {
+          Alert.alert(t('community.blockUser'), t('community.blockConfirm'), [
+            { text: t('common.cancel'), style: 'cancel' },
+            {
+              text: t('community.blockUser'),
+              style: 'destructive',
+              onPress: () => {
+                blockUser(message.authorUid);
+                Alert.alert(t('common.info'), t('community.blocked'));
+                onBlocked?.();
+              },
+            },
+          ]);
         },
       },
     ]);
@@ -132,8 +152,8 @@ export function MessageBubble({ message, threadId, isOwn, userLang }: Props) {
               </TouchableOpacity>
             )}
             {!isOwn && (
-              <TouchableOpacity onPress={onReport} hitSlop={8} accessibilityRole="button">
-                <Icon name="warning-outline" size={15} color={theme.colors.textTertiary} />
+              <TouchableOpacity onPress={onActions} hitSlop={8} accessibilityRole="button">
+                <Icon name="ellipsis-vertical" size={15} color={theme.colors.textTertiary} />
               </TouchableOpacity>
             )}
           </View>
