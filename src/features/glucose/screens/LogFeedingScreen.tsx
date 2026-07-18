@@ -19,7 +19,7 @@ import { useRoute, RouteProp } from '@react-navigation/native';
 import type { HomeStackParamList } from '@navigation/types';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '@shared/theme';
-import { Button, Input, Card } from '@shared/components/ui';
+import { Button, Input, Card, ScreenHeader } from '@shared/components/ui';
 import { useSuccessToast } from '@shared/components/ui/SuccessToast';
 import { feedingRepository } from '@storage/database';
 import { usePetStore } from '@shared/stores/petStore';
@@ -250,18 +250,7 @@ export default function LogFeedingScreen() {
       <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.background }]}>
         {/* Header */}
         <View>
-          <View style={[styles.navHeader, { borderBottomColor: theme.colors.border }]}>
-            <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backBtn}>
-              <Text style={{ color: theme.colors.primary, fontSize: 16 }}>
-                {'\u2190 '}
-                {t('common.back')}
-              </Text>
-            </TouchableOpacity>
-            <Text style={[styles.headerTitle, { color: theme.colors.text }]}>
-              {t('feeding.title')}
-            </Text>
-            <View style={{ width: 60 }} />
-          </View>
+          <ScreenHeader title={t('feeding.title')} onBack={() => navigation.goBack()} />
           <LinearGradient
             colors={[...theme.gradients.success] as [string, string]}
             start={{ x: 0, y: 0 }}
@@ -597,17 +586,6 @@ export default function LogFeedingScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
-  navHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    borderBottomWidth: 0.5,
-    gap: 8,
-  },
-  backBtn: { width: 60, minHeight: 44, minWidth: 44, justifyContent: 'center' },
-  headerTitle: { fontSize: 17, fontWeight: '600', flex: 1, textAlign: 'center' },
   content: { padding: 20, gap: 16, paddingBottom: 40 },
   sectionTitle: { fontSize: 16, fontWeight: '700', marginTop: 4 },
   chipGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 10 },

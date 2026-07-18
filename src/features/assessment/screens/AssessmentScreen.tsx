@@ -1,12 +1,10 @@
 import React, { useState, useCallback } from 'react';
-import {
-  View, Text, StyleSheet, ScrollView,
-  TouchableOpacity,
-} from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useSymptomsNavigation, useRootNavigation } from '@navigation/hooks';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '@shared/theme';
+import { ScreenHeader } from '@shared/components/ui';
 import * as Haptics from 'expo-haptics';
 import { useUnsavedChangesGuard } from '@shared/hooks/useUnsavedChangesGuard';
 
@@ -109,13 +107,7 @@ export default function AssessmentScreen() {
 
     return (
       <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.background }]}>
-        <View style={[styles.navHeader, { borderBottomColor: theme.colors.border }]}>
-          <TouchableOpacity onPress={() => navigation.goBack()} style={{ minHeight: 44, minWidth: 44, justifyContent: 'center' }}>
-            <Text style={{ color: theme.colors.primary }}>{'\u2190'} {t('common.back')}</Text>
-          </TouchableOpacity>
-          <Text numberOfLines={1} style={[styles.title, { color: theme.colors.text }]}>{t('assessment.title')}</Text>
-          <View style={{ width: 60 }} />
-        </View>
+        <ScreenHeader title={t('assessment.title')} onBack={() => navigation.goBack()} />
 
         <ScrollView contentContainerStyle={styles.content}>
           {/* Progress bar full */}
@@ -124,7 +116,12 @@ export default function AssessmentScreen() {
           </View>
 
           {/* Result card */}
-          <View style={[styles.resultCard, { backgroundColor: theme.colors.surface, ...theme.shadows.sm }]}>
+          <View
+            style={[
+              styles.resultCard,
+              { backgroundColor: theme.colors.surface, ...theme.shadows.sm },
+            ]}
+          >
             <Text style={styles.resultEmoji}>{STAGE_EMOJIS[stage]}</Text>
 
             <View style={[styles.stageBadge, { backgroundColor: stageColor }]}>
@@ -156,7 +153,9 @@ export default function AssessmentScreen() {
                 onPress={() => rootNavigation.navigate('Emergency')}
                 activeOpacity={0.8}
               >
-                <Text style={styles.emergencyBtnText}>{'\uD83D\uDEA8'} {t('emergency.emergencyMode')}</Text>
+                <Text style={styles.emergencyBtnText}>
+                  {'\uD83D\uDEA8'} {t('emergency.emergencyMode')}
+                </Text>
               </TouchableOpacity>
             )}
 
@@ -177,18 +176,20 @@ export default function AssessmentScreen() {
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.background }]}>
-      <View style={[styles.navHeader, { borderBottomColor: theme.colors.border }]}>
-        <TouchableOpacity onPress={currentIndex > 0 ? handleBack : () => navigation.goBack()} style={{ minHeight: 44, minWidth: 44, justifyContent: 'center' }}>
-          <Text style={{ color: theme.colors.primary }}>{'\u2190'} {t('common.back')}</Text>
-        </TouchableOpacity>
-        <Text numberOfLines={1} style={[styles.title, { color: theme.colors.text }]}>{t('assessment.title')}</Text>
-        <View style={{ width: 60 }} />
-      </View>
+      <ScreenHeader
+        title={t('assessment.title')}
+        onBack={currentIndex > 0 ? handleBack : () => navigation.goBack()}
+      />
 
       <ScrollView contentContainerStyle={styles.content}>
         {/* Progress bar */}
         <View style={[styles.progressBar, { backgroundColor: theme.colors.surfaceSecondary }]}>
-          <View style={[styles.progressFill, { width: `${progress * 100}%`, backgroundColor: theme.colors.primary }]} />
+          <View
+            style={[
+              styles.progressFill,
+              { width: `${progress * 100}%`, backgroundColor: theme.colors.primary },
+            ]}
+          />
         </View>
 
         <Text style={[styles.progressText, { color: theme.colors.textSecondary }]}>
@@ -210,7 +211,9 @@ export default function AssessmentScreen() {
                 style={[
                   styles.answerChip,
                   {
-                    backgroundColor: isSelected ? theme.colors.primary : theme.colors.surfaceSecondary,
+                    backgroundColor: isSelected
+                      ? theme.colors.primary
+                      : theme.colors.surfaceSecondary,
                     borderWidth: isSelected ? 2 : 0,
                     borderColor: theme.colors.primary,
                     flex: 1,
@@ -219,11 +222,13 @@ export default function AssessmentScreen() {
                 onPress={() => handleSelect(opt.value)}
                 activeOpacity={0.8}
               >
-                <Text style={{
-                  color: isSelected ? '#fff' : theme.colors.text,
-                  fontWeight: '600',
-                  textAlign: 'center',
-                }}>
+                <Text
+                  style={{
+                    color: isSelected ? '#fff' : theme.colors.text,
+                    fontWeight: '600',
+                    textAlign: 'center',
+                  }}
+                >
                   {t(opt.labelKey)}
                 </Text>
               </TouchableOpacity>
@@ -250,15 +255,6 @@ export default function AssessmentScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
-  navHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    padding: 16,
-    borderBottomWidth: 0.5,
-    gap: 8,
-  },
-  title: { fontSize: 17, fontWeight: '600', flex: 1, textAlign: 'center' },
   content: { padding: 20, gap: 16, paddingBottom: 40 },
   progressBar: {
     height: 6,

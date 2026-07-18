@@ -1,11 +1,10 @@
 import React, { useState, useMemo } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useMoreNavigation } from '@navigation/hooks';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '@shared/theme';
-import { Card } from '@shared/components/ui';
-import { Input } from '@shared/components/ui';
+import { Card, Input, ScreenHeader } from '@shared/components/ui';
 import { calculateDryMatter } from '../utils/calculateDryMatter';
 import { usePetStore } from '@shared/stores/petStore';
 import { getSpeciesConfig } from '@shared/config/speciesConfig';
@@ -82,21 +81,7 @@ export default function FeedCalculatorScreen() {
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.background }]}>
-      <View style={[styles.navHeader, { borderBottomColor: theme.colors.border }]}>
-        <TouchableOpacity
-          onPress={() => navigation.goBack()}
-          style={{ minHeight: 44, minWidth: 44, justifyContent: 'center' }}
-        >
-          <Text style={{ color: theme.colors.primary }}>
-            {'← '}
-            {t('common.back')}
-          </Text>
-        </TouchableOpacity>
-        <Text numberOfLines={1} style={[styles.headerTitle, { color: theme.colors.text }]}>
-          {t('feedCalculator.title')}
-        </Text>
-        <View style={{ width: 60 }} />
-      </View>
+      <ScreenHeader title={t('feedCalculator.title')} onBack={() => navigation.goBack()} />
 
       <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
         <Card style={styles.inputCard}>
@@ -305,15 +290,6 @@ export default function FeedCalculatorScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
-  navHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    padding: 16,
-    borderBottomWidth: 0.5,
-    gap: 8,
-  },
-  headerTitle: { fontSize: 17, fontWeight: '600', flex: 1, textAlign: 'center' },
   content: { padding: 16, gap: 16, paddingBottom: 40 },
   inputCard: { gap: 12 },
   row: { flexDirection: 'row', gap: 12 },

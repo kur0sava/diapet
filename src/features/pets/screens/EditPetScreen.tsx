@@ -13,7 +13,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useMoreNavigation } from '@navigation/hooks';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '@shared/theme';
-import { Button, Input, PetAvatar } from '@shared/components/ui';
+import { Button, Input, PetAvatar, ScreenHeader } from '@shared/components/ui';
 import { pickPetPhoto, deletePetPhotoFile } from '../utils/petPhoto';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { petRepository, scheduleRepository, getDatabase } from '@storage/database';
@@ -341,20 +341,7 @@ export default function EditPetScreen() {
       style={{ flex: 1 }}
     >
       <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.background }]}>
-        <View style={[styles.navHeader, { borderBottomColor: theme.colors.border }]}>
-          <TouchableOpacity
-            onPress={() => navigation.goBack()}
-            style={{ minHeight: 44, minWidth: 44, justifyContent: 'center' }}
-          >
-            <Text style={{ color: theme.colors.primary }}>← {t('common.back')}</Text>
-          </TouchableOpacity>
-          <Text
-            style={[{ fontSize: 17, fontFamily: theme.fonts.semibold, color: theme.colors.text }]}
-          >
-            {t('pets.editPet')}
-          </Text>
-          <View style={{ width: 60 }} />
-        </View>
+        <ScreenHeader title={t('pets.editPet')} onBack={() => navigation.goBack()} />
         <ScrollView contentContainerStyle={styles.content}>
           {/* Pet photo — the cheapest, strongest emotional hook in a pet app
               (design audit 2026-07-17, "чего не хватает" №1) */}
@@ -635,13 +622,6 @@ export default function EditPetScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
-  navHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    padding: 16,
-    borderBottomWidth: 0.5,
-  },
   content: { padding: 20, gap: 14, paddingBottom: 40 },
   photoSection: { alignItems: 'center', gap: 12, marginBottom: 4 },
   photoCircle: {

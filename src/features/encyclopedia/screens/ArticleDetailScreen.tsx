@@ -14,6 +14,7 @@ import type { EncyclopediaStackParamList } from '@navigation/types';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '@shared/theme';
 import { Icon } from '@shared/components/ui/Icon';
+import { ScreenHeader } from '@shared/components/ui';
 import { articles } from '../data/articles';
 import { BilingualText } from '../types';
 import { storageUtils, StorageKeys } from '@storage/mmkv/storage';
@@ -248,35 +249,30 @@ export default function ArticleDetailScreen() {
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.background }]}>
-      <View style={[styles.navHeader, { borderBottomColor: theme.colors.border }]}>
-        <TouchableOpacity
-          onPress={() => navigation.goBack()}
-          style={{ minHeight: 44, minWidth: 44, justifyContent: 'center' }}
-        >
-          <Text style={{ color: theme.colors.primary }}>← {t('common.back')}</Text>
-        </TouchableOpacity>
-        <Text style={[styles.headerTitle, { color: theme.colors.text }]} numberOfLines={1}>
-          {t('encyclopedia.title')}
-        </Text>
-        <TouchableOpacity
-          onPress={toggleBookmark}
-          style={styles.bookmarkButton}
-          accessibilityRole="button"
-          accessibilityLabel={
-            isBookmarked
-              ? t('encyclopedia.removeBookmark', { defaultValue: 'Remove bookmark' })
-              : t('encyclopedia.addBookmark', { defaultValue: 'Add bookmark' })
-          }
-          accessibilityState={{ selected: isBookmarked }}
-          hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
-        >
-          <Icon
-            name={isBookmarked ? 'star' : 'star-outline'}
-            size={24}
-            color={isBookmarked ? '#F5A623' : theme.colors.textTertiary}
-          />
-        </TouchableOpacity>
-      </View>
+      <ScreenHeader
+        title={t('encyclopedia.title')}
+        onBack={() => navigation.goBack()}
+        right={
+          <TouchableOpacity
+            onPress={toggleBookmark}
+            style={styles.bookmarkButton}
+            accessibilityRole="button"
+            accessibilityLabel={
+              isBookmarked
+                ? t('encyclopedia.removeBookmark', { defaultValue: 'Remove bookmark' })
+                : t('encyclopedia.addBookmark', { defaultValue: 'Add bookmark' })
+            }
+            accessibilityState={{ selected: isBookmarked }}
+            hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
+          >
+            <Icon
+              name={isBookmarked ? 'star' : 'star-outline'}
+              size={24}
+              color={isBookmarked ? '#F5A623' : theme.colors.textTertiary}
+            />
+          </TouchableOpacity>
+        }
+      />
 
       <ScrollView
         ref={scrollRef}
@@ -446,22 +442,7 @@ export default function ArticleDetailScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
-  navHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    borderBottomWidth: 0.5,
-  },
-  headerTitle: {
-    fontSize: 16,
-    fontWeight: '600',
-    flex: 1,
-    textAlign: 'center',
-    marginHorizontal: 8,
-  },
-  bookmarkButton: { width: 60, alignItems: 'flex-end' },
+  bookmarkButton: { minWidth: 44, minHeight: 44, alignItems: 'flex-end', justifyContent: 'center' },
   content: { padding: 20, paddingBottom: 60 },
   articleTitle: { fontSize: 24, fontWeight: '800', lineHeight: 32, marginBottom: 12 },
   meta: { flexDirection: 'row', marginBottom: 16 },

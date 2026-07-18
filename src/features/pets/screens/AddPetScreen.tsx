@@ -13,7 +13,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '@shared/theme';
 import { useMoreNavigation } from '@navigation/hooks';
-import { Button, Input, PetFace, PetAvatar } from '@shared/components/ui';
+import { Button, Input, PetFace, PetAvatar, ScreenHeader } from '@shared/components/ui';
 import { pickPetPhoto, deletePetPhotoFile } from '../utils/petPhoto';
 import { Icon } from '@shared/components/ui/Icon';
 import DateTimePicker from '@react-native-community/datetimepicker';
@@ -667,19 +667,7 @@ export default function AddPetScreen() {
       style={{ flex: 1, backgroundColor: theme.colors.background }}
     >
       <SafeAreaView style={{ flex: 1 }}>
-        <View style={[styles.navHeader, { borderBottomColor: theme.colors.border }]}>
-          <TouchableOpacity
-            onPress={onBack}
-            style={{ minHeight: 44, minWidth: 44, justifyContent: 'center' }}
-            hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
-          >
-            <Text style={{ color: theme.colors.primary, fontSize: 16 }}>← {t('common.back')}</Text>
-          </TouchableOpacity>
-          <Text style={[styles.headerTitle, { color: theme.colors.text }]} numberOfLines={1}>
-            {stepTitle}
-          </Text>
-          <View style={{ width: 60 }} />
-        </View>
+        <ScreenHeader title={stepTitle} onBack={onBack} />
         {renderStepDots()}
         <ScrollView
           contentContainerStyle={styles.content}
@@ -740,16 +728,6 @@ export default function AddPetScreen() {
 }
 
 const styles = StyleSheet.create({
-  navHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    gap: 8,
-  },
-  headerTitle: { fontSize: 17, fontWeight: '600', flex: 1, textAlign: 'center' },
   stepDots: {
     flexDirection: 'row',
     alignSelf: 'center',

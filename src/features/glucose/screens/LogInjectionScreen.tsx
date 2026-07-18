@@ -20,7 +20,7 @@ import { useRoute, RouteProp } from '@react-navigation/native';
 import type { HomeStackParamList } from '@navigation/types';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '@shared/theme';
-import { Button, Input, Card } from '@shared/components/ui';
+import { Button, Input, Card, ScreenHeader } from '@shared/components/ui';
 import { useSuccessToast } from '@shared/components/ui/SuccessToast';
 import { injectionRepository } from '@storage/database';
 import { StorageKeys } from '@storage/mmkv/storage';
@@ -247,21 +247,7 @@ export default function LogInjectionScreen() {
     >
       <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.background }]}>
         <View>
-          <View style={[styles.navHeader, { borderBottomColor: theme.colors.border }]}>
-            <TouchableOpacity
-              onPress={() => navigation.goBack()}
-              style={{ minHeight: 44, minWidth: 44, justifyContent: 'center' }}
-            >
-              <Text style={{ color: theme.colors.primary }}>
-                {'\u2190 '}
-                {t('common.back')}
-              </Text>
-            </TouchableOpacity>
-            <Text style={[styles.title, { color: theme.colors.text }]} numberOfLines={1}>
-              {t('injection.title')}
-            </Text>
-            <View style={{ width: 60 }} />
-          </View>
+          <ScreenHeader title={t('injection.title')} onBack={() => navigation.goBack()} />
           <LinearGradient
             colors={[...theme.gradients.secondary] as [string, string]}
             start={{ x: 0, y: 0 }}
@@ -445,15 +431,6 @@ export default function LogInjectionScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
-  navHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    padding: 16,
-    borderBottomWidth: 0.5,
-    gap: 8,
-  },
-  title: { fontSize: 17, fontWeight: '600', flex: 1, textAlign: 'center' },
   content: { padding: 20, gap: 14, paddingBottom: 40 },
   mainCard: { alignItems: 'center', paddingVertical: 20 },
   sectionTitle: { fontSize: 15, fontWeight: '700', marginTop: 4 },

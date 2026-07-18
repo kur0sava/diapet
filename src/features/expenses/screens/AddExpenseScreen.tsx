@@ -20,7 +20,7 @@ import type { MoreStackParamList } from '@navigation/types';
 import { useTranslation } from 'react-i18next';
 import i18n from '@shared/i18n';
 import { useTheme } from '@shared/theme';
-import { Button, Input } from '@shared/components/ui';
+import { Button, Input, ScreenHeader } from '@shared/components/ui';
 import { useSuccessToast } from '@shared/components/ui/SuccessToast';
 import { expenseRepository } from '@storage/database';
 import { usePetStore } from '@shared/stores/petStore';
@@ -155,19 +155,10 @@ export default function AddExpenseScreen() {
       style={{ flex: 1 }}
     >
       <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.background }]}>
-        <View style={[styles.navHeader, { borderBottomColor: theme.colors.border }]}>
-          <TouchableOpacity onPress={() => navigation.goBack()} style={styles.navBtn}>
-            <Icon name="chevron-back" size={22} color={theme.colors.primary} />
-            <Text style={{ color: theme.colors.primary }}>{t('common.back')}</Text>
-          </TouchableOpacity>
-          <Text
-            numberOfLines={1}
-            style={[styles.title, { color: theme.colors.text, fontFamily: theme.fonts.semibold }]}
-          >
-            {editId ? t('expenses.editExpense') : t('expenses.addExpense')}
-          </Text>
-          <View style={{ width: 60 }} />
-        </View>
+        <ScreenHeader
+          title={editId ? t('expenses.editExpense') : t('expenses.addExpense')}
+          onBack={() => navigation.goBack()}
+        />
         <ScrollView contentContainerStyle={styles.content}>
           <Text
             style={[
@@ -282,16 +273,6 @@ export default function AddExpenseScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
-  navHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    padding: 16,
-    borderBottomWidth: 0.5,
-    gap: 8,
-  },
-  navBtn: { flexDirection: 'row', alignItems: 'center', gap: 2, minHeight: 44, minWidth: 44 },
-  title: { fontSize: 17, flex: 1, textAlign: 'center' },
   content: { padding: 20, gap: 16, paddingBottom: 40 },
   sectionTitle: { fontSize: 16 },
   categoryGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 10 },

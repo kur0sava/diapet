@@ -1,7 +1,13 @@
 import React from 'react';
 import {
-  View, Text, StyleSheet, ScrollView,
-  TouchableOpacity, Alert, Linking, Platform,
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  TouchableOpacity,
+  Alert,
+  Linking,
+  Platform,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Icon } from '@shared/components/ui/Icon';
@@ -11,7 +17,7 @@ import { useTranslation } from 'react-i18next';
 import { useSubscription } from '../hooks/useSubscription';
 import { useSubscriptionStore, isBackendConfigured } from '@shared/stores/subscriptionStore';
 import { useMoreNavigation, useRootNavigation } from '@navigation/hooks';
-import { Card } from '@shared/components/ui';
+import { Card, ScreenHeader } from '@shared/components/ui';
 
 export default function SubscriptionScreen() {
   const navigation = useMoreNavigation();
@@ -22,9 +28,10 @@ export default function SubscriptionScreen() {
   const refreshStatus = useSubscriptionStore(s => s.refreshStatus);
 
   const handleManage = () => {
-    const url = Platform.OS === 'android'
-      ? 'https://play.google.com/store/account/subscriptions'
-      : 'https://apps.apple.com/account/subscriptions';
+    const url =
+      Platform.OS === 'android'
+        ? 'https://play.google.com/store/account/subscriptions'
+        : 'https://apps.apple.com/account/subscriptions';
     Linking.openURL(url).catch(() => {});
   };
 
@@ -40,16 +47,13 @@ export default function SubscriptionScreen() {
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.background }]}>
-      <View style={[styles.navHeader, { borderBottomColor: theme.colors.border }]}>
-        <TouchableOpacity onPress={() => navigation.goBack()} style={{ minHeight: 44, minWidth: 44, justifyContent: 'center' }}>
-          <Text style={{ color: theme.colors.primary }}>← {t('common.back')}</Text>
-        </TouchableOpacity>
-        <Text style={[styles.title, { color: theme.colors.text, fontFamily: theme.fonts.semibold }]}>
-          {t('subscription.title')}
-        </Text>
-        <View style={{ width: 60 }} />
-      </View>
-      <LinearGradient colors={[...theme.gradients.primary] as [string, string]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} style={{ height: 3 }} />
+      <ScreenHeader title={t('subscription.title')} onBack={() => navigation.goBack()} />
+      <LinearGradient
+        colors={[...theme.gradients.primary] as [string, string]}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 0 }}
+        style={{ height: 3 }}
+      />
 
       <ScrollView contentContainerStyle={[styles.content, { paddingBottom: 40 }]}>
         {/* Current plan */}
@@ -57,7 +61,12 @@ export default function SubscriptionScreen() {
           {!isBackendConfigured() ? (
             <>
               <Icon name="gift-outline" size={40} color={theme.colors.success} />
-              <Text style={[styles.planTitle, { color: theme.colors.success, fontFamily: theme.fonts.bold }]}>
+              <Text
+                style={[
+                  styles.planTitle,
+                  { color: theme.colors.success, fontFamily: theme.fonts.bold },
+                ]}
+              >
                 {t('subscription.allFeaturesUnlocked')}
               </Text>
               <View style={[styles.comingSoonBadge, { backgroundColor: theme.colors.primary }]}>
@@ -66,14 +75,28 @@ export default function SubscriptionScreen() {
                   {t('subscription.comingSoon')}
                 </Text>
               </View>
-              <Text style={[styles.planDesc, { color: theme.colors.textSecondary, textAlign: 'center' }]}>
+              <Text
+                style={[
+                  styles.planDesc,
+                  { color: theme.colors.textSecondary, textAlign: 'center' },
+                ]}
+              >
                 {t('subscription.comingSoonDesc')}
               </Text>
             </>
           ) : (
             <>
-              <Icon name={isPro ? 'star' : 'star-outline'} size={40} color={isPro ? '#FFD700' : theme.colors.textSecondary} />
-              <Text style={[styles.planTitle, { color: theme.colors.text, fontFamily: theme.fonts.bold }]}>
+              <Icon
+                name={isPro ? 'star' : 'star-outline'}
+                size={40}
+                color={isPro ? '#FFD700' : theme.colors.textSecondary}
+              />
+              <Text
+                style={[
+                  styles.planTitle,
+                  { color: theme.colors.text, fontFamily: theme.fonts.bold },
+                ]}
+              >
                 {isPro ? t('subscription.pro') : t('subscription.free')}
               </Text>
               <Text style={[styles.planDesc, { color: theme.colors.textSecondary }]}>
@@ -84,9 +107,17 @@ export default function SubscriptionScreen() {
         </Card>
 
         {isBackendConfigured() && isPro && (
-          <TouchableOpacity style={[styles.actionBtn, { backgroundColor: theme.colors.surface }]} onPress={handleManage}>
+          <TouchableOpacity
+            style={[styles.actionBtn, { backgroundColor: theme.colors.surface }]}
+            onPress={handleManage}
+          >
             <Icon name="settings-outline" size={20} color={theme.colors.primary} />
-            <Text style={[styles.actionText, { color: theme.colors.text, fontFamily: theme.fonts.semibold }]}>
+            <Text
+              style={[
+                styles.actionText,
+                { color: theme.colors.text, fontFamily: theme.fonts.semibold },
+              ]}
+            >
               {t('subscription.manageSubscription')}
             </Text>
             <Icon name="chevron-forward" size={18} color={theme.colors.textTertiary} />
@@ -112,9 +143,17 @@ export default function SubscriptionScreen() {
               </LinearGradient>
             </TouchableOpacity>
 
-            <TouchableOpacity style={[styles.actionBtn, { backgroundColor: theme.colors.surface }]} onPress={handleCheckStatus}>
+            <TouchableOpacity
+              style={[styles.actionBtn, { backgroundColor: theme.colors.surface }]}
+              onPress={handleCheckStatus}
+            >
               <Icon name="refresh-outline" size={20} color={theme.colors.primary} />
-              <Text style={[styles.actionText, { color: theme.colors.text, fontFamily: theme.fonts.semibold }]}>
+              <Text
+                style={[
+                  styles.actionText,
+                  { color: theme.colors.text, fontFamily: theme.fonts.semibold },
+                ]}
+              >
                 {t('subscription.checkStatus')}
               </Text>
               <Icon name="chevron-forward" size={18} color={theme.colors.textTertiary} />
@@ -128,16 +167,27 @@ export default function SubscriptionScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
-  navHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', padding: 16, borderBottomWidth: 0.5, gap: 8 },
-  title: { fontSize: 17, flex: 1, textAlign: 'center' },
   content: { padding: 20, gap: 16 },
   planCard: { alignItems: 'center', paddingVertical: 24, gap: 8 },
   planTitle: { fontSize: 24 },
   planDesc: { fontSize: 13, paddingHorizontal: 16 },
-  comingSoonBadge: { flexDirection: 'row', alignItems: 'center', gap: 4, paddingHorizontal: 12, paddingVertical: 5, borderRadius: 16 },
+  comingSoonBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    paddingHorizontal: 12,
+    paddingVertical: 5,
+    borderRadius: 16,
+  },
   actionBtn: { flexDirection: 'row', alignItems: 'center', padding: 16, borderRadius: 12, gap: 12 },
   actionText: { flex: 1, fontSize: 15 },
   upgradeBtn: { borderRadius: 28, overflow: 'hidden' },
-  upgradeBtnInner: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', paddingVertical: 16, gap: 8 },
+  upgradeBtnInner: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 16,
+    gap: 8,
+  },
   upgradeBtnText: { color: '#fff', fontSize: 17 },
 });

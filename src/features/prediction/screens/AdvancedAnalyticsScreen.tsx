@@ -23,7 +23,7 @@ import { useQuery } from '@tanstack/react-query';
 import { queryKeys } from '@shared/utils/queryKeys';
 import { usePetStore } from '@shared/stores/petStore';
 import { glucoseRepository } from '@storage/database';
-import { Card } from '@shared/components/ui';
+import { Card, ScreenHeader } from '@shared/components/ui';
 import { useSubscription } from '@features/subscription/hooks/useSubscription';
 import { useRootNavigation } from '@navigation/hooks';
 import { isAiFeatureVisible } from '@shared/config/runtimeConfig';
@@ -106,23 +106,7 @@ export default function AdvancedAnalyticsScreen() {
     return (
       <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.background }]}>
         <View>
-          <View style={[styles.navHeader, { borderBottomColor: theme.colors.border }]}>
-            <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backBtn}>
-              <Text style={{ color: theme.colors.primary, fontSize: 16 }}>
-                {'\u2190 '}
-                {t('common.back')}
-              </Text>
-            </TouchableOpacity>
-            <Text
-              style={[
-                styles.headerTitle,
-                { color: theme.colors.text, fontFamily: theme.fonts.bold },
-              ]}
-            >
-              {t('prediction.title')}
-            </Text>
-            <View style={{ width: 60 }} />
-          </View>
+          <ScreenHeader title={t('prediction.title')} onBack={() => navigation.goBack()} />
           <LinearGradient
             colors={[...theme.gradients.primary] as [string, string]}
             start={{ x: 0, y: 0 }}
@@ -160,20 +144,7 @@ export default function AdvancedAnalyticsScreen() {
     <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.background }]}>
       {/* Header */}
       <View>
-        <View style={[styles.navHeader, { borderBottomColor: theme.colors.border }]}>
-          <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backBtn}>
-            <Text style={{ color: theme.colors.primary, fontSize: 16 }}>
-              {'\u2190 '}
-              {t('common.back')}
-            </Text>
-          </TouchableOpacity>
-          <Text
-            style={[styles.headerTitle, { color: theme.colors.text, fontFamily: theme.fonts.bold }]}
-          >
-            {t('prediction.title')}
-          </Text>
-          <View style={{ width: 60 }} />
-        </View>
+        <ScreenHeader title={t('prediction.title')} onBack={() => navigation.goBack()} />
         <LinearGradient
           colors={[...theme.gradients.primary] as [string, string]}
           start={{ x: 0, y: 0 }}
@@ -427,17 +398,6 @@ export default function AdvancedAnalyticsScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
-  navHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    borderBottomWidth: 0.5,
-    gap: 8,
-  },
-  backBtn: { width: 60, minHeight: 44, minWidth: 44, justifyContent: 'center' },
-  headerTitle: { fontSize: 17, flex: 1, textAlign: 'center' },
   scrollContent: { padding: 16, gap: 12, paddingBottom: 40 },
   section: { gap: 8 },
   sectionTitle: { fontSize: 16, marginTop: 4 },

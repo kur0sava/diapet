@@ -16,7 +16,7 @@ import { useHomeNavigation, useRootNavigation } from '@navigation/hooks';
 import { useRoute, RouteProp } from '@react-navigation/native';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '@shared/theme';
-import { Button, Input } from '@shared/components/ui';
+import { Button, Input, ScreenHeader } from '@shared/components/ui';
 import { useSuccessToast } from '@shared/components/ui/SuccessToast';
 import { symptomRepository, glucoseRepository } from '@storage/database';
 import { usePetStore } from '@shared/stores/petStore';
@@ -210,21 +210,10 @@ export default function AddSymptomScreen() {
       style={{ flex: 1 }}
     >
       <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.background }]}>
-        <View style={[styles.navHeader, { borderBottomColor: theme.colors.border }]}>
-          <TouchableOpacity
-            onPress={() => navigation.goBack()}
-            style={{ minHeight: 44, minWidth: 44, justifyContent: 'center' }}
-          >
-            <Text style={{ color: theme.colors.primary }}>
-              {'\u2190 '}
-              {t('common.back')}
-            </Text>
-          </TouchableOpacity>
-          <Text numberOfLines={1} style={[styles.title, { color: theme.colors.text }]}>
-            {editId ? t('symptoms.editSymptom') : t('symptoms.addSymptom')}
-          </Text>
-          <View style={{ width: 60 }} />
-        </View>
+        <ScreenHeader
+          title={editId ? t('symptoms.editSymptom') : t('symptoms.addSymptom')}
+          onBack={() => navigation.goBack()}
+        />
 
         <ScrollView contentContainerStyle={styles.content}>
           <Text style={[styles.sectionTitle, { color: theme.colors.text }]}>
@@ -440,15 +429,6 @@ export default function AddSymptomScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
-  navHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    padding: 16,
-    borderBottomWidth: 0.5,
-    gap: 8,
-  },
-  title: { fontSize: 17, fontWeight: '600', flex: 1, textAlign: 'center' },
   content: { padding: 20, gap: 14, paddingBottom: 40 },
   sectionTitle: { fontSize: 16, fontWeight: '700', marginTop: 4 },
   symptomGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 10 },

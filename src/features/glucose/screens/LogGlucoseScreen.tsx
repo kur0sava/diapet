@@ -15,7 +15,7 @@ import { useRootNavigation } from '@navigation/hooks';
 import type { HomeStackParamList } from '@navigation/types';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '@shared/theme';
-import { Button, Input, Card } from '@shared/components/ui';
+import { Button, Input, Card, ScreenHeader } from '@shared/components/ui';
 import { useSuccessToast } from '@shared/components/ui/SuccessToast';
 import { glucoseRepository } from '@storage/database';
 import { usePetStore } from '@shared/stores/petStore';
@@ -509,22 +509,10 @@ export default function LogGlucoseScreen() {
       <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.background }]}>
         {/* Header */}
         <View>
-          <View style={[styles.navHeader, { borderBottomColor: theme.colors.border }]}>
-            <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backBtn}>
-              <Text style={{ color: theme.colors.primary, fontSize: 16 }}>
-                ← {t('common.back')}
-              </Text>
-            </TouchableOpacity>
-            <Text
-              style={[
-                styles.headerTitle,
-                { color: theme.colors.text, fontFamily: theme.fonts.semibold },
-              ]}
-            >
-              {editId ? t('glucose.editReading') : t('glucose.addReading')}
-            </Text>
-            <View style={{ width: 60 }} />
-          </View>
+          <ScreenHeader
+            title={editId ? t('glucose.editReading') : t('glucose.addReading')}
+            onBack={() => navigation.goBack()}
+          />
           <LinearGradient
             colors={[...theme.gradients.primary] as [string, string]}
             start={{ x: 0, y: 0 }}
@@ -842,17 +830,6 @@ const styles = StyleSheet.create({
   container: { flex: 1 },
   insulinChips: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginBottom: 16 },
   insulinChip: { paddingHorizontal: 14, paddingVertical: 8, borderRadius: 20 },
-  navHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    borderBottomWidth: 0.5,
-    gap: 8,
-  },
-  backBtn: { width: 60, minHeight: 44, minWidth: 44, justifyContent: 'center' },
-  headerTitle: { fontSize: 17, flex: 1, textAlign: 'center' },
   content: { padding: 20, gap: 16, paddingBottom: 40 },
   mainCard: { alignItems: 'center', paddingVertical: 24 },
   mainLabel: { fontSize: 13, fontWeight: '500', marginBottom: 12 },
