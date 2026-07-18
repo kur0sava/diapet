@@ -155,6 +155,7 @@ export default function SettingsScreen() {
                   storage.delete(StorageKeys.HINTS_PUSH_SHOWN_IDS);
                   storage.delete(StorageKeys.HINTS_PUSH_LAST_SCHEDULED);
                   storage.delete(StorageKeys.ACHIEVEMENTS_UNLOCKED);
+                  storage.delete(StorageKeys.EVENT_HINTS_SHOWN_IDS);
                   storage.delete('hintsMissedCheckDate');
                   // Smart-alert throttling must reset with the data it was
                   // computed from, or the fresh pet inherits old cooldowns
@@ -172,7 +173,9 @@ export default function SettingsScreen() {
                       key.startsWith('remissionCache_') ||
                       key.startsWith('remissionLastRequest_') ||
                       key.startsWith('vetName_') ||
-                      key.startsWith('vetPhone_')
+                      key.startsWith('vetPhone_') ||
+                      key.startsWith('foodsSeen_') ||
+                      key.startsWith('eventHintDate_')
                     ) {
                       storage.delete(key);
                     }

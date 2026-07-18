@@ -196,7 +196,13 @@ export default function LogFeedingScreen() {
       disableGuard();
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       useSuccessToast.getState().show(t('common.saved'));
-      triggerAfterAction('feeding');
+      // v2.6 (3.4): pass the food identity so a genuinely new food can
+      // trigger the "gradual transition" hints
+      const foodKey =
+        nutritionData.foodBrand || nutritionData.foodProduct
+          ? `${nutritionData.foodBrand ?? ''} · ${nutritionData.foodProduct ?? ''}`
+          : undefined;
+      triggerAfterAction('feeding', foodKey ? { foodKey } : undefined);
       navigation.goBack();
     } catch {
       Alert.alert(t('common.error'), t('feeding.saveError'));

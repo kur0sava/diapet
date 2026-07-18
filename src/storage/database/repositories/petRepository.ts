@@ -144,6 +144,8 @@ export const petRepository = {
         // ever collides.
         `vetName_${id}`,
         `vetPhone_${id}`,
+        // v2.6: per-pet seen-foods set for new-food event hints
+        `foodsSeen_${id}`,
       ];
       for (const key of petPrefixes) {
         mmkv.delete(key);

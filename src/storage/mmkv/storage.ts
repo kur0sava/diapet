@@ -166,6 +166,10 @@ export const StorageKeys = {
   /** v2.6 retention: JSON array of unlocked achievement ids
    * (see @features/hints/data/achievements). */
   ACHIEVEMENTS_UNLOCKED: 'achievementsUnlocked',
+  /** v2.6 retention: shown ids of event-driven hints
+   * (see @features/hints/data/eventHints). Per-event daily throttle lives in
+   * dynamic `eventHintDate_<trigger>` keys. */
+  EVENT_HINTS_SHOWN_IDS: 'eventHintsShownIds',
 } as const;
 
 /** Per-pet vet contact key. See {@link StorageKeys.VET_NAME} for legacy migration. */
@@ -176,4 +180,9 @@ export function vetNameKey(petId: string): string {
 /** Per-pet vet contact key. See {@link StorageKeys.VET_PHONE} for legacy migration. */
 export function vetPhoneKey(petId: string): string {
   return `vetPhone_${petId}`;
+}
+
+/** Per-pet set of food keys the pet has been fed (new-food event hints). */
+export function foodsSeenKey(petId: string): string {
+  return `foodsSeen_${petId}`;
 }

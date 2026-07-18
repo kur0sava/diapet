@@ -641,7 +641,8 @@ export const en = {
     glucoseReminderPermission: 'Allow notifications in system settings to receive reminders.',
     hintsSection: 'HINTS',
     showHints: 'Show hints',
-    hintsDescription: 'Pop-up hints help during the first 30 days of using the app',
+    hintsDescription:
+      'Pop-up hints: a guided course for the first 30 days, then event-based tips (low/high readings, new food, milestones)',
     privacySection: 'PRIVACY',
     analyticsToggle: 'Anonymous usage statistics',
     analyticsDescription:

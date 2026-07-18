@@ -317,14 +317,16 @@ export default function LogGlucoseScreen() {
       disableGuard();
       syncInitialValues();
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+      const enteredMmol = unit === 'mg/dL' ? mgdlToMmol(numValue) : numValue;
       if (!editId) {
-        triggerAfterAction('glucose');
+        // v2.6 (3.4): pass the value so the hint system can react to a mild
+        // hypo/hyper contextually (emergencies covered by the alert below)
+        triggerAfterAction('glucose', { valueMmol: enteredMmol });
         logEvent('glucose_added', { meal_relation: mealRelation, has_insulin: !!insulinDose });
       }
       // Safety: if the just-logged reading is in an emergency zone, surface it
       // immediately with a route to the first-aid guide. Previously the danger
       // was only implied by a coloured badge and never triggered any alert.
-      const enteredMmol = unit === 'mg/dL' ? mgdlToMmol(numValue) : numValue;
       const gcfg = getSpeciesConfig(activePet?.species ?? 'cat').glucose;
       const isHypoEmergency = enteredMmol < gcfg.emergencyLow;
       const isHyperEmergency = enteredMmol > gcfg.emergencyHigh;
