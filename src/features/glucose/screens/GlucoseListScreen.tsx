@@ -22,6 +22,7 @@ import {
   injectionRepository,
   symptomRepository,
   weightRepository,
+  feedingRepository,
 } from '@storage/database';
 import { usePetStore } from '@shared/stores/petStore';
 import { GlucoseReading, MealRelation } from '../types';
@@ -37,6 +38,7 @@ import { EmptyState, Card, AnimatedListItem } from '@shared/components/ui';
 import { Icon } from '@shared/components/ui/Icon';
 import { storage, StorageKeys } from '@storage/mmkv/storage';
 import { generateVetReportPdf } from '@shared/utils/pdfExport';
+import { exportDiaryCsv } from '@shared/utils/csvExport';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { useSubscription } from '@features/subscription/hooks/useSubscription';
 import { subDays } from 'date-fns';
@@ -291,6 +293,42 @@ export default function GlucoseListScreen() {
       setExporting(false);
     }
   }, [activePet, t, rootNav, canExportPDF, isMonetizationEnabled]);
+
+  // v2.6 (4.1): raw data export — deliberately NOT behind the PDF paywall
+  // gate; owning one's medical data must never be premium.
+  const handleExportCsv = useCallback(async () => {
+    if (!activePet) return;
+    setExporting(true);
+    try {
+      const [allReadings, injections, feedings, symptoms, weights] = await Promise.all([
+        glucoseRepository.findAllByPetId(activePet.id),
+        injectionRepository.findAllByPetId(activePet.id),
+        feedingRepository.findAllByPetId(activePet.id),
+        symptomRepository.findAllByPetId(activePet.id),
+        weightRepository.findAllByPetId(activePet.id),
+      ]);
+      await exportDiaryCsv({
+        pet: activePet,
+        glucoseReadings: allReadings,
+        injections,
+        feedings,
+        symptoms,
+        weights,
+      });
+    } catch (e) {
+      Alert.alert(t('common.error'), String(e));
+    } finally {
+      setExporting(false);
+    }
+  }, [activePet, t]);
+
+  const handleExportChoice = useCallback(() => {
+    Alert.alert(t('glucose.exportChoiceTitle'), t('glucose.exportChoiceDesc'), [
+      { text: t('common.cancel'), style: 'cancel' },
+      { text: t('glucose.exportCsvOption'), onPress: () => void handleExportCsv() },
+      { text: t('glucose.exportPdfOption'), onPress: () => void handleExportPdf() },
+    ]);
+  }, [t, handleExportCsv, handleExportPdf]);
 
   const renderReading = useCallback(
     ({ item, index }: { item: GlucoseReading; index: number }) => {
@@ -675,14 +713,16 @@ export default function GlucoseListScreen() {
         }
       />
 
-      {/* Export PDF FAB */}
-      {readings.length > 0 && (canExportPDF() || isMonetizationEnabled) && (
+      {/* Export FAB — PDF for the vet, CSV for raw data. Shown whenever
+          there is anything to export: CSV is never paywalled, and the PDF
+          branch does its own gate check. */}
+      {readings.length > 0 && (
         <TouchableOpacity
           style={[
             styles.fabExport,
             { backgroundColor: theme.colors.surface, borderColor: theme.colors.primary },
           ]}
-          onPress={handleExportPdf}
+          onPress={handleExportChoice}
           activeOpacity={0.8}
           disabled={exporting}
         >

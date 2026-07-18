@@ -208,6 +208,12 @@ export const en = {
     history: 'History',
     chart: 'Chart',
     exportPDF: 'Export PDF',
+    exportChoiceTitle: 'Export data',
+    exportChoiceDesc:
+      'PDF — a report for your vet. CSV — every record as a table for Excel and other tools.',
+    exportPdfOption: 'PDF for the vet',
+    exportCsvOption: 'CSV (spreadsheet)',
+    exportCsvDialog: 'DiaPet — data export (CSV)',
     severeLow: 'Severe Low',
     low: 'Low',
     belowTarget: 'Below Target',

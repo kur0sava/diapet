@@ -187,7 +187,11 @@
       "PowerShell(npx tsc --noEmit; if \\($?\\) { npx jest src/storage/domain/__tests__/types.test.ts --silent 2>$null; echo \"EXIT:$LASTEXITCODE\" })",
       "PowerShell(npx eslint src/features/pets/screens/SettingsScreen.tsx src/shared/hooks/useNotifications.ts src/storage/mmkv/storage.ts src/features/auth/utils/cloudBackup.ts 2>&1 | Select-Object -First 30)",
       "PowerShell(npx eslint src/features/pets/screens/WeightHistoryScreen.tsx src/storage/database/repositories/weightRepository.ts src/storage/database/migrations.ts src/storage/database/schema.ts src/features/analyzer/hooks/useAnalyzer.ts src/shared/utils/pdfExport.ts src/features/glucose/screens/GlucoseListScreen.tsx src/features/pets/screens/PetProfileScreen.tsx 2>&1 | Select-Object -First 30)",
-      "PowerShell(npx eslint src/features/dashboard 2>&1 | Select-Object -First 10; npx tsc --noEmit 2>&1 | Select-Object -First 5)"
+      "PowerShell(npx eslint src/features/dashboard 2>&1 | Select-Object -First 10; npx tsc --noEmit 2>&1 | Select-Object -First 5)",
+      "Bash(perl -i -pe \"s/'\\\\x{FEFF}' \\\\+ csv/'\\\\\\\\\\\\\\\\uFEFF' + csv/\" src/shared/utils/csvExport.ts)",
+      "Bash(perl -i -pe \"s/'\\\\xEF\\\\xBB\\\\xBF' \\\\+ csv/'\\\\\\\\\\\\\\\\uFEFF' + csv/\" src/shared/utils/csvExport.ts)",
+      "Bash(perl -i -pe \"s/'\\\\xEF\\\\xBB\\\\xBF' \\\\+ csv/String.fromCharCode\\(0xfeff\\) + csv/\" src/shared/utils/csvExport.ts)",
+      "PowerShell(npx tsc --noEmit 2>&1 | Select-Object -First 20; npx eslint src/shared/utils/csvExport.ts src/features/glucose/screens/GlucoseListScreen.tsx 2>&1 | Select-Object -First 20)"
     ]
   }
 }

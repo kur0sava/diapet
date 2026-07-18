@@ -209,6 +209,12 @@ export const ru = {
     history: 'История',
     chart: 'График',
     exportPDF: 'Экспорт PDF',
+    exportChoiceTitle: 'Экспорт данных',
+    exportChoiceDesc:
+      'PDF — отчёт для ветеринара. CSV — все записи таблицей для Excel и других программ.',
+    exportPdfOption: 'PDF для врача',
+    exportCsvOption: 'CSV (таблица)',
+    exportCsvDialog: 'DiaPet — экспорт данных (CSV)',
     severeLow: 'Тяжёлая гипо',
     low: 'Низкий',
     belowTarget: 'Ниже цели',
