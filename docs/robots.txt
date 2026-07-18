@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://kur0sava.github.io/diapet/sitemap.xml

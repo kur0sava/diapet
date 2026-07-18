@@ -193,7 +193,14 @@
       "Bash(perl -i -pe \"s/'\\\\xEF\\\\xBB\\\\xBF' \\\\+ csv/String.fromCharCode\\(0xfeff\\) + csv/\" src/shared/utils/csvExport.ts)",
       "PowerShell(npx tsc --noEmit 2>&1 | Select-Object -First 20; npx eslint src/shared/utils/csvExport.ts src/features/glucose/screens/GlucoseListScreen.tsx 2>&1 | Select-Object -First 20)",
       "PowerShell(npm ls *)",
-      "PowerShell(npx tsc --noEmit 2>&1 | Select-Object -First 20; npx eslint src/shared/utils/pdfExport.ts 2>&1 | Select-Object -First 10)"
+      "PowerShell(npx tsc --noEmit 2>&1 | Select-Object -First 20; npx eslint src/shared/utils/pdfExport.ts 2>&1 | Select-Object -First 10)",
+      "PowerShell(Add-Content *)",
+      "PowerShell(Get-ChildItem docs | Select-Object Name; \\(Get-ChildItem docs\\\\a\\).Count; \\(Get-ChildItem docs\\\\en\\\\a\\).Count)",
+      "PowerShell(Select-String -Path docs\\\\a\\\\insulin_types.html -Pattern '<thead>' | Select-Object -ExpandProperty Line | ForEach-Object { $_.Substring\\(0, [Math]::Min\\(200, $_.Length\\)\\) })",
+      "PowerShell(git status --short | Select-Object -First 20; \"---\"; git status --short | Measure-Object -Line)",
+      "PowerShell(git ls-tree *)",
+      "PowerShell(npm run *)",
+      "PowerShell(git status --short | Where-Object { $_ -match 'webenc-build' }; \"build-dir ignored: $\\(-not \\(git status --short | Select-String 'webenc-build'\\)\\)\"; git status --short | Measure-Object -Line | Select-Object -ExpandProperty Lines)"
     ]
   }
 }

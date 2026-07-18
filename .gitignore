@@ -40,3 +40,6 @@ Thumbs.db
 
 # Temp / debug dumps
 _tmp_*
+
+# Web encyclopedia build intermediates (docs/ is the committed output)
+.webenc-build/

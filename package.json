@@ -12,6 +12,7 @@
     "format": "prettier --write \"src/**/*.{ts,tsx}\"",
     "typecheck": "tsc --noEmit",
     "test": "jest",
+    "webenc": "tsc -p scripts/tsconfig.web.json && node .webenc-build/scripts/generateWebEncyclopedia.js",
     "prepare": "husky"
   },
   "dependencies": {
