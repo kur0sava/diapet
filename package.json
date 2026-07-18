@@ -45,6 +45,7 @@
     "firebase": "^12.11.0",
     "i18next": "^23.16.8",
     "lucide-react-native": "^1.7.0",
+    "qrcode-generator": "^2.0.4",
     "react": "19.1.0",
     "react-i18next": "^15.7.4",
     "react-native": "0.81.5",

@@ -191,7 +191,9 @@
       "Bash(perl -i -pe \"s/'\\\\x{FEFF}' \\\\+ csv/'\\\\\\\\\\\\\\\\uFEFF' + csv/\" src/shared/utils/csvExport.ts)",
       "Bash(perl -i -pe \"s/'\\\\xEF\\\\xBB\\\\xBF' \\\\+ csv/'\\\\\\\\\\\\\\\\uFEFF' + csv/\" src/shared/utils/csvExport.ts)",
       "Bash(perl -i -pe \"s/'\\\\xEF\\\\xBB\\\\xBF' \\\\+ csv/String.fromCharCode\\(0xfeff\\) + csv/\" src/shared/utils/csvExport.ts)",
-      "PowerShell(npx tsc --noEmit 2>&1 | Select-Object -First 20; npx eslint src/shared/utils/csvExport.ts src/features/glucose/screens/GlucoseListScreen.tsx 2>&1 | Select-Object -First 20)"
+      "PowerShell(npx tsc --noEmit 2>&1 | Select-Object -First 20; npx eslint src/shared/utils/csvExport.ts src/features/glucose/screens/GlucoseListScreen.tsx 2>&1 | Select-Object -First 20)",
+      "PowerShell(npm ls *)",
+      "PowerShell(npx tsc --noEmit 2>&1 | Select-Object -First 20; npx eslint src/shared/utils/pdfExport.ts 2>&1 | Select-Object -First 10)"
     ]
   }
 }
