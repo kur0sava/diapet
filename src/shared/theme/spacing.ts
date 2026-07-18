@@ -30,6 +30,12 @@ export const BorderRadius = {
   xl: 16,
   '2xl': 24,
   full: 9999,
+  // Semantic 3-step scale (design G3) — the canonical radii for new UI:
+  // controls (inputs, chips, buttons) / cards / hero surfaces. Existing raw
+  // numbers stay until touched; new screens should use these names.
+  control: 12,
+  card: 16,
+  hero: 20,
 } as const;
 
 export const Shadow = {

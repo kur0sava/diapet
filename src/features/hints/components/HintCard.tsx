@@ -17,24 +17,26 @@ type IoniconName = string;
 interface CategoryConfig {
   icon: IoniconName;
   labelKey: string;
-  color: string;
+  /** Semantic theme-color key — resolved in-component so hint accents follow
+   *  the palette (incl. dark mode) instead of hardcoded hex (Y1). */
+  colorKey: 'warning' | 'info' | 'danger';
 }
 
 const CATEGORY_CONFIG: Record<HintCategory, CategoryConfig> = {
   practical: {
     icon: 'bulb-outline',
     labelKey: 'hints.tipLabel',
-    color: '#FF9500',
+    colorKey: 'warning',
   },
   medical_fact: {
     icon: 'medical-outline',
     labelKey: 'hints.factLabel',
-    color: '#4A90D9',
+    colorKey: 'info',
   },
   support: {
     icon: 'heart-outline',
     labelKey: 'hints.supportLabel',
-    color: '#FF6B6B',
+    colorKey: 'danger',
   },
 };
 
@@ -74,6 +76,7 @@ export function HintCard() {
   if (!currentHint) return null;
 
   const config = CATEGORY_CONFIG[currentHint.category];
+  const accent = theme.colors[config.colorKey];
 
   return (
     <Animated.View
@@ -84,8 +87,8 @@ export function HintCard() {
     >
       {/* Header row: icon + category label */}
       <View style={styles.header}>
-        <Icon name={config.icon} size={18} color={config.color} />
-        <Text style={[styles.categoryLabel, { color: config.color }]}>{t(config.labelKey)}</Text>
+        <Icon name={config.icon} size={18} color={accent} />
+        <Text style={[styles.categoryLabel, { color: accent }]}>{t(config.labelKey)}</Text>
       </View>
 
       {/* Hint text */}
@@ -94,7 +97,7 @@ export function HintCard() {
       {/* Dismiss button */}
       <TouchableOpacity
         onPress={dismissHint}
-        style={[styles.gotItButton, { backgroundColor: config.color }]}
+        style={[styles.gotItButton, { backgroundColor: accent }]}
         activeOpacity={0.8}
       >
         <Text style={styles.gotItText}>{t('hints.gotIt')}</Text>

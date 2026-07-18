@@ -9,3 +9,4 @@ export { PetFace } from './PetFace';
 export { PetAvatar } from './PetAvatar';
 export { AnimatedListItem } from './AnimatedListItem';
 export { ScreenHeader } from './ScreenHeader';
+export { IconBadge } from './IconBadge';

@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { useQuery } from '@tanstack/react-query';
 import { useTheme } from '@shared/theme';
 import { Icon } from '@shared/components/ui/Icon';
+import { IconBadge } from '@shared/components/ui';
 import type { IoniconName } from '@shared/components/ui';
 import { useHomeNavigation } from '@navigation/hooks';
 import { queryKeys } from '@shared/utils/queryKeys';
@@ -179,20 +180,12 @@ export function FirstStepsCard() {
             disabled={step.done}
             activeOpacity={0.7}
           >
-            <View
-              style={[
-                styles.stepIcon,
-                {
-                  backgroundColor: step.done ? theme.colors.success : step.color + '20',
-                },
-              ]}
-            >
-              {step.done ? (
-                <Icon name="checkmark" size={18} color="#fff" />
-              ) : (
-                <Icon name={step.icon} size={18} color={step.color} />
-              )}
-            </View>
+            <IconBadge
+              size="sm"
+              name={step.done ? 'checkmark' : step.icon}
+              color={step.done ? '#fff' : step.color}
+              background={step.done ? theme.colors.success : step.color + '20'}
+            />
             <Text
               style={[
                 styles.stepLabel,
@@ -250,13 +243,6 @@ const styles = StyleSheet.create({
     gap: 10,
     padding: 10,
     borderRadius: 12,
-  },
-  stepIcon: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    alignItems: 'center',
-    justifyContent: 'center',
   },
   stepLabel: { flex: 1, fontSize: 13 },
 });
