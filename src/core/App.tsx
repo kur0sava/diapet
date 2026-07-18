@@ -17,6 +17,7 @@ import { HintProvider } from '@features/hints/components/HintProvider';
 import { useMorningGreeting } from '@features/hints/hooks/useMorningGreeting';
 import { useMissedInjection } from '@features/hints/hooks/useMissedInjection';
 import { scheduleHintPushNotifications } from '@features/hints/utils/hintScheduler';
+import { refreshWeeklySummaryPush } from '@features/dashboard/utils/weeklySummaryScheduler';
 import { restoreScheduleNotifications } from '@shared/hooks/useNotifications';
 import { usePetStore } from '@shared/stores/petStore';
 import { initStorage, storage, StorageKeys, vetNameKey, vetPhoneKey } from '@storage/mmkv/storage';
@@ -71,6 +72,8 @@ function AppContent() {
     // Initial restore on mount
     restoreScheduleNotifications().catch(() => {});
     scheduleHintPushNotifications().catch(() => {});
+    // Weekly summary push: recompute stats and (re)schedule for next Sunday
+    refreshWeeklySummaryPush().catch(() => {});
     // Self-updating food catalog: background pull, throttled to 1/day,
     // silent on any failure (bundled/cached data keeps serving).
     refreshFoodCatalog().catch(() => {});
@@ -81,6 +84,7 @@ function AppContent() {
       if (state === 'active') {
         useSubscriptionStore.getState().refreshStatus();
         restoreScheduleNotifications().catch(() => {});
+        refreshWeeklySummaryPush().catch(() => {});
       }
     });
     return () => sub.remove();

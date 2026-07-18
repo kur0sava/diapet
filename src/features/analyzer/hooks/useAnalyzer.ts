@@ -189,5 +189,7 @@ export function useAnalyzer() {
     emergencyAlerts,
     hasEnoughData,
     readingsCount: readings.length,
+    /** Raw readings (ASC) — reused by the dashboard weekly summary card */
+    readings,
   };
 }

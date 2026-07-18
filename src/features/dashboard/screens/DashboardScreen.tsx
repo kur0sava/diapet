@@ -31,6 +31,8 @@ import { TRIAL_REMINDER_DAYS } from '@features/subscription/utils/trial';
 import { useFocusEffect } from '@react-navigation/native';
 import { useAnalyzer } from '@features/analyzer/hooks/useAnalyzer';
 import { computeStreakDays } from '@features/hints/utils/achievementEngine';
+import { computeWeeklySummary } from '../utils/weeklySummary';
+import { mmolToMgdl } from '@storage/domain/types';
 import { RiskScoreWidget } from '@features/analyzer/components/RiskScoreWidget';
 import { TrendIndicator } from '@features/analyzer/components/TrendIndicator';
 import { SmartInsightCard } from '@features/analyzer/components/SmartInsightCard';
@@ -88,7 +90,8 @@ export default function DashboardScreen() {
   const activePet = usePetStore(s => s.activePet);
   const pets = usePetStore(s => s.pets);
   const setActivePet = usePetStore(s => s.setActivePet);
-  const speciesRanges = getSpeciesConfig(activePet?.species ?? 'cat').glucose.ranges;
+  const speciesConfig = getSpeciesConfig(activePet?.species ?? 'cat');
+  const speciesRanges = speciesConfig.glucose.ranges;
   const { isPro, isPaidPro, isTrialActive, trialDaysLeft, canAddPet, isMonetizationEnabled } =
     useSubscription();
   const [pickerVisible, setPickerVisible] = useState(false);
@@ -185,7 +188,13 @@ export default function DashboardScreen() {
     smartAlert,
     emergencyAlerts,
     hasEnoughData: hasAnalyzerData,
+    readings: analyzerReadings,
   } = useAnalyzer();
+
+  // v2.6 (3.2): rolling weekly summary vs previous week. Plain call —
+  // React Compiler memoizes it; manual useMemo can't hold speciesConfig
+  // (derived, non-memoized) as a dependency.
+  const weeklySummary = computeWeeklySummary(analyzerReadings, speciesConfig);
 
   const [refreshing, setRefreshing] = React.useState(false);
 
@@ -744,6 +753,104 @@ export default function DashboardScreen() {
           </View>
         )}
 
+        {/* Weekly summary (3.2) — rolling 7 days vs previous week; also the
+            landing content for the Sunday push. Needs ≥3 readings to be more
+            than noise. */}
+        {weeklySummary.measurements >= 3 && (
+          <View style={styles.section}>
+            <Text
+              style={[
+                styles.sectionTitle,
+                { color: theme.colors.text, fontFamily: theme.fonts.bold },
+              ]}
+            >
+              {t('weekly.title')}
+            </Text>
+            <Card>
+              <View style={styles.weeklyRow}>
+                <View style={styles.weeklyCell}>
+                  <Text
+                    style={[
+                      styles.weeklyValue,
+                      { color: theme.colors.text, fontFamily: theme.fonts.bold },
+                    ]}
+                  >
+                    {weeklySummary.measurements}
+                  </Text>
+                  <Text style={[styles.weeklyLabel, { color: theme.colors.textSecondary }]}>
+                    {t('weekly.measurements')}
+                  </Text>
+                </View>
+                <View style={styles.weeklyCell}>
+                  <View style={{ flexDirection: 'row', alignItems: 'baseline', gap: 4 }}>
+                    <Text
+                      style={[
+                        styles.weeklyValue,
+                        { color: theme.colors.text, fontFamily: theme.fonts.bold },
+                      ]}
+                    >
+                      {weeklySummary.tir !== null ? `${Math.round(weeklySummary.tir)}%` : '—'}
+                    </Text>
+                    {weeklySummary.tirDelta !== null && Math.abs(weeklySummary.tirDelta) >= 1 && (
+                      <Text
+                        style={{
+                          fontSize: 12,
+                          fontFamily: theme.fonts.semibold,
+                          color:
+                            weeklySummary.tirDelta > 0 ? theme.colors.success : theme.colors.danger,
+                        }}
+                      >
+                        {weeklySummary.tirDelta > 0 ? '▲' : '▼'}
+                        {Math.abs(Math.round(weeklySummary.tirDelta))}
+                      </Text>
+                    )}
+                  </View>
+                  <Text style={[styles.weeklyLabel, { color: theme.colors.textSecondary }]}>
+                    {t('weekly.inRange')}
+                  </Text>
+                </View>
+                <View style={styles.weeklyCell}>
+                  <View style={{ flexDirection: 'row', alignItems: 'baseline', gap: 4 }}>
+                    <Text
+                      style={[
+                        styles.weeklyValue,
+                        { color: theme.colors.text, fontFamily: theme.fonts.bold },
+                      ]}
+                    >
+                      {weeklySummary.avgMmol !== null
+                        ? glucoseUnit === 'mg/dL'
+                          ? `${mmolToMgdl(weeklySummary.avgMmol)}`
+                          : weeklySummary.avgMmol.toFixed(1)
+                        : '—'}
+                    </Text>
+                    {weeklySummary.avgDeltaMmol !== null &&
+                      Math.abs(weeklySummary.avgDeltaMmol) >= 0.3 && (
+                        <Text
+                          style={{
+                            fontSize: 12,
+                            fontFamily: theme.fonts.semibold,
+                            // Lower average glucose is the good direction
+                            color:
+                              weeklySummary.avgDeltaMmol < 0
+                                ? theme.colors.success
+                                : theme.colors.warning,
+                          }}
+                        >
+                          {weeklySummary.avgDeltaMmol > 0 ? '▲' : '▼'}
+                        </Text>
+                      )}
+                  </View>
+                  <Text style={[styles.weeklyLabel, { color: theme.colors.textSecondary }]}>
+                    {t('weekly.avg', {
+                      unit: glucoseUnit === 'mg/dL' ? t('common.mg_dl') : t('common.mmol_l'),
+                    })}
+                  </Text>
+                </View>
+              </View>
+            </Card>
+          </View>
+        )}
+
         {/* H1: AI Smart Analysis + Feed Guide banner removed from Dashboard —
             AI/prediction accessed via Analyzer block; Feed Guide lives in Encyclopedia */}
 
@@ -981,6 +1088,10 @@ const styles = StyleSheet.create({
   trialBannerTitle: { fontSize: 14 },
   trialBannerDesc: { fontSize: 12, marginTop: 2, lineHeight: 16 },
   analyzerRow: { marginTop: 8 },
+  weeklyRow: { flexDirection: 'row', justifyContent: 'space-between' },
+  weeklyCell: { flex: 1, alignItems: 'center', gap: 2 },
+  weeklyValue: { fontSize: 22, fontVariant: ['tabular-nums'] },
+  weeklyLabel: { fontSize: 11, textAlign: 'center' },
   analyzerTrendRow: { flexDirection: 'row', gap: 8, marginTop: 8, flexWrap: 'wrap' },
   tirBadge: { paddingHorizontal: 10, paddingVertical: 4, borderRadius: 12 },
   tirText: { fontSize: 12 },

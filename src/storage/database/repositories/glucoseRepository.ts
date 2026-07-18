@@ -197,6 +197,16 @@ export const glucoseRepository = {
     return rows.map(mapRowToReading);
   },
 
+  /** Readings recorded on/after the given ISO timestamp, ASC. */
+  async findSince(petId: string, sinceIso: string): Promise<GlucoseReading[]> {
+    const db = await getDatabase();
+    const rows = await db.getAllAsync<GlucoseRow>(
+      'SELECT * FROM glucose_readings WHERE pet_id = ? AND recorded_at >= ? ORDER BY recorded_at ASC',
+      [petId, sinceIso]
+    );
+    return rows.map(mapRowToReading);
+  },
+
   async findLast7Days(petId: string): Promise<GlucoseReading[]> {
     const db = await getDatabase();
     const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();

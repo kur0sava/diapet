@@ -186,7 +186,8 @@
       "PowerShell(Set-Location C:\\\\Users\\\\Admin\\\\DIAPET; $env:NODE_OPTIONS='--use-system-ca'; $ids = @\\('445a24b8-b905-4064-a6b2-4b2b374346ba','038e5409-d41a-4844-9735-f2885e39336b'\\); $json = npx eas-cli build:list --platform android --limit 6 --json --non-interactive 2>$null | ConvertFrom-Json; $json | Where-Object { $ids -contains $_.id } | ForEach-Object { Write-Output \"$\\($_.buildProfile\\): $\\($_.status\\) | artifact: $\\($_.artifacts.buildUrl\\)\" })",
       "PowerShell(npx tsc --noEmit; if \\($?\\) { npx jest src/storage/domain/__tests__/types.test.ts --silent 2>$null; echo \"EXIT:$LASTEXITCODE\" })",
       "PowerShell(npx eslint src/features/pets/screens/SettingsScreen.tsx src/shared/hooks/useNotifications.ts src/storage/mmkv/storage.ts src/features/auth/utils/cloudBackup.ts 2>&1 | Select-Object -First 30)",
-      "PowerShell(npx eslint src/features/pets/screens/WeightHistoryScreen.tsx src/storage/database/repositories/weightRepository.ts src/storage/database/migrations.ts src/storage/database/schema.ts src/features/analyzer/hooks/useAnalyzer.ts src/shared/utils/pdfExport.ts src/features/glucose/screens/GlucoseListScreen.tsx src/features/pets/screens/PetProfileScreen.tsx 2>&1 | Select-Object -First 30)"
+      "PowerShell(npx eslint src/features/pets/screens/WeightHistoryScreen.tsx src/storage/database/repositories/weightRepository.ts src/storage/database/migrations.ts src/storage/database/schema.ts src/features/analyzer/hooks/useAnalyzer.ts src/shared/utils/pdfExport.ts src/features/glucose/screens/GlucoseListScreen.tsx src/features/pets/screens/PetProfileScreen.tsx 2>&1 | Select-Object -First 30)",
+      "PowerShell(npx eslint src/features/dashboard 2>&1 | Select-Object -First 10; npx tsc --noEmit 2>&1 | Select-Object -First 5)"
     ]
   }
 }

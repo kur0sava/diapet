@@ -586,6 +586,16 @@ export const ru = {
     menu: 'МЕНЮ',
   },
 
+  weekly: {
+    title: 'Итоги недели',
+    measurements: 'Замеров',
+    inRange: 'В диапазоне',
+    avg: 'Средняя, {{unit}}',
+    pushTitle: '📊 Итоги недели — {{petName}}',
+    pushBody: '{{count}} замеров, {{tir}}% в целевом диапазоне{{delta}}. Так держать!',
+    pp: 'п.п.',
+  },
+
   weight: {
     title: 'История веса',
     current: 'Текущий вес',

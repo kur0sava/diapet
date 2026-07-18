@@ -586,6 +586,16 @@ export const en = {
     menu: 'MENU',
   },
 
+  weekly: {
+    title: 'Weekly summary',
+    measurements: 'Readings',
+    inRange: 'In range',
+    avg: 'Average, {{unit}}',
+    pushTitle: '📊 Weekly summary — {{petName}}',
+    pushBody: '{{count}} readings, {{tir}}% in target range{{delta}}. Keep it up!',
+    pp: 'pp',
+  },
+
   weight: {
     title: 'Weight history',
     current: 'Current weight',
