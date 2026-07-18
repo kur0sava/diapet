@@ -72,6 +72,24 @@ export interface CreatePetDTO {
 
 export type UpdatePetDTO = Partial<CreatePetDTO>;
 
+// --------------- Weight history ---------------
+
+export interface WeightEntry {
+  id: string;
+  petId: string;
+  weightKg: number;
+  notes?: string;
+  recordedAt: string;
+  createdAt: string;
+}
+
+export interface CreateWeightDTO {
+  petId: string;
+  weightKg: number;
+  notes?: string;
+  recordedAt?: string;
+}
+
 // --------------- Glucose types ---------------
 
 export type MealRelation = 'before_meal' | 'after_meal' | 'fasting' | 'unspecified';

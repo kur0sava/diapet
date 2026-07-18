@@ -39,6 +39,10 @@ export const queryKeys = {
       ['expenses', 'total', petId, year, month] as const,
     totalYear: (petId: string, year: number) => ['expenses', 'total', 'year', petId, year] as const,
   },
+  weight: {
+    all: ['weight'] as const,
+    list: (petId: string) => ['weight', petId] as const,
+  },
   diary: {
     all: ['diary'] as const,
     glucose: (petId: string, date: string) => ['diary', 'glucose', petId, date] as const,

@@ -17,7 +17,12 @@ import { useTranslation } from 'react-i18next';
 import { useTheme } from '@shared/theme';
 import { useInfiniteQuery, useQuery, useQueryClient } from '@tanstack/react-query';
 import { queryKeys } from '@shared/utils/queryKeys';
-import { glucoseRepository, injectionRepository, symptomRepository } from '@storage/database';
+import {
+  glucoseRepository,
+  injectionRepository,
+  symptomRepository,
+  weightRepository,
+} from '@storage/database';
 import { usePetStore } from '@shared/stores/petStore';
 import { GlucoseReading, MealRelation } from '../types';
 import {
@@ -267,16 +272,18 @@ export default function GlucoseListScreen() {
     }
     setExporting(true);
     try {
-      const [allReadings, injections, symptoms] = await Promise.all([
+      const [allReadings, injections, symptoms, weights] = await Promise.all([
         glucoseRepository.findAllByPetId(activePet.id),
         injectionRepository.findAllByPetId(activePet.id),
         symptomRepository.findAllByPetId(activePet.id),
+        weightRepository.findAllByPetId(activePet.id),
       ]);
       await generateVetReportPdf({
         pet: activePet,
         glucoseReadings: allReadings,
         injections,
         symptoms,
+        weights,
       });
     } catch (e) {
       Alert.alert(t('common.error'), String(e));

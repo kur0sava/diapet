@@ -206,11 +206,43 @@ export default function PetProfileScreen() {
                 ? t('pets.dog')
                 : t('pets.pet')
           )}
-          {/* != null (not truthy): a numeric 0 from a legacy backup would leak
-              a bare `0` text node into the View — an RN render crash */}
-          {activePet.weightKg != null &&
-            activePet.weightKg > 0 &&
-            renderInfoRow(t('pets.weight'), `${activePet.weightKg} ${t('common.kg')}`)}
+          {/* Weight row is always shown and links to the history/chart screen
+              (v2.6 batch 3.5) — even a pet without a recorded weight needs a
+              path to start logging it. */}
+          <TouchableOpacity
+            style={[styles.infoRow, { borderBottomColor: theme.colors.divider }]}
+            onPress={() => navigation.navigate('WeightHistory')}
+            accessibilityRole="button"
+            accessibilityLabel={t('weight.title')}
+          >
+            <Text
+              style={[
+                styles.infoLabel,
+                { color: theme.colors.textSecondary, fontFamily: theme.fonts.regular },
+              ]}
+              numberOfLines={1}
+            >
+              {t('pets.weight')}
+            </Text>
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
+              <Text
+                style={[
+                  styles.infoValue,
+                  {
+                    color: theme.colors.text,
+                    fontFamily: theme.fonts.semibold,
+                    maxWidth: undefined,
+                  },
+                ]}
+                numberOfLines={1}
+              >
+                {activePet.weightKg != null && activePet.weightKg > 0
+                  ? `${activePet.weightKg} ${t('common.kg')}`
+                  : t('weight.notSet')}
+              </Text>
+              <Icon name="chevron-forward" size={16} color={theme.colors.textTertiary} />
+            </View>
+          </TouchableOpacity>
           {activePet.birthYear != null &&
             activePet.birthYear > 0 &&
             renderInfoRow(

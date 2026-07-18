@@ -12,7 +12,7 @@ export const DB_NAME = 'diapet.db';
  *   - CREATE TABLE / CREATE INDEX use IF NOT EXISTS
  *   - ALTER TABLE ADD COLUMN is wrapped in try/catch (SQLite lacks IF NOT EXISTS for ALTER)
  */
-export const CURRENT_SCHEMA_VERSION = 9;
+export const CURRENT_SCHEMA_VERSION = 10;
 
 export const CREATE_TABLES_SQL = `
   PRAGMA journal_mode = WAL;
@@ -127,6 +127,16 @@ export const CREATE_TABLES_SQL = `
     FOREIGN KEY (pet_id) REFERENCES pets(id) ON DELETE CASCADE
   );
 
+  CREATE TABLE IF NOT EXISTS weight_entries (
+    id TEXT PRIMARY KEY NOT NULL,
+    pet_id TEXT NOT NULL,
+    weight_kg REAL NOT NULL,
+    notes TEXT,
+    recorded_at TEXT NOT NULL,
+    created_at TEXT NOT NULL DEFAULT (datetime('now')),
+    FOREIGN KEY (pet_id) REFERENCES pets(id) ON DELETE CASCADE
+  );
+
   CREATE TABLE IF NOT EXISTS symptom_entry_types (
     id TEXT PRIMARY KEY NOT NULL,
     symptom_id TEXT NOT NULL REFERENCES symptoms(id) ON DELETE CASCADE,
@@ -135,6 +145,7 @@ export const CREATE_TABLES_SQL = `
   );
 
   CREATE INDEX IF NOT EXISTS idx_glucose_pet_date ON glucose_readings(pet_id, recorded_at);
+  CREATE INDEX IF NOT EXISTS idx_weight_pet_date ON weight_entries(pet_id, recorded_at);
   CREATE INDEX IF NOT EXISTS idx_symptoms_pet_date ON symptoms(pet_id, recorded_at);
   CREATE INDEX IF NOT EXISTS idx_expenses_pet_date ON expenses(pet_id, date);
   CREATE INDEX IF NOT EXISTS idx_injections_pet_date ON injections(pet_id, administered_at);

@@ -585,6 +585,19 @@ export const en = {
     menu: 'MENU',
   },
 
+  weight: {
+    title: 'Weight history',
+    current: 'Current weight',
+    chart: 'Chart',
+    logNew: 'Log weight',
+    addEntry: 'Add weight entry',
+    history: 'Entries',
+    deleteEntry: 'Delete weight entry?',
+    lossWarning:
+      'Noticeable weight loss. For a diabetic pet this is an important signal — discuss it with your vet.',
+    notSet: 'Not set',
+  },
+
   settings: {
     title: 'Settings',
     theme: 'Theme',

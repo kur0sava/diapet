@@ -13,6 +13,7 @@ import {
   feedingRepository,
   symptomRepository,
   scheduleRepository,
+  weightRepository,
 } from '@storage/database';
 import { analyzeTrends } from '../engine/trendEngine';
 import { detectPatterns } from '../engine/patternDetector';
@@ -66,6 +67,16 @@ export function useAnalyzer() {
   });
 
   const scheduledInjectionsPerDay = injectionSchedule.length || 2;
+
+  // v2.6 (batch 3.5): weight history feeds the analyzer's weight_trend factor —
+  // previously previousWeightKg was never supplied and the factor sat at
+  // neutral for everyone.
+  const { data: previousWeightEntry } = useQuery({
+    queryKey: [...queryKeys.weight.list(petId), 'previous'],
+    queryFn: () => weightRepository.findPrevious(petId),
+    enabled: !!petId,
+    staleTime: 5 * 60 * 1000,
+  });
 
   // Insulin logged inline on a glucose reading (LogGlucoseScreen) is not saved
   // as a separate InjectionLog, so adherence/dose-response/missed-injection
@@ -130,6 +141,7 @@ export function useAnalyzer() {
             feedings,
             symptoms,
             weightKg: activePet?.weightKg,
+            previousWeightKg: previousWeightEntry?.weightKg,
             diagnosisDays,
             scheduledInjectionsPerDay,
             now,
@@ -142,6 +154,7 @@ export function useAnalyzer() {
       feedings,
       symptoms,
       activePet?.weightKg,
+      previousWeightEntry?.weightKg,
       diagnosisDays,
       scheduledInjectionsPerDay,
       now,

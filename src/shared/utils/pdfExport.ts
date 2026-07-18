@@ -9,6 +9,7 @@ import type {
   GlucoseReading,
   InjectionLog,
   SymptomEntry,
+  WeightEntry,
   MealRelation,
   SymptomType,
   SymptomSeverity,
@@ -65,6 +66,8 @@ interface Labels {
   colInsulinType: string;
   colSymptoms: string;
   colSeverity: string;
+  sectionWeight: string;
+  colWeightKg: string;
   emptyGlucose: string;
   emptyInjections: string;
   /** Note shown on injection rows synthesized from inline insulin doses */
@@ -127,6 +130,8 @@ function getLabels(): Labels {
       colInsulinType: 'Тип инсулина',
       colSymptoms: 'Симптомы',
       colSeverity: 'Тяжесть',
+      sectionWeight: 'Динамика веса',
+      colWeightKg: 'Вес, кг',
       emptyGlucose: 'Нет данных за выбранный период',
       emptyInjections: 'Нет данных об инъекциях',
       inlineInsulinNote: 'вместе с замером глюкозы',
@@ -187,6 +192,8 @@ function getLabels(): Labels {
     colInsulinType: 'Insulin type',
     colSymptoms: 'Symptoms',
     colSeverity: 'Severity',
+    sectionWeight: 'Weight trend',
+    colWeightKg: 'Weight, kg',
     emptyGlucose: 'No data for selected period',
     emptyInjections: 'No injection records',
     inlineInsulinNote: 'with glucose reading',
@@ -220,7 +227,8 @@ function buildHtml(
   pet: Pet,
   glucoseReadings: GlucoseReading[],
   injections: InjectionLog[],
-  symptoms: SymptomEntry[]
+  symptoms: SymptomEntry[],
+  weights: WeightEntry[]
 ): string {
   const L = getLabels();
   const lang = isRu() ? 'ru' : 'en';
@@ -284,6 +292,21 @@ function buildHtml(
         <td>${inj.doseUnits} ${L.doseUnit}</td>
         <td>${escapeHtml(inj.insulinType)}</td>
         <td>${escapeHtml(inj.notes)}</td>
+      </tr>`
+    )
+    .join('');
+
+  // Weight rows (most recent 24 weigh-ins — enough for two years of monthly
+  // checks; a vet reads the trend, not every entry)
+  const weightRows = [...weights]
+    .sort((a, b) => byDateDesc(a.recordedAt, b.recordedAt))
+    .slice(0, 24)
+    .map(
+      w => `
+      <tr>
+        <td>${formatDateShort(w.recordedAt)}</td>
+        <td><strong>${w.weightKg.toFixed(2)}</strong></td>
+        <td>${escapeHtml(w.notes)}</td>
       </tr>`
     )
     .join('');
@@ -471,6 +494,24 @@ function buildHtml(
     }
   </div>
 
+  ${
+    weights.length > 0
+      ? `<div class="section">
+    <h2>${L.sectionWeight}</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>${L.colDateTime}</th>
+          <th>${L.colWeightKg}</th>
+          <th>${L.colNotes}</th>
+        </tr>
+      </thead>
+      <tbody>${weightRows}</tbody>
+    </table>
+  </div>`
+      : ''
+  }
+
   <div class="section">
     <h2>${L.sectionSymptoms(symptoms.length)}</h2>
     ${
@@ -502,10 +543,18 @@ export interface VetReportData {
   glucoseReadings: GlucoseReading[];
   injections: InjectionLog[];
   symptoms: SymptomEntry[];
+  /** Optional weight history — section is omitted when absent/empty. */
+  weights?: WeightEntry[];
 }
 
 export async function generateVetReportPdf(data: VetReportData): Promise<void> {
-  const html = buildHtml(data.pet, data.glucoseReadings, data.injections, data.symptoms);
+  const html = buildHtml(
+    data.pet,
+    data.glucoseReadings,
+    data.injections,
+    data.symptoms,
+    data.weights ?? []
+  );
 
   const { uri } = await Print.printToFileAsync({ html });
 

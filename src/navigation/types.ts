@@ -75,6 +75,7 @@ export type EncyclopediaStackParamList = {
 export type MoreStackParamList = {
   MoreMenu: undefined;
   PetProfile: undefined;
+  WeightHistory: undefined;
   EditPet: undefined;
   AddPet: undefined;
   Expenses: undefined;

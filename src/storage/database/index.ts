@@ -6,4 +6,5 @@ export { expenseRepository } from './repositories/expenseRepository';
 export { injectionRepository } from './repositories/injectionRepository';
 export { feedingRepository } from './repositories/feedingRepository';
 export { scheduleRepository } from './repositories/scheduleRepository';
+export { weightRepository } from './repositories/weightRepository';
 export type { Schedule } from './repositories/scheduleRepository';

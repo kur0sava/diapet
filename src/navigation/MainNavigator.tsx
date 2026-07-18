@@ -31,6 +31,7 @@ import FeedGuideAlternativesScreen from '@features/encyclopedia/screens/FeedGuid
 import FeedGuideNaturalScreen from '@features/encyclopedia/screens/FeedGuideNaturalScreen';
 import MoreMenuScreen from '@features/pets/screens/MoreMenuScreen';
 import PetProfileScreen from '@features/pets/screens/PetProfileScreen';
+import WeightHistoryScreen from '@features/pets/screens/WeightHistoryScreen';
 import EditPetScreen from '@features/pets/screens/EditPetScreen';
 import AddPetScreen from '@features/pets/screens/AddPetScreen';
 import ExpensesScreen from '@features/expenses/screens/ExpensesScreen';
@@ -256,6 +257,11 @@ function MoreStackNavigator() {
       <MoreStack.Screen
         name="PetProfile"
         component={PetProfileScreen}
+        options={{ headerShown: false }}
+      />
+      <MoreStack.Screen
+        name="WeightHistory"
+        component={WeightHistoryScreen}
         options={{ headerShown: false }}
       />
       <MoreStack.Screen name="EditPet" component={EditPetScreen} options={{ headerShown: false }} />

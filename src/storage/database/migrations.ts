@@ -176,6 +176,30 @@ const MIGRATIONS: Migration[] = [
       await db.runAsync(`UPDATE pets SET species = 'cat' WHERE species IS NULL OR species = ''`);
     },
   },
+  {
+    version: 10,
+    name: 'add_weight_history',
+    up: [
+      `CREATE TABLE IF NOT EXISTS weight_entries (
+        id TEXT PRIMARY KEY NOT NULL,
+        pet_id TEXT NOT NULL,
+        weight_kg REAL NOT NULL,
+        notes TEXT,
+        recorded_at TEXT NOT NULL,
+        created_at TEXT NOT NULL DEFAULT (datetime('now')),
+        FOREIGN KEY (pet_id) REFERENCES pets(id) ON DELETE CASCADE
+      )`,
+      `CREATE INDEX IF NOT EXISTS idx_weight_pet_date ON weight_entries(pet_id, recorded_at)`,
+      // Seed a baseline entry from the pet's current weight so the history
+      // chart starts with a point. Idempotent: skips pets that already have
+      // any weight entry (safe to re-run after a rolled-back migration).
+      `INSERT INTO weight_entries (id, pet_id, weight_kg, recorded_at)
+        SELECT lower(hex(randomblob(16))), p.id, p.weight_kg, p.updated_at
+        FROM pets p
+        WHERE p.weight_kg IS NOT NULL AND p.weight_kg > 0
+          AND NOT EXISTS (SELECT 1 FROM weight_entries w WHERE w.pet_id = p.id)`,
+    ],
+  },
 ];
 
 export async function runMigrations(db: SQLiteDatabase): Promise<void> {

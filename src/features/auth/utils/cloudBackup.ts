@@ -23,6 +23,7 @@ const TABLES = [
   'expenses',
   'injection_schedule',
   'feeding_schedule',
+  'weight_entries',
 ] as const;
 
 /** Firestore document size limit (1 MB minus safety margin). */

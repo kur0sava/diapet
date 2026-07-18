@@ -44,6 +44,15 @@ export const petRepository = {
         now,
       ]
     );
+    // v2.6: weight history baseline — a pet created with a weight gets its
+    // first history entry here, covering AddPet AND onboarding call sites.
+    if (dto.weightKg != null && dto.weightKg > 0) {
+      await db.runAsync(
+        `INSERT INTO weight_entries (id, pet_id, weight_kg, recorded_at, created_at)
+         VALUES (?, ?, ?, ?, ?)`,
+        [uuid.v4() as string, id, dto.weightKg, now, now]
+      );
+    }
     const result = await this.findById(id);
     if (!result) throw new Error(`Failed to read back pet ${id} after insert`);
     return result;
@@ -72,6 +81,23 @@ export const petRepository = {
   async update(id: string, dto: UpdatePetDTO): Promise<Pet | null> {
     const db = await getDatabase();
     const now = new Date().toISOString();
+    // v2.6: weight history — an edited weight (EditPet) becomes a history
+    // entry, but only when it actually changed; photo/name edits and re-saves
+    // of the same weight must not spam the chart. The explicit "record new
+    // weight" flow goes through weightRepository.logWeight instead.
+    if ('weightKg' in dto && dto.weightKg != null && dto.weightKg > 0) {
+      const current = await db.getFirstAsync<{ weight_kg: number | null }>(
+        'SELECT weight_kg FROM pets WHERE id = ?',
+        [id]
+      );
+      if (current && current.weight_kg !== dto.weightKg) {
+        await db.runAsync(
+          `INSERT INTO weight_entries (id, pet_id, weight_kg, recorded_at, created_at)
+           VALUES (?, ?, ?, ?, ?)`,
+          [uuid.v4() as string, id, dto.weightKg, now, now]
+        );
+      }
+    }
     const sets: string[] = [];
     const params: (string | number | null)[] = [];
     const fields: Array<[string, keyof UpdatePetDTO]> = [
