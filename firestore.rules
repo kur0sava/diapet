@@ -1,0 +1,58 @@
+rules_version = '2';
+
+// Security-правила Firestore для сообщества DiaPet (v2.6).
+// Деплой: firebase deploy --only firestore:rules  (проект diapet-49162).
+// Это ВТОРАЯ линия защиты (первая — клиентская эвристика + rate-limit;
+// третья — серверный AI-модератор, деплоится отдельно).
+//
+// ⚠️ Пока НЕ задеплоено — Firestore в проекте работает по дефолтным правилам.
+// Без этих правил чат небезопасен (любой может писать/править чужое).
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function signedIn() {
+      return request.auth != null;
+    }
+    function isOwner(uid) {
+      return signedIn() && request.auth.uid == uid;
+    }
+
+    // Профили: читают все залогиненные; пишет/меняет только владелец.
+    match /communityProfiles/{uid} {
+      allow read: if signedIn();
+      allow create, update: if isOwner(uid)
+        && request.resource.data.uid == uid;
+      allow delete: if isOwner(uid);
+    }
+
+    // Треды: читают залогиненные; создаёт автор от своего имени.
+    // Обновление ограничено служебными полями (счётчик/время последнего
+    // сообщения) — заголовок/автор править нельзя.
+    match /communityThreads/{threadId} {
+      allow read: if signedIn();
+      allow create: if signedIn()
+        && request.resource.data.authorUid == request.auth.uid;
+      allow update: if signedIn()
+        && request.resource.data.diff(resource.data).affectedKeys()
+             .hasOnly(['lastMessageAt', 'messageCount', 'moderation']);
+      allow delete: if false; // удаление — только через админ/серверную функцию
+
+      // Сообщения треда.
+      match /messages/{messageId} {
+        allow read: if signedIn();
+        allow create: if signedIn()
+          && request.resource.data.authorUid == request.auth.uid
+          && request.resource.data.text is string
+          && request.resource.data.text.size() <= 4000;
+        // Единственное разрешённое обновление чужого сообщения — инкремент
+        // счётчика жалоб (репорт). Свои сообщения владелец тоже может
+        // помечать, но текст/автора менять нельзя.
+        allow update: if signedIn()
+          && request.resource.data.diff(resource.data).affectedKeys()
+               .hasOnly(['reportCount']);
+        allow delete: if false;
+      }
+    }
+  }
+}

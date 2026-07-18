@@ -10,6 +10,7 @@ import {
   SymptomsStackParamList,
   EncyclopediaStackParamList,
   MoreStackParamList,
+  CommunityStackParamList,
 } from './types';
 import { Icon } from '@shared/components/ui';
 
@@ -32,6 +33,11 @@ import FeedGuideNaturalScreen from '@features/encyclopedia/screens/FeedGuideNatu
 import MoreMenuScreen from '@features/pets/screens/MoreMenuScreen';
 import PetProfileScreen from '@features/pets/screens/PetProfileScreen';
 import WeightHistoryScreen from '@features/pets/screens/WeightHistoryScreen';
+import CommunityRoomsScreen from '@features/community/screens/CommunityRoomsScreen';
+import ThreadListScreen from '@features/community/screens/ThreadListScreen';
+import ThreadScreen from '@features/community/screens/ThreadScreen';
+import NewThreadScreen from '@features/community/screens/NewThreadScreen';
+import GuidelinesScreen from '@features/community/screens/GuidelinesScreen';
 import EditPetScreen from '@features/pets/screens/EditPetScreen';
 import AddPetScreen from '@features/pets/screens/AddPetScreen';
 import ExpensesScreen from '@features/expenses/screens/ExpensesScreen';
@@ -57,6 +63,19 @@ const HomeStack = createNativeStackNavigator<HomeStackParamList>();
 const SymptomsStack = createNativeStackNavigator<SymptomsStackParamList>();
 const EncyclopediaStack = createNativeStackNavigator<EncyclopediaStackParamList>();
 const MoreStack = createNativeStackNavigator<MoreStackParamList>();
+const CommunityStack = createNativeStackNavigator<CommunityStackParamList>();
+
+function CommunityStackNavigator() {
+  return (
+    <CommunityStack.Navigator screenOptions={{ headerShown: false, animation: 'slide_from_right' }}>
+      <CommunityStack.Screen name="CommunityRooms" component={CommunityRoomsScreen} />
+      <CommunityStack.Screen name="ThreadList" component={ThreadListScreen} />
+      <CommunityStack.Screen name="Thread" component={ThreadScreen} />
+      <CommunityStack.Screen name="NewThread" component={NewThreadScreen} />
+      <CommunityStack.Screen name="Guidelines" component={GuidelinesScreen} />
+    </CommunityStack.Navigator>
+  );
+}
 
 function HomeStackNavigator() {
   const { theme } = useTheme();
@@ -338,6 +357,7 @@ export default function MainNavigator() {
             Home: 'home-outline',
             SymptomsTab: 'paw-outline',
             AiTab: 'sparkles-outline',
+            ChatTab: 'chatbubble-ellipses-outline',
             EncyclopediaTab: 'book-outline',
             MoreTab: 'ellipsis-horizontal-circle-outline',
           };
@@ -381,6 +401,11 @@ export default function MainNavigator() {
           options={{ title: t('navigation.ai') }}
         />
       )}
+      <Tab.Screen
+        name="ChatTab"
+        component={CommunityStackNavigator}
+        options={{ title: t('community.tab') }}
+      />
       <Tab.Screen
         name="EncyclopediaTab"
         component={EncyclopediaStackNavigator}

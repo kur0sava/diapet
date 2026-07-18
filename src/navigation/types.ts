@@ -28,8 +28,19 @@ export type MainTabParamList = {
   /** Dummy route behind the central «+» FAB — never actually navigated to */
   AddTab: undefined;
   AiTab: undefined;
+  ChatTab: NavigatorScreenParams<CommunityStackParamList> | undefined;
   EncyclopediaTab: NavigatorScreenParams<EncyclopediaStackParamList> | undefined;
   MoreTab: NavigatorScreenParams<MoreStackParamList> | undefined;
+};
+
+// Community (Chat) Stack
+export type CommunityStackParamList = {
+  CommunityRooms: undefined;
+  ThreadList: { roomId: string };
+  Thread: { threadId: string; roomId: string; title: string };
+  NewThread: { roomId: string };
+  Guidelines: undefined;
+  MyPosts: undefined;
 };
 
 // Home Stack
@@ -119,6 +130,9 @@ export type SymptomsStackScreenProps<T extends keyof SymptomsStackParamList> =
 
 export type EncyclopediaStackScreenProps<T extends keyof EncyclopediaStackParamList> =
   NativeStackScreenProps<EncyclopediaStackParamList, T>;
+
+export type CommunityStackScreenProps<T extends keyof CommunityStackParamList> =
+  NativeStackScreenProps<CommunityStackParamList, T>;
 
 export type MoreStackScreenProps<T extends keyof MoreStackParamList> = NativeStackScreenProps<
   MoreStackParamList,

@@ -7,6 +7,7 @@ import type {
   EncyclopediaStackParamList,
   MoreStackParamList,
   OnboardingStackParamList,
+  CommunityStackParamList,
 } from './types';
 
 export const useRootNavigation = () =>
@@ -26,3 +27,6 @@ export const useMoreNavigation = () =>
 
 export const useOnboardingNavigation = () =>
   useNavigation<NativeStackNavigationProp<OnboardingStackParamList>>();
+
+export const useCommunityNavigation = () =>
+  useNavigation<NativeStackNavigationProp<CommunityStackParamList>>();

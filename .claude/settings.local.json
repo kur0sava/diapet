@@ -211,7 +211,10 @@
       "PowerShell($env:FUZZ_SCENARIOS=$null; $env:FUZZ_ACTIONS=$null; Write-Host \"=== EXPO-DOCTOR ===\"; $env:NODE_OPTIONS='--use-system-ca'; npx expo-doctor 2>&1 | Select-Object -Last 25)",
       "PowerShell(npx jest community 2>&1 | Select-Object -Last 15)",
       "PowerShell(npx jest community 2>&1 | Select-Object -Last 12ъ)",
-      "PowerShell(npx jest community 2>&1 | Select-Object -Last 8)"
+      "PowerShell(npx jest community 2>&1 | Select-Object -Last 8)",
+      "PowerShell(npx jest translation 2>&1 | Select-Object -Last 8; npx tsc --noEmit 2>&1 | Select-Object -First 15)",
+      "PowerShell(\\(Get-Content src\\\\shared\\\\i18n\\\\locales\\\\ru.ts | Measure-Object -Line\\).Lines; \"---last 6 ru---\"; Get-Content src\\\\shared\\\\i18n\\\\locales\\\\ru.ts -Tail 6; \"---last 6 en---\"; Get-Content src\\\\shared\\\\i18n\\\\locales\\\\en.ts -Tail 6)",
+      "PowerShell(npx eslint src/features/community src/shared/translation src/navigation/MainNavigator.tsx 2>&1 | Select-Object -First 40)"
     ]
   }
 }
