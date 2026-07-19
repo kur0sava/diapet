@@ -7,6 +7,7 @@ import { useTheme } from '@shared/theme';
 import { ScreenHeader } from '@shared/components/ui';
 import * as Haptics from 'expo-haptics';
 import { useUnsavedChangesGuard } from '@shared/hooks/useUnsavedChangesGuard';
+import { getStage, type AnswerValue, type Stage } from '../utils/scoring';
 
 const QUESTIONS = [
   'polyuria',
@@ -20,10 +21,6 @@ const QUESTIONS = [
 ] as const;
 
 type QuestionKey = (typeof QUESTIONS)[number];
-
-type AnswerValue = 0 | 1 | 2;
-
-type Stage = 'mild' | 'moderate' | 'severe';
 
 const ANSWER_OPTIONS: { value: AnswerValue; labelKey: string }[] = [
   { value: 0, labelKey: 'assessment.no' },
@@ -43,12 +40,6 @@ const STAGE_EMOJIS: Record<Stage, string> = {
   severe: '\uD83D\uDEA8',
 };
 
-function getStage(score: number): Stage {
-  if (score <= 5) return 'mild';
-  if (score <= 11) return 'moderate';
-  return 'severe';
-}
-
 export default function AssessmentScreen() {
   const navigation = useSymptomsNavigation();
   const rootNavigation = useRootNavigation();
@@ -65,7 +56,7 @@ export default function AssessmentScreen() {
   const currentQuestion: QuestionKey | undefined = QUESTIONS[currentIndex];
 
   const totalScore = Object.values(answers).reduce<number>((sum, v) => sum + v, 0);
-  const stage = getStage(totalScore);
+  const stage = getStage(totalScore, answers);
   const stageColor = STAGE_COLORS[stage];
 
   const handleSelect = useCallback((value: AnswerValue) => {

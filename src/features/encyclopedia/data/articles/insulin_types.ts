@@ -91,7 +91,12 @@ export const insulinTypes: Article = {
 | U-40 | 40 единиц | Только шприц U-40 |
 | U-100 | 100 единиц | Только шприц U-100 |
 
-> **Это очень важно:** если набрать инсулин U-40 по шкале шприца U-100, питомец получит примерно в 2.5 раза меньше инсулина, чем требуется. Это опасно из-за выраженной недодозировки и срыва контроля. Всегда уточняйте у ветеринара, какой именно шприц использовать.
+> **Это очень важно — ошибка опасна в ОБЕ стороны:**
+>
+> - Инсулин **U-40 набран шприцем U-100** → питомец получит примерно в **2.5 раза меньше** инсулина. Это недодозировка: сахар не снижается, срыв контроля.
+> - Инсулин **U-100 набран шприцем U-40** → питомец получит примерно в **2.5 раза больше** инсулина. Это **опаснее**: передозировка вызывает тяжёлую гипогликемию, которая может быть смертельной (см. статью «Гипогликемия»).
+>
+> Правило простое: **шприц должен соответствовать концентрации инсулина** (U-40 → шприц U-40, U-100 → шприц U-100). Всегда уточняйте у ветеринара, какой именно шприц использовать, и не смешивайте шкалы.
 
 ### Как правильно хранить инсулин
 
@@ -181,7 +186,12 @@ This is critically important, so please remember:
 | U-40 | 40 units | U-40 syringe only |
 | U-100 | 100 units | U-100 syringe only |
 
-> **This is critically important:** drawing U-40 insulin using a U-100 syringe scale gives about 2.5 times less insulin than intended. That can seriously destabilize glucose control. Always confirm with your vet which syringe to use.
+> **This is critically important — a mismatch is dangerous in BOTH directions:**
+>
+> - **U-40 insulin drawn with a U-100 syringe** → gives about **2.5 times less** insulin than intended. Under-dosing: glucose stays high, control breaks down.
+> - **U-100 insulin drawn with a U-40 syringe** → gives about **2.5 times more** insulin than intended. This is **more dangerous**: an overdose causes severe hypoglycemia, which can be fatal (see the "Hypoglycemia" article).
+>
+> The rule is simple: **the syringe must match the insulin concentration** (U-40 → U-40 syringe, U-100 → U-100 syringe). Always confirm with your vet which syringe to use, and never mix the scales.
 
 ### How to Store Insulin Properly
 

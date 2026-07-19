@@ -46,7 +46,10 @@ export const dogInsulin: Article = {
 
 - Канинсулин — **U-40** (40 ЕД/мл)
 - NPH — **U-100** (100 ЕД/мл)
-- Использование неправильного шприца = **неправильная доза** = опасно!
+- Использование неправильного шприца = **неправильная доза**, и ошибка опасна в **обе стороны**:
+  - Инсулин **U-40 набран шприцем U-100** → примерно в **2.5 раза меньше** дозы (недодоза, сахар не снижается);
+  - Инсулин **U-100 набран шприцем U-40** → примерно в **2.5 раза больше** дозы. Это **опаснее** — передозировка вызывает тяжёлую гипогликемию, вплоть до смертельной (см. статью «Гипогликемия»).
+- Правило: **шприц должен соответствовать концентрации инсулина** (U-40 → шприц U-40, U-100 → шприц U-100)
 - U-40 шприцы обычно с красным колпачком, U-100 — с оранжевым (цвета колпачков **не стандартизованы во всех странах и у всех производителей** — обязательно уточните маркировку у ветеринара или в аптеке)
 
 ## Доступность по регионам
@@ -113,7 +116,10 @@ export const dogInsulin: Article = {
 
 - Caninsulin is **U-40** (40 IU/mL)
 - NPH is **U-100** (100 IU/mL)
-- Using the wrong syringe = **wrong dose** = dangerous!
+- Using the wrong syringe = **wrong dose**, and the mistake is dangerous in **both directions**:
+  - **U-40 insulin drawn with a U-100 syringe** → about **2.5 times less** than intended (under-dose, glucose stays high);
+  - **U-100 insulin drawn with a U-40 syringe** → about **2.5 times more** than intended. This is **more dangerous** — an overdose causes severe, potentially fatal hypoglycemia (see the "Hypoglycemia" article).
+- The rule: **the syringe must match the insulin concentration** (U-40 → U-40 syringe, U-100 → U-100 syringe)
 - U-40 syringes usually have a red cap, U-100 have orange (cap colors are **not standardized across all countries and manufacturers** — always verify the markings with your vet or pharmacist)
 
 ## Availability by Region
