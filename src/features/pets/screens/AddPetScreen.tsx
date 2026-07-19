@@ -99,9 +99,12 @@ export default function AddPetScreen() {
   // 08:00/20:00 defaults fired two overlapping notifications and implied a
   // link the user didn't set. These remain freely editable.
   const [feedingTimes, setFeedingTimes] = useState<string[]>(['07:30', '19:30']);
+  // index === -1 → picker is adding a NEW slot; appended only when a time is
+  // confirmed (audit 5.4: dismissing the picker no longer leaves a stray slot).
   const [showPicker, setShowPicker] = useState<{
     type: 'injection' | 'feeding';
     index: number;
+    defaultTime?: string;
   } | null>(null);
 
   // Vet state
@@ -158,10 +161,8 @@ export default function AddPetScreen() {
         break;
       }
     }
-    const newIndex = times.length;
-    if (type === 'injection') setInjectionTimes([...injectionTimes, candidate]);
-    else setFeedingTimes([...feedingTimes, candidate]);
-    setShowPicker({ type, index: newIndex });
+    // Open picker in "adding" mode — nothing is added until a time is confirmed.
+    setShowPicker({ type, index: -1, defaultTime: candidate });
   };
 
   const removeTime = (type: 'injection' | 'feeding', index: number) => {
@@ -687,7 +688,11 @@ export default function AddPetScreen() {
           <DateTimePicker
             value={(() => {
               const list = showPicker.type === 'injection' ? injectionTimes : feedingTimes;
-              const [h, m] = list[showPicker.index].split(':').map(Number);
+              const timeStr =
+                showPicker.index === -1
+                  ? (showPicker.defaultTime ?? '12:00')
+                  : list[showPicker.index];
+              const [h, m] = timeStr.split(':').map(Number);
               const d = new Date();
               d.setHours(h, m, 0, 0);
               return d;
@@ -700,7 +705,12 @@ export default function AddPetScreen() {
                 const mm = date.getMinutes().toString().padStart(2, '0');
                 const newTime = `${hh}:${mm}`;
                 const list = showPicker.type === 'injection' ? injectionTimes : feedingTimes;
-                if (list.some((existing, i) => i !== showPicker.index && existing === newTime)) {
+                const isAdding = showPicker.index === -1;
+                if (
+                  list.some(
+                    (existing, i) => (isAdding || i !== showPicker.index) && existing === newTime
+                  )
+                ) {
                   Alert.alert(
                     t('common.error'),
                     t('onboarding.duplicateTime', { defaultValue: 'This time already exists' })
@@ -708,7 +718,15 @@ export default function AddPetScreen() {
                   setShowPicker(null);
                   return;
                 }
-                if (showPicker.type === 'injection') {
+                if (isAdding) {
+                  if (list.length < MAX_SCHEDULE_TIMES) {
+                    if (showPicker.type === 'injection') {
+                      setInjectionTimes(prev => [...prev, newTime]);
+                    } else {
+                      setFeedingTimes(prev => [...prev, newTime]);
+                    }
+                  }
+                } else if (showPicker.type === 'injection') {
                   setInjectionTimes(prev =>
                     prev.map((existing, i) => (i === showPicker.index ? newTime : existing))
                   );

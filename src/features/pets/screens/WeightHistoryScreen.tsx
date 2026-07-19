@@ -154,6 +154,14 @@ export default function WeightHistoryScreen() {
   const latest = entries.length > 0 ? entries[entries.length - 1] : null;
   const previous = entries.length > 1 ? entries[entries.length - 2] : null;
   const deltaKg = latest && previous ? latest.weightKg - previous.weightKg : null;
+  // 5.2 (audit): the loss warning must consider the interval — two weigh-ins a
+  // few hours apart differ by scale noise, not real loss. Only warn when the two
+  // entries are at least a week apart. (Window is a clinical parameter — Batch 8.)
+  const daysBetweenWeighins =
+    latest && previous
+      ? Math.abs(new Date(latest.recordedAt).getTime() - new Date(previous.recordedAt).getTime()) /
+        86400000
+      : 0;
 
   const listDesc = useMemo(() => [...entries].reverse(), [entries]);
 
@@ -278,12 +286,17 @@ export default function WeightHistoryScreen() {
                 </View>
               )}
             </View>
-            {/* Weight loss in a diabetic pet is a red flag worth a vet call */}
-            {deltaKg !== null && latest && previous && deltaKg / previous.weightKg < -0.05 && (
-              <Text style={[styles.lossHint, { color: theme.colors.danger }]}>
-                {t('weight.lossWarning')}
-              </Text>
-            )}
+            {/* Weight loss in a diabetic pet is a red flag worth a vet call —
+                but only over a meaningful interval (≥7 days), not scale noise */}
+            {deltaKg !== null &&
+              latest &&
+              previous &&
+              daysBetweenWeighins >= 7 &&
+              deltaKg / previous.weightKg < -0.05 && (
+                <Text style={[styles.lossHint, { color: theme.colors.danger }]}>
+                  {t('weight.lossWarning')}
+                </Text>
+              )}
           </Card>
 
           {/* Chart */}

@@ -58,15 +58,19 @@ export default function ScheduleScreen() {
     // reminders don't collide at identical times. Freely editable.
     draft.feedingTimes ?? ['07:30', '19:30']
   );
+  // index === -1 → picker is adding a NEW slot; the slot is appended only when a
+  // time is confirmed (audit 5.4: previously the slot was added BEFORE the picker,
+  // so dismissing it on Android left an unwanted slot).
   const [showPicker, setShowPicker] = useState<{
     type: 'injection' | 'feeding';
     index: number;
+    defaultTime?: string;
   } | null>(null);
 
   const addTime = (type: 'injection' | 'feeding') => {
     const times = type === 'injection' ? injectionTimes : feedingTimes;
     if (times.length >= MAX_SCHEDULE_TIMES) return;
-    // Find a unique time that doesn't collide with existing entries
+    // Suggest a unique default time that doesn't collide with existing entries
     const existingSet = new Set(times);
     let newTime = '12:00';
     for (let h = 6; h < 24; h++) {
@@ -76,14 +80,8 @@ export default function ScheduleScreen() {
         break;
       }
     }
-    const newIndex = times.length;
-    if (type === 'injection') {
-      setInjectionTimes([...injectionTimes, newTime]);
-    } else {
-      setFeedingTimes([...feedingTimes, newTime]);
-    }
-    // Immediately open picker for the newly added time
-    setShowPicker({ type, index: newIndex });
+    // Open the picker in "adding" mode — nothing is added to the list yet.
+    setShowPicker({ type, index: -1, defaultTime: newTime });
   };
 
   const removeTime = (type: 'injection' | 'feeding', index: number) => {
@@ -195,7 +193,11 @@ export default function ScheduleScreen() {
         <DateTimePicker
           value={(() => {
             const list = showPicker.type === 'injection' ? injectionTimes : feedingTimes;
-            const [h, m] = list[showPicker.index].split(':').map(Number);
+            const timeStr =
+              showPicker.index === -1
+                ? (showPicker.defaultTime ?? '12:00')
+                : list[showPicker.index];
+            const [h, m] = timeStr.split(':').map(Number);
             const d = new Date();
             d.setHours(h, m, 0, 0);
             return d;
@@ -208,8 +210,13 @@ export default function ScheduleScreen() {
               const mm = date.getMinutes().toString().padStart(2, '0');
               const newTime = `${hh}:${mm}`;
               const times = showPicker.type === 'injection' ? injectionTimes : feedingTimes;
-              // Prevent duplicate times
-              if (times.some((existing, i) => i !== showPicker.index && existing === newTime)) {
+              const isAdding = showPicker.index === -1;
+              // Prevent duplicate times (for edit, allow keeping the same slot)
+              if (
+                times.some(
+                  (existing, i) => (isAdding || i !== showPicker.index) && existing === newTime
+                )
+              ) {
                 Alert.alert(
                   t('common.error'),
                   t('onboarding.duplicateTime', { defaultValue: 'This time already exists' })
@@ -217,7 +224,16 @@ export default function ScheduleScreen() {
                 setShowPicker(null);
                 return;
               }
-              if (showPicker.type === 'injection') {
+              if (isAdding) {
+                // Append only now that a time is confirmed
+                if (times.length < MAX_SCHEDULE_TIMES) {
+                  if (showPicker.type === 'injection') {
+                    setInjectionTimes(prev => [...prev, newTime]);
+                  } else {
+                    setFeedingTimes(prev => [...prev, newTime]);
+                  }
+                }
+              } else if (showPicker.type === 'injection') {
                 setInjectionTimes(prev =>
                   prev.map((existing, i) => (i === showPicker.index ? newTime : existing))
                 );

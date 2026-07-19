@@ -1,5 +1,15 @@
 import React, { useCallback, useMemo, useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, RefreshControl } from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  TouchableOpacity,
+  RefreshControl,
+  ToastAndroid,
+  Platform,
+} from 'react-native';
+import * as Haptics from 'expo-haptics';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useTranslation } from 'react-i18next';
@@ -143,7 +153,13 @@ export default function DashboardScreen() {
     storage.set(StorageKeys.GLUCOSE_UNIT, next);
     setGlucoseUnit(next);
     queryClient.invalidateQueries({ queryKey: queryKeys.glucose.all });
-  }, [glucoseUnit, queryClient]);
+    // 5.6 (audit): the silent swap-chip flips the unit globally — give feedback
+    // (haptics + toast) so the change isn't invisible, matching Settings.
+    Haptics.selectionAsync().catch(() => {});
+    if (Platform.OS === 'android') {
+      ToastAndroid.show(t('settings.unitChanged', { unit: next }), ToastAndroid.SHORT);
+    }
+  }, [glucoseUnit, queryClient, t]);
 
   const { data: latestGlucose, refetch: refetchGlucose } = useQuery({
     queryKey: queryKeys.glucose.latest(petId),
