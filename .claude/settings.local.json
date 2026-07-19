@@ -222,7 +222,10 @@
       "PowerShell(git status --short; \"---\"; git log --oneline origin/master..HEAD | Measure-Object -Line | Select-Object -ExpandProperty Lines | ForEach-Object { \"Локальных коммитов \\(не запушено\\): $_\" }; \"---\"; git log --oneline -1)",
       "PowerShell(git status --short; \"clean: $\\(\\(git status --short\\).Length -eq 0\\)\"; \"---\"; git log --oneline -4)",
       "PowerShell(npx jest community 2>&1 | Select-Object -Last 10)",
-      "PowerShell(npx tsc --noEmit 2>&1 | Select-Object -First 15; if \\($LASTEXITCODE -eq 0\\) { \"TSC OK\" }; \"---LINT---\"; npx eslint src/features/community src/features/hints src/features/dashboard src/features/pets/screens/WeightHistoryScreen.tsx src/features/dashboard/components/GlucoseHeroCard.tsx 2>&1 | Select-Object -First 15)"
+      "PowerShell(npx tsc --noEmit 2>&1 | Select-Object -First 15; if \\($LASTEXITCODE -eq 0\\) { \"TSC OK\" }; \"---LINT---\"; npx eslint src/features/community src/features/hints src/features/dashboard src/features/pets/screens/WeightHistoryScreen.tsx src/features/dashboard/components/GlucoseHeroCard.tsx 2>&1 | Select-Object -First 15)",
+      "PowerShell(cd C:\\\\Users\\\\Admin\\\\DIAPET; $env:FUZZ_SCENARIOS=400; $env:FUZZ_ACTIONS=80; $env:FUZZ_SEED=101; npx jest userScenarios --silent 2>&1 | Select-Object -Last 25)",
+      "PowerShell(cd C:\\\\Users\\\\Admin\\\\DIAPET; $env:FUZZ_SCENARIOS=400; $env:FUZZ_ACTIONS=80; $env:FUZZ_SEED=777; npx jest userScenarios --silent 2>&1 | Select-String -Pattern \"Tests:|PASS|FAIL|●\" | Select-Object -First 15)",
+      "Bash(awk '{print $NF}')"
     ]
   }
 }

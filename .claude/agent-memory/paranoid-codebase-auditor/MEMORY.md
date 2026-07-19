@@ -4,6 +4,34 @@
 - [v2.6 community/translation/retention audit](v26_community_audit.md) — chat ships enabled, Firestore-index/rules broken out-of-box, weight-delete nulls dose safety, CSV formula injection. Hermes lookbehind VERIFIED safe.
 
 
+## Audit 2026-07-19 (HEAD a99a416) — runtime/infra focus, NEW eyes
+- Baseline: tsc 0 errors, jest 18 suites / 149 pass + 1 skip. Clean tree.
+- **C001 data-loss now MITIGATED**: startupRecovery.ts does age-based ADOPTION (established pet outside
+  10-min onboarding window → rebuild MMKV pointers + set ONBOARDING_COMPLETE, never purge). AND app.json now
+  sets `android.allowBackup: false`. My older C001 note below is SUPERSEDED — no longer a live critical.
+- Config injection: `app.config.ts` spreads app.json + injects process.env into `extra` (premiumMode/aiProxyUrl/
+  supabase*/paymentProviderUrl/foodsManifestUrl). eas.json prod+rustore set PREMIUM_MODE=unlocked. AI/Supabase/
+  payment all EMPTY this release → all network paths (subscriptionApi, translationService, aiClient) dormant.
+- NO new P0/P1 runtime crashers found. Codebase is mature/heavily-audited. Findings this pass are MED/LOW/PLAUSIBLE:
+  * initStorage() MMKV enc-key: concurrent first-launch double-init could persist SecureStore key ≠ MMKV key
+    → decrypt mismatch. Guarded in practice (single awaited call in App.tsx bootstrap, prod effect runs once). LOW.
+  * scheduleGlucoseReminders() `schedulingGlucose` guard DROPS (no queue, unlike restoreScheduleNotifications'
+    restoreQueued) a Settings-toggle-initiated schedule if it overlaps a foreground restore → glucose reminders
+    silently not scheduled until next foreground. LOW/PLAUSIBLE.
+  * restoreScheduleNotifications cancel-loop filters by data.type==='injection'|'feeding'; any pre-tagging
+    legacy scheduled notif (no data.type) survives cancel AND new one added → possible dup on version upgrade
+    from a build that didn't tag type. Unverifiable historically. PLAUSIBLE LOW.
+  * initializeDatabase fresh-install shortcut: user_version==0 + existing tables → jumps to CURRENT(10), skips
+    ALTERs. Only reachable if a pre-versioning build left tables at v0; migrationUpgradePath test + species-brick
+    history imply v1 set user_version, so NOT reachable in practice. THEORETICAL.
+  * AppState 'active' runs restore + weeklySummary + subscription refresh on EVERY foreground (bounded by guards;
+    subscription no-op unconfigured). Heavy but acceptable.
+- CONFIRMED SAFE (checked, not bugs): all JSON.parse guarded; feeding/glucose/injection timestamps always
+  toISOString() (no mixed space-format for query/sort columns); DailyDiary date parses use isValid(); GlucoseChart
+  aggregates by day (no per-reading blowup); migration DDL inside withTransactionAsync (rollback-safe, idempotent);
+  cloudBackup restore FK-ordered + column-validated; entryDraft per-pet keys; petRepository read-back guards;
+  getInsulinThresholds weight<=0 handled (no div-by-zero); all short-lived setTimeouts flip refs only (no leaks).
+
 ## Audit 2026-07-08/09 (HEAD 0dd722c) — persistence/deferred-crash focus
 - **NEW CRITICAL (not previously flagged): silent total data loss via App.tsx orphan-pet purge + MMKV key loss.**
   App.tsx bootstrap deletes ALL pets from SQLite when `ONBOARDING_COMPLETE` reads false. MMKV is encrypted with a

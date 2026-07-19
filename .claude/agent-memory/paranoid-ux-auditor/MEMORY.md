@@ -27,6 +27,14 @@
 - ExpensesScreen: missing long-press hint (inconsistent with SymptomsListScreen)
 - Touch targets < 44px: AI back button (36px), trash icons (~34px), bookmark button
 
+## 2026-07-19 re-audit (HEAD a99a416) — status of prior findings
+- FIXED: achievement-over-emergency for GLUCOSE logs — useHintTrigger.ts:35-39 now suppresses achievement+hint when valueMmol in emergency band. BUT checkAchievements (:45-47) still fires 3s after ANY non-glucose log (feeding/injection/weight); HintProvider wraps whole app (App.tsx:226) so AchievementModal (native Modal) still can pop over Emergency screen after e.g. logging honey to treat hypo. STILL OPEN (High, narrowed).
+- FIXED: SettingsScreen delete-all — SQL transaction runs BEFORE MMKV deletes (:115-119). Order correct.
+- FIXED: glucose unit change invalidates glucose query cache (Settings:302, Dashboard:145).
+- FIXED: AddExpense unsaved-guard false-trigger in edit mode — now uses initialLoaded ref + isDirty pattern (:60-68).
+- FIXED: pet delete has DOUBLE confirm + blocks deleting last pet (PetProfileScreen:37-81).
+- STILL OPEN: LogInjection no edit mode (InjectionList row tap = no-op, only delete). Weight lossWarning ignores time-gap (WeightHistoryScreen:282). Weight unit global toggle silent from 4 places; PetProfile hardcodes kg (:232). AchievementModal no ScrollView (clip under max font).
+
 ## v2.6 New Surfaces (audited 2026-07-18, static)
 - **Retention (LIVE in prod)**: achievementEngine + hintStore (id-based achievements, queued modals), weeklySummary + Sunday push scheduler, streak chip, event hints (hypo/hyper/new-food), WeightHistoryScreen.
 - **KEY LIVE BUG**: AchievementModal (gold celebration, global via HintProvider) can pop OVER Emergency screen / right after a scary glucose reading. `useHintTrigger.ts:33` schedules checkAchievements 3s AFTER any log, "NOT gated", fires even in emergency path (LogGlucoseScreen:324 triggerAfterAction BEFORE emergency alert:333). Emotional tone-clash. FIX: suppress achievement when emergency.
