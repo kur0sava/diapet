@@ -44,9 +44,14 @@ export default function FeedGuideScreen() {
   // User's region first in the grid, marked as "yours" — one tap to their
   // local catalog instead of scanning the list every time.
   const appRegion = getAppRegion();
+  // Batch7: getAppRegion() falls back to 'GLOBAL' for many locales, but the grid
+  // listed only country regions — a GLOBAL user couldn't reach the GLOBAL catalog.
+  // Surface a GLOBAL entry (at the top, marked "yours") only for those users.
+  const baseRegions: { key: Region; emoji: string }[] =
+    appRegion === 'GLOBAL' ? [{ key: 'GLOBAL', emoji: '🌍' }, ...REGIONS] : REGIONS;
   const orderedRegions = [
-    ...REGIONS.filter(r => r.key === appRegion),
-    ...REGIONS.filter(r => r.key !== appRegion),
+    ...baseRegions.filter(r => r.key === appRegion),
+    ...baseRegions.filter(r => r.key !== appRegion),
   ];
 
   return (

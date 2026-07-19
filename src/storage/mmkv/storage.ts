@@ -10,6 +10,10 @@ const FALLBACK_KEY_NAME = 'encKey';
 
 let _storage: MMKV | null = null;
 let initialized = false;
+// L001: shared-promise singleton (like dbInitPromise). Without it, two callers
+// racing before `initialized` is set both run the async SecureStore path and
+// build two MMKV instances. Concurrent callers now await the same promise.
+let initPromise: Promise<void> | null = null;
 
 export function getStorage(): MMKV {
   if (!_storage) {
@@ -34,9 +38,18 @@ export const storage = new Proxy({} as MMKV, {
  * platform's secure enclave (Android Keystore / iOS Keychain).
  * Must be called once at app startup before any reads/writes.
  */
-export async function initStorage(): Promise<void> {
-  if (initialized) return;
+export function initStorage(): Promise<void> {
+  if (initialized) return Promise.resolve();
+  if (initPromise) return initPromise;
+  initPromise = doInitStorage().catch(e => {
+    // Reset so a later call can retry instead of re-returning a rejected promise.
+    initPromise = null;
+    throw e;
+  });
+  return initPromise;
+}
 
+async function doInitStorage(): Promise<void> {
   let encryptionKey: string;
   try {
     let storedKey = await SecureStore.getItemAsync(SECURE_STORE_KEY);

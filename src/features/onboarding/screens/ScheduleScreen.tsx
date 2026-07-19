@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRoute, RouteProp } from '@react-navigation/native';
@@ -66,6 +66,12 @@ export default function ScheduleScreen() {
     index: number;
     defaultTime?: string;
   } | null>(null);
+
+  // Batch7: persist times into the draft as they change (not only on "Next"),
+  // so a user pulled away mid-edit (call, OOM kill) doesn't lose their schedule.
+  useEffect(() => {
+    mergeDraft({ injectionTimes, feedingTimes });
+  }, [injectionTimes, feedingTimes]);
 
   const addTime = (type: 'injection' | 'feeding') => {
     const times = type === 'injection' ? injectionTimes : feedingTimes;

@@ -1,4 +1,4 @@
-import React, { useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import {
   View,
   Text,
@@ -75,6 +75,21 @@ export default function AddPetScreen() {
     if (photoUri) void deletePetPhotoFile(photoUri);
     setPhotoUri(uri);
   };
+  // Batch7: clean up a picked-but-never-saved photo when the user abandons
+  // AddPet (back / gesture). savedRef flips true once the pet is committed so we
+  // never delete a photo that a real pet row now references. photoUriRef mirrors
+  // the latest value so the unmount cleanup reads it without re-subscribing.
+  const savedRef = useRef(false);
+  const photoUriRef = useRef<string | null>(null);
+  photoUriRef.current = photoUri;
+  useEffect(
+    () => () => {
+      if (!savedRef.current && photoUriRef.current) {
+        void deletePetPhotoFile(photoUriRef.current);
+      }
+    },
+    []
+  );
   // A3: weight is stored canonically in kg; this string holds the value as
   // typed in the currently-selected unit.
   const [weightKg, setWeightKg] = useState('');
@@ -262,6 +277,8 @@ export default function AddPetScreen() {
     disableGuard();
     setSaving(false);
     savingRef.current = false;
+    // Pet is committed and references the photo now — don't let unmount delete it.
+    savedRef.current = true;
     navigation.popToTop();
   };
 
