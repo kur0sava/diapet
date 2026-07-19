@@ -20,6 +20,7 @@ import { BilingualText } from '../types';
 import { storageUtils, StorageKeys } from '@storage/mmkv/storage';
 import { usePetStore } from '@shared/stores/petStore';
 import { logEvent } from '@shared/analytics/analytics';
+import { parseTableRow, isTableSeparator } from '../utils/articleMarkdown';
 
 const useLang = () => {
   const { i18n } = useTranslation();
@@ -27,7 +28,7 @@ const useLang = () => {
 };
 
 interface HeadingEntry {
-  level: 2 | 3;
+  level: 2 | 3 | 4;
   text: string;
   lineIndex: number;
 }
@@ -84,11 +85,14 @@ export default function ArticleDetailScreen() {
     const result: HeadingEntry[] = [];
     lang(article.contentKey)
       .split('\n')
-      .forEach((line, i) => {
-        if (line.startsWith('### ')) {
-          result.push({ level: 3, text: line.replace('### ', ''), lineIndex: i });
+      .forEach((raw, i) => {
+        const line = raw.trimStart();
+        if (line.startsWith('#### ')) {
+          result.push({ level: 4, text: line.slice(5), lineIndex: i });
+        } else if (line.startsWith('### ')) {
+          result.push({ level: 3, text: line.slice(4), lineIndex: i });
         } else if (line.startsWith('## ')) {
-          result.push({ level: 2, text: line.replace('## ', ''), lineIndex: i });
+          result.push({ level: 2, text: line.slice(3), lineIndex: i });
         }
       });
     return result;
@@ -146,105 +150,239 @@ export default function ArticleDetailScreen() {
     );
   };
 
+  // Одна строка внутри бокса-цитаты (поддерживает вложенный "- " буллет и **bold**).
+  const renderQuoteLine = (raw: string, key: string) => {
+    const trimmed = raw.trimStart();
+    if (trimmed === '') return <View key={key} style={{ height: 6 }} />;
+    if (trimmed.startsWith('- ')) {
+      return (
+        <View key={key} style={styles.quoteBulletItem}>
+          <Text style={[styles.blockquoteText, { color: theme.colors.text }]}>{'•  '}</Text>
+          {renderInline(trimmed.slice(2), [styles.blockquoteText, { flex: 1 }], `${key}-t`)}
+        </View>
+      );
+    }
+    return renderInline(trimmed, styles.blockquoteText, key);
+  };
+
   const renderContent = (content: string) => {
     const lines = content.split('\n');
     // Bundled articles open with "# <title>" that duplicates the header title
     // shown above. Drop that leading H1 so the title isn't shown twice — and so
-    // it isn't rendered as a raw "# ..." paragraph (the parser had no h1 case,
-    // so a single-hash heading previously leaked its literal "# " to the user).
+    // it isn't rendered as a raw "# ..." paragraph.
     const firstIdx = lines.findIndex(l => l.trim() !== '');
     if (firstIdx !== -1 && lines[firstIdx].startsWith('# ') && !lines[firstIdx].startsWith('## ')) {
       lines[firstIdx] = '';
     }
-    return lines.map((line, i) => {
-      // h1 (single hash) — defensive for remote/manifest content; bundled
-      // articles have their duplicate leading h1 stripped above.
-      if (line.startsWith('# ') && !line.startsWith('## ')) {
-        return (
-          <Text
-            key={`line-${i}`}
-            style={[styles.h1, { color: theme.colors.text }]}
-            onLayout={e => handleHeadingLayout(i, e)}
-          >
-            {line.replace('# ', '')}
-          </Text>
+
+    const out: React.ReactNode[] = [];
+    let i = 0;
+    while (i < lines.length) {
+      const raw = lines[i];
+      const line = raw.trimStart();
+      const indent = raw.length - line.length;
+
+      // ── Таблица: строка с "|", за которой следует разделитель "|---|" ──
+      if (line.startsWith('|') && i + 1 < lines.length && isTableSeparator(lines[i + 1])) {
+        const header = parseTableRow(line);
+        const rows: string[][] = [];
+        let j = i + 2;
+        while (j < lines.length && lines[j].trimStart().startsWith('|')) {
+          rows.push(parseTableRow(lines[j]));
+          j++;
+        }
+        const colCount = header.length;
+        out.push(
+          <View key={`tbl-${i}`} style={[styles.table, { borderColor: theme.colors.border }]}>
+            <View
+              style={[
+                styles.tableRow,
+                styles.tableHeaderRow,
+                { backgroundColor: theme.colors.primaryLight, borderColor: theme.colors.border },
+              ]}
+            >
+              {header.map((cell, c) => (
+                <View
+                  key={c}
+                  style={[
+                    styles.tableCell,
+                    c < colCount - 1 && styles.tableCellDivider,
+                    { borderColor: theme.colors.border },
+                  ]}
+                >
+                  {renderInline(cell, styles.tableHeaderText, `tbl-${i}-h${c}`)}
+                </View>
+              ))}
+            </View>
+            {rows.map((row, r) => (
+              <View
+                key={r}
+                style={[
+                  styles.tableRow,
+                  r < rows.length - 1 && styles.tableRowDivider,
+                  { borderColor: theme.colors.border },
+                ]}
+              >
+                {Array.from({ length: colCount }).map((_, c) => (
+                  <View
+                    key={c}
+                    style={[
+                      styles.tableCell,
+                      c < colCount - 1 && styles.tableCellDivider,
+                      { borderColor: theme.colors.border },
+                    ]}
+                  >
+                    {renderInline(row[c] ?? '', styles.tableCellText, `tbl-${i}-r${r}c${c}`)}
+                  </View>
+                ))}
+              </View>
+            ))}
+          </View>
         );
+        i = j;
+        continue;
       }
-      if (line.startsWith('## ')) {
-        return (
-          <Text
-            key={`line-${i}`}
-            style={[styles.h2, { color: theme.colors.text }]}
-            onLayout={e => handleHeadingLayout(i, e)}
-          >
-            {line.replace('## ', '')}
-          </Text>
-        );
-      }
-      if (line.startsWith('### ')) {
-        return (
-          <Text
-            key={`line-${i}`}
-            style={[styles.h3, { color: theme.colors.text }]}
-            onLayout={e => handleHeadingLayout(i, e)}
-          >
-            {line.replace('### ', '')}
-          </Text>
-        );
-      }
-      if (line.startsWith('> ')) {
-        return (
+
+      // ── Блок-цитата: подряд идущие ">" строки → один бокс ──
+      if (line.startsWith('>')) {
+        const quoteLines: string[] = [];
+        let j = i;
+        while (j < lines.length && lines[j].trimStart().startsWith('>')) {
+          quoteLines.push(lines[j].trimStart().replace(/^>\s?/, ''));
+          j++;
+        }
+        out.push(
           <View
-            key={`line-${i}`}
+            key={`bq-${i}`}
             style={[
               styles.blockquote,
               { borderLeftColor: theme.colors.primary, backgroundColor: theme.colors.primaryLight },
             ]}
           >
-            {renderInline(line.replace('> ', ''), styles.blockquoteText, `bq-${i}`)}
+            {quoteLines.map((ql, k) => renderQuoteLine(ql, `bq-${i}-${k}`))}
           </View>
         );
+        i = j;
+        continue;
+      }
+
+      // ── Заголовки h1–h4 (с учётом отступа) ──
+      if (line.startsWith('#### ')) {
+        out.push(
+          <Text
+            key={`line-${i}`}
+            style={[styles.h4, { color: theme.colors.text }]}
+            onLayout={e => handleHeadingLayout(i, e)}
+          >
+            {line.slice(5)}
+          </Text>
+        );
+        i++;
+        continue;
+      }
+      if (line.startsWith('### ')) {
+        out.push(
+          <Text
+            key={`line-${i}`}
+            style={[styles.h3, { color: theme.colors.text }]}
+            onLayout={e => handleHeadingLayout(i, e)}
+          >
+            {line.slice(4)}
+          </Text>
+        );
+        i++;
+        continue;
+      }
+      if (line.startsWith('## ')) {
+        out.push(
+          <Text
+            key={`line-${i}`}
+            style={[styles.h2, { color: theme.colors.text }]}
+            onLayout={e => handleHeadingLayout(i, e)}
+          >
+            {line.slice(3)}
+          </Text>
+        );
+        i++;
+        continue;
+      }
+      // h1 (single hash) — defensive for remote/manifest content.
+      if (line.startsWith('# ')) {
+        out.push(
+          <Text
+            key={`line-${i}`}
+            style={[styles.h1, { color: theme.colors.text }]}
+            onLayout={e => handleHeadingLayout(i, e)}
+          >
+            {line.slice(2)}
+          </Text>
+        );
+        i++;
+        continue;
       }
       if (line.startsWith('---')) {
-        return (
+        out.push(
           <View
             key={`line-${i}`}
             style={[styles.divider, { backgroundColor: theme.colors.border }]}
           />
         );
+        i++;
+        continue;
       }
-      if (line.trim() === '') {
-        return <View key={`line-${i}`} style={{ height: 8 }} />;
+      if (line === '') {
+        out.push(<View key={`line-${i}`} style={{ height: 8 }} />);
+        i++;
+        continue;
       }
-      // Numbered list: 1. text, 2. text, etc.
+      // Вложенность списка по величине отступа (2 пробела ≈ 1 уровень).
+      const depth = Math.min(Math.floor(indent / 2), 3);
+      // Нумерованный список: "1. text"
       const numMatch = line.match(/^(\d+)\.\s+(.+)/);
       if (numMatch) {
-        return (
-          <View key={`line-${i}`} style={styles.bulletItem}>
+        out.push(
+          <View
+            key={`line-${i}`}
+            style={[styles.bulletItem, depth > 0 && { marginLeft: depth * 16 }]}
+          >
             <Text style={[styles.bulletDot, { color: theme.colors.textSecondary }]}>
               {numMatch[1]}.
             </Text>
             {renderInline(numMatch[2], styles.body, `ni-${i}`)}
           </View>
         );
+        i++;
+        continue;
       }
+      // Маркированный список: "- text" (вложенный → ◦)
       if (line.startsWith('- ')) {
-        return (
-          <View key={`line-${i}`} style={styles.bulletItem}>
-            <Text style={[styles.bulletDot, { color: theme.colors.textSecondary }]}>{'•'}</Text>
+        out.push(
+          <View
+            key={`line-${i}`}
+            style={[styles.bulletItem, depth > 0 && { marginLeft: depth * 16 }]}
+          >
+            <Text style={[styles.bulletDot, { color: theme.colors.textSecondary }]}>
+              {depth > 0 ? '◦' : '•'}
+            </Text>
             {renderInline(line.slice(2), styles.body, `bi-${i}`)}
           </View>
         );
+        i++;
+        continue;
       }
       if (line.startsWith('**') && line.endsWith('**')) {
-        return (
+        out.push(
           <Text key={`line-${i}`} style={[styles.bold, { color: theme.colors.text }]}>
             {line.replace(/\*\*/g, '')}
           </Text>
         );
+        i++;
+        continue;
       }
-      return renderInline(line, styles.body, `line-${i}`);
-    });
+      out.push(renderInline(line, styles.body, `line-${i}`));
+      i++;
+    }
+    return out;
   };
 
   return (
@@ -345,7 +483,11 @@ export default function ArticleDetailScreen() {
                 {headings.map((heading, idx) => (
                   <TouchableOpacity
                     key={idx}
-                    style={[styles.tocItem, heading.level === 3 && styles.tocItemIndented]}
+                    style={[
+                      styles.tocItem,
+                      heading.level === 3 && styles.tocItemIndented,
+                      heading.level === 4 && styles.tocItemIndented2,
+                    ]}
                     onPress={() => scrollToHeading(heading.lineIndex)}
                     activeOpacity={0.6}
                   >
@@ -353,7 +495,7 @@ export default function ArticleDetailScreen() {
                       style={[
                         styles.tocItemText,
                         { color: theme.colors.primary },
-                        heading.level === 3 && styles.tocItemTextSub,
+                        heading.level >= 3 && styles.tocItemTextSub,
                       ]}
                     >
                       {heading.text}
@@ -462,6 +604,7 @@ const styles = StyleSheet.create({
   h1: { fontSize: 23, fontWeight: '800', marginTop: 20, marginBottom: 10 },
   h2: { fontSize: 20, fontWeight: '800', marginTop: 20, marginBottom: 8 },
   h3: { fontSize: 17, fontWeight: '700', marginTop: 16, marginBottom: 6 },
+  h4: { fontSize: 15, fontWeight: '700', marginTop: 12, marginBottom: 4 },
   bold: { fontSize: 15, fontWeight: '700', marginTop: 4 },
   body: { fontSize: 15, lineHeight: 24 },
   blockquote: {
@@ -473,9 +616,24 @@ const styles = StyleSheet.create({
     marginVertical: 8,
   },
   blockquoteText: { fontSize: 14, lineHeight: 20, fontStyle: 'italic' },
+  quoteBulletItem: { flexDirection: 'row', alignItems: 'flex-start', marginVertical: 1 },
   divider: { height: 1, marginVertical: 16 },
   bulletItem: { flexDirection: 'row', alignItems: 'flex-start', gap: 8, marginVertical: 2 },
   bulletDot: { fontSize: 15, lineHeight: 24, width: 12 },
+  // Таблицы
+  table: {
+    borderWidth: 1,
+    borderRadius: 10,
+    overflow: 'hidden',
+    marginVertical: 10,
+  },
+  tableRow: { flexDirection: 'row' },
+  tableHeaderRow: {},
+  tableRowDivider: { borderBottomWidth: StyleSheet.hairlineWidth },
+  tableCell: { flex: 1, paddingHorizontal: 10, paddingVertical: 8, justifyContent: 'center' },
+  tableCellDivider: { borderRightWidth: StyleSheet.hairlineWidth },
+  tableHeaderText: { fontSize: 13, fontWeight: '700', lineHeight: 18 },
+  tableCellText: { fontSize: 13, lineHeight: 18 },
   // TOC styles
   tocContainer: { borderWidth: 1, borderRadius: 12, marginBottom: 20, overflow: 'hidden' },
   tocHeader: {
@@ -489,6 +647,7 @@ const styles = StyleSheet.create({
   tocList: { paddingHorizontal: 14, paddingBottom: 14, gap: 4 },
   tocItem: { paddingVertical: 6, paddingLeft: 4 },
   tocItemIndented: { paddingLeft: 20 },
+  tocItemIndented2: { paddingLeft: 36 },
   tocItemText: { fontSize: 14, fontWeight: '500' },
   tocItemTextSub: { fontSize: 13, fontWeight: '400' },
   // References
