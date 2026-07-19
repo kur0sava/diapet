@@ -228,6 +228,11 @@ async function openBatteryOptimizationSettings(): Promise<void> {
  */
 let isRestoring = false;
 let restoreQueued = false;
+// Audit 4.2: timestamp последнего полного restore. Foreground-вызов пропускает
+// повтор, если прошло меньше minIntervalMs — полный cancel→reschedule на КАЖДЫЙ
+// возврат в приложение бил по батарее. Явные вызовы (EditPet/PetProfile после
+// смены расписания) идут без интервала и перепланируют немедленно.
+let lastRestoreAt = 0;
 
 /**
  * Restore injection/feeding notifications on app startup.
@@ -243,7 +248,11 @@ let restoreQueued = false;
  * cost — the re-entrancy guard above keeps it bounded to one rebuild at
  * a time.
  */
-export async function restoreScheduleNotifications(): Promise<void> {
+export async function restoreScheduleNotifications(opts?: {
+  minIntervalMs?: number;
+}): Promise<void> {
+  const minInterval = opts?.minIntervalMs ?? 0;
+  if (minInterval > 0 && Date.now() - lastRestoreAt < minInterval) return;
   if (isRestoring) {
     restoreQueued = true;
     return;
@@ -253,6 +262,7 @@ export async function restoreScheduleNotifications(): Promise<void> {
     do {
       restoreQueued = false;
       await doRestoreScheduleNotifications();
+      lastRestoreAt = Date.now();
     } while (restoreQueued);
   } finally {
     isRestoring = false;
@@ -385,6 +395,11 @@ export async function cancelGlucoseReminders(): Promise<void> {
 // restore-прохода на foreground; два близких вызова могут проскочить
 // cancel→schedule и продублировать напоминания.
 let schedulingGlucose = false;
+// Audit 4.1: раньше конкурентный вызов просто отбрасывался (return). Если между
+// вызовами МЕНЯЛИСЬ времена напоминаний (тумблер во время foreground-restore),
+// расписание оставалось от старого состояния. Зеркалим restoreQueued: помечаем
+// и перезапускаем ещё один проход по свежему MMKV-состоянию.
+let glucoseQueued = false;
 
 /**
  * (Re)schedule daily glucose-measurement reminders from MMKV state.
@@ -392,10 +407,16 @@ let schedulingGlucose = false;
  * from both the Settings toggle and every restore pass.
  */
 export async function scheduleGlucoseReminders(): Promise<void> {
-  if (schedulingGlucose) return;
+  if (schedulingGlucose) {
+    glucoseQueued = true;
+    return;
+  }
   schedulingGlucose = true;
   try {
-    await doScheduleGlucoseReminders();
+    do {
+      glucoseQueued = false;
+      await doScheduleGlucoseReminders();
+    } while (glucoseQueued);
   } finally {
     schedulingGlucose = false;
   }

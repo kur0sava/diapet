@@ -79,7 +79,11 @@ function AppContent() {
     const sub = AppState.addEventListener('change', state => {
       if (state === 'active') {
         useSubscriptionStore.getState().refreshStatus();
-        restoreScheduleNotifications().catch(() => {});
+        // Throttled: skip the full cancel→reschedule if we did one in the last
+        // 5 min (frequent app switching drained battery). Explicit reschedules
+        // after a schedule edit call restoreScheduleNotifications() without a
+        // throttle and still run immediately.
+        restoreScheduleNotifications({ minIntervalMs: 5 * 60 * 1000 }).catch(() => {});
         refreshWeeklySummaryPush().catch(() => {});
       }
     });
