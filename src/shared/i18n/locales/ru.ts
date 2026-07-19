@@ -278,6 +278,7 @@ export const ru = {
 
   injection: {
     title: 'Инъекция инсулина',
+    editTitle: 'Изменить инъекцию',
     dose: 'Доза (единицы)',
     insulinType: 'Тип инсулина',
     quickSelect: 'Быстрый выбор',

@@ -43,16 +43,24 @@ export default function LogInjectionScreen() {
   const { theme } = useTheme();
   const activePet = usePetStore(s => s.activePet);
   const queryClient = useQueryClient();
+  // 5.1 (audit): editing an existing injection to fix a dose typo (4 vs 0.4)
+  // instead of delete + re-create. Mirrors LogGlucose's editId flow.
+  const editId = route.params?.editId;
   // UX-C2 (audit): pin pet at mount — see LogGlucoseScreen for rationale.
   // Misattributed insulin doses are dangerous in multi-pet households.
   const petIdRef = useRef<string | undefined>(activePet?.id);
 
   // C2 (audit): restore an interrupted draft (per-pet, expires after a day).
+  // Not when editing — an edit prefills from the stored record, not a draft.
   const initialDraft = useRef(
-    loadEntryDraft<{ dose: string; insulinType: string; notes: string; administeredAt: string }>(
-      StorageKeys.INJECTION_DRAFT,
-      activePet?.id ?? ''
-    )
+    editId
+      ? null
+      : loadEntryDraft<{
+          dose: string;
+          insulinType: string;
+          notes: string;
+          administeredAt: string;
+        }>(StorageKeys.INJECTION_DRAFT, activePet?.id ?? '')
   ).current;
 
   const [dose, setDose] = useState(initialDraft?.dose ?? '');
@@ -68,9 +76,27 @@ export default function LogInjectionScreen() {
         : new Date()
   );
 
+  // 5.1: load the existing injection when editing and prefill the form.
+  useEffect(() => {
+    if (!editId) return;
+    let cancelled = false;
+    injectionRepository.findById(editId).then(inj => {
+      if (cancelled || !inj) return;
+      setDose(String(inj.doseUnits));
+      setInsulinType(inj.insulinType ?? '');
+      setNotes(inj.notes ?? '');
+      setAdministeredAt(new Date(inj.administeredAt));
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [editId]);
+
   // C2: persist the draft as the user types; clear it once nothing meaningful
   // remains. Cleared on successful save (see doSaveInjection).
   useEffect(() => {
+    // Don't persist a draft while editing an existing record.
+    if (editId) return;
     const pid = petIdRef.current;
     if (!pid) return;
     if (!dose && !notes) {
@@ -83,7 +109,7 @@ export default function LogInjectionScreen() {
       notes,
       administeredAt: administeredAt.toISOString(),
     });
-  }, [dose, insulinType, notes, administeredAt]);
+  }, [dose, insulinType, notes, administeredAt, editId]);
   const initialAdministeredAt = useRef(administeredAt.getTime());
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [showTimePicker, setShowTimePicker] = useState(false);
@@ -130,20 +156,26 @@ export default function LogInjectionScreen() {
     savingRef.current = true;
     setLoading(true);
     try {
-      await injectionRepository.create({
+      const payload = {
         petId: targetPetId,
         insulinType: insulinType.trim(),
         doseUnits: parseFloat(dose.replace(',', '.')),
         notes: notes || undefined,
         administeredAt: administeredAt.toISOString(),
-      });
+      };
+      if (editId) {
+        await injectionRepository.update(editId, payload);
+      } else {
+        await injectionRepository.create(payload);
+      }
       await queryClient.invalidateQueries({ queryKey: queryKeys.injections.all });
       await queryClient.invalidateQueries({ queryKey: queryKeys.diary.all });
       clearEntryDraft(StorageKeys.INJECTION_DRAFT, targetPetId);
       disableGuard();
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       useSuccessToast.getState().show(t('common.saved'));
-      triggerAfterAction('injection');
+      // Milestones/hints only fire for a NEW injection, not an edit.
+      if (!editId) triggerAfterAction('injection');
       navigation.goBack();
     } catch {
       Alert.alert(t('common.error'), t('injection.saveError'));
@@ -156,6 +188,7 @@ export default function LogInjectionScreen() {
     insulinType,
     notes,
     administeredAt,
+    editId,
     queryClient,
     navigation,
     t,
@@ -247,7 +280,10 @@ export default function LogInjectionScreen() {
     >
       <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.background }]}>
         <View>
-          <ScreenHeader title={t('injection.title')} onBack={() => navigation.goBack()} />
+          <ScreenHeader
+            title={editId ? t('injection.editTitle') : t('injection.title')}
+            onBack={() => navigation.goBack()}
+          />
           <LinearGradient
             colors={[...theme.gradients.secondary] as [string, string]}
             start={{ x: 0, y: 0 }}

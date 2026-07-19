@@ -36,6 +36,33 @@ export const injectionRepository = {
     return result;
   },
 
+  async update(id: string, dto: Partial<CreateInjectionDTO>): Promise<InjectionLog | null> {
+    const db = await getDatabase();
+    const sets: string[] = [];
+    const params: (string | number | null)[] = [];
+    if (dto.insulinType !== undefined) {
+      sets.push('insulin_type=?');
+      params.push(dto.insulinType);
+    }
+    if (dto.doseUnits !== undefined) {
+      sets.push('dose_units=?');
+      params.push(dto.doseUnits);
+    }
+    if ('notes' in dto) {
+      sets.push('notes=?');
+      params.push(dto.notes ?? null);
+    }
+    if (dto.administeredAt !== undefined) {
+      sets.push('administered_at=?');
+      params.push(dto.administeredAt);
+    }
+    if (sets.length > 0) {
+      params.push(id);
+      await db.runAsync(`UPDATE injections SET ${sets.join(', ')} WHERE id=?`, params);
+    }
+    return this.findById(id);
+  },
+
   async findById(id: string): Promise<InjectionLog | null> {
     const db = await getDatabase();
     const row = await db.getFirstAsync<InjectionRow>('SELECT * FROM injections WHERE id = ?', [id]);

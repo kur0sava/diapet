@@ -277,6 +277,7 @@ export const en = {
 
   injection: {
     title: 'Insulin Injection',
+    editTitle: 'Edit Injection',
     dose: 'Dose (units)',
     insulinType: 'Insulin type',
     quickSelect: 'Quick select',

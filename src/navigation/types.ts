@@ -48,7 +48,7 @@ export type HomeStackParamList = {
   Dashboard: undefined;
   DailyDiary: { date?: string };
   LogGlucose: { editId?: string; presetDate?: string };
-  LogInjection: { presetDate?: string } | undefined;
+  LogInjection: { presetDate?: string; editId?: string } | undefined;
   LogFeeding: { presetDate?: string } | undefined;
   AddSymptom: { editId?: string; glucoseReadingId?: string };
   GlucoseList: undefined;

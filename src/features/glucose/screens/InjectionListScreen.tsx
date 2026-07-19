@@ -84,7 +84,11 @@ export default function InjectionListScreen() {
 
   const renderItem = ({ item, index }: { item: InjectionLog; index: number }) => (
     <AnimatedListItem index={index}>
-      <TouchableOpacity onLongPress={() => handleDelete(item.id)} activeOpacity={0.8}>
+      <TouchableOpacity
+        onPress={() => navigation.navigate('LogInjection', { editId: item.id })}
+        onLongPress={() => handleDelete(item.id)}
+        activeOpacity={0.8}
+      >
         <Card style={styles.card} shadow>
           <View style={[styles.colorBar, { backgroundColor: theme.colors.primary }]} />
           <View style={styles.cardContent}>
