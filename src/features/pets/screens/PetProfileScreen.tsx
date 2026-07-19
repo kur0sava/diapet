@@ -14,6 +14,7 @@ import { Icon } from '@shared/components/ui/Icon';
 import { PetAvatar } from '@shared/components/ui/PetAvatar';
 import { useMoreNavigation } from '@navigation/hooks';
 import { useTranslation } from 'react-i18next';
+import { getWeightUnit, kgToInput } from '@shared/utils/weight';
 import i18n from '@shared/i18n';
 import { parseDateOnly } from '@shared/utils/dateUtils';
 import { useTheme } from '@shared/theme';
@@ -33,6 +34,9 @@ export default function PetProfileScreen() {
   const loadPets = usePetStore(s => s.loadPets);
   const queryClient = useQueryClient();
   const deletingRef = useRef(false);
+  // 5.3 (audit): respect the user's global weight unit instead of hardcoding kg.
+  const weightUnit = getWeightUnit();
+  const weightUnitLabel = weightUnit === 'kg' ? t('common.kg') : t('common.lb');
 
   const handleDeletePet = () => {
     if (!activePet || deletingRef.current) return;
@@ -230,7 +234,7 @@ export default function PetProfileScreen() {
                 numberOfLines={1}
               >
                 {activePet.weightKg != null && activePet.weightKg > 0
-                  ? `${activePet.weightKg} ${t('common.kg')}`
+                  ? `${kgToInput(activePet.weightKg, weightUnit)} ${weightUnitLabel}`
                   : t('weight.notSet')}
               </Text>
               <Icon name="chevron-forward" size={16} color={theme.colors.textTertiary} />

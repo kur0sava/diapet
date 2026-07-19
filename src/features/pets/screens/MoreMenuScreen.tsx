@@ -12,6 +12,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useMoreNavigation, useRootNavigation } from '@navigation/hooks';
 import { useTranslation } from 'react-i18next';
+import { getWeightUnit, kgToInput } from '@shared/utils/weight';
 import { useTheme } from '@shared/theme';
 import { usePetStore } from '@shared/stores/petStore';
 import { Icon } from '@shared/components/ui/Icon';
@@ -35,6 +36,9 @@ export default function MoreMenuScreen() {
   const activePet = usePetStore(s => s.activePet);
   const pets = usePetStore(s => s.pets);
   const setActivePet = usePetStore(s => s.setActivePet);
+  // 5.3: respect the user's weight unit in the pet card subtitle
+  const weightUnit = getWeightUnit();
+  const weightUnitLabel = weightUnit === 'kg' ? t('common.kg') : t('common.lb');
   const { isPro, canAccessAdvanced, canAddPet, isMonetizationEnabled } = useSubscription();
   const [pickerVisible, setPickerVisible] = useState(false);
 
@@ -231,7 +235,9 @@ export default function MoreMenuScreen() {
                   : activePet.species === 'dog'
                     ? t('pets.dog')
                     : t('pets.pet')}
-                {activePet.weightKg ? ` · ${activePet.weightKg} ${t('common.kg')}` : ''}
+                {activePet.weightKg
+                  ? ` · ${kgToInput(activePet.weightKg, weightUnit)} ${weightUnitLabel}`
+                  : ''}
                 {activePet.diabetesType !== 'unknown'
                   ? ` · ${t('pets.diabetesType')} ${activePet.diabetesType === 'type1' ? '1' : '2'}`
                   : ''}

@@ -13,6 +13,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTheme } from '@shared/theme';
 import { Icon } from '@shared/components/ui/Icon';
 import { PetAvatar } from '@shared/components/ui/PetAvatar';
+import { getWeightUnit, kgToInput } from '@shared/utils/weight';
 import type { Pet } from '@storage/domain/types';
 
 interface Props {
@@ -37,6 +38,9 @@ export function PetPickerSheet({ visible, pets, activePetId, onSelect, onAddPet,
   const { t } = useTranslation();
   const { theme } = useTheme();
   const insets = useSafeAreaInsets();
+  // 5.3: respect the user's weight unit in the pet subtitle
+  const weightUnit = getWeightUnit();
+  const weightUnitLabel = weightUnit === 'kg' ? t('common.kg') : t('common.lb');
 
   return (
     <Modal
@@ -121,7 +125,9 @@ export function PetPickerSheet({ visible, pets, activePetId, onSelect, onAddPet,
                         : pet.species === 'dog'
                           ? t('pets.dog')
                           : t('pets.pet')}
-                      {pet.weightKg ? ` · ${pet.weightKg} ${t('common.kg')}` : ''}
+                      {pet.weightKg
+                        ? ` · ${kgToInput(pet.weightKg, weightUnit)} ${weightUnitLabel}`
+                        : ''}
                     </Text>
                   </View>
                   {isActive && (
