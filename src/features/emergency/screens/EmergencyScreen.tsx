@@ -50,7 +50,11 @@ export default function EmergencyScreen() {
 
   const callVet = () => {
     if (callingRef.current) return;
-    if (!vetPhone) {
+    // Batch7: sanitize first, then require at least one digit — a garbage saved
+    // number ("n/a", "—") passed the old `!vetPhone` check but sanitized to ""
+    // → `tel:` opened nothing. Fall through to the clinic-search flow instead.
+    const sanitizedPhone = (vetPhone ?? '').replace(/[^\d+\-() ]/g, '').trim();
+    if (!vetPhone || !/\d/.test(sanitizedPhone)) {
       // A2 (audit): this used to be a dead-end alert — the app's most prominent
       // emergency action did nothing for users who never saved a vet. Make it
       // actionable: offer to find the nearest clinic on the map. We still don't
@@ -64,7 +68,7 @@ export default function EmergencyScreen() {
     }
     callingRef.current = true;
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
-    Linking.openURL(`tel:${vetPhone.replace(/[^\d+\-() ]/g, '')}`).catch(() => {
+    Linking.openURL(`tel:${sanitizedPhone}`).catch(() => {
       Alert.alert(t('emergency.callFailed'), t('emergency.callFailedDesc'));
     });
     setTimeout(() => {

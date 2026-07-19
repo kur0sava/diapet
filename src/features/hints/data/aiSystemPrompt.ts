@@ -63,10 +63,11 @@ export function buildAiSystemPrompt(context: AiPetContext): string {
   const highControl = config.glucose.highControlThreshold;
   // Vet-contact threshold for sustained hyperglycemia — species-aware.
   // Must stay ≥ highControl so the ordering emergencyLow < targetLow <
-  // targetHigh < highControl < emergencyHigh holds. For dogs highControl
+  // targetHigh < highControl < vetContactThreshold holds. For dogs highControl
   // is 16.7 mmol/L; a hardcoded 15 here would invert the scale.
-  // Kept conservatively below config.glucose.emergencyHigh (DKA territory).
-  const emergencyHigh = highControl + 2;
+  // NOT the same as config.glucose.emergencyHigh (DKA territory) — this is the
+  // softer "call the vet if sustained" level, kept conservatively below it.
+  const vetContactThreshold = highControl + 2;
   const toMgDl = (mmol: number) => Math.round(mmol * 18);
 
   // Species-specific diet and medical context
@@ -194,7 +195,7 @@ You are here to help with the ${animalWord}, not to advertise. Never mention pri
 
 ${dietContext}
 - The target glucose range for a diabetic ${animalWord} at home is typically around ${targetLow}–${targetHigh} mmol/L (${toMgDl(targetLow)}–${toMgDl(targetHigh)} mg/dL), but individual targets should be set by the treating vet. Readings of ${targetHigh}–${highControl} mmol/L (${toMgDl(targetHigh)}–${toMgDl(highControl)} mg/dL) indicate hyperglycaemia.
-- Glucose readings above ${highControl} mmol/L (${toMgDl(highControl)} mg/dL) are severely high. Readings consistently above ${emergencyHigh} mmol/L (${toMgDl(emergencyHigh)} mg/dL) over 2–3 days warrant veterinary contact per ISFM/AAHA guidance; above ${Math.max(emergencyHigh + 5, 20)} mmol/L (${toMgDl(Math.max(emergencyHigh + 5, 20))} mg/dL) or any glucose reading with lethargy, vomiting, or inappetence requires urgent attention (possible DKA).
+- Glucose readings above ${highControl} mmol/L (${toMgDl(highControl)} mg/dL) are severely high. Readings consistently above ${vetContactThreshold} mmol/L (${toMgDl(vetContactThreshold)} mg/dL) over 2–3 days warrant veterinary contact per ISFM/AAHA guidance; above ${Math.max(vetContactThreshold + 5, 20)} mmol/L (${toMgDl(Math.max(vetContactThreshold + 5, 20))} mg/dL) or any glucose reading with lethargy, vomiting, or inappetence requires urgent attention (possible DKA).
 - Glucose of ${config.glucose.ranges.find(r => r.key === 'below_target')?.min ?? 3.3}–${targetLow} mmol/L is below target and warrants monitoring; ${emergencyLow}–${config.glucose.ranges.find(r => r.key === 'below_target')?.min ?? 3.3} mmol/L is hypoglycaemia and requires treatment; below ${emergencyLow} mmol/L (${toMgDl(emergencyLow)} mg/dL) is an emergency.
 ${injectionSiteInfo}
 - Unopened insulin is stored in the refrigerator (2–8°C). Storage after opening depends on the product and label: for example, Lantus 28 days, Levemir 42 days, ProZinc 60 days, and Caninsulin/Vetsulin 42 days with region-specific storage instructions after first use. Never freeze insulin and always follow the exact package insert for the owner's product.

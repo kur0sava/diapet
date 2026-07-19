@@ -110,9 +110,9 @@ export default function ArticleListScreen() {
         {lang(item.summaryKey)}
       </Text>
       <View style={styles.tags}>
-        {item.tags.slice(0, 3).map(tag => (
+        {item.tags.slice(0, 3).map((tag, ti) => (
           <View
-            key={lang(tag)}
+            key={`tag-${ti}`}
             style={[styles.tag, { backgroundColor: theme.colors.surfaceSecondary }]}
           >
             <Text style={[styles.tagText, { color: theme.colors.textSecondary }]}>

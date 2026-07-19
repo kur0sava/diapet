@@ -293,9 +293,12 @@ export default function WeightHistoryScreen() {
               previous &&
               daysBetweenWeighins >= 7 &&
               deltaKg / previous.weightKg < -0.05 && (
-                <Text style={[styles.lossHint, { color: theme.colors.danger }]}>
-                  {t('weight.lossWarning')}
-                </Text>
+                <View style={styles.lossHintRow}>
+                  <Icon name="alert-circle-outline" size={14} color={theme.colors.danger} />
+                  <Text style={[styles.lossHint, { color: theme.colors.danger }]}>
+                    {t('weight.lossWarning')}
+                  </Text>
+                </View>
               )}
           </Card>
 
@@ -413,7 +416,8 @@ const styles = StyleSheet.create({
   currentRow: { flexDirection: 'row', alignItems: 'center', gap: 12, flexWrap: 'wrap' },
   currentValue: { fontSize: 32, fontVariant: ['tabular-nums'] },
   deltaBadge: { paddingHorizontal: 10, paddingVertical: 4, borderRadius: 10 },
-  lossHint: { fontSize: 12, lineHeight: 16 },
+  lossHintRow: { flexDirection: 'row', alignItems: 'flex-start', gap: 4, marginTop: 4 },
+  lossHint: { fontSize: 12, lineHeight: 16, flex: 1 },
   addRow: { flexDirection: 'row', alignItems: 'center', gap: 10 },
   addUnit: { fontSize: 15 },
   addBtn: {
