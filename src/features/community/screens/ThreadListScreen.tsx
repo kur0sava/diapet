@@ -7,7 +7,7 @@ import {
   TouchableOpacity,
   ActivityIndicator,
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useRoute, RouteProp } from '@react-navigation/native';
 import { useFocusEffect } from '@react-navigation/native';
 import { useTranslation } from 'react-i18next';
@@ -35,6 +35,7 @@ export default function ThreadListScreen() {
   const route = useRoute<RouteProp<CommunityStackParamList, 'ThreadList'>>();
   const { roomId } = route.params;
   const room = getRoomById(roomId);
+  const insets = useSafeAreaInsets();
 
   const {
     data: threads = [],
@@ -135,7 +136,7 @@ export default function ThreadListScreen() {
         />
       )}
       <TouchableOpacity
-        style={[styles.fab, { backgroundColor: theme.colors.primary }]}
+        style={[styles.fab, { backgroundColor: theme.colors.primary, bottom: 28 + insets.bottom }]}
         onPress={() => navigation.navigate('NewThread', { roomId })}
         accessibilityRole="button"
         accessibilityLabel={t('community.newThread')}
