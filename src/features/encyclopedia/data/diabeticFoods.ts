@@ -1558,7 +1558,12 @@ export function getFoodVerdict(
     // Fat is the hard safety gate: high fat drives pancreatitis, a major
     // trigger of insulin resistance in diabetic dogs.
     if (fatDM != null && fatDM > G.fatMaxPercent) return 'bad';
-    const lowFat = fatDM == null || fatDM <= G.fatIdealPercent + 2; // ≈≤14% DM
+    // H5 (2026-07-19 audit): fat is the hard pancreatitis-safety gate. If it's
+    // unknown we cannot certify the food as "good" — cap at 'acceptable' (the UI
+    // flags "fat not specified") instead of letting high fibre alone earn a
+    // 'good'. Previously `fatDM == null` counted as low-fat → false "good".
+    if (fatDM == null) return 'acceptable';
+    const lowFat = fatDM <= G.fatIdealPercent + 2; // ≈≤14% DM
     const fiberIdeal = fiberDM != null && fiberDM >= G.fiberIdealPercent; // ≥15%
     const fiberHigh = fiberDM != null && fiberDM >= G.fiberMinPercent; // ≥10%
     // Two legitimate clinical approaches to canine diabetic control (AAHA 2018):

@@ -50,4 +50,12 @@ describe('getFoodVerdict — dogs', () => {
   it('unknown fibre with acceptable fat stays neutral (acceptable)', () => {
     expect(getFoodVerdict(45, 'dog', 12, undefined)).toBe('acceptable');
   });
+
+  it('H5: unknown FAT never earns a "good", even with ideal fibre', () => {
+    // Fat is the pancreatitis safety gate; if it's unknown we cannot certify.
+    expect(getFoodVerdict(50, 'dog', undefined, 17)).toBe('acceptable');
+    expect(getFoodVerdict(50, 'dog', undefined, 25)).toBe('acceptable');
+    // still not worse than acceptable when fibre is also unknown
+    expect(getFoodVerdict(50, 'dog', undefined, undefined)).toBe('acceptable');
+  });
 });

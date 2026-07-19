@@ -145,6 +145,10 @@ export const StorageKeys = {
   EXPENSE_BUDGET_MONTHLY: 'expenseBudgetMonthly',
   AUTH_USER: 'authUser',
   HINTS_DISABLED: 'hintsDisabled',
+  /** Epoch ms until which a glucose emergency is considered "active". Set when a
+   *  reading in the emergency band is logged; while now < this value, hints and
+   *  achievement modals are suppressed so nothing pops over the SOS flow. */
+  EMERGENCY_UNTIL: 'emergencyUntil',
   FIRST_STEPS_DISMISSED: 'firstStepsDismissed',
   FIRST_STEPS_COMPLETED_AT: 'firstStepsCompletedAt',
   TRIAL_STARTED_AT: 'trialStartedAt',

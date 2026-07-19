@@ -39,9 +39,9 @@ export const dogDiet: Article = {
 
 ## Специализированные корма
 
-- **Hills w/d** — высокая клетчатка, низкий жир, для диабета и контроля веса
-- **Royal Canin Diabetic (Canine)** — специально для собак с диабетом, высокая клетчатка
-- **Farmina Vet Life Diabetic (Canine)** — доступен в России и Европе
+- **Hills w/d** — высокая клетчатка, низкий жир, для диабета и контроля веса (⚠️ в РФ официальных поставок больше нет — производство ушло; доступен за рубежом)
+- **Royal Canin Diabetic (Canine)** — специально для собак с диабетом, высокая клетчатка (в РФ производится, завод Дмитров)
+- **Farmina Vet Life Diabetic (Canine)** — доступен в Европе; в РФ ввоз сухих кормов Farmina запрещён с 2024 (недоступен)
 - ⚠️ **Не давай собаке кошачьи диабетические корма** (Purina DM Feline, Hill's m/d Feline и др.) — у кошек стратегия «высокий белок / низкие углеводы», собаке она не подходит и повышает риск панкреатита
 
 ## Главное правило: СТАБИЛЬНОСТЬ
@@ -88,9 +88,9 @@ Cats are obligate carnivores who need a high-protein, low-carb diet. Dogs are om
 
 ## Specialized foods
 
-- **Hills w/d** — high fiber, low fat, for diabetes and weight management
-- **Royal Canin Diabetic (Canine)** — specifically for diabetic dogs, high fiber
-- **Farmina Vet Life Diabetic (Canine)** — available in Russia and Europe
+- **Hills w/d** — high fiber, low fat, for diabetes and weight management (⚠️ no longer officially supplied in Russia — production left the market; available abroad)
+- **Royal Canin Diabetic (Canine)** — specifically for diabetic dogs, high fiber (made in Russia, Dmitrov plant)
+- **Farmina Vet Life Diabetic (Canine)** — available in Europe; Farmina dry foods have been banned from import into Russia since 2024 (unavailable)
 - ⚠️ **Don't feed a dog feline diabetic foods** (Purina DM Feline, Hill's m/d Feline, etc.) — cats use a "high protein / low carb" strategy that is unsuitable for dogs and raises pancreatitis risk
 
 ## The golden rule: CONSISTENCY

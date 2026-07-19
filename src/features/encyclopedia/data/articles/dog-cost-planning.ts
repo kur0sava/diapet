@@ -49,7 +49,7 @@ export const dogCostPlanning: Article = {
 - Непрерывный сенсор (FreeStyle Libre) при построении кривых иногда выгоднее ежедневных полосок
 
 **Корм:**
-- Собачьи диабетические диеты: Royal Canin Diabetic Canine, Hill's w/d, Farmina Vet Life Diabetic
+- Собачьи диабетические диеты: Royal Canin Diabetic Canine (в РФ доступен, завод Дмитров); Hill's w/d и Farmina Vet Life Diabetic — в РФ официально не поставляются (доступны за рубежом)
 - **Не экономьте на переходе на кошачий корм** — он не подходит собаке и повышает риск панкреатита (лечение обойдётся дороже экономии)
 
 **Ветеринар:**
@@ -106,7 +106,7 @@ Food volume and insulin dose rise with the dog's weight, so large breeds cost mo
 - A continuous sensor (FreeStyle Libre) can beat daily strips when building curves
 
 **Food:**
-- Canine diabetic diets: Royal Canin Diabetic Canine, Hill's w/d, Farmina Vet Life Diabetic
+- Canine diabetic diets: Royal Canin Diabetic Canine (available in Russia, Dmitrov plant); Hill's w/d and Farmina Vet Life Diabetic — not officially supplied in Russia (available abroad)
 - **Don't "save" by switching to cat food** — it's unsuitable for a dog and raises pancreatitis risk (treatment costs more than the savings)
 
 **Vet:**
