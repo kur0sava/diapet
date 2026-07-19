@@ -157,9 +157,11 @@ export default function FoodSelector({ visible, onClose, onSelect, filterCategor
   // Region is read per-open (the picker is a fresh modal each time it is shown);
   // `visible` is a dep so re-opening after a Settings region change rebuilds.
   const region = getAppRegion();
-  // eslint-disable-next-line react-hooks/exhaustive-deps -- rebuild list when language/region/species changes
   const allFoods = useMemo(
     () => buildUnifiedList(species, region),
+    // currentLang & visible are intentional deps: rebuild the list when the
+    // language changes or the modal re-opens after a Settings region change.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [currentLang, species, region, visible]
   );
 
