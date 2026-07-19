@@ -214,11 +214,14 @@ export function generateSmartAlerts(
   // 7-day average is already at/below the lower target, a further drop is sliding
   // toward hypoglycemia, not good control — never surface "keep up the good work"
   // there (the high-priority low_streak alert may be suppressed by throttling).
+  // The 7-day average lags; also gate on the faster 3-day average so a recent
+  // slide below target isn't praised while the 7-day figure is still catching up.
   const improvingFloor = config?.glucose.targetLow ?? 4.0;
   if (
     trends.direction === 'improving' &&
     trends.movingAverage7d !== null &&
-    trends.movingAverage7d >= improvingFloor
+    trends.movingAverage7d >= improvingFloor &&
+    !(trends.movingAverage3d !== null && trends.movingAverage3d < improvingFloor)
   ) {
     candidates.push({
       type: 'glucose_improving',

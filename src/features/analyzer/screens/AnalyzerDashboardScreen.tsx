@@ -280,8 +280,9 @@ export default function AnalyzerDashboardScreen() {
           </View>
         )}
 
-        {/* Patterns Section */}
-        {patterns.length > 0 && (
+        {/* Patterns Section — gated on hasEnoughData so it isn't shown next to
+            the "insufficient data" card (detectSomogyi fires on just 2 readings) */}
+        {hasEnoughData && patterns.length > 0 && (
           <View style={styles.section}>
             <Text
               style={[
@@ -343,8 +344,8 @@ export default function AnalyzerDashboardScreen() {
           </View>
         )}
 
-        {/* Risk Factor Breakdown */}
-        {riskScore && (
+        {/* Risk Factor Breakdown — gated on hasEnoughData (same reason) */}
+        {hasEnoughData && riskScore && (
           <View style={styles.section}>
             <Text
               style={[
