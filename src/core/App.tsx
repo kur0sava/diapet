@@ -12,6 +12,7 @@ import {
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ThemeProvider, useTheme } from '@shared/theme';
 import { ErrorBoundary } from '@shared/components/ErrorBoundary';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { RootNavigator } from '@navigation/RootNavigator';
 import { HintProvider } from '@features/hints/components/HintProvider';
 import { useMorningGreeting } from '@features/hints/hooks/useMorningGreeting';
@@ -223,17 +224,25 @@ export default function App() {
   }
 
   return (
-    <View style={{ flex: 1 }}>
-      <QueryClientProvider client={queryClient}>
-        <ErrorBoundary>
-          <ThemeProvider>
-            <HintProvider>
-              <AppContent />
-            </HintProvider>
-          </ThemeProvider>
-        </ErrorBoundary>
-      </QueryClientProvider>
-    </View>
+    // SafeAreaProvider at the ROOT: HintProvider renders HintCard (and other
+    // overlays) as a sibling of the navigator, so they sit OUTSIDE the
+    // SafeAreaProviderCompat that NavigationContainer supplies. Without a root
+    // provider, HintCard's useSafeAreaInsets() throws "No safe area value
+    // available" on the New Architecture — crashing the app via ErrorBoundary
+    // on a fresh install where a hint renders at boot (caught in device test).
+    <SafeAreaProvider>
+      <View style={{ flex: 1 }}>
+        <QueryClientProvider client={queryClient}>
+          <ErrorBoundary>
+            <ThemeProvider>
+              <HintProvider>
+                <AppContent />
+              </HintProvider>
+            </ThemeProvider>
+          </ErrorBoundary>
+        </QueryClientProvider>
+      </View>
+    </SafeAreaProvider>
   );
 }
 
