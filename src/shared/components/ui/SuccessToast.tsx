@@ -51,7 +51,10 @@ export function SuccessToast() {
         <View style={[styles.check, { backgroundColor: theme.colors.success }]}>
           <Check size={14} color="#FFFFFF" strokeWidth={3} />
         </View>
-        <Text style={[styles.text, { color: theme.colors.text, fontFamily: theme.fonts.semibold }]}>
+        <Text
+          style={[styles.text, { color: theme.colors.text, fontFamily: theme.fonts.semibold }]}
+          numberOfLines={2}
+        >
           {message}
         </Text>
       </View>
@@ -60,11 +63,12 @@ export function SuccessToast() {
 }
 
 const styles = StyleSheet.create({
-  wrap: { position: 'absolute', left: 0, right: 0, alignItems: 'center' },
+  wrap: { position: 'absolute', left: 24, right: 24, alignItems: 'center' },
   pill: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 8,
+    maxWidth: '100%',
     paddingHorizontal: 16,
     paddingVertical: 10,
     borderRadius: 24,
@@ -76,5 +80,5 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  text: { fontSize: 14 },
+  text: { fontSize: 14, flexShrink: 1 },
 });

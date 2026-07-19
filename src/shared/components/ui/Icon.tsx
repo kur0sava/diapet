@@ -154,6 +154,8 @@ const ICON_MAP: Record<string, LucideIcon> = {
   close: X,
   'refresh-outline': RefreshCw,
   refresh: RefreshCw,
+  'sync-outline': RefreshCw,
+  sync: RefreshCw,
   checkmark: Check,
   'checkmark-circle': Check,
   send: Send,

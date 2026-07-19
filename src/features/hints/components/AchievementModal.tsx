@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { Modal, View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { Modal, View, Text, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { Icon } from '@shared/components/ui/Icon';
 import { useTheme } from '@shared/theme';
@@ -32,39 +32,46 @@ export function AchievementModal() {
     <Modal visible transparent animationType="fade" onRequestClose={dismissAchievement}>
       {/* Semi-transparent backdrop */}
       <View style={styles.overlay}>
-        {/* Achievement card */}
+        {/* Achievement card — ScrollView, чтобы кнопку «Закрыть» не обрезало
+            при крупном системном шрифте на маленьком экране (360×640). */}
         <View style={styles.card}>
-          {/* Gold decoration — icon comes from the achievement definition */}
-          <View style={styles.iconWrapper}>
-            <Icon name={achievement.icon} size={48} color={GOLD} />
-          </View>
-
-          {/* Achievement label */}
-          <Text style={styles.achievementLabel}>{t('hints.achievementTitle')}</Text>
-
-          {/* Title from content */}
-          <Text style={styles.title}>{achievement.title[lang]}</Text>
-
-          {/* Congratulation text */}
-          {achievement.congratulation[lang] ? (
-            <Text style={styles.congratulation}>{achievement.congratulation[lang]}</Text>
-          ) : null}
-
-          {/* Card text */}
-          {achievement.cardText[lang] ? (
-            <View style={styles.cardTextWrapper}>
-              <Text style={styles.cardText}>{achievement.cardText[lang]}</Text>
-            </View>
-          ) : null}
-
-          {/* Close button */}
-          <TouchableOpacity
-            style={styles.closeButton}
-            onPress={dismissAchievement}
-            activeOpacity={0.85}
+          <ScrollView
+            contentContainerStyle={styles.cardScroll}
+            showsVerticalScrollIndicator={false}
+            bounces={false}
           >
-            <Text style={styles.closeButtonText}>{t('hints.achievementClose')}</Text>
-          </TouchableOpacity>
+            {/* Gold decoration — icon comes from the achievement definition */}
+            <View style={styles.iconWrapper}>
+              <Icon name={achievement.icon} size={48} color={GOLD} />
+            </View>
+
+            {/* Achievement label */}
+            <Text style={styles.achievementLabel}>{t('hints.achievementTitle')}</Text>
+
+            {/* Title from content */}
+            <Text style={styles.title}>{achievement.title[lang]}</Text>
+
+            {/* Congratulation text */}
+            {achievement.congratulation[lang] ? (
+              <Text style={styles.congratulation}>{achievement.congratulation[lang]}</Text>
+            ) : null}
+
+            {/* Card text */}
+            {achievement.cardText[lang] ? (
+              <View style={styles.cardTextWrapper}>
+                <Text style={styles.cardText}>{achievement.cardText[lang]}</Text>
+              </View>
+            ) : null}
+
+            {/* Close button */}
+            <TouchableOpacity
+              style={styles.closeButton}
+              onPress={dismissAchievement}
+              activeOpacity={0.85}
+            >
+              <Text style={styles.closeButtonText}>{t('hints.achievementClose')}</Text>
+            </TouchableOpacity>
+          </ScrollView>
         </View>
       </View>
     </Modal>
@@ -82,10 +89,10 @@ function makeStyles(cardBg: string, textColor: string, textSecondary: string, is
     },
     card: {
       width: '100%',
+      maxHeight: '85%',
       backgroundColor: cardBg,
       borderRadius: 24,
-      padding: 28,
-      alignItems: 'center',
+      overflow: 'hidden',
       // Gold border accent
       borderWidth: 2,
       borderColor: isDark ? GOLD_DARK : GOLD,
@@ -96,6 +103,10 @@ function makeStyles(cardBg: string, textColor: string, textSecondary: string, is
       shadowRadius: 16,
       // Elevation (Android)
       elevation: 12,
+    },
+    cardScroll: {
+      padding: 28,
+      alignItems: 'center',
     },
     iconWrapper: {
       width: 80,
