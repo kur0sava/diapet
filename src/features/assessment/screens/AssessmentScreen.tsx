@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useMemo } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useSymptomsNavigation, useRootNavigation } from '@navigation/hooks';
@@ -7,9 +7,10 @@ import { useTheme } from '@shared/theme';
 import { ScreenHeader } from '@shared/components/ui';
 import * as Haptics from 'expo-haptics';
 import { useUnsavedChangesGuard } from '@shared/hooks/useUnsavedChangesGuard';
+import { usePetStore } from '@shared/stores/petStore';
 import { getStage, type AnswerValue, type Stage } from '../utils/scoring';
 
-const QUESTIONS = [
+const ALL_QUESTIONS = [
   'polyuria',
   'polydipsia',
   'weightLoss',
@@ -20,7 +21,13 @@ const QUESTIONS = [
   'vomiting',
 ] as const;
 
-type QuestionKey = (typeof QUESTIONS)[number];
+type QuestionKey = (typeof ALL_QUESTIONS)[number];
+
+// M9 (audit): plantigrade stance / hind-limb weakness is a feline diabetic
+// neuropathy sign — rare in dogs (matches speciesConfig symptoms.available,
+// where dogs have no hindLimbWeakness). Don't ask dog owners an irrelevant
+// question (and don't let it feed the score / red-flag logic for dogs).
+const CAT_ONLY_QUESTIONS = new Set<QuestionKey>(['hindLimbs']);
 
 const ANSWER_OPTIONS: { value: AnswerValue; labelKey: string }[] = [
   { value: 0, labelKey: 'assessment.no' },
@@ -46,14 +53,21 @@ export default function AssessmentScreen() {
   const { t } = useTranslation();
   const { theme } = useTheme();
 
+  const species = usePetStore(s => s.activePet?.species ?? 'cat');
+  const questions = useMemo<readonly QuestionKey[]>(
+    () =>
+      species === 'dog' ? ALL_QUESTIONS.filter(q => !CAT_ONLY_QUESTIONS.has(q)) : ALL_QUESTIONS,
+    [species]
+  );
+
   const [currentIndex, setCurrentIndex] = useState(0);
   const [answers, setAnswers] = useState<Record<string, AnswerValue>>({});
   const [selectedAnswer, setSelectedAnswer] = useState<AnswerValue | null>(null);
   const [showResult, setShowResult] = useState(false);
   useUnsavedChangesGuard(Object.keys(answers).length > 0 && !showResult);
 
-  const totalQuestions = QUESTIONS.length;
-  const currentQuestion: QuestionKey | undefined = QUESTIONS[currentIndex];
+  const totalQuestions = questions.length;
+  const currentQuestion: QuestionKey | undefined = questions[currentIndex];
 
   const totalScore = Object.values(answers).reduce<number>((sum, v) => sum + v, 0);
   const stage = getStage(totalScore, answers);
@@ -66,7 +80,7 @@ export default function AssessmentScreen() {
 
   const handleNext = useCallback(() => {
     if (selectedAnswer === null) return;
-    const key = QUESTIONS[currentIndex];
+    const key = questions[currentIndex];
     setAnswers(prev => ({ ...prev, [key]: selectedAnswer }));
     setSelectedAnswer(null);
 
@@ -75,15 +89,15 @@ export default function AssessmentScreen() {
     } else {
       setShowResult(true);
     }
-  }, [currentIndex, totalQuestions, selectedAnswer]);
+  }, [currentIndex, totalQuestions, selectedAnswer, questions]);
 
   const handleBack = useCallback(() => {
     if (currentIndex > 0) {
-      const prevQuestion = QUESTIONS[currentIndex - 1];
+      const prevQuestion = questions[currentIndex - 1];
       setSelectedAnswer(answers[prevQuestion] ?? null);
       setCurrentIndex(prev => prev - 1);
     }
-  }, [currentIndex, answers]);
+  }, [currentIndex, answers, questions]);
 
   const handleRestart = useCallback(() => {
     setAnswers({});

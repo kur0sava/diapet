@@ -37,6 +37,10 @@ export default function FeedGuideScreen() {
   // Natural feeding guide is cat-only (taurine, protein ratios). Hide for dogs
   // to avoid species-wrong advice; will be re-enabled when dog natural guide lands.
   const showNaturalFood = species !== 'dog';
+  // 6.1 (audit): every entry in alternativeFoods.ts is feline (no species tag →
+  // defaults to 'cat'), so a dog owner opening "Alternatives" saw an empty list.
+  // Hide the card for dogs until dog alternatives are authored (content backlog).
+  const showAlternatives = species !== 'dog';
   // User's region first in the grid, marked as "yours" — one tap to their
   // local catalog instead of scanning the list every time.
   const appRegion = getAppRegion();
@@ -129,28 +133,32 @@ export default function FeedGuideScreen() {
           <Icon name="chevron-forward" size={20} color={theme.colors.textTertiary} />
         </TouchableOpacity>
 
-        {/* Alternative Foods */}
-        <TouchableOpacity
-          style={[
-            styles.sectionCard,
-            { backgroundColor: theme.colors.surface, ...theme.shadows.sm },
-          ]}
-          onPress={() => navigation.navigate('FeedGuideAlternatives')}
-          activeOpacity={0.7}
-        >
-          <View style={[styles.sectionCardIcon, { backgroundColor: theme.colors.warning + '15' }]}>
-            <Icon name="search" size={24} color={theme.colors.warning} />
-          </View>
-          <View style={styles.sectionCardContent}>
-            <Text style={[styles.sectionCardTitle, { color: theme.colors.text }]}>
-              {t('feedGuide.alternatives')}
-            </Text>
-            <Text style={[styles.sectionCardDesc, { color: theme.colors.textSecondary }]}>
-              {t('feedGuide.alternativesDesc')}
-            </Text>
-          </View>
-          <Icon name="chevron-forward" size={20} color={theme.colors.textTertiary} />
-        </TouchableOpacity>
+        {/* Alternative Foods — cat-only catalog for now, hidden for dogs */}
+        {showAlternatives && (
+          <TouchableOpacity
+            style={[
+              styles.sectionCard,
+              { backgroundColor: theme.colors.surface, ...theme.shadows.sm },
+            ]}
+            onPress={() => navigation.navigate('FeedGuideAlternatives')}
+            activeOpacity={0.7}
+          >
+            <View
+              style={[styles.sectionCardIcon, { backgroundColor: theme.colors.warning + '15' }]}
+            >
+              <Icon name="search" size={24} color={theme.colors.warning} />
+            </View>
+            <View style={styles.sectionCardContent}>
+              <Text style={[styles.sectionCardTitle, { color: theme.colors.text }]}>
+                {t('feedGuide.alternatives')}
+              </Text>
+              <Text style={[styles.sectionCardDesc, { color: theme.colors.textSecondary }]}>
+                {t('feedGuide.alternativesDesc')}
+              </Text>
+            </View>
+            <Icon name="chevron-forward" size={20} color={theme.colors.textTertiary} />
+          </TouchableOpacity>
+        )}
 
         {/* Natural Food — cat-only for now */}
         {showNaturalFood && (
