@@ -225,7 +225,20 @@
       "PowerShell(npx tsc --noEmit 2>&1 | Select-Object -First 15; if \\($LASTEXITCODE -eq 0\\) { \"TSC OK\" }; \"---LINT---\"; npx eslint src/features/community src/features/hints src/features/dashboard src/features/pets/screens/WeightHistoryScreen.tsx src/features/dashboard/components/GlucoseHeroCard.tsx 2>&1 | Select-Object -First 15)",
       "PowerShell(cd C:\\\\Users\\\\Admin\\\\DIAPET; $env:FUZZ_SCENARIOS=400; $env:FUZZ_ACTIONS=80; $env:FUZZ_SEED=101; npx jest userScenarios --silent 2>&1 | Select-Object -Last 25)",
       "PowerShell(cd C:\\\\Users\\\\Admin\\\\DIAPET; $env:FUZZ_SCENARIOS=400; $env:FUZZ_ACTIONS=80; $env:FUZZ_SEED=777; npx jest userScenarios --silent 2>&1 | Select-String -Pattern \"Tests:|PASS|FAIL|●\" | Select-Object -First 15)",
-      "Bash(awk '{print $NF}')"
+      "Bash(awk '{print $NF}')",
+      "Bash(xargs -n1 basename)",
+      "Bash(awk 'NR>=112 && NR<=323' src/shared/components/ui/Icon.tsx)",
+      "Bash(FUZZ_SCENARIOS=200 FUZZ_ACTIONS=50 FUZZ_SEED=101 npx jest userScenarios)",
+      "Bash(FUZZ_SCENARIOS=400 FUZZ_ACTIONS=80 FUZZ_SEED=777 npx jest userScenarios)",
+      "Bash(NODE_OPTIONS=--use-system-ca eas build --platform android --profile rustore --non-interactive --no-wait)",
+      "Bash(export ANDROID_HOME=\"C:\\\\\\\\Users\\\\\\\\Admin\\\\\\\\AppData\\\\\\\\Local\\\\\\\\Android\\\\\\\\Sdk\")",
+      "Bash(curl -s --ssl-no-revoke http://localhost:8081/status)",
+      "Bash(curl -s --ssl-no-revoke \"http://localhost:8081/status\")",
+      "Bash(./gradlew --stop)",
+      "Bash(curl -s --ssl-no-revoke -m 5 http://localhost:8081/status)",
+      "Bash(curl -s --ssl-no-revoke -m 180 -o /dev/null -w \"bundle HTTP %{http_code}, %{size_download} bytes, %{time_total}s\\\\n\" \"http://localhost:8081/index.bundle?platform=android&dev=true&minify=false\")",
+      "Bash(curl -s --ssl-no-revoke -m 5 http://192.168.0.100:8081/status)",
+      "Bash(echo \"=== TSC EXIT: $? ===\")"
     ]
   }
 }
