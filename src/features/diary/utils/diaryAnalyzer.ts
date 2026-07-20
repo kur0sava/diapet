@@ -98,8 +98,13 @@ export function analyzeDayGlucose(
     }
   }
 
-  // Wide spread warning
-  if (stats.min !== null && stats.max !== null && stats.max - stats.min > 8) {
+  // Wide spread warning. MC011 (diapet-medical-auditor Батч8): threshold is
+  // now species-aware (config?.analyzer.wideSpreadThreshold) — a flat 8
+  // mmol/L falsely flagged routine dog days, since normal postprandial
+  // swings on Lente/NPH BID run wider than a cat's. Falls back to 8 (the
+  // former hardcoded value = the cat threshold) when no config is passed.
+  const wideSpreadThreshold = config?.analyzer.wideSpreadThreshold ?? 8;
+  if (stats.min !== null && stats.max !== null && stats.max - stats.min > wideSpreadThreshold) {
     recommendations.push({ type: 'info', messageKey: 'diary.advice.wideSpread' });
   }
 

@@ -1,4 +1,4 @@
-import type { PetSpecies } from '@storage/domain/types';
+import { MGDL_PER_MMOLL, type PetSpecies } from '@storage/domain/types';
 import { getSpeciesConfig } from '@shared/config/speciesConfig';
 
 export interface AiPetContext {
@@ -68,7 +68,12 @@ export function buildAiSystemPrompt(context: AiPetContext): string {
   // NOT the same as config.glucose.emergencyHigh (DKA territory) — this is the
   // softer "call the vet if sustained" level, kept conservatively below it.
   const vetContactThreshold = highControl + 2;
-  const toMgDl = (mmol: number) => Math.round(mmol * 18);
+  // MC009 (diapet-medical-auditor Батч8): use the same conversion factor as
+  // the rest of the app (MGDL_PER_MMOLL = 18.0156, from glucose molar mass
+  // 180.156 g/mol) instead of a hardcoded *18 — the AI's quoted mg/dL
+  // thresholds must match what glucoseRepository/domain/types.ts compute
+  // elsewhere, or a user cross-checking numbers sees a discrepancy.
+  const toMgDl = (mmol: number) => Math.round(mmol * MGDL_PER_MMOLL);
 
   // Species-specific diet and medical context
   const dietContext = isCat

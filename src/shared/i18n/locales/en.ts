@@ -409,11 +409,25 @@ export const en = {
     ],
     hypoSteps: [
       '⚠️ Seizures / loss of consciousness — DO NOT GIVE ANYTHING ORALLY. Go to an emergency vet clinic immediately!',
-      'For mild symptoms (trembling, weakness): apply 1–2 ml glucose syrup to gums',
+      'For mild symptoms (trembling, weakness): apply honey or glucose syrup to the gums — by cat weight: under 3 kg 1–2 ml, 3–5 kg 2–4 ml, 5–8 kg 4–6 ml, over 8 kg 6–8 ml',
       'Call your vet',
       'Do NOT give insulin',
       'Keep the animal warm',
       'Take to clinic if no improvement within 5 minutes',
+    ],
+    // Dog-specific dosing (MC008, diapet-medical-auditor Batch 8): the flat
+    // "1-2 ml" cat dose massively under-doses a large dog — dog-hypoglycemia.ts
+    // recommends 1-2 TABLESPOONS (15-30 ml) for dogs >30 kg, an order of
+    // magnitude more than the cat dose. This is the app's primary crisis
+    // screen (Emergency SOS button), so it must not silently reuse cat-only
+    // numbers for dog owners.
+    hypoSteps_dog: [
+      '⚠️ Seizures / loss of consciousness — DO NOT GIVE ANYTHING ORALLY. Go to an emergency vet clinic immediately!',
+      'For mild symptoms (trembling, weakness): apply honey or syrup to the gums — by dog weight: under 5 kg ½–1 tsp, 5–15 kg 1–2 tsp, 15–30 kg 1 tbsp, over 30 kg 1–2 tbsp',
+      'Call your vet',
+      'Do NOT give insulin',
+      'Keep the animal warm',
+      'Take to clinic if no improvement within 5–15 minutes',
     ],
     hyperSigns: [
       'Lethargy, depression',

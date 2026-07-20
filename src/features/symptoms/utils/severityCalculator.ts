@@ -23,10 +23,30 @@ export interface SeverityResult {
   explanationKey: string;
 }
 
+/**
+ * DKA red-flag combo (MC012, diapet-medical-auditor Батч8).
+ *
+ * dka.ts / dog-dka.ts explicitly list "vomiting + refusal to eat" as a
+ * "go to the clinic IMMEDIATELY" combo, and separately say "2 or more of
+ * these signs [vomiting, complete anorexia, severe lethargy, acetone
+ * breath, rapid breathing, dehydration] — act immediately". Before this
+ * fix, the plain weighted sum let vomiting(3) + lossOfAppetite(2) = 5 land
+ * on 'moderate' — silently contradicting the app's own DKA guidance. This
+ * mirrors the hasRedFlag() override already used by the Assessment
+ * questionnaire (features/assessment/utils/scoring.ts) so the two
+ * symptom-severity surfaces in the app don't disagree on the same picture.
+ */
+function hasDkaRedFlag(types: SymptomType[]): boolean {
+  const has = (t: SymptomType) => types.includes(t);
+  if (has('vomiting') && has('lossOfAppetite')) return true;
+  if (has('vomiting') && has('lethargy')) return true;
+  return false;
+}
+
 export function calculateSeverity(types: SymptomType[]): SeverityResult {
   const score = types.reduce((sum, type) => sum + (SYMPTOM_WEIGHTS[type] ?? 1), 0);
 
-  if (score >= 6) {
+  if (hasDkaRedFlag(types) || score >= 6) {
     return { severity: 'severe', score, explanationKey: 'symptoms.severityExplanation.severe' };
   }
   if (score >= 3) {

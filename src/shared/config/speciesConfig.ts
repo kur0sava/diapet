@@ -100,6 +100,13 @@ export interface SpeciesConfig {
     remissionRelevant: boolean;
     /** Morning glucose threshold for remission candidate */
     remissionMorningThreshold: number;
+    /**
+     * Day-spread (max-min) above which the diary flags "wide swings" as a
+     * control concern. Must stay above the species' own NORMAL postprandial
+     * range (rangeHigh - targetLow), or the diary cries wolf on every
+     * ordinary day. See diaryAnalyzer.ts wideSpread check.
+     */
+    wideSpreadThreshold: number;
   };
 
   // --- Validation ---
@@ -165,7 +172,11 @@ const CAT_INSULIN_TYPES: InsulinTypeInfo[] = [
   {
     name: 'PZI (ProZinc)',
     concentration: 'U-40',
-    onsetHours: [1, 3],
+    // MC010 (diapet-medical-auditor Батч8): onset was [1,3] here but the
+    // user-facing insulin_types.ts article (and Nelson 2009 / Norsworthy
+    // 2018 / BI ProZinc SPC, all cited "1-4h onset") said 1-4. Aligned to
+    // the article so the two don't silently disagree.
+    onsetHours: [1, 4],
     peakHours: [3, 8],
     durationHours: [8, 16],
     // BI ProZinc SPC: use within 60 days of first vial puncture
@@ -266,6 +277,11 @@ const CAT_CONFIG: SpeciesConfig = {
     // Roomp & Rand 2009: fasting <6 mmol/L without insulin is the
     // remission-candidate signal. 7 was borderline hyperglycemic.
     remissionMorningThreshold: 6,
+    // MC011 (diapet-medical-auditor Батч8): cat target band is targetLow(4.0)
+    // to rangeHigh(12.0) = 8.0 mmol/L wide, so 8 is the smallest threshold
+    // that doesn't flag a routine in-range day. Kept at 8 (unchanged from the
+    // previous hardcoded diaryAnalyzer.ts constant).
+    wideSpreadThreshold: 8,
   },
 
   validation: {
@@ -431,6 +447,14 @@ const DOG_CONFIG: SpeciesConfig = {
     missedInjectionThreshold: 14,
     remissionRelevant: false,
     remissionMorningThreshold: 7,
+    // MC011 (diapet-medical-auditor Батч8): dog target band is targetLow(4.4)
+    // to rangeHigh(13.9) = 9.5 mmol/L wide, and rangeHigh's own comment notes
+    // postprandial peaks of 10-14 on Lente/NPH BID are NORMAL for dogs, not
+    // poor control. The old flat 8 mmol/L "wide spread" check (copied from
+    // the cat constant) would fire on almost every ordinary dog day. Set
+    // comfortably above the 9.5 normal band so it only catches genuinely
+    // erratic swings (e.g. Somogyi rebound).
+    wideSpreadThreshold: 12,
   },
 
   validation: {

@@ -37,7 +37,7 @@ export const insulinTypes: Article = {
 #### ProZinc (PZI) — специально для животных
 
 - **Концентрация:** U-40 (40 единиц на мл) — нужны специальные шприцы U-40!
-- **Начало / Пик / Длительность:** 1-4 ч / 4-8 ч / 8-14 ч
+- **Начало / Пик / Длительность:** 1-4 ч / 4-8 ч / 8-16 ч
 - **Важно:** одобрен FDA для кошек в США; для него нужны шприцы U-40
 - **Хранение:** в холодильнике; флакон обычно используют в течение 60 дней после первого прокола (уточните срок в инструкции к вашей упаковке)
 
@@ -132,7 +132,7 @@ Insulin works differently in cats than in humans. The onset, peak, and duration 
 #### ProZinc (PZI) — Made for Pets
 
 - **Concentration:** U-40 (40 units per mL) — requires special U-40 syringes!
-- **Onset / Peak / Duration:** 1-4 h / 4-8 h / 8-14 h
+- **Onset / Peak / Duration:** 1-4 h / 4-8 h / 8-16 h
 - **Important:** FDA-approved for cats in the USA and requires U-40 syringes
 - **Storage:** refrigerated; the vial is usually used within 60 days after first puncture (check the shelf life on your package insert)
 

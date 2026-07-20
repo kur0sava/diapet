@@ -36,8 +36,14 @@ export default function EmergencyScreen() {
   // *masked* the missing-vet state on the second pet by surfacing the wrong
   // global value. Drop it.
   const activePetId = usePetStore(s => s.activePet?.id);
+  const activeSpecies = usePetStore(s => s.activePet?.species);
   const vetPhone = activePetId ? storage.getString(vetPhoneKey(activePetId)) : undefined;
   const vetName = activePetId ? storage.getString(vetNameKey(activePetId)) : undefined;
+  // MC008 (diapet-medical-auditor Батч8): the hypoglycemia gum-dose amounts
+  // are weight/species-specific (cat ml vs dog tsp/tbsp) — see hypoSteps_dog
+  // in the locale files. i18next context falls back to the base key when no
+  // _dog variant exists, so 'other' correctly reuses the cat numbers.
+  const speciesContext = activeSpecies === 'dog' ? 'dog' : undefined;
 
   // A2 (audit): find the nearest clinic on the map. Opens an external maps app,
   // so the first-aid instructions on this screen are not lost.
@@ -78,7 +84,9 @@ export default function EmergencyScreen() {
 
   const asArray = (v: unknown): string[] => (Array.isArray(v) ? v : []);
   const hypoSigns = asArray(t('emergency.hypoSigns', { returnObjects: true }));
-  const hypoSteps = asArray(t('emergency.hypoSteps', { returnObjects: true }));
+  const hypoSteps = asArray(
+    t('emergency.hypoSteps', { returnObjects: true, context: speciesContext })
+  );
   const hyperSigns = asArray(t('emergency.hyperSigns', { returnObjects: true }));
   const hyperSteps = asArray(t('emergency.hyperSteps', { returnObjects: true }));
 
