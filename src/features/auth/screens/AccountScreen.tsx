@@ -4,12 +4,17 @@ import {
   Text,
   StyleSheet,
   TouchableOpacity,
+  TextInput,
   Image,
   Alert,
   ActivityIndicator,
+  KeyboardAvoidingView,
+  ScrollView,
+  Platform,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
+import type { TFunction } from 'i18next';
 import { useTheme } from '@shared/theme';
 import { Icon } from '@shared/components/ui/Icon';
 import { Card } from '@shared/components/ui';
@@ -20,16 +25,59 @@ import { usePetStore } from '@shared/stores/petStore';
 import { useQueryClient } from '@tanstack/react-query';
 import { formatFullDateTime } from '@shared/utils/dateUtils';
 
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+/** Map a Firebase Auth error to a localized message. */
+function mapAuthError(error: unknown, t: TFunction): string {
+  const code =
+    error && typeof error === 'object' && 'code' in error
+      ? String((error as { code: unknown }).code)
+      : '';
+  switch (code) {
+    case 'auth/invalid-email':
+      return t('auth.errEmailInvalid');
+    case 'auth/email-already-in-use':
+      return t('auth.errEmailInUse');
+    case 'auth/weak-password':
+      return t('auth.errWeakPassword');
+    case 'auth/wrong-password':
+    case 'auth/user-not-found':
+    case 'auth/invalid-credential':
+      return t('auth.errWrongCredentials');
+    case 'auth/too-many-requests':
+      return t('auth.errTooManyRequests');
+    case 'auth/network-request-failed':
+      return t('auth.errNetwork');
+    default:
+      return error instanceof Error ? error.message : t('common.error');
+  }
+}
+
 export default function AccountScreen() {
   const { t } = useTranslation();
   const { theme } = useTheme();
   const navigation = useMoreNavigation();
-  const { user, firebaseUid, loading, signIn, signOut } = useAuthStore();
+  const {
+    user,
+    firebaseUid,
+    loading,
+    signIn,
+    signInWithEmail,
+    signUpWithEmail,
+    resetPassword,
+    signOut,
+  } = useAuthStore();
   const loadPets = usePetStore(s => s.loadPets);
   const queryClient = useQueryClient();
 
   const [backupLoading, setBackupLoading] = useState(false);
   const [backupDate, setBackupDate] = useState<string | null>(null);
+
+  // Email/password form (Google-free path)
+  const [authMode, setAuthMode] = useState<'signin' | 'signup'>('signin');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [formError, setFormError] = useState<string | null>(null);
 
   useEffect(() => {
     if (firebaseUid) {
@@ -47,6 +95,48 @@ export default function AccountScreen() {
     } catch (error: unknown) {
       const msg = error instanceof Error ? error.message : t('common.error');
       Alert.alert(t('auth.signInError'), msg);
+    }
+  };
+
+  const handleEmailSubmit = async () => {
+    const mail = email.trim();
+    if (!mail) {
+      setFormError(t('auth.errEmailRequired'));
+      return;
+    }
+    if (!EMAIL_RE.test(mail)) {
+      setFormError(t('auth.errEmailInvalid'));
+      return;
+    }
+    if (password.length < 6) {
+      setFormError(t('auth.errPasswordTooShort'));
+      return;
+    }
+    setFormError(null);
+    try {
+      if (authMode === 'signup') {
+        await signUpWithEmail(mail, password);
+      } else {
+        await signInWithEmail(mail, password);
+      }
+      setPassword('');
+    } catch (error: unknown) {
+      setFormError(mapAuthError(error, t));
+    }
+  };
+
+  const handleForgotPassword = async () => {
+    const mail = email.trim();
+    if (!mail || !EMAIL_RE.test(mail)) {
+      setFormError(t('auth.errEmailInvalid'));
+      return;
+    }
+    setFormError(null);
+    try {
+      await resetPassword(mail);
+      Alert.alert(t('auth.resetEmailSent'));
+    } catch (error: unknown) {
+      Alert.alert(t('auth.signInError'), mapAuthError(error, t));
     }
   };
 
@@ -249,48 +339,157 @@ export default function AccountScreen() {
             </TouchableOpacity>
           </>
         ) : (
-          <View style={styles.signInContainer}>
-            <View style={[styles.iconCircle, { backgroundColor: theme.colors.primary + '15' }]}>
-              <Icon name="person-circle-outline" size={64} color={theme.colors.primary} />
-            </View>
-            <Text
-              style={[
-                styles.signInTitle,
-                { color: theme.colors.text, fontFamily: theme.fonts.bold },
-              ]}
+          <KeyboardAvoidingView
+            style={{ flex: 1 }}
+            behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+          >
+            <ScrollView
+              contentContainerStyle={styles.signInContainer}
+              keyboardShouldPersistTaps="handled"
+              showsVerticalScrollIndicator={false}
             >
-              {t('auth.signInTitle')}
-            </Text>
-            <Text style={[styles.signInDesc, { color: theme.colors.textSecondary }]}>
-              {t('auth.signInDescription')}
-            </Text>
+              <View style={[styles.iconCircle, { backgroundColor: theme.colors.primary + '15' }]}>
+                <Icon name="person-circle-outline" size={56} color={theme.colors.primary} />
+              </View>
+              <Text
+                style={[
+                  styles.signInTitle,
+                  { color: theme.colors.text, fontFamily: theme.fonts.bold },
+                ]}
+              >
+                {t('auth.signInTitle')}
+              </Text>
+              <Text style={[styles.signInDesc, { color: theme.colors.textSecondary }]}>
+                {t('auth.signInDescription')}
+              </Text>
 
-            <TouchableOpacity
-              style={[
-                styles.googleBtn,
-                { backgroundColor: theme.colors.surface, ...theme.shadows.sm },
-              ]}
-              onPress={handleSignIn}
-              disabled={loading}
-              activeOpacity={0.8}
-            >
-              {loading ? (
-                <ActivityIndicator size="small" color={theme.colors.primary} />
-              ) : (
-                <>
-                  <Icon name="logo-google" size={22} color="#4285F4" />
-                  <Text
-                    style={[
-                      styles.googleBtnText,
-                      { color: theme.colors.text, fontFamily: theme.fonts.semibold },
-                    ]}
-                  >
-                    {t('auth.signInWithGoogle')}
-                  </Text>
-                </>
+              {/* Email + password (works without Google services) */}
+              <View style={styles.formGroup}>
+                <Text style={[styles.inputLabel, { color: theme.colors.textSecondary }]}>
+                  {t('auth.emailLabel')}
+                </Text>
+                <TextInput
+                  style={[
+                    styles.input,
+                    {
+                      backgroundColor: theme.colors.surface,
+                      borderColor: theme.colors.border,
+                      color: theme.colors.text,
+                    },
+                  ]}
+                  value={email}
+                  onChangeText={v => {
+                    setEmail(v);
+                    if (formError) setFormError(null);
+                  }}
+                  placeholder={t('auth.emailPlaceholder')}
+                  placeholderTextColor={theme.colors.textTertiary}
+                  keyboardType="email-address"
+                  autoCapitalize="none"
+                  autoCorrect={false}
+                  autoComplete="email"
+                  editable={!loading}
+                />
+              </View>
+
+              <View style={styles.formGroup}>
+                <Text style={[styles.inputLabel, { color: theme.colors.textSecondary }]}>
+                  {t('auth.passwordLabel')}
+                </Text>
+                <TextInput
+                  style={[
+                    styles.input,
+                    {
+                      backgroundColor: theme.colors.surface,
+                      borderColor: theme.colors.border,
+                      color: theme.colors.text,
+                    },
+                  ]}
+                  value={password}
+                  onChangeText={v => {
+                    setPassword(v);
+                    if (formError) setFormError(null);
+                  }}
+                  placeholder={t('auth.passwordPlaceholder')}
+                  placeholderTextColor={theme.colors.textTertiary}
+                  secureTextEntry
+                  autoCapitalize="none"
+                  autoComplete={authMode === 'signup' ? 'new-password' : 'password'}
+                  editable={!loading}
+                  onSubmitEditing={handleEmailSubmit}
+                  returnKeyType="done"
+                />
+              </View>
+
+              {formError && (
+                <Text style={[styles.formError, { color: theme.colors.danger }]}>{formError}</Text>
               )}
-            </TouchableOpacity>
-          </View>
+
+              <TouchableOpacity
+                style={[styles.primaryBtn, { backgroundColor: theme.colors.primary }]}
+                onPress={handleEmailSubmit}
+                disabled={loading}
+                activeOpacity={0.85}
+              >
+                {loading ? (
+                  <ActivityIndicator size="small" color="#fff" />
+                ) : (
+                  <Text style={[styles.primaryBtnText, { fontFamily: theme.fonts.semibold }]}>
+                    {authMode === 'signup' ? t('auth.register') : t('auth.signInWithEmail')}
+                  </Text>
+                )}
+              </TouchableOpacity>
+
+              {authMode === 'signin' && (
+                <TouchableOpacity onPress={handleForgotPassword} disabled={loading}>
+                  <Text style={[styles.linkText, { color: theme.colors.primary }]}>
+                    {t('auth.forgotPassword')}
+                  </Text>
+                </TouchableOpacity>
+              )}
+
+              <TouchableOpacity
+                onPress={() => {
+                  setAuthMode(m => (m === 'signin' ? 'signup' : 'signin'));
+                  setFormError(null);
+                }}
+                disabled={loading}
+              >
+                <Text style={[styles.linkText, { color: theme.colors.primary }]}>
+                  {authMode === 'signin' ? t('auth.noAccountPrompt') : t('auth.haveAccountPrompt')}
+                </Text>
+              </TouchableOpacity>
+
+              {/* Divider */}
+              <View style={styles.dividerRow}>
+                <View style={[styles.dividerLine, { backgroundColor: theme.colors.border }]} />
+                <Text style={[styles.dividerText, { color: theme.colors.textTertiary }]}>
+                  {t('auth.orDivider')}
+                </Text>
+                <View style={[styles.dividerLine, { backgroundColor: theme.colors.border }]} />
+              </View>
+
+              <TouchableOpacity
+                style={[
+                  styles.googleBtn,
+                  { backgroundColor: theme.colors.surface, ...theme.shadows.sm },
+                ]}
+                onPress={handleSignIn}
+                disabled={loading}
+                activeOpacity={0.8}
+              >
+                <Icon name="logo-google" size={22} color="#4285F4" />
+                <Text
+                  style={[
+                    styles.googleBtnText,
+                    { color: theme.colors.text, fontFamily: theme.fonts.semibold },
+                  ]}
+                >
+                  {t('auth.signInWithGoogle')}
+                </Text>
+              </TouchableOpacity>
+            </ScrollView>
+          </KeyboardAvoidingView>
         )}
       </View>
     </SafeAreaView>
@@ -350,30 +549,67 @@ const styles = StyleSheet.create({
   },
   signOutText: { fontSize: 15 },
   signInContainer: {
-    flex: 1,
+    flexGrow: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    gap: 16,
-    paddingBottom: 60,
+    gap: 12,
+    paddingVertical: 24,
   },
   iconCircle: {
-    width: 120,
-    height: 120,
-    borderRadius: 60,
+    width: 96,
+    height: 96,
+    borderRadius: 48,
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 8,
+    marginBottom: 4,
   },
   signInTitle: { fontSize: 22 },
-  signInDesc: { fontSize: 14, textAlign: 'center', lineHeight: 20, paddingHorizontal: 20 },
+  signInDesc: {
+    fontSize: 14,
+    textAlign: 'center',
+    lineHeight: 20,
+    paddingHorizontal: 20,
+    marginBottom: 4,
+  },
+  formGroup: { width: '100%', gap: 6 },
+  inputLabel: { fontSize: 13 },
+  input: {
+    width: '100%',
+    borderWidth: 1,
+    borderRadius: 12,
+    paddingHorizontal: 14,
+    paddingVertical: 12,
+    fontSize: 15,
+  },
+  formError: { fontSize: 13, textAlign: 'center', width: '100%' },
+  primaryBtn: {
+    width: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 14,
+    borderRadius: 12,
+    marginTop: 4,
+  },
+  primaryBtnText: { color: '#fff', fontSize: 16 },
+  linkText: { fontSize: 14, textAlign: 'center', paddingVertical: 4 },
+  dividerRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    width: '100%',
+    marginVertical: 4,
+  },
+  dividerLine: { flex: 1, height: 1 },
+  dividerText: { fontSize: 13 },
   googleBtn: {
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'center',
     gap: 12,
     paddingVertical: 14,
     paddingHorizontal: 24,
     borderRadius: 12,
-    marginTop: 8,
+    width: '100%',
   },
   googleBtnText: { fontSize: 16 },
 });

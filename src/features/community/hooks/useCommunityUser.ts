@@ -12,7 +12,6 @@ import type { ContentLang } from '@shared/translation';
 export function useCommunityUser() {
   const user = useAuthStore(s => s.user);
   const firebaseUid = useAuthStore(s => s.firebaseUid);
-  const signIn = useAuthStore(s => s.signIn);
   const activeSpecies = usePetStore(s => s.activePet?.species);
 
   const loggedIn = !!user && !!firebaseUid;
@@ -35,6 +34,5 @@ export function useCommunityUser() {
     setDisplayName,
     userLang,
     species: activeSpecies,
-    signIn,
   };
 }

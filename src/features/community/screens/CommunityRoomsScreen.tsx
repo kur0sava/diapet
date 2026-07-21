@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '@shared/theme';
 import { Icon, Card } from '@shared/components/ui';
-import { useCommunityNavigation } from '@navigation/hooks';
+import { useCommunityNavigation, useRootNavigation } from '@navigation/hooks';
 import { getVisibleRooms } from '../data/rooms';
 import { useCommunityUser } from '../hooks/useCommunityUser';
 
@@ -12,8 +12,16 @@ export default function CommunityRoomsScreen() {
   const { t } = useTranslation();
   const { theme } = useTheme();
   const navigation = useCommunityNavigation();
-  const { loggedIn, signIn } = useCommunityUser();
+  const rootNavigation = useRootNavigation();
+  const { loggedIn } = useCommunityUser();
   const [showAll, setShowAll] = useState(false);
+
+  // Route to the Account screen (More tab), which offers both email/password
+  // (Google-free, for regions without Google services) and Google sign-in.
+  // Once signed in there, the global auth store flips `loggedIn` and this gate
+  // disappears on return.
+  const goToSignIn = () =>
+    rootNavigation.navigate('Main', { screen: 'MoreTab', params: { screen: 'Account' } });
 
   if (!loggedIn) {
     return (
@@ -30,16 +38,10 @@ export default function CommunityRoomsScreen() {
           </Text>
           <TouchableOpacity
             style={[styles.signInBtn, { backgroundColor: theme.colors.primary }]}
-            onPress={() => {
-              // UX-аудит: молчаливый .catch(()=>{}) скрывал ошибку входа —
-              // юзер жал кнопку, ничего не происходило. Показываем ошибку.
-              void signIn().catch(() => {
-                Alert.alert(t('common.error'), t('auth.sessionNotReadyBody'));
-              });
-            }}
+            onPress={goToSignIn}
             accessibilityRole="button"
           >
-            <Icon name="logo-google" size={18} color="#fff" />
+            <Icon name="person-circle-outline" size={18} color="#fff" />
             <Text style={styles.signInText}>{t('community.signIn')}</Text>
           </TouchableOpacity>
         </View>
