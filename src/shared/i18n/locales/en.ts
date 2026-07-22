@@ -991,6 +991,7 @@ export const en = {
 
   hints: {
     gotIt: 'Got it',
+    learnMore: 'Learn more',
     achievementTitle: 'Achievement!',
     achievementClose: 'Thanks',
     aiAssistant: 'AI Assistant',

@@ -994,6 +994,7 @@ export const ru = {
 
   hints: {
     gotIt: 'Понятно',
+    learnMore: 'Подробнее',
     achievementTitle: 'Достижение!',
     achievementClose: 'Спасибо',
     aiAssistant: 'ИИ-ассистент',

@@ -34,7 +34,7 @@ function persistShown(ids: string[]): void {
 export function selectEventHint(
   trigger: EventHintTrigger,
   species?: PetSpecies
-): { text: string; category: HintCategory; id: string } | null {
+): { text: string; category: HintCategory; id: string; articleId?: string } | null {
   const today = format(new Date(), 'yyyy-MM-dd');
   const dateKey = `eventHintDate_${trigger}`;
   if (storage.getString(dateKey) === today) return null;
@@ -59,7 +59,7 @@ export function selectEventHint(
   const pick = candidates[0];
   persistShown([...readShown().filter(id => id !== pick.id), pick.id]);
   storage.set(dateKey, today);
-  return { text: pick[lang], category: pick.category, id: pick.id };
+  return { text: pick[lang], category: pick.category, id: pick.id, articleId: pick.articleId };
 }
 
 /**

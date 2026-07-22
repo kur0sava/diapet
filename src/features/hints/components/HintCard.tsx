@@ -7,6 +7,7 @@ import { useTranslation } from 'react-i18next';
 import { useTheme } from '@shared/theme';
 import { useHintStore } from '../store/hintStore';
 import type { HintCategory } from '../store/hintStore';
+import { navigateToArticle } from '@navigation/navigationRef';
 
 // ---------------------------------------------------------------------------
 // Category config
@@ -77,6 +78,12 @@ export function HintCard() {
 
   const config = CATEGORY_CONFIG[currentHint.category];
   const accent = theme.colors[config.colorKey];
+  const articleId = currentHint.articleId;
+
+  const openArticle = () => {
+    dismissHint();
+    if (articleId) navigateToArticle(articleId);
+  };
 
   return (
     <Animated.View
@@ -94,14 +101,29 @@ export function HintCard() {
       {/* Hint text */}
       <Text style={styles.hintText}>{currentHint.text}</Text>
 
-      {/* Dismiss button */}
-      <TouchableOpacity
-        onPress={dismissHint}
-        style={[styles.gotItButton, { backgroundColor: accent }]}
-        activeOpacity={0.8}
-      >
-        <Text style={styles.gotItText}>{t('hints.gotIt')}</Text>
-      </TouchableOpacity>
+      {/* Footer: optional "learn more" link + dismiss button */}
+      <View style={styles.footer}>
+        {articleId ? (
+          <TouchableOpacity
+            onPress={openArticle}
+            style={styles.learnMore}
+            activeOpacity={0.7}
+            accessibilityRole="button"
+          >
+            <Icon name="book-outline" size={15} color={accent} />
+            <Text style={[styles.learnMoreText, { color: accent }]}>{t('hints.learnMore')}</Text>
+          </TouchableOpacity>
+        ) : (
+          <View />
+        )}
+        <TouchableOpacity
+          onPress={dismissHint}
+          style={[styles.gotItButton, { backgroundColor: accent }]}
+          activeOpacity={0.8}
+        >
+          <Text style={styles.gotItText}>{t('hints.gotIt')}</Text>
+        </TouchableOpacity>
+      </View>
     </Animated.View>
   );
 }
@@ -119,8 +141,10 @@ function makeStyles(cardBg: string, textColor: string, isDark: boolean) {
       left: 16,
       right: 16,
       backgroundColor: cardBg,
-      borderRadius: 16,
-      padding: 16,
+      borderRadius: 14,
+      paddingHorizontal: 13,
+      paddingTop: 10,
+      paddingBottom: 10,
       // Shadow (iOS)
       shadowColor: isDark ? '#000' : '#00000033',
       shadowOffset: { width: 0, height: 4 },
@@ -132,32 +156,47 @@ function makeStyles(cardBg: string, textColor: string, isDark: boolean) {
     header: {
       flexDirection: 'row',
       alignItems: 'center',
-      marginBottom: 8,
-      gap: 6,
+      marginBottom: 4,
+      gap: 5,
     },
     categoryLabel: {
-      fontSize: 12,
+      fontSize: 11,
       fontWeight: '600',
-      letterSpacing: 0.4,
+      letterSpacing: 0.3,
       textTransform: 'uppercase',
     },
     hintText: {
-      fontSize: 15,
-      lineHeight: 22,
+      fontSize: 13.5,
+      lineHeight: 19,
       color: textColor,
-      marginBottom: 14,
+      marginBottom: 10,
+    },
+    footer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+    },
+    learnMore: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 5,
+      paddingVertical: 6,
+      paddingRight: 8,
+    },
+    learnMoreText: {
+      fontSize: 13,
+      fontWeight: '600',
     },
     gotItButton: {
-      alignSelf: 'flex-end',
-      paddingHorizontal: 18,
-      paddingVertical: 12,
-      borderRadius: 20,
-      minHeight: 44,
+      paddingHorizontal: 16,
+      paddingVertical: 8,
+      borderRadius: 18,
+      minHeight: 38,
       justifyContent: 'center' as const,
     },
     gotItText: {
       color: '#FFFFFF',
-      fontSize: 14,
+      fontSize: 13,
       fontWeight: '600',
     },
   });

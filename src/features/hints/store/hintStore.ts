@@ -2,7 +2,14 @@ import { create } from 'zustand';
 
 export type HintCategory = 'practical' | 'medical_fact' | 'support';
 
-type Hint = { text: string; category: HintCategory; id: string };
+type Hint = {
+  text: string;
+  category: HintCategory;
+  id: string;
+  /** Optional encyclopedia article id — renders a "Подробнее" link on the hint
+   *  card that deep-links to it. Must be species-safe for the hint's audience. */
+  articleId?: string;
+};
 
 /**
  * BUG-M008 (audit): pending was a single slot — when morningGreeting,

@@ -14,6 +14,9 @@ export interface HintContent {
   timeOfDay: HintTimeOfDay;
   /** Species filter. Omit or 'all' = shown to everyone. */
   species?: HintSpecies;
+  /** Optional encyclopedia article id for a "Подробнее" deep-link. For hints
+   *  shown to both species, only link species-neutral ('all') articles. */
+  articleId?: string;
   ru: string;
   en: string;
 }
@@ -1336,6 +1339,7 @@ export const HINTS: HintContent[] = [
     stage: 'week1',
     category: 'support',
     timeOfDay: 'any',
+    articleId: 'missed-double-insulin',
     ru: 'Это бывает. Жизнь не всегда идёт по плану. Свяжись с ветеринаром и уточни, что делать в твоём конкретном случае — пропустить или сделать позже.',
     en: "It happens. Life doesn't always follow a schedule. Contact your vet to ask what's best in your specific case — skip it or give it later.",
   },
@@ -1345,6 +1349,7 @@ export const HINTS: HintContent[] = [
     stage: 'week2',
     category: 'medical_fact',
     timeOfDay: 'any',
+    articleId: 'missed-double-insulin',
     ru: 'Никогда не делай двойную дозу, чтобы «наверстать» пропущенный укол — это опасно. Следующий укол — в обычное время и в обычной дозе.',
     en: 'Never give a double dose to "make up" for a missed injection — it\'s dangerous. The next injection goes at the usual time and usual dose.',
   },
@@ -1354,6 +1359,7 @@ export const HINTS: HintContent[] = [
     stage: 'week3',
     category: 'support',
     timeOfDay: 'any',
+    articleId: 'missed-double-insulin',
     ru: 'Один пропуск не перечёркивает всё, что ты сделал. Продолжай с следующего укола — и всё вернётся в норму.',
     en: "One missed injection doesn't cancel everything you've done. Pick up at the next injection and things will return to normal.",
   },
@@ -1363,6 +1369,7 @@ export const HINTS: HintContent[] = [
     stage: 'week4',
     category: 'practical',
     timeOfDay: 'any',
+    articleId: 'missed-double-insulin',
     ru: 'Если пропуски случаются регулярно — стоит обсудить с ветеринаром, можно ли скорректировать расписание под твой реальный день.',
     en: "If missed injections happen regularly, it's worth discussing with your vet whether the schedule can be adjusted to fit your actual day.",
   },
@@ -1372,6 +1379,7 @@ export const HINTS: HintContent[] = [
     stage: 'days29_30',
     category: 'support',
     timeOfDay: 'any',
+    articleId: 'missed-double-insulin',
     ru: 'Ты делаешь всё возможное, и этого достаточно. Измерь глюкозу, чтобы понять текущее состояние, и двигайся дальше.',
     en: "You're doing everything you can, and that's enough. Check the glucose to understand the current state, and move forward.",
   },
@@ -1658,6 +1666,7 @@ export const HINTS: HintContent[] = [
     category: 'practical',
     timeOfDay: 'any',
     species: 'dog',
+    articleId: 'missed-double-insulin',
     ru: 'Пропущенный укол — не катастрофа. Не вводи двойную дозу при следующем уколе. Вернись к обычному расписанию и следи за глюкозой.',
     en: "A missed injection isn't a disaster. Don't give a double dose next time. Return to your normal schedule and monitor glucose.",
   },

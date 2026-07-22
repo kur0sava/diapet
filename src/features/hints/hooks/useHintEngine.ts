@@ -110,7 +110,7 @@ export function selectHint(
   stage: HintStage,
   timeOfDay: HintTimeOfDay,
   species?: PetSpecies
-): { text: string; category: HintCategory; id: string } | null {
+): { text: string; category: HintCategory; id: string; articleId?: string } | null {
   const shownIds = getShownIds();
   const lang = i18n.language?.startsWith('en') ? 'en' : 'ru';
   const sp = species ?? 'cat';
@@ -130,7 +130,7 @@ export function selectHint(
   const preferred = candidates.filter(c => c.category === targetCategory);
   const pick = preferred.length > 0 ? preferred[0] : candidates[0];
 
-  return { text: pick[lang], category: pick.category, id: pick.id };
+  return { text: pick[lang], category: pick.category, id: pick.id, articleId: pick.articleId };
 }
 
 // ---------------------------------------------------------------------------

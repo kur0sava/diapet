@@ -4,6 +4,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { useTheme } from '@shared/theme';
 import { storage, StorageKeys } from '@storage/mmkv/storage';
 import { RootStackParamList } from './types';
+import { navigationRef } from './navigationRef';
 import OnboardingNavigator from './OnboardingNavigator';
 import MainNavigator from './MainNavigator';
 import EmergencyScreen from '@features/emergency/screens/EmergencyScreen';
@@ -74,7 +75,7 @@ export function RootNavigator() {
   };
 
   return (
-    <NavigationContainer theme={navigationTheme} linking={linking}>
+    <NavigationContainer ref={navigationRef} theme={navigationTheme} linking={linking}>
       <Stack.Navigator
         screenOptions={{ headerShown: false }}
         initialRouteName={isOnboardingComplete ? 'Main' : 'Onboarding'}

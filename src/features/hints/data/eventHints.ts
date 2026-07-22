@@ -25,6 +25,9 @@ export interface EventHintContent {
   trigger: EventHintTrigger;
   category: HintCategory;
   species?: PetSpecies | 'all';
+  /** Optional encyclopedia article id for a "Подробнее" deep-link. For 'all'
+   *  hints, only link species-neutral ('all') articles. */
+  articleId?: string;
   ru: string;
   en: string;
 }
@@ -97,6 +100,7 @@ export const EVENT_HINTS: EventHintContent[] = [
     trigger: 'hyper_logged',
     category: 'medical_fact',
     species: 'cat',
+    articleId: 'stress-hyperglycemia',
     ru: 'Стресс заметно поднимает глюкозу у кошек: замер после поездки, гостей или другого волнения может быть выше обычного. Учитывайте контекст.',
     en: 'Stress raises glucose noticeably in cats: a reading after a car ride, visitors or other excitement can run higher than usual. Consider the context.',
   },
@@ -105,6 +109,7 @@ export const EVENT_HINTS: EventHintContent[] = [
     trigger: 'hyper_logged',
     category: 'medical_fact',
     species: 'dog',
+    articleId: 'dog-spay-diestrus',
     ru: 'У собак глюкоза может подниматься после активных игр, стресса или у сук в определённые фазы цикла. Учитывайте контекст замера.',
     en: 'In dogs, glucose can rise after vigorous play, stress, or in intact females at certain cycle phases. Consider the context of the reading.',
   },
@@ -179,6 +184,7 @@ export const EVENT_HINTS: EventHintContent[] = [
     trigger: 'ongoing',
     category: 'medical_fact',
     species: 'cat',
+    articleId: 'remission',
     ru: 'У кошек диабет может уйти в ремиссию. В энциклопедии есть статья о том, какие факторы повышают шансы — загляните.',
     en: 'Feline diabetes can go into remission. The encyclopedia has an article on the factors that improve the odds — take a look.',
   },
@@ -187,6 +193,7 @@ export const EVENT_HINTS: EventHintContent[] = [
     trigger: 'ongoing',
     category: 'support',
     species: 'dog',
+    articleId: 'dog-life-expectancy',
     ru: 'Диабет у собак обычно пожизненный, но с налаженной рутиной собаки живут полноценной и активной жизнью. В энциклопедии есть статьи о долгосрочном контроле.',
     en: 'Canine diabetes is usually lifelong, but with a solid routine dogs live full, active lives. The encyclopedia has articles on long-term control.',
   },
@@ -194,6 +201,7 @@ export const EVENT_HINTS: EventHintContent[] = [
     id: 'ev_ong_2',
     trigger: 'ongoing',
     category: 'practical',
+    articleId: 'insulin-storage',
     ru: 'Открытый флакон инсулина не хранится вечно. Статья о хранении инсулина в энциклопедии напомнит, когда пора менять флакон.',
     en: 'An opened insulin vial does not last forever. The insulin storage article in the encyclopedia will remind you when to replace it.',
   },
