@@ -1,7 +1,12 @@
 import { Article } from '../types';
 
 import { whatIsDiabetes } from './articles/what-is-diabetes';
+import { catLifeExpectancy } from './articles/cat-life-expectancy';
+import { catWhyDiabetes } from './articles/cat-why-diabetes';
+import { catDiabetesMyths } from './articles/cat-diabetes-myths';
 import { remission } from './articles/remission';
+import { catRemissionSigns } from './articles/cat-remission-signs';
+import { catNoRemission } from './articles/cat-no-remission';
 import { neuropathy } from './articles/neuropathy';
 import { diet } from './articles/diet';
 import { commonMistakes } from './articles/common-mistakes';
@@ -23,6 +28,10 @@ import { glucoseCurvesPractice } from './articles/glucose-curves-practice';
 import { costPlanning } from './articles/cost-planning';
 import { choosingVet } from './articles/choosing-vet';
 import { dogDiabetesBasics } from './articles/dog-diabetes-basics';
+import { dogLifeExpectancy } from './articles/dog-life-expectancy';
+import { dogWhyDiabetes } from './articles/dog-why-diabetes';
+import { dogInsulinExplained } from './articles/dog-insulin-explained';
+import { dogRemission } from './articles/dog-remission';
 import { dogCataracts } from './articles/dog-cataracts';
 import { dogDiet } from './articles/dog-diet';
 import { dogInsulin } from './articles/dog-insulin';
@@ -44,7 +53,12 @@ import { dogCostPlanning } from './articles/dog-cost-planning';
 
 export const articles: Article[] = [
   whatIsDiabetes,
+  catLifeExpectancy,
+  catWhyDiabetes,
+  catDiabetesMyths,
   remission,
+  catRemissionSigns,
+  catNoRemission,
   neuropathy,
   diet,
   commonMistakes,
@@ -67,6 +81,10 @@ export const articles: Article[] = [
   choosingVet,
   // Dog-specific articles
   dogDiabetesBasics,
+  dogLifeExpectancy,
+  dogWhyDiabetes,
+  dogInsulinExplained,
+  dogRemission,
   dogCataracts,
   dogDiet,
   dogInsulin,

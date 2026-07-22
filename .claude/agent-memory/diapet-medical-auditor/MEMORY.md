@@ -116,3 +116,20 @@ Every audit so far has found at least one drift between them. Always diff these 
   ketone/DKA/remission/pancreatitis numeric thresholds across cat+dog articles, region unit defaults,
   weight kg/lb conversion. tsc 0 errors, jest 170/171 passed (1 pre-existing skip) incl. 6 new tests added
   for severityCalculator.ts red-flag logic.
+- **Batch 9 (2026-07-22)**: narrative "basics"/"remission" encyclopedia audit (not calculators) — 9 new
+  articles: cat-life-expectancy, cat-why-diabetes, cat-diabetes-myths, dog-life-expectancy, dog-why-diabetes,
+  dog-insulin-explained, cat-remission-signs, cat-no-remission, dog-remission. Result: clean batch, only 1
+  cosmetic edit (added 75-80% cataract prevalence stat to dog-life-expectancy.ts RU+EN, sourced from
+  dog-cataracts.ts, for cross-article precision). No CRITICAL/HIGH found - numbers (nadir 4-5/pre-shot 10
+  mmol/L, remission window 1-6mo, carbs <10%, breed lists, male-cat 2x risk, dog breed list Samoyed/Tibetan+
+  Cairn Terrier/Mini Schnauzer/Poodle/Bichon) all cross-checked against and matched the pre-existing
+  canonical articles (remission.ts, dog-cataracts.ts, dog-spay-diestrus.ts, what-is-diabetes.ts,
+  dog-diabetes-basics.ts) verbatim - this batch was clearly written using those as templates. Species
+  separation clean (no cat-facts leaking into dog articles or vice versa; comparisons between species are
+  explicit and correctly labeled). RU/EN pairs are faithful section-by-section translations, no
+  asymmetry found. All relatedArticleIds resolve to real files; order values don't collide within
+  category+species. Technique note: when auditing narrative (non-calculator) encyclopedia articles,
+  the fastest way to validate a number is to grep for the same fact/number across the rest of
+  src/features/encyclopedia/data/articles/ - this codebase reuses vetted numbers across articles
+  extremely consistently, so a new article's claim either matches an existing sourced one (fine) or is
+  the first place it appears (needs real scrutiny).
