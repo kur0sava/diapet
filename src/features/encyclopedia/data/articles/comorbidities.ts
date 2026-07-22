@@ -151,8 +151,8 @@ Cats have a unique syndrome — **triaditis** (IBD + pancreatitis + cholangitis)
   relatedArticleIds: ['what-is-diabetes', 'pancreatitis-diabetes', 'diet'],
   references: [
     {
-      ru: 'ISFM Guidelines on Diabetes Mellitus in Cats, 2023',
-      en: 'ISFM Guidelines on Diabetes Mellitus in Cats, 2023',
+      ru: '2025 iCatCare Consensus Guidelines on Diabetes Mellitus in Cats (Taylor et al., JFMS 2025)',
+      en: '2025 iCatCare Consensus Guidelines on Diabetes Mellitus in Cats (Taylor et al., JFMS 2025)',
     },
     { ru: 'IRIS Staging of CKD, 2023', en: 'IRIS Staging of CKD, 2023' },
     {

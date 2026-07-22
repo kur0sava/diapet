@@ -97,8 +97,8 @@ Your vet gradually lowers the dose; if the cat **holds normal blood sugar withou
       en: 'Roomp K, Rand J — Intensive blood glucose control in diabetic cats using home monitoring and glargine, JFMS, 2009',
     },
     {
-      ru: 'ISFM Guidelines on Diabetes Mellitus in Cats, 2023',
-      en: 'ISFM Guidelines on Diabetes Mellitus in Cats, 2023',
+      ru: '2025 iCatCare Consensus Guidelines on Diabetes Mellitus in Cats (Taylor et al., JFMS 2025)',
+      en: '2025 iCatCare Consensus Guidelines on Diabetes Mellitus in Cats (Taylor et al., JFMS 2025)',
     },
   ],
   tags: [

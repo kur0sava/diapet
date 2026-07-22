@@ -155,8 +155,8 @@ Managing two chronic conditions at once is truly heroic. There will be good days
       en: 'Xenoulis PG — Feline pancreatitis, JFMS 2015',
     },
     {
-      ru: 'ISFM Guidelines on Diabetes Mellitus in Cats, 2023',
-      en: 'ISFM Guidelines on Diabetes Mellitus in Cats, 2023',
+      ru: '2025 iCatCare Consensus Guidelines on Diabetes Mellitus in Cats (Taylor et al., JFMS 2025)',
+      en: '2025 iCatCare Consensus Guidelines on Diabetes Mellitus in Cats (Taylor et al., JFMS 2025)',
     },
   ],
   tags: [

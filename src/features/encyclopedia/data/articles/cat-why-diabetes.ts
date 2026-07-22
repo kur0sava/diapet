@@ -107,8 +107,8 @@ Diabetes isn't a punishment or a verdict on your care. It's a disease with many 
       en: 'Rand J. — Feline Diabetes Mellitus, Veterinary Clinics of North America, 2012',
     },
     {
-      ru: 'ISFM Guidelines on Diabetes Mellitus in Cats, 2023',
-      en: 'ISFM Guidelines on Diabetes Mellitus in Cats, 2023',
+      ru: '2025 iCatCare Consensus Guidelines on Diabetes Mellitus in Cats (Taylor et al., JFMS 2025)',
+      en: '2025 iCatCare Consensus Guidelines on Diabetes Mellitus in Cats (Taylor et al., JFMS 2025)',
     },
   ],
   tags: [

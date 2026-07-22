@@ -123,8 +123,8 @@ If home readings are also consistently high (>12-13 mmol/L on home curves, per I
       en: 'Rand J. — Feline Diabetes Mellitus, Veterinary Clinics, 2012',
     },
     {
-      ru: 'ISFM Guidelines on Diabetes Mellitus in Cats, 2023',
-      en: 'ISFM Guidelines on Diabetes Mellitus in Cats, 2023',
+      ru: '2025 iCatCare Consensus Guidelines on Diabetes Mellitus in Cats (Taylor et al., JFMS 2025)',
+      en: '2025 iCatCare Consensus Guidelines on Diabetes Mellitus in Cats (Taylor et al., JFMS 2025)',
     },
     {
       ru: 'Sparkes AH et al. — ISFM Consensus on Feline Diabetes, JFMS 2015',

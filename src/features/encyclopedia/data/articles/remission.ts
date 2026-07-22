@@ -217,8 +217,8 @@ Signs of relapse: thirst returns, frequent urination, weight loss. Check glucose
       en: 'Roomp K, Rand J — Intensive blood glucose control is safe and effective in diabetic cats using home monitoring and treatment with glargine, JFMS 2009',
     },
     {
-      ru: 'ISFM Guidelines on Diabetes Mellitus in Cats, 2023',
-      en: 'ISFM Guidelines on Diabetes Mellitus in Cats, 2023',
+      ru: '2025 iCatCare Consensus Guidelines on Diabetes Mellitus in Cats (Taylor et al., JFMS 2025)',
+      en: '2025 iCatCare Consensus Guidelines on Diabetes Mellitus in Cats (Taylor et al., JFMS 2025)',
     },
   ],
   tags: [

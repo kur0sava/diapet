@@ -128,8 +128,8 @@ The downside — **test strips cost more and are harder to find** than for human
       en: 'AAHA Diabetes Management Guidelines for Dogs and Cats, 2018',
     },
     {
-      ru: 'ISFM Guidelines on Diabetes Mellitus in Cats, 2023',
-      en: 'ISFM Guidelines on Diabetes Mellitus in Cats, 2023',
+      ru: '2025 iCatCare Consensus Guidelines on Diabetes Mellitus in Cats (Taylor et al., JFMS 2025)',
+      en: '2025 iCatCare Consensus Guidelines on Diabetes Mellitus in Cats (Taylor et al., JFMS 2025)',
     },
     {
       ru: 'Zeugswetter FK et al. — Point-of-care glucose meters in dogs and cats (portable meter validation studies)',

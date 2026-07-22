@@ -121,8 +121,8 @@ Remember: your attention and care are already half the treatment.`,
       en: 'Mizisin AP et al — Feline Diabetic Neuropathy, Veterinary Pathology, 2007',
     },
     {
-      ru: 'ISFM Guidelines on Diabetes Mellitus in Cats, 2023',
-      en: 'ISFM Guidelines on Diabetes Mellitus in Cats, 2023',
+      ru: '2025 iCatCare Consensus Guidelines on Diabetes Mellitus in Cats (Taylor et al., JFMS 2025)',
+      en: '2025 iCatCare Consensus Guidelines on Diabetes Mellitus in Cats (Taylor et al., JFMS 2025)',
     },
   ],
   tags: [

@@ -117,8 +117,8 @@ The rule is simple: **a treat = pure protein**. If it's meat and only meat — i
   relatedArticleIds: ['diet', 'cat-reading-food-labels', 'cat-home-diet', 'hypoglycemia'],
   references: [
     {
-      ru: 'ISFM Guidelines on Diabetes Mellitus in Cats, 2023',
-      en: 'ISFM Guidelines on Diabetes Mellitus in Cats, 2023',
+      ru: '2025 iCatCare Consensus Guidelines on Diabetes Mellitus in Cats (Taylor et al., JFMS 2025)',
+      en: '2025 iCatCare Consensus Guidelines on Diabetes Mellitus in Cats (Taylor et al., JFMS 2025)',
     },
     {
       ru: 'ASPCA Animal Poison Control — People Foods to Avoid Feeding Your Pets',

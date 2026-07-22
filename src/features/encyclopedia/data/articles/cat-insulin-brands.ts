@@ -112,8 +112,8 @@ Veterinary insulins (ProZinc, Caninsulin) are **not registered** in Russia and a
   ],
   references: [
     {
-      ru: 'ISFM Guidelines on Diabetes Mellitus in Cats, 2023',
-      en: 'ISFM Guidelines on Diabetes Mellitus in Cats, 2023',
+      ru: '2025 iCatCare Consensus Guidelines on Diabetes Mellitus in Cats (Taylor et al., JFMS 2025)',
+      en: '2025 iCatCare Consensus Guidelines on Diabetes Mellitus in Cats (Taylor et al., JFMS 2025)',
     },
     {
       ru: 'Behrend E et al — AAHA Diabetes Management Guidelines for Dogs and Cats, 2018',

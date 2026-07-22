@@ -139,8 +139,8 @@ Surprisingly, careful observation of your cat provides a lot of information:
   relatedArticleIds: ['glucose_monitoring', 'fructosamine', 'remission'],
   references: [
     {
-      ru: 'ISFM Guidelines on Diabetes Mellitus in Cats, 2023',
-      en: 'ISFM Guidelines on Diabetes Mellitus in Cats, 2023',
+      ru: '2025 iCatCare Consensus Guidelines on Diabetes Mellitus in Cats (Taylor et al., JFMS 2025)',
+      en: '2025 iCatCare Consensus Guidelines on Diabetes Mellitus in Cats (Taylor et al., JFMS 2025)',
     },
     {
       ru: 'Cornell Feline Health Center — Feline Diabetes, 2021',

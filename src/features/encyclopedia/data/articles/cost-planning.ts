@@ -51,7 +51,7 @@ export const costPlanning: Article = {
 - Ринсулин НПХ — самый бюджетный (500-1000 руб), но менее эффективен для кошек
 
 **Полоски:**
-- **В России:** AlphaTRAK 2 недоступен. Рекомендуем **Contour Plus** (хорошее качество) или **Сателлит Экспресс** (самые дешёвые полоски — 400-600 руб/50 шт, но точность ниже). Помните: человеческие глюкометры занижают результат у кошек на 10-15%
+- **В России:** AlphaTRAK 2 недоступен. Рекомендуем **Contour Plus** (хорошее качество) или **Сателлит Экспресс** (самые дешёвые полоски — 400-600 руб/50 шт, но точность ниже). Помните: человеческие глюкометры занижают результат у кошек (обычно на 10-30%, сильнее при высоком сахаре)
 - За рубежом: AlphaTRAK 2 — точнее, но полоски дороже
 - Покупайте полоски оптом (100 шт = дешевле за штуку)
 - Не тестируйте каждый день, если кошка стабильна (2-3 раза в неделю достаточно)
@@ -122,7 +122,7 @@ Diabetes is a long-term expense. But the good news: with proper planning, it's q
 - **In the USA:** NPH insulin (e.g. Walmart ReliOn, ~$25/vial) is the cheapest option, but NPH is **not first-choice for cats** — shorter duration of action and a lower remission rate (~25% vs 50-90% on glargine). Discuss with your vet before switching purely to save money
 
 **Test strips:**
-- **In Russia:** AlphaTRAK 2 is unavailable. Use **Contour Plus** (good quality) or **Satellite Express** (cheapest strips ~400-600 RUB/50 pcs, but less accurate). Note: human glucometers read 10-15% lower for cats
+- **In Russia:** AlphaTRAK 2 is unavailable. Use **Contour Plus** (good quality) or **Satellite Express** (cheapest strips ~400-600 RUB/50 pcs, but less accurate). Note: human glucometers read lower for cats (typically 10-30%, more at high glucose)
 - **In the USA/EU:** AlphaTRAK 2 is the gold standard for pets
 - Buy strips in bulk (100 pcs = cheaper per strip)
 - Don't test every day if the cat is stable (2-3 times per week is enough)
@@ -161,8 +161,8 @@ Keep a safety fund for:
   relatedArticleIds: ['first-days', 'insulin_types', 'diet', 'flexible-monitoring'],
   references: [
     {
-      ru: 'ISFM Guidelines on Diabetes Mellitus in Cats, 2023',
-      en: 'ISFM Guidelines on Diabetes Mellitus in Cats, 2023',
+      ru: '2025 iCatCare Consensus Guidelines on Diabetes Mellitus in Cats (Taylor et al., JFMS 2025)',
+      en: '2025 iCatCare Consensus Guidelines on Diabetes Mellitus in Cats (Taylor et al., JFMS 2025)',
     },
   ],
   tags: [

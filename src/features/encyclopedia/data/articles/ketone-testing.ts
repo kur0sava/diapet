@@ -139,8 +139,8 @@ Ketones are an alarm signal. When the body can't use glucose (no insulin), it st
       en: "O'Brien MA — Diabetic Ketoacidosis in Cats, Veterinary Clinics 2010",
     },
     {
-      ru: 'ISFM Guidelines on Diabetes Mellitus in Cats, 2023',
-      en: 'ISFM Guidelines on Diabetes Mellitus in Cats, 2023',
+      ru: '2025 iCatCare Consensus Guidelines on Diabetes Mellitus in Cats (Taylor et al., JFMS 2025)',
+      en: '2025 iCatCare Consensus Guidelines on Diabetes Mellitus in Cats (Taylor et al., JFMS 2025)',
     },
   ],
   tags: [

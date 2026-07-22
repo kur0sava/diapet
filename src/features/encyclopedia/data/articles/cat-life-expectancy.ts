@@ -97,8 +97,8 @@ But you're already reading this article — which means you're on the treating t
   relatedArticleIds: ['what-is-diabetes', 'remission', 'first-days', 'diet'],
   references: [
     {
-      ru: 'ISFM Guidelines on Diabetes Mellitus in Cats, 2023',
-      en: 'ISFM Guidelines on Diabetes Mellitus in Cats, 2023',
+      ru: '2025 iCatCare Consensus Guidelines on Diabetes Mellitus in Cats (Taylor et al., JFMS 2025)',
+      en: '2025 iCatCare Consensus Guidelines on Diabetes Mellitus in Cats (Taylor et al., JFMS 2025)',
     },
     {
       ru: 'Rand J. — Feline Diabetes Mellitus, Veterinary Clinics of North America, 2012',

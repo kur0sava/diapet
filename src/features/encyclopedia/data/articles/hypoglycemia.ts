@@ -99,17 +99,15 @@ export const hypoglycemia: Article = {
 4. Глюкоза ниже 5 ммоль/л → мёд на дёсны (протокол выше)
 5. Кошка не ест более 4 часов после рвоты → ветеринар в тот же день
 
-### Пропущенная инъекция — таблица действий
+### Пропущенная инъекция — что делать
 
-| Когда заметили пропуск | Что делать |
-|------------------------|-----------|
-| Менее 2 ч от планового времени | Ввести обычную дозу |
-| 2-4 ч | Ввести 50-75% дозы |
-| 4-6 ч | Ввести 50% дозы, следующая — по расписанию |
-| Более 6 ч или менее 2 ч до следующей | Пропустить, следующая — обычная доза |
-| Пропущен весь цикл (12 ч) | Следующая по расписанию — обычная доза. **Не двойную!** |
+Главное правило: **корректировать дозу — решение ветеринара, а не ваша самодеятельность.** Пропущенная доза почти всегда безопаснее лишней.
 
-После пропуска: измерьте глюкозу перед следующей инъекцией. Если выше 20 ммоль/л — позвоните ветеринару.
+- **Заметили быстро и кошка поела** — обычно вводят как обычно, но при сомнении сверьтесь с ветеринаром
+- **Прошло много времени** — не «догоняйте» пропущенную дозу и не колите частичную «на глаз»; дождитесь следующего планового укола
+- **Пропущен весь цикл** — следующая доза по расписанию, обычная. **Никогда не двойную!**
+
+После пропуска измерьте глюкозу перед следующей инъекцией. Стабильно высокий сахар — повод позвонить ветеринару и обсудить схему, а не поднимать дозу самостоятельно. Подробнее — в отдельной статье о пропущенном и двойном уколе.
 
 ### Почему это происходит
 
@@ -226,17 +224,15 @@ If you accidentally gave more insulin than prescribed:
 4. Glucose below 5 mmol/L → honey on gums (protocol above)
 5. Cat hasn't eaten for 4+ hours after vomiting → vet same day
 
-### Missed Injection — Action Table
+### Missed Injection — What to Do
 
-| When you noticed | What to do |
-|-----------------|-----------|
-| Less than 2 h from scheduled time | Give the usual dose |
-| 2-4 h | Give 50-75% of the dose |
-| 4-6 h | Give 50% dose, next one at the scheduled time |
-| More than 6 h or less than 2 h until next | Skip it, give the normal dose at next scheduled time |
-| Entire cycle (12 h) missed | Next scheduled dose — normal amount. **Never double!** |
+The key rule: **adjusting the dose is your vet's decision, not something to improvise.** A missed dose is almost always safer than an extra one.
 
-After a missed dose: check glucose before the next injection. If above 20 mmol/L — call your vet.
+- **Caught it quickly and your cat has eaten** — the usual dose is typically given, but check with your vet if unsure
+- **A lot of time has passed** — don't "make up" the missed dose or inject a partial amount by guesswork; wait for the next scheduled injection
+- **Entire cycle missed** — give the next scheduled dose as normal. **Never double!**
+
+After a missed dose, check glucose before the next injection. Persistently high sugar is a reason to call your vet and review the plan — not to raise the dose yourself. See the dedicated article on missed and double injections.
 
 ### Why This Happens
 
@@ -271,11 +267,17 @@ With quick action, hypoglycemia responds very well to treatment. Honey on the gu
   species: 'cat',
   readingTimeMinutes: 7,
   order: 3,
-  relatedArticleIds: ['injection-technique', 'glucose_monitoring', 'dka', 'first-days'],
+  relatedArticleIds: [
+    'injection-technique',
+    'glucose_monitoring',
+    'dka',
+    'first-days',
+    'missed-double-insulin',
+  ],
   references: [
     {
-      ru: 'ISFM Guidelines on Diabetes Mellitus in Cats, 2023',
-      en: 'ISFM Guidelines on Diabetes Mellitus in Cats, 2023',
+      ru: '2025 iCatCare Consensus Guidelines on Diabetes Mellitus in Cats (Taylor et al., JFMS 2025)',
+      en: '2025 iCatCare Consensus Guidelines on Diabetes Mellitus in Cats (Taylor et al., JFMS 2025)',
     },
     {
       ru: 'Cornell Feline Health Center — Feline Diabetes, 2021',

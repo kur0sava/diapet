@@ -142,8 +142,8 @@ Act immediately if you see:
       en: 'AAHA Diabetes Management Guidelines for Dogs and Cats, 2018',
     },
     {
-      ru: 'ISFM Guidelines on Diabetes Mellitus in Cats, 2023',
-      en: 'ISFM Guidelines on Diabetes Mellitus in Cats, 2023',
+      ru: '2025 iCatCare Consensus Guidelines on Diabetes Mellitus in Cats (Taylor et al., JFMS 2025)',
+      en: '2025 iCatCare Consensus Guidelines on Diabetes Mellitus in Cats (Taylor et al., JFMS 2025)',
     },
     {
       ru: 'MSD Animal Health — Caninsulin/Vetsulin owner guidance (missed dose handling)',

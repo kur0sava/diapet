@@ -152,7 +152,12 @@ A glucose curve is a series of readings every 2 hours over 12 hours. It shows ho
   species: 'dog',
   readingTimeMinutes: 7,
   order: 2,
-  relatedArticleIds: ['dog-glucose-monitoring', 'dog-insulin', 'dog-hypoglycemia'],
+  relatedArticleIds: [
+    'dog-glucose-monitoring',
+    'dog-insulin',
+    'dog-hypoglycemia',
+    'somogyi-rebound',
+  ],
   references: [
     {
       ru: 'AAHA Diabetes Management Guidelines for Dogs and Cats, 2018',

@@ -169,8 +169,8 @@ Don't rush! A sudden switch can upset the stomach and destabilize blood sugar.`,
       en: 'Bennett N et al — Comparison of a low-carbohydrate vs high-fiber diet in cats with diabetes, JFMS 2006',
     },
     {
-      ru: 'ISFM Guidelines on Diabetes Mellitus in Cats, 2023',
-      en: 'ISFM Guidelines on Diabetes Mellitus in Cats, 2023',
+      ru: '2025 iCatCare Consensus Guidelines on Diabetes Mellitus in Cats (Taylor et al., JFMS 2025)',
+      en: '2025 iCatCare Consensus Guidelines on Diabetes Mellitus in Cats (Taylor et al., JFMS 2025)',
     },
   ],
   tags: [

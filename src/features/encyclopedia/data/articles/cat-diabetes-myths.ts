@@ -101,8 +101,8 @@ A lot of the fear around diabetes comes from myths, not from the disease itself.
   relatedArticleIds: ['what-is-diabetes', 'remission', 'hypoglycemia', 'common-mistakes'],
   references: [
     {
-      ru: 'ISFM Guidelines on Diabetes Mellitus in Cats, 2023',
-      en: 'ISFM Guidelines on Diabetes Mellitus in Cats, 2023',
+      ru: '2025 iCatCare Consensus Guidelines on Diabetes Mellitus in Cats (Taylor et al., JFMS 2025)',
+      en: '2025 iCatCare Consensus Guidelines on Diabetes Mellitus in Cats (Taylor et al., JFMS 2025)',
     },
     {
       ru: 'Cornell Feline Health Center — Feline Diabetes',

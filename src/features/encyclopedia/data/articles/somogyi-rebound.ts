@@ -136,8 +136,8 @@ The classic, pronounced Somogyi effect gets discussed in veterinary circles more
       en: 'AAHA Diabetes Management Guidelines for Dogs and Cats, 2018',
     },
     {
-      ru: 'ISFM Guidelines on Diabetes Mellitus in Cats, 2023',
-      en: 'ISFM Guidelines on Diabetes Mellitus in Cats, 2023',
+      ru: '2025 iCatCare Consensus Guidelines on Diabetes Mellitus in Cats (Taylor et al., JFMS 2025)',
+      en: '2025 iCatCare Consensus Guidelines on Diabetes Mellitus in Cats (Taylor et al., JFMS 2025)',
     },
     {
       ru: 'Feldman EC, Nelson RW — Canine and Feline Endocrinology, 4th ed., 2015',
