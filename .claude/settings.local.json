@@ -238,7 +238,10 @@
       "Bash(curl -s --ssl-no-revoke -m 5 http://localhost:8081/status)",
       "Bash(curl -s --ssl-no-revoke -m 180 -o /dev/null -w \"bundle HTTP %{http_code}, %{size_download} bytes, %{time_total}s\\\\n\" \"http://localhost:8081/index.bundle?platform=android&dev=true&minify=false\")",
       "Bash(curl -s --ssl-no-revoke -m 5 http://192.168.0.100:8081/status)",
-      "Bash(echo \"=== TSC EXIT: $? ===\")"
+      "Bash(echo \"=== TSC EXIT: $? ===\")",
+      "Bash(awk '{print $6, $7, $8, $9}')",
+      "Bash(awk '{print \"size=\"$5\" bytes, last-modified=\"$6}')",
+      "Bash(echo \"COMMIT: $?\")"
     ]
   }
 }

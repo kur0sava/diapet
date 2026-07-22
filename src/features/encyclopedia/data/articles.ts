@@ -60,6 +60,12 @@ import { dogHomeDiet } from './articles/dog-home-diet';
 import { dogInsulinBrands } from './articles/dog-insulin-brands';
 import { insulinStorage } from './articles/insulin-storage';
 import { insulinSyringesU40U100 } from './articles/insulin-syringes-u40-u100';
+import { cgmMonitoring } from './articles/cgm-monitoring';
+import { dogCgmMonitoring } from './articles/dog-cgm-monitoring';
+import { petGlucometerVsHuman } from './articles/pet-glucometer-vs-human';
+import { somogyiRebound } from './articles/somogyi-rebound';
+import { sickDayRules } from './articles/sick-day-rules';
+import { missedDoubleInsulin } from './articles/missed-double-insulin';
 
 export const articles: Article[] = [
   whatIsDiabetes,
@@ -93,6 +99,7 @@ export const articles: Article[] = [
   catReadingFoodLabels,
   catHomeDiet,
   catInsulinBrands,
+  cgmMonitoring,
   // Dog-specific articles
   dogDiabetesBasics,
   dogLifeExpectancy,
@@ -121,7 +128,12 @@ export const articles: Article[] = [
   dogReadingFoodLabels,
   dogHomeDiet,
   dogInsulinBrands,
+  dogCgmMonitoring,
   // Universal (both species) articles
   insulinStorage,
   insulinSyringesU40U100,
+  petGlucometerVsHuman,
+  somogyiRebound,
+  sickDayRules,
+  missedDoubleInsulin,
 ];
