@@ -62,6 +62,8 @@ export const glucoseMonitoring: Article = {
 
 Не переживайте, если не всегда получается сделать полную кривую — даже минимальная даёт ветеринару ценную информацию.
 
+> **По рекомендациям 2025 iCatCare** акцент в контроле сместился на **клинические признаки + тренды CGM и домашних замеров**, а стационарная кривая в клинике больше не основной инструмент (мешает стрессовая гипергликемия). Наши кривые изначально домашние — это как раз то, что рекомендуют.
+
 ### Надир — самое важное число
 
 Надир — это **самая низкая точка** сахара в течение цикла. Именно по этому числу ветеринар решает, правильная ли доза инсулина.
@@ -143,6 +145,8 @@ This is a series of measurements over a 12-hour cycle that shows how insulin is 
 **Minimal (when the full version isn't possible):** 0 h, 4 h, 6-8 h, 12 h
 
 Don't stress if you can't always do a full curve — even a minimal one gives your vet valuable information.
+
+> **Per the 2025 iCatCare guidelines**, the emphasis has shifted to **clinical signs + CGM and home-reading trends**, and an in-clinic curve is no longer the primary tool (stress hyperglycemia gets in the way). Our curves are home-based by design — exactly what's recommended.
 
 ### Nadir — The Most Important Number
 

@@ -31,6 +31,7 @@ import { catFoodsToAvoid } from './articles/cat-foods-to-avoid';
 import { catReadingFoodLabels } from './articles/cat-reading-food-labels';
 import { catHomeDiet } from './articles/cat-home-diet';
 import { catInsulinBrands } from './articles/cat-insulin-brands';
+import { catOralMedication } from './articles/cat-oral-medication';
 import { dogDiabetesBasics } from './articles/dog-diabetes-basics';
 import { dogLifeExpectancy } from './articles/dog-life-expectancy';
 import { dogWhyDiabetes } from './articles/dog-why-diabetes';
@@ -99,6 +100,7 @@ export const articles: Article[] = [
   catReadingFoodLabels,
   catHomeDiet,
   catInsulinBrands,
+  catOralMedication,
   cgmMonitoring,
   // Dog-specific articles
   dogDiabetesBasics,

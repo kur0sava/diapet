@@ -63,3 +63,37 @@ pet-glucometer-vs-human.ts (RU+EN+tag, 9 occurrences) to match the rest of the e
 edit. Also surfaced 3 unresolved cross-article issues, filed in open_issues.md (1 CRITICAL, 1 MEDIUM, 1 LOW).
 Technique confirmed: cross-reference a new safety article's central thesis against what its
 relatedArticleIds actually say, not just check it in isolation — this is what caught the CRITICAL finding.
+
+## Batch 12 (2026-07-22) — SGLT2 inhibitors (oral meds) + insulin PK date-fact audit
+New: cat-oral-medication.ts (Bexacat/Senvelgo, cat-only). Re-checked mentions in insulin_types.ts,
+cat-insulin-brands.ts, remission.ts, dog-insulin.ts, dog-insulin-brands.ts, glucose_monitoring.ts,
+glucose-curves-practice.ts. eDKA framing (contraindicated if currently/ever on insulin or reduced beta-cell
+reserve; red-flag = lethargy/anorexia/vomiting even with normal glucose → urgent vet) was ALREADY correct
+and appropriately hard-hitting — no changes needed there, matches real-world EU pharmacovigilance reports of
+fatal eDKA in cats improperly switched from insulin. "First-line option... but with clear conditions" framing
+for SGLT2i verified accurate against 2025 iCatCare/AAHA guidance (SGLT2i now positioned as alternative
+first-line for well-selected insulin-naive cats, not superior/preferred over insulin generally) — not an
+overstatement. Fixed via WebSearch-verified facts (all edits applied ru+en):
+1. Bexacat FDA approval date was off by one day: app said Dec 8 2022 → corrected to **Dec 9, 2022** (FDA/
+   Elanco press release consensus date).
+2. Senvelgo FDA approval date used the BI press-release date (Aug 14, 2023) instead of the official FDA
+   approval date **Aug 10, 2023** (per FDA FOI Summary — "Date of Approval: August 10, 2023"). Note for future:
+   company announcement dates commonly lag 2-5 days behind the actual FDA approval date — prefer the FOI
+   summary date when both are available.
+3. Added missing fact: Bexacat is a FIXED 15mg dose (not weight-scaled) and only indicated for cats **≥~3kg
+   (6.6 lb)** — relevant because many diabetic cats are underweight from PU/PD weight loss and could be
+   ineligible.
+4. Added missing fact: Senvelgo is ALSO EMA-approved in the EU (Nov 2023) — the article previously implied
+   both drugs were USA-only + unavailable in RU/CIS, which under-informed EU/UK users (a real DiaPet region).
+   No confirmed Bexacat EU/UK approval found as of this audit — flagged as "no confirmed approval" rather
+   than "unavailable" (open-ended, don't assert an absence you can't fully verify).
+5. **Detemir/Levemir discontinuation date was mis-stated as a single global date.** dog-insulin.ts and
+   dog-insulin-brands.ts both said "флаконы сняты с 31.12.2024" as if globally true. Verified: Novo Nordisk's
+   decision to discontinue IS global, but the Dec 31 2024 vial cutoff is **US-market only** — UK/EU supply
+   continues to ~late 2026, Canada to ~end 2025, Russia timeline unconfirmed. Corrected all instances (ru+en)
+   to state the US date explicitly and note EU/UK runs ~2 years longer. **Pattern for future audits: any
+   claim about a drug/insulin being "discontinued"/"withdrawn" needs a per-region timeline check — global
+   manufacturer decisions routinely have staggered, multi-year regional wind-down dates, and DiaPet's
+   audience spans exactly the regions (RU/EU/UK) most likely to be misled by a US-centric date.**
+Toujeo/Tardo et al. JVIM 2024 citation for dogs verified correct (Tardo et al., JVIM 38(4):2120-2128, 2024,
+dose titration protocol for once-daily IGla300 in dogs) — no change needed. tsc 0 after all edits.

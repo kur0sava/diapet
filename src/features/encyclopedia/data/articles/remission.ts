@@ -43,6 +43,8 @@ export const remission: Article = {
 **5. Правильный инсулин**
 Инсулины длительного действия (Гларгин/Лантус, Детемир/Левемир) дают более высокий процент ремиссии. Обсудите выбор с ветеринаром.
 
+> **Новый вариант старта.** Для части впервые выявленных, инсулин-наивных кошек ветеринар может рассмотреть пероральные препараты (SGLT2-ингибиторы: Bexacat, Senvelgo). Это не инсулин, подходит не всем и несёт особый риск — подробно см. отдельную статью «Таблетки от диабета для кошек».
+
 ### Почему раннее лечение так важно — глюкозотоксичность
 
 Есть научный термин — **глюкозотоксичность**. Хроническая гипергликемия повреждает β-клетки поджелудочной, подавляя их способность вырабатывать инсулин.
@@ -140,6 +142,8 @@ If your kitty is carrying extra weight, losing it noticeably improves how the bo
 **5. The right insulin**
 Long-acting insulins (Glargine/Lantus, Detemir/Levemir) are associated with higher remission rates. Discuss the choice with your vet.
 
+> **A new way to start.** For some newly diagnosed, insulin-naive cats, the vet may consider oral drugs (SGLT2 inhibitors: Bexacat, Senvelgo). These aren't insulin, aren't for every cat, and carry a specific risk — see the separate article "Oral Diabetes Medication for Cats" for details.
+
 ### Why Early Treatment Matters So Much — Glucotoxicity
 
 There's a scientific concept called **glucotoxicity**. Chronic high blood sugar damages the pancreatic β-cells, suppressing their ability to produce insulin.
@@ -210,7 +214,13 @@ Signs of relapse: thirst returns, frequent urination, weight loss. Check glucose
   species: 'cat',
   readingTimeMinutes: 10,
   order: 1,
-  relatedArticleIds: ['what-is-diabetes', 'diet', 'glucose_monitoring', 'flexible-monitoring'],
+  relatedArticleIds: [
+    'what-is-diabetes',
+    'diet',
+    'glucose_monitoring',
+    'flexible-monitoring',
+    'cat-oral-medication',
+  ],
   references: [
     {
       ru: 'Roomp K, Rand J — Intensive blood glucose control is safe and effective in diabetic cats using home monitoring and treatment with glargine, JFMS 2009',

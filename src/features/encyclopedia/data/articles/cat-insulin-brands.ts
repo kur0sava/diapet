@@ -24,6 +24,8 @@ export const catInsulinBrands: Article = {
 
 Для кошек «золотым стандартом» первого выбора часто считают **гларгин** или **ProZinc** в связке с низкоуглеводной диетой — из-за высокого шанса ремиссии. Но выбор всегда за врачом.
 
+> **Не только инсулин.** Для части впервые выявленных, инсулин-наивных кошек существует и пероральный вариант — SGLT2-ингибиторы (Bexacat, Senvelgo, одобрены в США). Это не инсулин и подходит не всем. Подробно — см. отдельную статью «Таблетки от диабета для кошек».
+
 ### 🇷🇺 Россия и СНГ
 
 Ветеринарные инсулины (ProZinc, Caninsulin) в РФ **не зарегистрированы** и в аптеках не продаются. Ветеринары используют человеческие инсулины off-label — это стандартная и общепринятая практика:
@@ -68,6 +70,8 @@ This article isn't about how insulin works (see "Insulin Types for Cats" for tha
 
 For cats, the "gold standard" first choice is often **glargine** or **ProZinc** paired with a low-carb diet, because of the high chance of remission. But the choice is always the vet's.
 
+> **Not only insulin.** For some newly diagnosed, insulin-naive cats there's also an oral option — SGLT2 inhibitors (Bexacat, Senvelgo, approved in the USA). It isn't insulin and isn't for every cat. See the separate article "Oral Diabetes Medication for Cats".
+
 ### 🇺🇸 United States
 
 - **ProZinc** is FDA-approved for cats — a common first choice, prescription only
@@ -109,6 +113,7 @@ Veterinary insulins (ProZinc, Caninsulin) are **not registered** in Russia and a
     'insulin-storage',
     'insulin-syringes-u40-u100',
     'cost-planning',
+    'cat-oral-medication',
   ],
   references: [
     {

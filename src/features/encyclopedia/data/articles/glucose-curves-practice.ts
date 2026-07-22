@@ -78,6 +78,12 @@ export const glucoseCurvesPractice: Article = {
 
 **Вывод:** срочно к ветеринару для обследования.
 
+### Что изменилось в 2025 году
+
+По обновлённым рекомендациям **2025 iCatCare** (в одном ключе с AAHA) **стационарная 12-часовая кривая в клинике больше не считается основным инструментом** контроля. Причина — поездка и сама клиника вызывают стрессовую гипергликемию, которая искажает картину. Акцент сместился на **клинические признаки** (жажда, мочеиспускание, вес, аппетит) плюс **тренды CGM и домашних замеров**. Точечная кривая остаётся полезным, но **вспомогательным** инструментом.
+
+> Хорошая новость: наши кривые изначально **домашние** — это как раз то, что рекомендуют. Спокойная кошка даёт реальные цифры без стрессового скачка. А непрерывный мониторинг (CGM) и тренд утренних замеров рисуют ещё более полную картину, чем одна отдельная кривая.
+
 ### Когда НЕ нужна кривая
 
 - Стабильная кошка с хорошими утренними замерами
@@ -151,6 +157,12 @@ A glucose curve is a series of readings every 2 hours over 12 hours. It shows ho
 - Wrong syringe (U-40 instead of U-100 or vice versa)
 
 **Conclusion:** urgent vet visit for investigation.
+
+### What Changed in 2025
+
+Under the updated **2025 iCatCare** guidelines (aligned with AAHA), an **in-clinic 12-hour curve is no longer considered the primary monitoring tool**. The reason: the trip and the clinic itself trigger stress hyperglycemia that distorts the picture. The emphasis has shifted to **clinical signs** (thirst, urination, weight, appetite) plus **CGM and home-reading trends**. A spot curve remains useful, but as an **auxiliary** tool.
+
+> Good news: our curves are home-based by design — exactly what's recommended. A calm cat gives real numbers without the stress spike. And continuous monitoring (CGM) plus a trend of morning readings paint an even fuller picture than a single curve.
 
 ### When You DON'T Need a Curve
 

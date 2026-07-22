@@ -4,7 +4,7 @@
 - [file_locations.md](file_locations.md) — where medical constants/calculators live in the codebase (speciesConfig.ts is the SSOT; check cat+dog both).
 - [clinical_facts.md](clinical_facts.md) — verified conversion factor, DMB formula, region coverage, feline/canine numeric thresholds, and the recurring "two parallel engines must agree" bug pattern.
 - [open_issues.md](open_issues.md) — **read first**: unresolved cross-article contradictions found but not yet fixed (1 CRITICAL missed-dose table contradiction, 1 MEDIUM dog threshold, 1 LOW % mismatch).
-- [audit_history.md](audit_history.md) — chronological log of all audit batches (v1-v3, Batch 8-11) with what was fixed vs. confirmed clean.
+- [audit_history.md](audit_history.md) — chronological log of all audit batches (v1-v3, Batch 8-12) with what was fixed vs. confirmed clean.
 
 ## Quick Orientation for a New Audit Pass
 1. **Start with open_issues.md** — those are known, still-broken items; don't re-discover them from scratch, just check if they're now in scope to fix.

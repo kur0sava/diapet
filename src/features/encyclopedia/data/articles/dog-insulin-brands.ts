@@ -23,6 +23,10 @@ export const dogInsulinBrands: Article = {
 - **NPH / изофан (Humulin N, Протафан)** — человеческий, назначается off-label. Концентрация **U-100**
 - **Гларгин (Lantus) / детемир (Levemir)** — длительного действия, off-label; иногда назначают при плохом ответе на Канинсулин/NPH
 
+> **Две важные оговорки по 2025 году:**
+> - **Детемир (Levemir)** повсеместно снимается с производства (решение Novo Nordisk) — сроки разные по странам: в **США флаконы уже недоступны (с 31.12.2024)**, в **ЕС и Великобритании поставки продлятся примерно до конца 2026 года**. Точных сроков для России нет. В любом случае не стройте на нём долгосрочный план.
+> - **Гларгин U-300 (Toujeo)** набирает популярность как вариант 1 раз в день у собак (титрование по CGM). Это **U-300** в шприц-ручке — «мягче» на единицу и требует более широкого диапазона дозы, чем U-100; только под контролем ветеринара.
+
 ### 🇷🇺 Россия и СНГ
 
 Ветеринарный **Канинсулин в РФ не зарегистрирован** и в обычной продаже отсутствует. Ветеринары используют человеческие инсулины off-label:
@@ -63,6 +67,10 @@ This isn't about pharmacology (see "Insulin for Dogs" for that) — it's about t
 - **Caninsulin / Vetsulin** — porcine Lente insulin, made specifically for dogs. Often the **first choice**. **U-40**, a suspension (roll before injecting)
 - **NPH / isophane (Humulin N, Protaphane)** — human, prescribed off-label. **U-100**
 - **Glargine (Lantus) / detemir (Levemir)** — long-acting, off-label; sometimes used when the response to Caninsulin/NPH is poor
+
+> **Two important 2025 caveats:**
+> - **Detemir (Levemir)** is being phased out everywhere (Novo Nordisk's decision) — timelines differ by country: **US vials are already gone (since Dec 31, 2024)**, while **UK/EU supply is expected to last until roughly late 2026**. No confirmed timeline for Russia. Either way, don't build a long-term plan around it.
+> - **Glargine U-300 (Toujeo)** is gaining traction as a once-daily option in dogs (titrated by CGM). It's **U-300** in a pen — "gentler" per unit and needs a wider dose range than U-100; only under veterinary supervision.
 
 ### 🇺🇸 United States
 
@@ -112,6 +120,10 @@ Veterinary **Caninsulin is not registered** in Russia and isn't in general circu
     {
       ru: 'Feldman EC, Nelson RW — Canine and Feline Endocrinology, 4th ed., 2015',
       en: 'Feldman EC, Nelson RW — Canine and Feline Endocrinology, 4th ed., 2015',
+    },
+    {
+      ru: 'Novo Nordisk / Diabetes UK — уведомление о всемирном прекращении производства Levemir (детемир), 2024',
+      en: 'Novo Nordisk / Diabetes UK — Levemir (insulin detemir) worldwide discontinuation notice, 2024',
     },
   ],
   tags: [

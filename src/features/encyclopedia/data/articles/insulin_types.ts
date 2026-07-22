@@ -17,6 +17,8 @@ export const insulinTypes: Article = {
 
 У кошек инсулины работают не так, как у людей. Скорость начала действия, пик и длительность — всё отличается. Поэтому важно использовать именно тот инсулин, который назначил врач.
 
+> **Не только инсулин.** Для части впервые выявленных, инсулин-наивных кошек с 2022-2023 гг. появились пероральные препараты — SGLT2-ингибиторы (Bexacat, Senvelgo), раз в день, без уколов. Они подходят не всем и несут особый риск (эугликемический кетоацидоз), а кошкам на инсулине противопоказаны. Подробно — см. отдельную статью «Таблетки от диабета для кошек».
+
 ### Основные инсулины
 
 #### Гларгин (Lantus) — часто первый выбор
@@ -111,6 +113,8 @@ export const insulinTypes: Article = {
 The topic of insulin can feel confusing — so many names, numbers, and concentrations. But don't worry, let's figure it out together. Remember: choosing the insulin is always your vet's decision. Your job is to understand the basics.
 
 Insulin works differently in cats than in humans. The onset, peak, and duration are all different. That's why it's important to use exactly the insulin your vet prescribed.
+
+> **Not only insulin.** Since 2022-2023, some newly diagnosed, insulin-naive cats have a once-daily oral option — SGLT2 inhibitors (Bexacat, Senvelgo), no injections. They aren't for every cat and carry a specific risk (euglycemic ketoacidosis), and they're contraindicated for cats on insulin. See the separate article "Oral Diabetes Medication for Cats".
 
 ### Main Insulins
 
@@ -212,6 +216,7 @@ This is critically important, so please remember:
     'glucose_monitoring',
     'glucose-curves-practice',
     'cost-planning',
+    'cat-oral-medication',
   ],
   references: [
     {

@@ -50,6 +50,27 @@ metadata:
   Caninsulin/Vetsulin 42d (dog article) — consistently applied across speciesConfig.ts, articles, and
   cost-planning.ts as of Batch 8.
 
+## SGLT2 Inhibitors (cats only) — Verified Facts (Batch 12, 2026-07-22)
+- Bexacat (bexagliflozin, Elanco): FDA-approved **Dec 9, 2022** (not Dec 8 — common off-by-one in secondary
+  sources). Fixed 15mg tablet once daily, NOT weight-scaled; only for cats **≥~3kg/6.6lb**. US-only as of this
+  audit, no confirmed EU/UK approval.
+- Senvelgo (velagliflozin, Boehringer Ingelheim): FDA-approved **Aug 10, 2023** per FDA FOI Summary (company
+  press release was Aug 14 — press-release dates commonly lag the real FDA approval date by several days,
+  prefer the FOI summary date). ALSO EMA-approved in the EU, **Nov 2023** — don't describe these drugs as
+  "USA-only", EU/UK vets can prescribe Senvelgo.
+- Both are contraindicated in cats currently or ever on insulin, and in cats with reduced beta-cell reserve/
+  ketosis tendency/DKA history — eDKA (euglycemic DKA, normal glucose + ketoacidosis) is the key risk, and
+  real EU pharmacovigilance has recorded fatal eDKA cases in cats improperly switched from insulin to an
+  SGLT2i. Candidate = newly diagnosed, insulin-naive, otherwise healthy, preserved beta-cell reserve — this
+  "first-line option with conditions" framing matches 2025 iCatCare/AAHA guidance, not an overstatement.
+
+## Drug/Insulin Discontinuation Dates — Always Check Per-Region, Not Just "Global"
+Levemir/detemir (Novo Nordisk) is a real example: the decision to discontinue is global, but the vial
+cutoff date is NOT uniform — US Dec 31 2024, Canada ~end 2025, UK/EU ~late 2026, Russia unconfirmed. A
+DiaPet article stating one hard date as if it applied everywhere will be wrong for most of the app's
+actual regions (RU/EU/UK). When auditing any "X is being discontinued/withdrawn" claim, search for the
+region-specific timeline before accepting a single date — see dog-insulin.ts/dog-insulin-brands.ts fix.
+
 ## Recurring Pattern: Two Parallel Engines That Must Agree
 DiaPet has several places where the SAME clinical judgment is computed twice by independent code paths.
 Every audit so far has found at least one drift between them. Always diff these pairs:

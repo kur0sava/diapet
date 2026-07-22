@@ -35,6 +35,13 @@ export const dogInsulin: Article = {
 - Длительного действия, используются off-label
 - Могут быть назначены ветеринаром при плохом ответе на Канинсулин/NPH
 - Не суспензии — не нужно перемешивать
+- **Детемир (Levemir):** доступен, но Novo Nordisk принял решение **сворачивать его производство по всему миру** — сроки различаются по странам: в **США флаконы уже сняты с продажи (с 31.12.2024)**, в **ЕС и Великобритании поставки планируют прекратить ориентировочно к концу 2026 года**. Точных сроков для России нет — уточняйте у поставщика. В любом случае не закладывайтесь на этот инсулин в долгосрочном плане — заранее обсудите с ветеринаром альтернативу
+
+### Гларгин U-300 (Toujeo) — набирающий популярность вариант
+
+- Более концентрированная форма гларгина — **U-300** (300 ЕД/мл), обычно в шприц-ручке (доза набирается в единицах на ручке, а не инсулиновым шприцем)
+- Всё чаще применяется как инсулин **1 раз в день** у собак, с титрованием дозы по данным CGM (Tardo et al., JVIM 2024)
+- **Важно:** U-300 «мягче» в пересчёте на единицу и требует более широкого диапазона дозы, чем U-100. Это не «прямая замена» гларгина U-100. Применять только под контролем ветеринара
 
 ## Как подбирается доза?
 
@@ -105,6 +112,13 @@ export const dogInsulin: Article = {
 - Long-acting, used off-label
 - May be prescribed by your vet if response to Caninsulin/NPH is poor
 - Not suspensions — no mixing needed
+- **Detemir (Levemir):** available, but Novo Nordisk has decided to **phase it out worldwide** — timelines differ by country: **US vials are already discontinued (as of Dec 31, 2024)**, while **UK/EU supply is expected to continue until roughly late 2026**. No confirmed timeline for Russia — check with your supplier. Either way, don't build a long-term plan around it — discuss an alternative with your vet in advance
+
+### Glargine U-300 (Toujeo) — a Gaining Option
+
+- A more concentrated form of glargine — **U-300** (300 IU/mL), usually in a pre-filled pen (the dose is dialed in units on the pen, not drawn with an insulin syringe)
+- Increasingly used as a **once-daily** insulin in dogs, with dose titration guided by CGM (Tardo et al., JVIM 2024)
+- **Important:** U-300 is "gentler" per unit and needs a wider dose range than U-100. It is not a "one-to-one swap" for U-100 glargine. Use only under veterinary supervision
 
 ## How is the dose determined?
 
@@ -165,6 +179,14 @@ export const dogInsulin: Article = {
     {
       ru: 'Feldman EC, Nelson RW — Canine and Feline Endocrinology, 4th ed., 2015',
       en: 'Feldman EC, Nelson RW — Canine and Feline Endocrinology, 4th ed., 2015',
+    },
+    {
+      ru: 'Tardo AM et al — Инсулин гларгин U-300 у собак с сахарным диабетом, JVIM 2024',
+      en: 'Tardo AM et al — Insulin glargine 300 U/mL in diabetic dogs, JVIM 2024',
+    },
+    {
+      ru: 'Novo Nordisk / Diabetes UK — уведомление о всемирном прекращении производства Levemir (детемир), 2024',
+      en: 'Novo Nordisk / Diabetes UK — Levemir (insulin detemir) worldwide discontinuation notice, 2024',
     },
   ],
   tags: [

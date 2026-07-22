@@ -241,7 +241,8 @@
       "Bash(echo \"=== TSC EXIT: $? ===\")",
       "Bash(awk '{print $6, $7, $8, $9}')",
       "Bash(awk '{print \"size=\"$5\" bytes, last-modified=\"$6}')",
-      "Bash(echo \"COMMIT: $?\")"
+      "Bash(echo \"COMMIT: $?\")",
+      "Bash(echo \"---EXIT $?---\")"
     ]
   }
 }
