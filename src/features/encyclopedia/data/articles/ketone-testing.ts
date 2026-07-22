@@ -18,9 +18,9 @@ export const ketoneTesting: Article = {
 ### Когда проверять кетоны
 
 **Обязательно:**
-- Глюкоза держится выше 14-15 ммоль/л (250-270 мг/дл) — кетогенез возможен уже на этом уровне (O'Brien 2010 / ISFM 2023); ждать 20 ммоль/л поздно
+- Глюкоза держится выше 14-15 ммоль/л (250-270 мг/дл) — кетогенез возможен уже на этом уровне (O'Brien 2010 / 2025 iCatCare Consensus Guidelines); ждать 20 ммоль/л поздно
 - Кошка не ест более 24 часов
-- **Рвота + вялость при любом повышении глюкозы выше нормы — проверяйте немедленно** (по ISFM 2023, не ждите достижения 20 ммоль/л)
+- **Рвота + вялость при любом повышении глюкозы выше нормы — проверяйте немедленно** (по 2025 iCatCare Consensus Guidelines, не ждите достижения 20 ммоль/л)
 - Запах ацетона изо рта
 - Только что диагностирован диабет (до начала инсулинотерапии)
 
@@ -76,9 +76,9 @@ Ketones are an alarm signal. When the body can't use glucose (no insulin), it st
 ### When to Check Ketones
 
 **Always check if:**
-- Glucose stays above 14-15 mmol/L (250-270 mg/dL) — ketogenesis can already occur at this level (O'Brien 2010 / ISFM 2023); waiting for 20 is too late
+- Glucose stays above 14-15 mmol/L (250-270 mg/dL) — ketogenesis can already occur at this level (O'Brien 2010 / 2025 iCatCare Consensus Guidelines); waiting for 20 is too late
 - Cat hasn't eaten for more than 24 hours
-- **Vomiting + lethargy at any above-normal glucose — check immediately** (per ISFM 2023, do not wait for 20 mmol/L)
+- **Vomiting + lethargy at any above-normal glucose — check immediately** (per 2025 iCatCare Consensus Guidelines, do not wait for 20 mmol/L)
 - Acetone smell from breath
 - Diabetes just diagnosed (before starting insulin)
 
@@ -135,8 +135,8 @@ Ketones are an alarm signal. When the body can't use glucose (no insulin), it st
   relatedArticleIds: ['dka', 'glucose_monitoring', 'first-days'],
   references: [
     {
-      ru: "O'Brien MA — Diabetic Ketoacidosis in Cats, Veterinary Clinics 2010",
-      en: "O'Brien MA — Diabetic Ketoacidosis in Cats, Veterinary Clinics 2010",
+      ru: "O'Brien MA — Diabetic Emergencies in Small Animals, Veterinary Clinics of North America: Small Animal Practice, 2010",
+      en: "O'Brien MA — Diabetic Emergencies in Small Animals, Veterinary Clinics of North America: Small Animal Practice, 2010",
     },
     {
       ru: '2025 iCatCare Consensus Guidelines on Diabetes Mellitus in Cats (Taylor et al., JFMS 2025)',

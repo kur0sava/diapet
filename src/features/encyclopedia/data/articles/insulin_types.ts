@@ -54,7 +54,7 @@ export const insulinTypes: Article = {
 
 - **Концентрация:** U-100
 - **Длительность:** 4-12 ч — обычно слишком коротко для кошек (по Feldman & Nelson)
-- **Важно:** не является препаратом первого выбора по рекомендациям ISFM (2023)
+- **Важно:** не является препаратом первого выбора по рекомендациям iCatCare (2025)
 
 ### Доступность и правила по регионам
 
@@ -151,7 +151,7 @@ Insulin works differently in cats than in humans. The onset, peak, and duration 
 
 - **Concentration:** U-100
 - **Duration:** 4-12 h — usually too short for cats (per Feldman & Nelson)
-- **Important:** not a first-line choice per ISFM guidelines (2023)
+- **Important:** not a first-line choice per iCatCare guidelines (2025)
 
 ### Availability and Regulations by Region
 

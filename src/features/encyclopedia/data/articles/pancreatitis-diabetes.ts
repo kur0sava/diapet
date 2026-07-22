@@ -151,8 +151,8 @@ Managing two chronic conditions at once is truly heroic. There will be good days
   relatedArticleIds: ['what-is-diabetes', 'comorbidities', 'dka', 'diet'],
   references: [
     {
-      ru: 'Xenoulis PG — Feline pancreatitis, JFMS 2015',
-      en: 'Xenoulis PG — Feline pancreatitis, JFMS 2015',
+      ru: 'Xenoulis PG — Diagnosis of Pancreatitis in Dogs and Cats, Journal of Small Animal Practice, 2015',
+      en: 'Xenoulis PG — Diagnosis of Pancreatitis in Dogs and Cats, Journal of Small Animal Practice, 2015',
     },
     {
       ru: '2025 iCatCare Consensus Guidelines on Diabetes Mellitus in Cats (Taylor et al., JFMS 2025)',

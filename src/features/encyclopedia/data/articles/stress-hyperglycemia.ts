@@ -58,7 +58,7 @@ export const stressHyperglycemia: Article = {
 
 ### Когда это НЕ стресс
 
-Если домашние замеры тоже высокие (стабильно >12-13 ммоль/л по кривой, ISFM 2023), это не стресс — поговорите с ветеринаром о корректировке дозы.
+Если домашние замеры тоже высокие (стабильно >12-13 ммоль/л по кривой, iCatCare 2025), это не стресс — поговорите с ветеринаром о корректировке дозы.
 
 > **Ключевой вывод:** один высокий замер в ветклинике — не повод для паники. Доверяйте домашним замерам и фруктозамину.`,
     en: `## Stress Hyperglycemia: When Blood Sugar Lies
@@ -108,7 +108,7 @@ Stress triggers the release of cortisol and adrenaline. These hormones:
 
 ### When It's NOT Stress
 
-If home readings are also consistently high (>12-13 mmol/L on home curves, per ISFM 2023), it's not stress — talk to your vet about dose adjustment.
+If home readings are also consistently high (>12-13 mmol/L on home curves, per iCatCare 2025), it's not stress — talk to your vet about dose adjustment.
 
 > **Key takeaway:** a single high reading at the vet is not a reason to panic. Trust home readings and fructosamine.`,
   },

@@ -97,3 +97,58 @@ overstatement. Fixed via WebSearch-verified facts (all edits applied ru+en):
    audience spans exactly the regions (RU/EU/UK) most likely to be misled by a US-centric date.**
 Toujeo/Tardo et al. JVIM 2024 citation for dogs verified correct (Tardo et al., JVIM 38(4):2120-2128, 2024,
 dose titration protocol for once-daily IGla300 in dogs) — no change needed. tsc 0 after all edits.
+
+## Batch 13 (2026-07-22) — external WebSearch fact-check of 17 cat articles (first EXTERNAL-source pass,
+not just internal cross-referencing) — injection-technique, first-days, flexible-monitoring, real-life-
+management, ketone-testing, common-mistakes, choosing-vet, cost-planning, neuropathy, dental-disease,
+pancreatitis-diabetes, cat-life-expectancy, cat-why-diabetes, cat-diabetes-myths, cat-remission-signs,
+cat-no-remission, cat-foods-to-avoid, cat-reading-food-labels, cat-home-diet. Verified against real 2025
+iCatCare guidelines (Taylor et al., JFMS, sagepub DOI 10.1177/1098612X251399103), Xenoulis & Fracassi 2022
+pancreatitis/DM comorbidity review, dental/insulin-resistance literature, Mizisin neuropathy papers, AlphaTrak
+product-generation facts. Edits made (all ru+en, tsc 0 after):
+1. **ketone-testing.ts had 4 leftover inline-prose "ISFM 2023" citations** (RU x2, EN x2) — the references
+   array had already been fixed to 2025 iCatCare in an earlier pass but the body prose citations were missed.
+   "ISFM 2023" does not correspond to any real guideline document (the actual current ISFM/iCatCare cat DM
+   guideline is the 2025 Taylor et al. consensus, superseding 2015 Sparkes et al.) — replaced all 4 with
+   "2025 iCatCare Consensus Guidelines". **Same phantom "ISFM 2023" string still exists in dka.ts (2 occurrences)
+   and stress-hyperglycemia.ts (2 occurrences) — both OUT OF SCOPE for this batch (not in the 17-file list),
+   flagged in open_issues.md, fix next time either file is in scope.**
+2. **3 reference citations had wrong/paraphrased journal or title** (author+year were right, title/journal
+   were not — a different failure mode than the fully-fictitious "ISFM 2023"): ketone-testing.ts's O'Brien
+   2010 citation said "Diabetic Ketoacidosis in Cats, Veterinary Clinics" — real title is "Diabetic Emergencies
+   in Small Animals," Vet Clin North Am Small Anim Pract 40(2):317-33; pancreatitis-diabetes.ts's Xenoulis 2015
+   citation said "Feline pancreatitis, JFMS" — real is "Diagnosis of Pancreatitis in Dogs and Cats," Journal of
+   Small Animal Practice 56(1):13-26; dental-disease.ts's dental guideline said "AAFP/AAHA Dental Care
+   Guidelines... 2019" — real 2019 guideline is AAHA-only (JAAHA 55(2):49-69), no AAFP co-authorship (AAFP/AAHA
+   jointly published a *different*, later document — the 2021 Feline Life Stage Guidelines — not the dental
+   one). All three fixed to the verified real title/journal. **Technique for future audits: even when a
+   reference "looks real" (plausible author+year), verify the actual title/journal string — paraphrased/
+   drifted citations are as easy to introduce as fully fictitious ones and just as misleading to a reader who
+   tries to look the source up.**
+3. **neuropathy.ts recovery-time window was too narrow**: said "1 to 6 months" for full resolution; multiple
+   sources (dvm360, canadianinsulin.com, secondary summaries of Mizisin's work) consistently describe full
+   resolution as taking up to **6-12 months**, with only *early/subtle* improvement visible within weeks.
+   Widened to "1 to 12 months (6-12 months in some cats), early improvement often within weeks" — avoids
+   worrying an owner whose cat hasn't fully recovered by month 6. Also fixed neuropathy.ts's Mizisin reference:
+   said "Feline Diabetic Neuropathy, Veterinary Pathology, 2007" — no such paper exists; the real 2007 Mizisin
+   paper is "Comparable Myelinated Nerve Pathology in Feline and Human Diabetes Mellitus," Acta Neuropathologica
+   113:431-442 (there's also a 2002 J Neuropathol Exp Neurol clinical paper and a 2008 Microvascular Research
+   endoneurial-pathology paper by the same group, neither titled/journaled as the app stated).
+4. **AlphaTRAK 2 → AlphaTRAK 3**: Zoetis launched AlphaTrak 3 in the US Feb 2023 and discontinued AlphaTrak 2
+   test strips by Sept 2023 — by 2026 recommending "AlphaTRAK 2" as the current buy is stale (~3 years out of
+   date). Updated first-days.ts (shopping list) and cost-planning.ts (both RU/US-EU rows) to reference
+   AlphaTRAK 3 as current, noting AlphaTrak 2 strips are discontinued. Also softened first-days.ts's blanket
+   "a human [glucometer] works too" to note it typically reads low for cats (matches cost-planning.ts's own
+   10-30% underestimation caveat, previously only present in that one file).
+Findings NOT edited (uncertain/contested, flagged for humans instead — see open_issues.md): methylcobalamin
+dose for neuropathy (app says 0.5-1mg PO SID; secondary vet sources cite anywhere from 0.25mg to 3-5mg —
+evidence is Level D/anecdotal either way, no controlled feline dosing study exists, app's number is within the
+plausible/conservative range so left alone); iCatCare 2025's diet-carb targets are framed in **%ME (metabolizable
+energy)**, not %DM — guideline text is "<25% DM / <15% ME / <5g/100kcal" generally, "ideally ≤12% ME" for
+remission-focused cats — DiaPet's articles and DIABETIC_NUTRITION_GUIDELINES_CAT constant are all %DM-framed
+(ideal 7%, max 15%) which is stricter/safer than iCatCare's %DM figure (<25%) and not clearly wrong, but the
+ME-vs-DM metric conflation is a subtlety worth a maintainer's eye, not a same-day fix. Also noted: cost-
+planning.ts's "10-15%" vs pet-glucometer-vs-human.ts's "10-30%" human-meter-underestimation mismatch flagged in
+open_issues.md (Batch 11) **appears already resolved** — cost-planning.ts now reads "10-30%" in both languages,
+matching pet-glucometer-vs-human.ts. Remove that LOW item from open_issues.md if a future audit confirms it's
+still consistent.

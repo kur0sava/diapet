@@ -29,7 +29,7 @@ export const firstDays: Article = {
 **Обязательно:**
 - Инсулин (по назначению ветеринара)
 - Инсулиновые шприцы U-40 или U-100 (в зависимости от инсулина) или ручка
-- Глюкометр для животных (AlphaTRAK 2, или человеческий — он тоже подходит)
+- Глюкометр для животных (AlphaTRAK 3, или человеческий — он тоже подходит, но обычно занижает показания у кошек)
 - Тест-полоски к глюкометру
 - Ланцеты
 - Низкоуглеводный влажный корм (Hill's m/d, Purina DM, или Fancy Feast Classic)
@@ -96,7 +96,7 @@ This article is your step-by-step plan for the first week. You don't need to mem
 **Essential:**
 - Insulin (as prescribed by your vet)
 - Insulin syringes U-40 or U-100 (depending on insulin) or pen
-- Pet glucometer (AlphaTRAK 2, or a human one works too)
+- Pet glucometer (AlphaTRAK 3, or a human one works too, though it typically reads low for cats)
 - Test strips for the glucometer
 - Lancets
 - Low-carbohydrate wet food (Hill's m/d, Purina DM, or Fancy Feast Classic)

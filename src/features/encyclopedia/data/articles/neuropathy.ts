@@ -43,7 +43,7 @@ export const neuropathy: Article = {
 
 **А вот и главное:** нейропатия у кошек **обратима**! Когда сахар приходит в норму, нервы постепенно восстанавливаются.
 
-Обычно на восстановление уходит от **1 до 6 месяцев** при хорошем контроле сахара. Терпение — ваш друг.
+Первые улучшения часто заметны уже через несколько недель, но полное восстановление обычно занимает от **1 до 12 месяцев** (у части кошек — 6-12 месяцев) при хорошем контроле сахара. Терпение — ваш друг.
 
 **Чем можно помочь:**
 - Самое главное — нормализовать уровень глюкозы
@@ -92,7 +92,7 @@ In simple terms: the nerves in the paws "slow down," and it becomes harder for y
 
 **Here's the important part:** neuropathy in cats is **reversible**! When blood sugar returns to normal, the nerves gradually heal.
 
-Recovery typically takes **1 to 6 months** with good blood sugar control. Patience is your friend here.
+Early improvement is often visible within a few weeks, but full recovery typically takes **1 to 12 months** (6-12 months in some cats) with good blood sugar control. Patience is your friend here.
 
 **How you can help:**
 - The most important thing — get blood sugar under control
@@ -117,8 +117,8 @@ Remember: your attention and care are already half the treatment.`,
   relatedArticleIds: ['what-is-diabetes', 'glucose_monitoring', 'injection-technique'],
   references: [
     {
-      ru: 'Mizisin AP et al — Feline Diabetic Neuropathy, Veterinary Pathology, 2007',
-      en: 'Mizisin AP et al — Feline Diabetic Neuropathy, Veterinary Pathology, 2007',
+      ru: 'Mizisin AP et al — Comparable Myelinated Nerve Pathology in Feline and Human Diabetes Mellitus, Acta Neuropathologica, 2007',
+      en: 'Mizisin AP et al — Comparable Myelinated Nerve Pathology in Feline and Human Diabetes Mellitus, Acta Neuropathologica, 2007',
     },
     {
       ru: '2025 iCatCare Consensus Guidelines on Diabetes Mellitus in Cats (Taylor et al., JFMS 2025)',

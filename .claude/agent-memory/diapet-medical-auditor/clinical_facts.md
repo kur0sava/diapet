@@ -71,6 +71,42 @@ DiaPet article stating one hard date as if it applied everywhere will be wrong f
 actual regions (RU/EU/UK). When auditing any "X is being discontinued/withdrawn" claim, search for the
 region-specific timeline before accepting a single date — see dog-insulin.ts/dog-insulin-brands.ts fix.
 
+## External Verification Facts (Batch 13, 2026-07-22 — first pass checking articles against real
+literature/WebSearch rather than only cross-referencing other DiaPet articles)
+- **AlphaTrak generations**: AlphaTrak 3 launched in the US Feb 6, 2023 (Zoetis); AlphaTrak 2 test strips were
+  discontinued by Sept 2023. As of 2026, any article still recommending "AlphaTRAK 2" as the current buy is
+  ~3 years stale — should say AlphaTRAK 3. AlphaTrak of any generation remains unavailable in Russia (Contour
+  Plus / Сателлит Экспресс are the RU-market recommendations, correctly used throughout the app).
+- **2025 iCatCare Consensus Guidelines (Taylor et al., JFMS, DOI 10.1177/1098612X251399103)** is the real,
+  verifiable, current guideline — supersedes 2015 Sparkes et al. ISFM guidelines. It frames diet carb targets
+  in **%ME (metabolizable energy)**, not %DM: "<25% DM / <15% ME / <5g/100kcal" generally, "ideally ≤12% ME" for
+  cats being pushed toward remission. DiaPet's own content is %DM-framed (ideal 7%, max 15%) — stricter/safer,
+  not wrong, but a different metric (see open_issues.md MEDIUM item).
+- **Diabetic neuropathy**: ~10-11% of diabetic cats show plantigrade stance at diagnosis. Full resolution with
+  good glycemic control typically takes up to 6-12 months (early/subtle improvement can appear within weeks) —
+  a narrower "1-6 months" claim understates the tail and can needlessly worry an owner at month 7.
+  Methylcobalamin dosing for this specific indication is Level D/anecdotal — cited doses range 0.25-5mg across
+  sources, no controlled feline study exists; don't "correct" this number without a real source pinning a value.
+- **Pancreatitis/DM comorbidity**: literature range is 31-83% of diabetic cats showing clinical/lipase evidence
+  of pancreatitis (Xenoulis & Fracassi 2022) — DiaPet's "50-80%" framing sits inside that range, fine as-is.
+  Guideline framing is "screen at least once" for pancreatitis in every diabetic cat, not necessarily routine
+  repeat fPLI every 3-6 months — the app's "recheck every 3-6 months" framing is a plausible clinical judgment
+  for a cat with *known* chronic pancreatitis specifically, not a guideline mandate for all diabetic cats.
+- **Dental disease ↔ insulin resistance**: real, bidirectional, well-supported mechanism (chronic periodontal
+  infection → IL-6/TNF-α → insulin resistance; hyperglycemia → impaired immune/gum defense). Post-extraction
+  improved glycemic control / reduced insulin need is a real, reported clinical outcome, not an overclaim.
+- **Reference-string accuracy is a distinct failure mode from fully fictitious citations**: a citation can have
+  the *correct author and year* but a wrong/paraphrased title or journal (e.g. neuropathy.ts's Mizisin 2007
+  cite said "Veterinary Pathology" — the real 2007 Mizisin paper is in Acta Neuropathologica; ketone-testing.ts's
+  O'Brien 2010 cite had a paraphrased title). These are just as misleading to a reader trying to look the source
+  up as a fully invented reference, and don't get caught by only checking "does this author/year combo look
+  plausible" — always search the exact title string. Also watch for **phantom inline-prose citations that
+  don't match the references array**: ketone-testing.ts had 4 "ISFM 2023" mentions in body text even though its
+  references array had already been corrected to "2025 iCatCare" in an earlier pass — the fictitious tag
+  survives in prose after the reference list is fixed unless both are grepped and fixed together. Same
+  "ISFM 2023" ghost string still lives in dka.ts and stress-hyperglycemia.ts as of 2026-07-22 (out of scope for
+  Batch 13, flagged in open_issues.md).
+
 ## Recurring Pattern: Two Parallel Engines That Must Agree
 DiaPet has several places where the SAME clinical judgment is computed twice by independent code paths.
 Every audit so far has found at least one drift between them. Always diff these pairs:

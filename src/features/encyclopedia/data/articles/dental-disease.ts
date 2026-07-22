@@ -129,8 +129,8 @@ Many owners fear anesthesia — and understandably so. But modern vets have prot
   relatedArticleIds: ['what-is-diabetes', 'comorbidities', 'diet'],
   references: [
     {
-      ru: 'AAFP/AAHA Dental Care Guidelines for Dogs and Cats, 2019',
-      en: 'AAFP/AAHA Dental Care Guidelines for Dogs and Cats, 2019',
+      ru: 'AAHA Dental Care Guidelines for Dogs and Cats, JAAHA, 2019',
+      en: 'AAHA Dental Care Guidelines for Dogs and Cats, JAAHA, 2019',
     },
     {
       ru: '2025 iCatCare Consensus Guidelines on Diabetes Mellitus in Cats (Taylor et al., JFMS 2025)',

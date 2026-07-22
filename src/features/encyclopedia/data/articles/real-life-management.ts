@@ -17,18 +17,17 @@ export const realLifeManagement: Article = {
 
 ### Опоздали с инъекцией
 
-Инсулин длительного действия (Лантус, Левемир) прощает отклонения в 1-2 часа. Если опоздали:
-- **До 2 часов** — колите как обычно
-- **2-4 часа** — колите обычную дозу, следующую инъекцию сдвиньте
-- **Больше 6 часов** — пропустите эту дозу, следующую по расписанию
-- **Никогда** не колите двойную дозу!
+Инсулин длительного действия (Лантус, Левемир) прощает небольшие отклонения. Главное правило: **корректировать дозу — решение ветеринара, а не ваша самодеятельность.**
+- **Небольшое опоздание (до ~1-2 часов) и кошка поела** — обычно колют как обычно; при сомнении сверьтесь с ветеринаром
+- **Прошло больше времени** — не «догоняйте» и не колите частичную дозу «на глаз»; дождитесь следующего планового укола
+- **Никогда** не колите двойную дозу, чтобы наверстать!
 
 ### Кошка не доела
 
-Это частая ситуация, особенно у привередливых кошек:
-- Если съела больше половины — колите полную дозу
-- Если съела меньше половины — колите половину дозы
-- Если не ела совсем — НЕ колите инсулин, позвоните ветеринару
+Частая ситуация у привередливых кошек. Инсулин действует на съеденную пищу, поэтому неполная еда — это риск гипогликемии:
+- **Съела почти всё** — обычно колют как обычно
+- **Съела заметно меньше обычного** — не решайте дозу сами: позвоните ветеринару. Если связи нет, безопаснее пропустить укол, чем ввести полную дозу на почти пустой желудок
+- **Не ела совсем** — НЕ колите инсулин, свяжитесь с ветеринаром
 
 ### Поездка / отпуск
 
@@ -81,18 +80,17 @@ Textbooks describe an ideal world: feeding on the dot, injections to the minute,
 
 ### Late with the Injection
 
-Long-acting insulin (Lantus, Levemir) forgives 1-2 hour deviations. If you're late:
-- **Up to 2 hours** — inject as normal
-- **2-4 hours** — inject the usual dose, shift the next injection
-- **More than 6 hours** — skip this dose, give the next one on schedule
-- **Never** give a double dose!
+Long-acting insulin (Lantus, Levemir) forgives small deviations. The rule of thumb: **adjusting the dose is your vet's decision, not something to improvise.**
+- **Small delay (~1-2 hours) and your cat has eaten** — the usual dose is typically given; check with your vet if unsure
+- **More time has passed** — don't "make up" the dose or inject a partial amount by guesswork; wait for the next scheduled injection
+- **Never** give a double dose to catch up!
 
 ### Cat Didn't Finish Eating
 
-This is common, especially with picky cats:
-- If she ate more than half — give the full dose
-- If she ate less than half — give half the dose
-- If she didn't eat at all — do NOT inject, call the vet
+Common, especially with picky cats. Insulin acts on the food that was eaten, so a partial meal is a hypoglycemia risk:
+- **Ate almost everything** — the usual dose is typically given
+- **Ate noticeably less than usual** — don't decide the dose yourself: call your vet. If you can't reach them, skipping the dose is safer than a full dose on a nearly empty stomach
+- **Didn't eat at all** — do NOT inject, contact your vet
 
 ### Travel / Vacation
 

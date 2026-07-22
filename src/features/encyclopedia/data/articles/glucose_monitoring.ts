@@ -68,7 +68,7 @@ export const glucoseMonitoring: Article = {
 
 Надир — это **самая низкая точка** сахара в течение цикла. Именно по этому числу ветеринар решает, правильная ли доза инсулина.
 
-**Целевой надир для кошек:** 4.0-8.0 ммоль/л (72-144 мг/дл) по ISFM 2022/2023. Низкий надир в этом диапазоне при отсутствии признаков гипогликемии — признак хорошего контроля и повышает шансы на ремиссию.
+**Целевой надир для кошек:** 4.0-8.0 ммоль/л (72-144 мг/дл) по iCatCare 2025. Низкий надир в этом диапазоне при отсутствии признаков гипогликемии — признак хорошего контроля и повышает шансы на ремиссию.
 
 | Надир | Что это значит | Что делать |
 |---|---|---|
@@ -152,7 +152,7 @@ Don't stress if you can't always do a full curve — even a minimal one gives yo
 
 The nadir is the **lowest blood sugar point** during the cycle. This is the number your vet uses to decide if the insulin dose is right.
 
-**Target nadir for cats:** 4.0-8.0 mmol/L (72-144 mg/dL) per ISFM 2022/2023. A low nadir within this range, with no hypoglycemia signs, indicates good control and improves the chance of remission.
+**Target nadir for cats:** 4.0-8.0 mmol/L (72-144 mg/dL) per iCatCare 2025. A low nadir within this range, with no hypoglycemia signs, indicates good control and improves the chance of remission.
 
 | Nadir | What It Means | What to Do |
 |---|---|---|

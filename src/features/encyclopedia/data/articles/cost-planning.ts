@@ -51,8 +51,8 @@ export const costPlanning: Article = {
 - Ринсулин НПХ — самый бюджетный (500-1000 руб), но менее эффективен для кошек
 
 **Полоски:**
-- **В России:** AlphaTRAK 2 недоступен. Рекомендуем **Contour Plus** (хорошее качество) или **Сателлит Экспресс** (самые дешёвые полоски — 400-600 руб/50 шт, но точность ниже). Помните: человеческие глюкометры занижают результат у кошек (обычно на 10-30%, сильнее при высоком сахаре)
-- За рубежом: AlphaTRAK 2 — точнее, но полоски дороже
+- **В России:** AlphaTRAK (2 и актуальный 3) недоступен. Рекомендуем **Contour Plus** (хорошее качество) или **Сателлит Экспресс** (самые дешёвые полоски — 400-600 руб/50 шт, но точность ниже). Помните: человеческие глюкометры занижают результат у кошек (обычно на 10-30%, сильнее при высоком сахаре)
+- За рубежом: AlphaTRAK 3 (актуальная модель с 2023 года; тест-полоски AlphaTRAK 2 сняты с производства) — точнее, но полоски дороже
 - Покупайте полоски оптом (100 шт = дешевле за штуку)
 - Не тестируйте каждый день, если кошка стабильна (2-3 раза в неделю достаточно)
 - FreeStyle Libre 2 (~5000-7000 руб/сенсор на 14 дней) может быть выгоднее, чем ежедневные полоски при построении кривых
@@ -122,8 +122,8 @@ Diabetes is a long-term expense. But the good news: with proper planning, it's q
 - **In the USA:** NPH insulin (e.g. Walmart ReliOn, ~$25/vial) is the cheapest option, but NPH is **not first-choice for cats** — shorter duration of action and a lower remission rate (~25% vs 50-90% on glargine). Discuss with your vet before switching purely to save money
 
 **Test strips:**
-- **In Russia:** AlphaTRAK 2 is unavailable. Use **Contour Plus** (good quality) or **Satellite Express** (cheapest strips ~400-600 RUB/50 pcs, but less accurate). Note: human glucometers read lower for cats (typically 10-30%, more at high glucose)
-- **In the USA/EU:** AlphaTRAK 2 is the gold standard for pets
+- **In Russia:** AlphaTRAK (2 or the current 3) is unavailable. Use **Contour Plus** (good quality) or **Satellite Express** (cheapest strips ~400-600 RUB/50 pcs, but less accurate). Note: human glucometers read lower for cats (typically 10-30%, more at high glucose)
+- **In the USA/EU:** AlphaTRAK 3 (current model since 2023; AlphaTRAK 2 test strips have been discontinued) is the gold standard for pets
 - Buy strips in bulk (100 pcs = cheaper per strip)
 - Don't test every day if the cat is stable (2-3 times per week is enough)
 - FreeStyle Libre 2 sensor (14-day wear) may be more economical than daily strips when building glucose curves
