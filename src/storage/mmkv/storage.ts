@@ -189,6 +189,10 @@ export const StorageKeys = {
   EVENT_HINTS_SHOWN_IDS: 'eventHintsShownIds',
   /** v2.6 community: preferred chat display name (nickname). */
   COMMUNITY_DISPLAY_NAME: 'communityDisplayName',
+  /** Set once the user first opens the Encyclopedia tab (or taps its hint
+   * bubble). While unset, a gentle "browse the encyclopedia" bubble floats over
+   * the Encyclopedia tab. See navigation/components/EncyclopediaTabHint. */
+  ENCYCLOPEDIA_HINT_SEEN: 'encyclopediaHintSeen',
 } as const;
 
 /** Per-(target-lang, hash) cache key for on-demand message translation

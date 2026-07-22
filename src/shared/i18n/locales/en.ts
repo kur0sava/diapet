@@ -465,6 +465,7 @@ export const en = {
   encyclopedia: {
     title: 'Encyclopedia',
     subtitle: 'Everything about pet diabetes',
+    tabHint: 'Browse the encyclopedia 📖',
     articles: 'Articles',
     readMore: 'Read more',
     minutesRead: 'min read',

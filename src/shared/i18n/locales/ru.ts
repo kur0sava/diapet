@@ -466,6 +466,7 @@ export const ru = {
   encyclopedia: {
     title: 'Энциклопедия',
     subtitle: 'Всё о диабете питомцев',
+    tabHint: 'Загляните в энциклопедию 📖',
     articles: 'Статьи',
     readMore: 'Читать далее',
     minutesRead: 'мин. чтения',

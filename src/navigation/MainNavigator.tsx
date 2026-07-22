@@ -1,6 +1,8 @@
 import React from 'react';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { View } from 'react-native';
+import { createBottomTabNavigator, BottomTabBar } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { EncyclopediaTabHint } from './components/EncyclopediaTabHint';
 import { useTheme } from '@shared/theme';
 import { useTranslation } from 'react-i18next';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -337,6 +339,12 @@ export default function MainNavigator() {
 
   return (
     <Tab.Navigator
+      tabBar={props => (
+        <View style={{ position: 'relative' }}>
+          <BottomTabBar {...props} />
+          <EncyclopediaTabHint {...props} />
+        </View>
+      )}
       screenOptions={({ route }) => ({
         headerShown: false,
         tabBarStyle: {
