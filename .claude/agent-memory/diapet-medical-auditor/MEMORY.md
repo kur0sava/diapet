@@ -116,6 +116,24 @@ Every audit so far has found at least one drift between them. Always diff these 
   ketone/DKA/remission/pancreatitis numeric thresholds across cat+dog articles, region unit defaults,
   weight kg/lb conversion. tsc 0 errors, jest 170/171 passed (1 pre-existing skip) incl. 6 new tests added
   for severityCalculator.ts red-flag logic.
+- **Batch 10 (2026-07-22)**: nutrition+treatment encyclopedia audit, 10 new articles — cat/dog-foods-to-avoid,
+  cat/dog-reading-food-labels, cat/dog-home-diet, cat/dog-insulin-brands, insulin-storage, insulin-syringes-u40-u100.
+  RESULT: clean batch, zero edits needed (all claims cross-checked and matched canonical pre-existing sources —
+  diet.ts/dog-diet.ts for macro thresholds, DIABETIC_NUTRITION_GUIDELINES_CAT/DOG in diabeticFoods.ts for numeric
+  targets, calculateDryMatter.ts for the NFE formula, insulin_types.ts/dog-insulin.ts for insulin-storage's shelf-life
+  claims and the Levemir-being-phased-out claim). Notably insulin-syringes-u40-u100.ts and insulin-storage.ts
+  (species:'all') are exemplary safety writing — explicitly refuse to give a home dose-conversion formula between
+  U-40/U-100, and explicitly warn against raising insulin dose to "push through" high sugar before checking for a
+  bad/expired vial first. Insulin-brand facts (ProZinc FDA-approved for dogs since 2019 too, Vetsulin=primarily
+  canine-labeled in US, Caninsulin cascade-registered EU/UK, RinGlar/Ринсулин НПХ Геропарм as RU off-label base,
+  AMDUCA/cascade regulatory framing) all check out and are internally consistent with insulin_types.ts/dog-insulin.ts.
+  One evidence-level nuance (not a fix, just noted): cat-foods-to-avoid.ts says xylitol is "deadly to dogs; keep it
+  away from cats too" — feline xylitol toxicosis is much less documented in vet toxicology literature than canine
+  (dogs get rapid insulin release + hypoglycemia + hepatic necrosis; the same beta-cell response in cats is not well
+  established) but the article correctly does NOT claim an established feline mechanism, it just recommends
+  avoidance — appropriately hedged, no correction needed. Confirms the Batch 9 pattern: this codebase's newer
+  articles are consistently being drafted from the older vetted articles as templates, so cross-referencing
+  existing canonical articles is the fastest and most reliable validation technique.
 - **Batch 9 (2026-07-22)**: narrative "basics"/"remission" encyclopedia audit (not calculators) — 9 new
   articles: cat-life-expectancy, cat-why-diabetes, cat-diabetes-myths, dog-life-expectancy, dog-why-diabetes,
   dog-insulin-explained, cat-remission-signs, cat-no-remission, dog-remission. Result: clean batch, only 1

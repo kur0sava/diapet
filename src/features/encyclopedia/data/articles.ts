@@ -27,6 +27,10 @@ import { dentalDisease } from './articles/dental-disease';
 import { glucoseCurvesPractice } from './articles/glucose-curves-practice';
 import { costPlanning } from './articles/cost-planning';
 import { choosingVet } from './articles/choosing-vet';
+import { catFoodsToAvoid } from './articles/cat-foods-to-avoid';
+import { catReadingFoodLabels } from './articles/cat-reading-food-labels';
+import { catHomeDiet } from './articles/cat-home-diet';
+import { catInsulinBrands } from './articles/cat-insulin-brands';
 import { dogDiabetesBasics } from './articles/dog-diabetes-basics';
 import { dogLifeExpectancy } from './articles/dog-life-expectancy';
 import { dogWhyDiabetes } from './articles/dog-why-diabetes';
@@ -50,6 +54,12 @@ import { dogSpayDiestrus } from './articles/dog-spay-diestrus';
 import { dogRealLife } from './articles/dog-real-life';
 import { dogChoosingVet } from './articles/dog-choosing-vet';
 import { dogCostPlanning } from './articles/dog-cost-planning';
+import { dogFoodsToAvoid } from './articles/dog-foods-to-avoid';
+import { dogReadingFoodLabels } from './articles/dog-reading-food-labels';
+import { dogHomeDiet } from './articles/dog-home-diet';
+import { dogInsulinBrands } from './articles/dog-insulin-brands';
+import { insulinStorage } from './articles/insulin-storage';
+import { insulinSyringesU40U100 } from './articles/insulin-syringes-u40-u100';
 
 export const articles: Article[] = [
   whatIsDiabetes,
@@ -79,6 +89,10 @@ export const articles: Article[] = [
   glucoseCurvesPractice,
   costPlanning,
   choosingVet,
+  catFoodsToAvoid,
+  catReadingFoodLabels,
+  catHomeDiet,
+  catInsulinBrands,
   // Dog-specific articles
   dogDiabetesBasics,
   dogLifeExpectancy,
@@ -103,4 +117,11 @@ export const articles: Article[] = [
   dogRealLife,
   dogChoosingVet,
   dogCostPlanning,
+  dogFoodsToAvoid,
+  dogReadingFoodLabels,
+  dogHomeDiet,
+  dogInsulinBrands,
+  // Universal (both species) articles
+  insulinStorage,
+  insulinSyringesU40U100,
 ];
