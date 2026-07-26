@@ -93,6 +93,7 @@ import {
   Footprints,
   BedDouble,
   Ban,
+  PersonStanding,
   Cloud,
   CloudUpload,
   CloudDownload,
@@ -313,6 +314,9 @@ const ICON_MAP: Record<string, LucideIcon> = {
   'bed-outline': BedDouble,
   bed: BedDouble,
   ban: Ban,
+  // Ataxia symptom — Ionicons' accessibility figure; PersonStanding is the
+  // closest Lucide body-coordination glyph (was unmapped → empty icon slot).
+  'accessibility-outline': PersonStanding,
   'ellipsis-vertical': MoreVertical,
   'scale-outline': Scale,
   'barbell-outline': Dumbbell,
