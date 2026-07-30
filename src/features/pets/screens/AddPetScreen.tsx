@@ -24,7 +24,7 @@ import { storage, StorageKeys, vetNameKey, vetPhoneKey } from '@storage/mmkv/sto
 import { getSpeciesConfig } from '@shared/config/speciesConfig';
 import type { PetSpecies } from '@storage/domain/types';
 import { MAX_SCHEDULE_TIMES } from '@storage/domain/types';
-import { toDateOnly } from '@shared/utils/dateUtils';
+import { toDateOnly, formatFullDateLocal } from '@shared/utils/dateUtils';
 import { WeightUnitToggle } from '@shared/components/WeightUnitToggle';
 import {
   getWeightUnit,
@@ -497,7 +497,7 @@ export default function AddPetScreen() {
               padding: 14,
             }}
           >
-            {diagnosisDate ? diagnosisDate.toLocaleDateString() : t('onboarding.diagnosisDate')}
+            {diagnosisDate ? formatFullDateLocal(diagnosisDate) : t('onboarding.diagnosisDate')}
           </Text>
         </TouchableOpacity>
         {showDatePicker && (

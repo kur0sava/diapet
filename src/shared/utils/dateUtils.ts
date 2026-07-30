@@ -85,6 +85,20 @@ export function formatFullDate(dateStr: string): string {
   }
 }
 
+/**
+ * Format a Date object as a full date in the APP's language.
+ *
+ * BUG-M009 class: `Date#toLocaleDateString()` honors the DEVICE locale, not the
+ * in-app language switch — a RU user with an EN-locale phone saw `7/30/2026` on
+ * the diagnosis-date button next to `30.07.2026` everywhere else. Use this for
+ * Date values and `formatFullDate` for ISO strings; never `toLocaleDateString()`
+ * without an explicit locale argument.
+ */
+export function formatFullDateLocal(date: Date): string {
+  if (isNaN(date.getTime())) return '';
+  return formatFullDate(toDateOnly(date));
+}
+
 export function formatFullDateTime(dateStr: string): string {
   try {
     const locale = getLocale();

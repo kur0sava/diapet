@@ -26,6 +26,7 @@ import { glucoseRepository } from '@storage/database';
 import { Card, ScreenHeader } from '@shared/components/ui';
 import { useSubscription } from '@features/subscription/hooks/useSubscription';
 import { useRootNavigation } from '@navigation/hooks';
+import { formatFullDateTime } from '@shared/utils/dateUtils';
 import { isAiFeatureVisible } from '@shared/config/runtimeConfig';
 import { isAiConfigured } from '@features/hints/utils/aiClient';
 
@@ -386,7 +387,8 @@ export default function AdvancedAnalyticsScreen() {
             {/* Last updated */}
             {prediction?.generatedAt && (
               <Text style={[styles.lastUpdated, { color: theme.colors.textTertiary }]}>
-                {t('prediction.lastUpdated')}: {new Date(prediction.generatedAt).toLocaleString()}
+                {/* App language, not device locale (BUG-M009 class). */}
+                {t('prediction.lastUpdated')}: {formatFullDateTime(prediction.generatedAt)}
               </Text>
             )}
           </>

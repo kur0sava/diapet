@@ -33,6 +33,7 @@ import {
 import { getStoresForRegion } from '../data/regionStores';
 import type { StoreEntry } from '../types';
 import { usePetStore } from '@shared/stores/petStore';
+import { formatFullDate } from '@shared/utils/dateUtils';
 
 type FilterType = 'all' | 'wet' | 'dry';
 
@@ -115,7 +116,8 @@ export default function FeedGuideRegionScreen() {
   const catalogDate = useMemo(() => {
     const iso = getFoodCatalog().generatedAt;
     const d = new Date(iso);
-    return isNaN(d.getTime()) ? '' : d.toLocaleDateString();
+    // In-app language, not device locale (BUG-M009 class).
+    return isNaN(d.getTime()) ? '' : formatFullDate(iso);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [catalogVersion]);
 

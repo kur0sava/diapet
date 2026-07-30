@@ -17,7 +17,7 @@ import type { PetSpecies } from '@storage/domain/types';
 import { getSpeciesConfig } from '@shared/config/speciesConfig';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { storage, StorageKeys } from '@storage/mmkv/storage';
-import { parseDateOnly, toDateOnly } from '@shared/utils/dateUtils';
+import { parseDateOnly, toDateOnly, formatFullDateLocal } from '@shared/utils/dateUtils';
 import { WeightUnitToggle } from '@shared/components/WeightUnitToggle';
 import {
   getWeightUnit,
@@ -315,7 +315,7 @@ export default function PetInfoScreen() {
                   }}
                 >
                   {diagnosisDate
-                    ? diagnosisDate.toLocaleDateString()
+                    ? formatFullDateLocal(diagnosisDate)
                     : t('onboarding.diagnosisDate')}
                 </Text>
               </TouchableOpacity>

@@ -11,6 +11,7 @@ import type { IoniconName } from '@shared/components/ui';
 import { storageUtils, StorageKeys } from '@storage/mmkv/storage';
 import { usePetStore } from '@shared/stores/petStore';
 import { getFoodCatalog } from '../data/foodCatalog';
+import { formatFullDate } from '@shared/utils/dateUtils';
 
 const useLang = () => {
   const { i18n } = useTranslation();
@@ -41,8 +42,11 @@ export default function ArticleListScreen() {
   // "Updated <date>" on the feed-guide banner signals the food catalog is
   // maintained (remote-refreshed), not frozen in the APK.
   const catalogDate = (() => {
-    const d = new Date(getFoodCatalog().generatedAt);
-    return isNaN(d.getTime()) ? '' : d.toLocaleDateString();
+    // formatFullDate follows the in-app language; toLocaleDateString() followed
+    // the device locale (BUG-M009 class) and disagreed with the rest of the UI.
+    const iso = getFoodCatalog().generatedAt;
+    const d = new Date(iso);
+    return isNaN(d.getTime()) ? '' : formatFullDate(iso);
   })();
   const bookmarkedIds = showBookmarks
     ? (storageUtils.getObject<string[]>(StorageKeys.BOOKMARKED_ARTICLES) ?? [])

@@ -22,7 +22,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { queryKeys } from '@shared/utils/queryKeys';
 import { MAX_SCHEDULE_TIMES } from '@storage/domain/types';
 import type { PetGender, DiabetesType } from '@storage/domain/types';
-import { toDateOnly } from '@shared/utils/dateUtils';
+import { toDateOnly, formatFullDateLocal } from '@shared/utils/dateUtils';
 import { getSpeciesConfig } from '@shared/config/speciesConfig';
 import { WeightUnitToggle } from '@shared/components/WeightUnitToggle';
 import {
@@ -483,7 +483,7 @@ export default function EditPetScreen() {
                   padding: 14,
                 }}
               >
-                {diagnosisDate ? diagnosisDate.toLocaleDateString() : t('onboarding.diagnosisDate')}
+                {diagnosisDate ? formatFullDateLocal(diagnosisDate) : t('onboarding.diagnosisDate')}
               </Text>
             </TouchableOpacity>
             {showDatePicker && (
