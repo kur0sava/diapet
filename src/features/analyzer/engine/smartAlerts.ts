@@ -2,8 +2,8 @@
  * Smart Alerts — contextual notifications based on analyzer data.
  * Throttled: max 1 alert/day, no repeat of same type for 7 days.
  */
-import { storage } from '@storage/mmkv/storage';
-import { GlucoseReading } from '@storage/domain/types';
+import { storage, StorageKeys } from '@storage/mmkv/storage';
+import { GlucoseReading, mmolToMgdl } from '@storage/domain/types';
 import { todayLocal, toDateOnly } from '@shared/utils/dateUtils';
 import type { SpeciesConfig } from '@shared/config/speciesConfig';
 import { TrendResult } from './trendEngine';
@@ -120,6 +120,22 @@ function markFired(type: AlertType, now: Date): void {
 }
 
 /**
+ * Render a mmol/L threshold in the unit the user actually reads.
+ *
+ * Thresholds live in mmol/L internally, but the alert text used to print
+ * "below 4.4 mmol/L" even for a mg/dL user (the US region default) — every
+ * other number on their screen is mg/dL, so the threshold read like a data
+ * error and could be misjudged against their own readings.
+ */
+function formatThreshold(valueMmol: number, lang: 'ru' | 'en'): string {
+  const isMgdl = storage.getString(StorageKeys.GLUCOSE_UNIT) === 'mg/dL';
+  if (isMgdl) {
+    return `${mmolToMgdl(valueMmol)} ${lang === 'ru' ? 'мг/дл' : 'mg/dL'}`;
+  }
+  return `${valueMmol} ${lang === 'ru' ? 'ммоль/л' : 'mmol/L'}`;
+}
+
+/**
  * C21: Generate contextual alerts based on analyzer results.
  */
 export function generateSmartAlerts(
@@ -147,8 +163,8 @@ export function generateSmartAlerts(
       type: 'glucose_low_streak',
       titleRu: 'Низкий уровень глюкозы',
       titleEn: 'Low glucose level',
-      bodyRu: `Средняя глюкоза за 3 дня ниже ${lowStreakThreshold} ммоль/л — возможно, доза высока. Обсудите с ветеринаром.`,
-      bodyEn: `3-day glucose average below ${lowStreakThreshold} mmol/L — dose may be too high. Discuss with your vet.`,
+      bodyRu: `Средняя глюкоза за 3 дня ниже ${formatThreshold(lowStreakThreshold, 'ru')} — возможно, доза высока. Обсудите с ветеринаром.`,
+      bodyEn: `3-day glucose average below ${formatThreshold(lowStreakThreshold, 'en')} — dose may be too high. Discuss with your vet.`,
       priority: 'high',
     });
   }

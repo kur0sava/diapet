@@ -17,17 +17,23 @@ interface Props {
 
 function getPriorityColor(priority: SmartAlert['priority'], theme: Theme): string {
   switch (priority) {
-    case 'high': return theme.colors.danger;
-    case 'medium': return theme.colors.warning;
-    case 'low': return theme.colors.success;
+    case 'high':
+      return theme.colors.danger;
+    case 'medium':
+      return theme.colors.warning;
+    case 'low':
+      return theme.colors.success;
   }
 }
 
 function getPriorityIcon(priority: SmartAlert['priority']): string {
   switch (priority) {
-    case 'high': return 'alert-circle';
-    case 'medium': return 'information-circle';
-    case 'low': return 'checkmark-circle';
+    case 'high':
+      return 'alert-circle';
+    case 'medium':
+      return 'information-circle';
+    case 'low':
+      return 'checkmark-circle';
   }
 }
 
@@ -60,10 +66,20 @@ export function SmartInsightCard({ alert, onPress }: Props) {
           <Icon name={getPriorityIcon(alert.priority)} size={20} color={color} />
         </View>
         <View style={styles.textCol}>
-          <Text style={[styles.title, { color: theme.colors.text, fontFamily: theme.fonts.semibold }]} numberOfLines={1}>
+          <Text
+            style={[styles.title, { color: theme.colors.text, fontFamily: theme.fonts.semibold }]}
+            numberOfLines={1}
+          >
             {title}
           </Text>
-          <Text style={[styles.body, { color: theme.colors.textSecondary }]} numberOfLines={2}>
+          {/* numberOfLines was 2, which clipped the longest (and highest
+              priority) alert exactly on its safety instruction: the low-streak
+              body is ~90 chars and fits ~37/line here, so «Обсудите с
+              ветеринаром» / «Discuss with your vet» was cut off — and on the
+              Analyzer screen this card is rendered without onPress, so there
+              was nowhere to tap to read the rest. 4 lines covers every alert
+              body in both languages, including large font scales. */}
+          <Text style={[styles.body, { color: theme.colors.textSecondary }]} numberOfLines={4}>
             {body}
           </Text>
         </View>
@@ -82,7 +98,13 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     borderLeftWidth: 3,
   },
-  iconCircle: { width: 36, height: 36, borderRadius: 18, alignItems: 'center', justifyContent: 'center' },
+  iconCircle: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   textCol: { flex: 1, gap: 2 },
   title: { fontSize: 14 },
   body: { fontSize: 12, lineHeight: 17 },
