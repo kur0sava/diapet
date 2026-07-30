@@ -40,14 +40,27 @@ function mapAuthError(error: unknown, t: TFunction): string {
       return t('auth.errEmailInUse');
     case 'auth/weak-password':
       return t('auth.errWeakPassword');
+    // invalid-credential / invalid-login-credentials are what Firebase returns
+    // instead of wrong-password/user-not-found when email enumeration
+    // protection is on — unmapped, the user got the raw English
+    // "Firebase: Error (auth/invalid-login-credentials)." string.
     case 'auth/wrong-password':
     case 'auth/user-not-found':
     case 'auth/invalid-credential':
+    case 'auth/invalid-login-credentials':
+    case 'auth/missing-password':
       return t('auth.errWrongCredentials');
     case 'auth/too-many-requests':
       return t('auth.errTooManyRequests');
     case 'auth/network-request-failed':
       return t('auth.errNetwork');
+    case 'auth/user-disabled':
+      return t('auth.errUserDisabled');
+    // The Email/Password provider is not enabled in the Firebase console. This
+    // is exactly what the FIRST real registration returns if the provider was
+    // never switched on, so it must not surface as a raw SDK string.
+    case 'auth/operation-not-allowed':
+      return t('auth.errEmailAuthDisabled');
     default:
       return error instanceof Error ? error.message : t('common.error');
   }
@@ -80,13 +93,22 @@ export default function AccountScreen() {
   const [formError, setFormError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (firebaseUid) {
-      hasCloudBackup(firebaseUid)
-        .then(({ exists, date }) => {
-          if (exists && date) setBackupDate(date);
-        })
-        .catch(() => {});
-    }
+    // Clear FIRST: the date belongs to the previous uid. The branch below only
+    // writes when a backup exists, so signing out and into another account
+    // (or one with no backup) used to keep showing the previous account's
+    // "last backup" date. `cancelled` also prevents a slow response for an old
+    // uid from landing after a newer one.
+    setBackupDate(null);
+    if (!firebaseUid) return;
+    let cancelled = false;
+    hasCloudBackup(firebaseUid)
+      .then(({ exists, date }) => {
+        if (!cancelled && exists && date) setBackupDate(date);
+      })
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
   }, [firebaseUid]);
 
   const handleSignIn = async () => {

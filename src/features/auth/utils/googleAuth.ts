@@ -37,11 +37,15 @@ export async function signInWithGoogle(): Promise<GoogleUser> {
 }
 
 export async function signOutGoogle(): Promise<void> {
-  configureGoogleSignIn();
+  // configure() is inside the try on purpose: sign-out must never be able to
+  // throw. An email-provider user on a device without Google services has no
+  // Google session to drop, and a throw here used to abort the whole signOut
+  // flow before Firebase sign-out and state clearing (authStore).
   try {
+    configureGoogleSignIn();
     await GoogleSignin.signOut();
   } catch {
-    // Already signed out
+    // Already signed out, or Google services unavailable
   }
 }
 

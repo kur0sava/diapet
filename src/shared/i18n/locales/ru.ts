@@ -1134,6 +1134,8 @@ export const ru = {
     errWeakPassword: 'Слишком простой пароль',
     errTooManyRequests: 'Слишком много попыток. Попробуйте позже',
     errNetwork: 'Нет соединения. Проверьте интернет',
+    errUserDisabled: 'Этот аккаунт отключён',
+    errEmailAuthDisabled: 'Вход по почте временно недоступен. Попробуйте вход через Google',
     signOut: 'Выйти',
     signOutConfirm: 'Выйти из аккаунта?',
     signOutWarning: 'Локальные данные останутся на устройстве',

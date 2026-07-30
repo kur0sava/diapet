@@ -1130,6 +1130,8 @@ export const en = {
     errWeakPassword: 'Password is too weak',
     errTooManyRequests: 'Too many attempts. Try again later',
     errNetwork: 'No connection. Check your internet',
+    errUserDisabled: 'This account has been disabled',
+    errEmailAuthDisabled: 'Email sign-in is temporarily unavailable. Try Google sign-in',
     signOut: 'Sign out',
     signOutConfirm: 'Sign out?',
     signOutWarning: 'Local data will remain on this device',

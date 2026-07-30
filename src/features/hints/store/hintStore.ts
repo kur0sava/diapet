@@ -33,6 +33,12 @@ interface HintState {
 interface HintActions {
   showHint: (hint: Hint) => void;
   dismissHint: () => void;
+  /** Close the card AND drop anything queued. Used when the user leaves the
+   *  hint surface on purpose (e.g. tapping «Подробнее» to open an article):
+   *  plain dismissHint() would promote the next queued hint and pop it on top
+   *  of the screen they just navigated to. Queued hints are already recorded as
+   *  shown by the engine, so dropping them loses nothing persistent. */
+  dismissAllHints: () => void;
   showAchievementById: (id: string) => void;
   dismissAchievement: () => void;
 }
@@ -63,6 +69,7 @@ export const useHintStore = create<HintState & HintActions>((set, get) => ({
       set({ currentHint: next, pendingHints: rest });
     }
   },
+  dismissAllHints: () => set({ currentHint: null, pendingHints: [] }),
   showAchievementById: id => {
     const { currentAchievementId, pendingAchievements } = get();
     if (currentAchievementId === id || pendingAchievements.includes(id)) return;

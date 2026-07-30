@@ -52,7 +52,7 @@ const AUTO_DISMISS_MS = 25_000;
 // ---------------------------------------------------------------------------
 
 export function HintCard() {
-  const { currentHint, dismissHint } = useHintStore();
+  const { currentHint, dismissHint, dismissAllHints } = useHintStore();
   const { t } = useTranslation();
   const { theme } = useTheme();
   const insets = useSafeAreaInsets();
@@ -81,7 +81,9 @@ export function HintCard() {
   const articleId = currentHint.articleId;
 
   const openArticle = () => {
-    dismissHint();
+    // dismissAllHints, not dismissHint: the latter promotes the next queued
+    // hint, which then popped up on top of the article the user just opened.
+    dismissAllHints();
     if (articleId) navigateToArticle(articleId);
   };
 

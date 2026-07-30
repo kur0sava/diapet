@@ -291,6 +291,23 @@ describe('sign out and provider transitions', () => {
     expect(mockFb.firebaseSignOutUser).toHaveBeenCalled();
   });
 
+  it('signOut clears the email session even if the Google sign-out throws', async () => {
+    // Device without Google Play services (RuStore audience): anything thrown
+    // on the Google path must not leave an email user shown as signed in with
+    // no way back to the sign-in form.
+    mockFb.firebaseSignInWithEmail.mockResolvedValue({ uid: 'u1', email: 'a@b.com' });
+    await useAuthStore.getState().signInWithEmail('a@b.com', 'secret1');
+    mockG.signOutGoogle.mockRejectedValue(new Error('no play services'));
+
+    await expect(useAuthStore.getState().signOut()).rejects.toThrow();
+
+    const st = useAuthStore.getState();
+    expect(st.user).toBeNull();
+    expect(st.firebaseUid).toBeNull();
+    expect(readCache()).toBeNull();
+    expect(st.loading).toBe(false);
+  });
+
   it('switching google -> email overwrites cached provider', async () => {
     mockG.signInWithGoogle.mockResolvedValue({
       id: 'g1',

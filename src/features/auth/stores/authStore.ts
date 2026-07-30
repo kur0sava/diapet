@@ -175,11 +175,14 @@ export const useAuthStore = create<AuthState>(set => ({
   signOut: async () => {
     set({ loading: true });
     try {
-      await signOutGoogle();
-      await firebaseSignOutUser();
+      // Clear local session FIRST. Both provider sign-outs swallow their own
+      // errors, but the order still mattered: anything unexpected thrown while
+      // talking to Google (no Play services on the device — the RuStore
+      // audience) left an email user shown as signed in with no way out.
       set({ user: null, firebaseUid: null });
-      const storage = getStorage();
-      storage.delete(StorageKeys.AUTH_USER);
+      getStorage().delete(StorageKeys.AUTH_USER);
+      await firebaseSignOutUser();
+      await signOutGoogle();
     } finally {
       set({ loading: false });
     }
