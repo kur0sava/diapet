@@ -479,6 +479,10 @@ export const ru = {
     bookmarks: 'Закладки',
     references: 'Источники',
     relatedArticles: 'Связанные статьи',
+    noResults: 'Ничего не найдено',
+    noResultsHint: 'Попробуйте другое слово или сбросьте фильтр категории.',
+    noBookmarks: 'Пока нет закладок',
+    noBookmarksHint: 'Откройте статью и нажмите ★, чтобы сохранить её здесь.',
     categories: {
       basics: 'Основы',
       treatment: 'Лечение',

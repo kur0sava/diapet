@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity, TextInput } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useEncyclopediaNavigation } from '@navigation/hooks';
@@ -31,7 +31,7 @@ const CATEGORY_ICONS: Record<ArticleCategory, { name: IoniconName; color: string
 
 export default function ArticleListScreen() {
   const navigation = useEncyclopediaNavigation();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { theme } = useTheme();
   const lang = useLang();
   const [search, setSearch] = useState('');
@@ -64,15 +64,43 @@ export default function ArticleListScreen() {
     a => !a.species || a.species === 'all' || a.species === species
   );
 
-  const filtered = speciesArticles.filter(a => {
-    const matchSearch =
-      search === '' ||
-      lang(a.titleKey).toLowerCase().includes(search.toLowerCase()) ||
-      lang(a.summaryKey).toLowerCase().includes(search.toLowerCase());
+  /**
+   * Search index, rebuilt only when the language changes.
+   *
+   * Searching title+summary alone left most of the corpus unreachable: the card
+   * shows tags like "#мёд" / "#ленте" that the search itself could not match
+   * (154 of 270 tags did not find their own article), so real owner queries
+   * ("мёд", "рвота", "вес") returned nothing even though the content covers them.
+   *
+   * `meta` (title + summary + tags) is the precise pass. `body` (full article
+   * text) is only consulted when the precise pass finds nothing — that keeps
+   * normal results clean while making sure a word that IS in the encyclopedia
+   * never yields an empty screen.
+   */
+  const searchIndex = useMemo(() => {
+    const pick = (x: BilingualText) => x[i18n.language as 'ru' | 'en'] ?? x.en;
+    const idx = new Map<string, { meta: string; body: string }>();
+    for (const a of articles) {
+      idx.set(a.id, {
+        meta: `${pick(a.titleKey)} ${pick(a.summaryKey)} ${a.tags.map(pick).join(' ')}`.toLowerCase(),
+        body: pick(a.contentKey).toLowerCase(),
+      });
+    }
+    return idx;
+  }, [i18n.language]);
+
+  const query = search.trim().toLowerCase();
+  const scoped = speciesArticles.filter(a => {
     const matchCategory = !selectedCategory || a.category === selectedCategory;
     const matchBookmark = !showBookmarks || bookmarkedIds.includes(a.id);
-    return matchSearch && matchCategory && matchBookmark;
+    return matchCategory && matchBookmark;
   });
+  const metaHits =
+    query === '' ? scoped : scoped.filter(a => searchIndex.get(a.id)?.meta.includes(query));
+  const filtered =
+    query !== '' && metaHits.length === 0
+      ? scoped.filter(a => searchIndex.get(a.id)?.body.includes(query))
+      : metaHits;
 
   const categories = [...new Set(speciesArticles.map(a => a.category))] as ArticleCategory[];
 
@@ -254,6 +282,28 @@ export default function ArticleListScreen() {
             <Icon name="chevron-forward" size={20} color="rgba(255,255,255,0.7)" />
           </TouchableOpacity>
         }
+        ListEmptyComponent={
+          // Every other list in the app explains itself when empty; this one
+          // used to leave a blank area under the banner with no hint that the
+          // search/bookmark filter was the reason.
+          <View style={styles.empty}>
+            <Icon
+              name={showBookmarks && query === '' ? 'star-outline' : 'search-outline'}
+              size={32}
+              color={theme.colors.textTertiary}
+            />
+            <Text style={[styles.emptyTitle, { color: theme.colors.text }]}>
+              {showBookmarks && query === ''
+                ? t('encyclopedia.noBookmarks')
+                : t('encyclopedia.noResults')}
+            </Text>
+            <Text style={[styles.emptyHint, { color: theme.colors.textSecondary }]}>
+              {showBookmarks && query === ''
+                ? t('encyclopedia.noBookmarksHint')
+                : t('encyclopedia.noResultsHint')}
+            </Text>
+          </View>
+        }
       />
     </SafeAreaView>
   );
@@ -299,6 +349,9 @@ const styles = StyleSheet.create({
   readTime: { fontSize: 12, flexShrink: 0 },
   articleTitle: { fontSize: 17, fontWeight: '700', lineHeight: 24 },
   articleSummary: { fontSize: 14, lineHeight: 20 },
+  empty: { alignItems: 'center', paddingTop: 32, paddingHorizontal: 24, gap: 8 },
+  emptyTitle: { fontSize: 16, fontWeight: '700', textAlign: 'center' },
+  emptyHint: { fontSize: 13, lineHeight: 19, textAlign: 'center' },
   tags: { flexDirection: 'row', flexWrap: 'wrap', gap: 6 },
   tag: { paddingHorizontal: 8, paddingVertical: 3, borderRadius: 8 },
   tagText: { fontSize: 12 },

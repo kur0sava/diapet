@@ -479,6 +479,10 @@ export const en = {
     bookmarks: 'Bookmarks',
     references: 'References',
     relatedArticles: 'Related Articles',
+    noResults: 'Nothing found',
+    noResultsHint: 'Try another word or clear the category filter.',
+    noBookmarks: 'No bookmarks yet',
+    noBookmarksHint: 'Open an article and tap ★ to save it here.',
     categories: {
       basics: 'Basics',
       treatment: 'Treatment',
