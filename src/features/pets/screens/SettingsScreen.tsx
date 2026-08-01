@@ -26,7 +26,7 @@ import { queryKeys } from '@shared/utils/queryKeys';
 import Constants from 'expo-constants';
 import { CommonActions } from '@react-navigation/native';
 import { isAnalyticsEnabled, setAnalyticsOptOut } from '@shared/analytics/analytics';
-import { PRIVACY_POLICY_URL, TERMS_OF_SERVICE_URL } from '@shared/config/legal';
+import { PRIVACY_POLICY_URL, TERMS_OF_SERVICE_URL, SUPPORT_EMAIL } from '@shared/config/legal';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import {
   useNotifications,
@@ -95,6 +95,20 @@ export default function SettingsScreen() {
     if (glucoseReminderEnabled) {
       await scheduleGlucoseReminders().catch(() => {});
     }
+  };
+
+  // Until now the only way to report a problem was a store review, which is a
+  // terrible first contact for a medical-adjacent app. Version and platform go
+  // in the body so a report arrives with the context needed to act on it.
+  const handleContactSupport = () => {
+    const version = Constants.expoConfig?.version ?? '?';
+    const subject = `DiaPet ${version} — ${t('settings.contactUs')}`;
+    const body = `\n\n---\nDiaPet ${version} · ${Platform.OS} ${Platform.Version}`;
+    const url = `mailto:${SUPPORT_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    Linking.openURL(url).catch(() => {
+      // No mail client configured — the address alone is still actionable.
+      Alert.alert(t('settings.contactUs'), SUPPORT_EMAIL);
+    });
   };
 
   const handleDeleteAllData = () => {
@@ -459,6 +473,20 @@ export default function SettingsScreen() {
           </View>
           <Text style={[styles.hintDesc, { color: theme.colors.textTertiary }]}>
             {t('settings.hintsDescription')}
+          </Text>
+        </Card>
+        <Text style={[styles.sectionHeader, { color: theme.colors.textSecondary }]}>
+          {t('settings.supportSection')}
+        </Text>
+        <Card style={styles.card}>
+          <TouchableOpacity style={styles.legalRow} onPress={handleContactSupport}>
+            <Icon name="mail-outline" size={18} color={theme.colors.textSecondary} />
+            <Text style={[styles.legalLink, { color: theme.colors.primary }]}>
+              {t('settings.contactUs')}
+            </Text>
+          </TouchableOpacity>
+          <Text style={[styles.hintDesc, { color: theme.colors.textTertiary }]}>
+            {t('settings.contactUsDesc')}
           </Text>
         </Card>
         <Text style={[styles.sectionHeader, { color: theme.colors.textSecondary }]}>

@@ -13,6 +13,7 @@ import { closeDatabase } from '@storage/database/database';
 import { initStorage, storage, StorageKeys, vetNameKey } from '@storage/mmkv/storage';
 import { __resetAllMmkvStores } from '../test/mocks/mmkvMock';
 import { runStartupRecovery } from '@core/startupRecovery';
+import { skipOnboardingToBrowse } from '@features/onboarding/utils/skipOnboarding';
 
 async function agePet(petId: string, ageMs: number): Promise<void> {
   const db = await getDatabase();
@@ -117,5 +118,37 @@ describe('startup recovery (BUG-C001)', () => {
 
     expect((await petRepository.findActive()).length).toBe(1);
     expect(storage.getString(StorageKeys.ACTIVE_PET_ID)).toBe(pet.id);
+  });
+
+  it('keeps a pet added after the user skipped onboarding to browse', async () => {
+    // The browse path must commit ONBOARDING_COMPLETE. If it only navigated
+    // away, AddPetScreen (which deliberately never touches the flag) would
+    // leave a minutes-old pet looking exactly like an onboarding orphan, and
+    // the next cold start would delete it along with everything logged for it.
+    skipOnboardingToBrowse();
+    const pet = await petRepository.create({ name: 'Барсик', species: 'cat', gender: 'male' });
+    const reading = await glucoseRepository.create({
+      petId: pet.id,
+      value: 9.1,
+      unit: 'mmol/L',
+      mealRelation: 'fasting',
+      recordedAt: new Date().toISOString(),
+    });
+
+    await runStartupRecovery();
+
+    expect((await petRepository.findActive()).map(p => p.id)).toEqual([pet.id]);
+    expect(await glucoseRepository.findById(reading.id)).not.toBeNull();
+  });
+
+  it('skipping to browse leaves no dangling active-pet pointer', async () => {
+    // ThemeContext falls back to ACTIVE_SPECIES; a pointer to a pet that was
+    // never created would tint the whole app for a nonexistent animal.
+    skipOnboardingToBrowse();
+
+    expect(storage.getBoolean(StorageKeys.ONBOARDING_COMPLETE)).toBe(true);
+    expect(storage.getString(StorageKeys.ACTIVE_PET_ID)).toBeUndefined();
+    expect(storage.getString(StorageKeys.ACTIVE_SPECIES)).toBeUndefined();
+    expect(storage.getString(StorageKeys.HINTS_REGISTRATION_DATE)).toBeTruthy();
   });
 });

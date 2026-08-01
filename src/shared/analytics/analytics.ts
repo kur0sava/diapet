@@ -45,6 +45,7 @@ export async function initAnalytics(): Promise<void> {
 
 type EventName =
   | 'onboarding_complete'
+  | 'onboarding_skipped'
   | 'glucose_added'
   | 'symptom_added'
   | 'injection_added'

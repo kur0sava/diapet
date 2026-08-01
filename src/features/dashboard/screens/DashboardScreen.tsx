@@ -120,7 +120,13 @@ export default function DashboardScreen() {
   const handleOpenPicker = () => {
     if (pets.length > 0) {
       setPickerVisible(true);
+      return;
     }
+    // Zero pets is reachable since onboarding can be skipped to browse the
+    // encyclopedia. The picker sheet — the usual route to AddPet — renders
+    // nothing useful with an empty list, so go straight there instead of
+    // leaving the header tap dead.
+    handleAddPetFromPicker();
   };
   const handleAddPetFromPicker = () => {
     setPickerVisible(false);
@@ -666,9 +672,36 @@ export default function DashboardScreen() {
           </TouchableOpacity>
         )}
 
+        {/* Browsing user who skipped onboarding: every logging action below is
+            useless without a pet, so make creating one the one obvious move
+            rather than relying on the header tap. */}
+        {pets.length === 0 && (
+          <TouchableOpacity
+            style={[styles.noPetCard, { backgroundColor: theme.colors.primary + '12' }]}
+            onPress={handleAddPetFromPicker}
+            accessibilityRole="button"
+          >
+            <Icon name="add-circle-outline" size={24} color={theme.colors.primary} />
+            <View style={{ flex: 1 }}>
+              <Text
+                style={[
+                  styles.noPetTitle,
+                  { color: theme.colors.text, fontFamily: theme.fonts.bold },
+                ]}
+              >
+                {t('dashboard.noPetTitle')}
+              </Text>
+              <Text style={[styles.noPetDesc, { color: theme.colors.textSecondary }]}>
+                {t('dashboard.noPetDesc')}
+              </Text>
+            </View>
+            <Icon name="chevron-forward" size={18} color={theme.colors.textTertiary} />
+          </TouchableOpacity>
+        )}
+
         {/* H9 First Win — pinned onboarding card. Banner budget (Y5): at most
             one auxiliary block at a time — the trial banner wins. */}
-        {!showTrialBanner && <FirstStepsCard />}
+        {!showTrialBanner && pets.length > 0 && <FirstStepsCard />}
 
         {/* Quick Actions */}
         <View style={styles.section}>
@@ -1060,6 +1093,17 @@ const styles = StyleSheet.create({
   },
   unitToggleText: { fontSize: 12 },
   section: { paddingHorizontal: 20, marginTop: 20 },
+  noPetCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    marginHorizontal: 20,
+    marginTop: 20,
+    padding: 16,
+    borderRadius: 16,
+  },
+  noPetTitle: { fontSize: 15, marginBottom: 2 },
+  noPetDesc: { fontSize: 13, lineHeight: 17 },
   sectionTitle: { fontSize: 17, marginBottom: 12 },
   actionsGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 12, justifyContent: 'center' },
   noData: { padding: 32, alignItems: 'center' },

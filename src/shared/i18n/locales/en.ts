@@ -42,6 +42,9 @@ export const en = {
   },
 
   onboarding: {
+    browseFirst: 'Just look around for now',
+    browseFirstHint:
+      'Opens the encyclopedia and the emergency section. You can add a pet later, any time.',
     welcome: 'Welcome to DiaPet',
     welcomeSubtitle: "Manage your pet's diabetes simply and effectively",
     selectLanguage: 'Select Language',
@@ -121,6 +124,8 @@ export const en = {
   },
 
   dashboard: {
+    noPetTitle: 'Add a pet',
+    noPetDesc: 'The diary, charts, and reminders start working as soon as you add a pet',
     title: 'Today',
     greeting: 'Hello! How is {{petName}} doing?',
     lastGlucose: 'Last Glucose',
@@ -672,6 +677,10 @@ export const en = {
     showHints: 'Show hints',
     hintsDescription:
       'Pop-up hints: a guided course for the first 30 days, then event-based tips (low/high readings, new food, milestones)',
+    supportSection: 'SUPPORT',
+    contactUs: 'Contact us',
+    contactUsDesc:
+      'Found a bug, an inaccuracy in an article, or have an idea? Write to us — it is the best way to shape the app.',
     privacySection: 'PRIVACY',
     analyticsToggle: 'Anonymous usage statistics',
     analyticsDescription:

@@ -11,6 +11,7 @@ module.exports = {
     '^expo-secure-store$': '<rootDir>/src/test/mocks/secureStoreMock.ts',
     '^expo-crypto$': '<rootDir>/src/test/mocks/expoCryptoMock.ts',
     '^expo-localization$': '<rootDir>/src/test/mocks/expoLocalizationMock.ts',
+    '^@react-native-firebase/analytics$': '<rootDir>/src/test/mocks/firebaseAnalyticsMock.ts',
     '^@core/(.*)$': '<rootDir>/src/core/$1',
     '^@features/(.*)$': '<rootDir>/src/features/$1',
     '^@shared/(.*)$': '<rootDir>/src/shared/$1',

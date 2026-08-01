@@ -9,7 +9,8 @@ import {
   Platform,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useOnboardingNavigation } from '@navigation/hooks';
+import { useOnboardingNavigation, useRootNavigation } from '@navigation/hooks';
+import { skipOnboardingToBrowse } from '../utils/skipOnboarding';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '@shared/theme';
 import { Button, Input, Icon, PetFace } from '@shared/components/ui';
@@ -29,6 +30,7 @@ import {
 
 export default function PetInfoScreen() {
   const navigation = useOnboardingNavigation();
+  const rootNavigation = useRootNavigation();
   const { t } = useTranslation();
   const { theme } = useTheme();
 
@@ -95,6 +97,19 @@ export default function PetInfoScreen() {
     }
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
+  };
+
+  // "Look around first": the encyclopedia and the emergency section are why a
+  // lot of people install the app the same evening they get the diagnosis, and
+  // requiring a full pet profile first turns them away. reset() rather than
+  // navigate() so the back gesture can't drop them into a half-filled form
+  // that is no longer part of any flow.
+  const handleBrowse = () => {
+    skipOnboardingToBrowse();
+    rootNavigation.reset({
+      index: 0,
+      routes: [{ name: 'Main', params: { screen: 'EncyclopediaTab' } }],
+    });
   };
 
   const handleContinue = () => {
@@ -370,6 +385,14 @@ export default function PetInfoScreen() {
 
           <View style={{ paddingHorizontal: 24, paddingVertical: 24 }}>
             <Button title={t('onboarding.next')} onPress={handleContinue} fullWidth size="lg" />
+            <TouchableOpacity style={styles.browseBtn} onPress={handleBrowse}>
+              <Text style={[styles.browseText, { color: theme.colors.textSecondary }]}>
+                {t('onboarding.browseFirst')}
+              </Text>
+            </TouchableOpacity>
+            <Text style={[styles.browseHint, { color: theme.colors.textTertiary }]}>
+              {t('onboarding.browseFirstHint')}
+            </Text>
           </View>
         </ScrollView>
       </SafeAreaView>
@@ -387,6 +410,9 @@ const styles = StyleSheet.create({
     minWidth: 44,
     justifyContent: 'center',
   },
+  browseBtn: { alignItems: 'center', paddingVertical: 14, marginTop: 4 },
+  browseText: { fontSize: 15, fontWeight: '600' },
+  browseHint: { fontSize: 12, textAlign: 'center', lineHeight: 16 },
   header: { padding: 24, paddingBottom: 0 },
   title: { fontSize: 28, fontWeight: '800', marginBottom: 8 },
   subtitle: { fontSize: 15, lineHeight: 22 },
