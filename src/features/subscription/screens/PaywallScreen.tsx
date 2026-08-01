@@ -29,9 +29,10 @@ import {
   trialDaysLeft,
   TRIAL_DURATION_DAYS,
 } from '../utils/trial';
+import { PRIVACY_POLICY_URL, TERMS_OF_SERVICE_URL } from '@shared/config/legal';
 
-const PRIVACY_URL = 'https://kur0sava.github.io/diapet/assets/privacy-policy.html';
-const TERMS_URL = 'https://kur0sava.github.io/diapet/assets/terms-of-service.html';
+const PRIVACY_URL = PRIVACY_POLICY_URL;
+const TERMS_URL = TERMS_OF_SERVICE_URL;
 
 const FEATURES: { icon: IoniconName; titleKey: string; descKey: string }[] = [
   {

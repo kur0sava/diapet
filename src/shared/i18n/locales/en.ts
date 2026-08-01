@@ -675,6 +675,10 @@ export const en = {
     analyticsToggle: 'Anonymous usage statistics',
     analyticsDescription:
       'Helps us understand how DiaPet is used so we can improve it. Sends only anonymous events (e.g. "glucose entry added"); no pet names, no glucose values, no symptoms.',
+    privacyPolicy: 'Privacy Policy',
+    termsOfUse: 'Terms of Use',
+    medicalDisclaimer:
+      'DiaPet is an assistant for tracking, not a medical device. It does not make diagnoses and does not prescribe treatment. Any change to insulin dose or diet must be agreed with your veterinarian.',
     dangerZone: 'DANGER ZONE',
     deleteDataConfirm: 'Delete all data?',
     deleteDataWarning: 'This action cannot be undone.',

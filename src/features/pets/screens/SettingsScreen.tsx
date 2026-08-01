@@ -9,6 +9,7 @@ import {
   Switch,
   ToastAndroid,
   Platform,
+  Linking,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useMoreNavigation, useRootNavigation } from '@navigation/hooks';
@@ -25,6 +26,7 @@ import { queryKeys } from '@shared/utils/queryKeys';
 import Constants from 'expo-constants';
 import { CommonActions } from '@react-navigation/native';
 import { isAnalyticsEnabled, setAnalyticsOptOut } from '@shared/analytics/analytics';
+import { PRIVACY_POLICY_URL, TERMS_OF_SERVICE_URL } from '@shared/config/legal';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import {
   useNotifications,
@@ -480,6 +482,28 @@ export default function SettingsScreen() {
           <Text style={[styles.hintDesc, { color: theme.colors.textTertiary }]}>
             {t('settings.analyticsDescription')}
           </Text>
+          <View style={[styles.legalDivider, { backgroundColor: theme.colors.border }]} />
+          <TouchableOpacity
+            style={styles.legalRow}
+            onPress={() => Linking.openURL(PRIVACY_POLICY_URL).catch(() => {})}
+          >
+            <Icon name="shield-checkmark-outline" size={18} color={theme.colors.textSecondary} />
+            <Text style={[styles.legalLink, { color: theme.colors.primary }]}>
+              {t('settings.privacyPolicy')}
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.legalRow}
+            onPress={() => Linking.openURL(TERMS_OF_SERVICE_URL).catch(() => {})}
+          >
+            <Icon name="document-text-outline" size={18} color={theme.colors.textSecondary} />
+            <Text style={[styles.legalLink, { color: theme.colors.primary }]}>
+              {t('settings.termsOfUse')}
+            </Text>
+          </TouchableOpacity>
+          <Text style={[styles.hintDesc, { color: theme.colors.textTertiary }]}>
+            {t('settings.medicalDisclaimer')}
+          </Text>
         </Card>
         <Text style={[styles.sectionHeader, { color: theme.colors.danger }]}>
           {t('settings.dangerZone')}
@@ -525,6 +549,9 @@ const styles = StyleSheet.create({
   },
   card: { gap: 12 },
   settingLabel: { fontSize: 15, fontWeight: '600' },
+  legalDivider: { height: StyleSheet.hairlineWidth, marginTop: 4 },
+  legalRow: { flexDirection: 'row', alignItems: 'center', gap: 8, paddingVertical: 2 },
+  legalLink: { fontSize: 14, fontWeight: '600' },
   themeRow: { flexDirection: 'row', gap: 8 },
   themeBtn: { flex: 1, padding: 10, borderRadius: 10, alignItems: 'center' },
   langRow: { flexDirection: 'row', gap: 10 },
