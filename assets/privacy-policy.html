@@ -232,7 +232,7 @@
             <!-- ENGLISH VERSION -->
             <div class="language-section active" data-lang="en">
                 <h2>Privacy Policy for DiaPet</h2>
-                <p><strong>Last Updated:</strong> April 2026</p>
+                <p><strong>Last Updated:</strong> August 2026</p>
 
                 <h3>1. Introduction</h3>
                 <p>DiaPet is a mobile application that helps cat and dog owners manage their pet's diabetes — track glucose, insulin, feeding, symptoms, expenses, and access educational content. This policy explains what data DiaPet handles, where it is stored, and which third-party services may receive it.</p>
@@ -278,8 +278,9 @@
 
                 <div class="third-party">
                     <strong>Google Sign-In + Firebase Authentication + Cloud Firestore</strong>
-                    <p style="margin-top:8px">Used <em>only if you choose to sign in</em> with your Google account to enable optional Cloud Backup. Provided by Google LLC.</p>
-                    <p><strong>What is sent:</strong> your Google account email and display name (to identify your backup), and a copy of your DiaPet database when you trigger a backup or restore. Backups are stored in your own account namespace in Firestore.</p>
+                    <p style="margin-top:8px">Used <em>only if you choose to sign in</em> to enable optional Cloud Backup. Two sign-in methods are offered: your Google account, or an email address with a password (a Google-free option for regions where Google Sign-In is unavailable). Provided by Google LLC.</p>
+                    <p><strong>What is sent (Google sign-in):</strong> your Google account email and display name (to identify your backup), and a copy of your DiaPet database when you trigger a backup or restore. Backups are stored in your own account namespace in Firestore.</p>
+                    <p><strong>What is sent (email sign-in):</strong> your email address and password, plus the same database copy on backup or restore. The password is handled by Firebase Authentication and stored only in hashed form — the DiaPet developer never sees it.</p>
                     <p><strong>What is NOT sent if you do not sign in:</strong> nothing. Cloud Backup is opt-in.</p>
                 </div>
 
@@ -309,7 +310,7 @@
                 <h3>6. Data Retention and Deletion</h3>
                 <ul>
                     <li><strong>Local data:</strong> remains on your device until you delete it (in the app's Settings → Delete All Data, or by uninstalling DiaPet).</li>
-                    <li><strong>Cloud Backup (Firestore):</strong> remains in your Google account until you delete it from the app's Cloud Backup screen or sign out.</li>
+                    <li><strong>Cloud Backup (Firestore):</strong> remains stored until you delete it. Signing out does <em>not</em> delete the backup — it is deliberately kept so you can restore your data on a new device. To remove it permanently, use <strong>Account → Delete account</strong> in the app, which deletes both the backup and the account itself; you can also request deletion at <a href="mailto:giwoder@gmail.com">giwoder@gmail.com</a> (processed within 30 days).</li>
                     <li><strong>Analytics events (Firebase):</strong> retained per Google's default Firebase Analytics retention (currently up to 14 months for event-level data).</li>
                     <li><strong>AI requests (Anthropic):</strong> per Anthropic's own retention policy.</li>
                 </ul>
@@ -342,7 +343,7 @@
             <!-- RUSSIAN VERSION -->
             <div class="language-section" data-lang="ru">
                 <h2>Политика конфиденциальности DiaPet</h2>
-                <p><strong>Последнее обновление:</strong> Апрель 2026</p>
+                <p><strong>Последнее обновление:</strong> Август 2026</p>
 
                 <h3>1. Введение</h3>
                 <p>DiaPet — это мобильное приложение, которое помогает владельцам кошек и собак вести диабет питомца: фиксировать глюкозу, инсулин, кормления, симптомы, расходы и читать обучающие материалы. Эта политика описывает, какие данные обрабатывает приложение, где они хранятся и с какими сторонними сервисами они могут передаваться.</p>
@@ -388,8 +389,9 @@
 
                 <div class="third-party">
                     <strong>Google Sign-In + Firebase Authentication + Cloud Firestore</strong>
-                    <p style="margin-top:8px">Используются, <em>только если вы решили войти</em> через Google-аккаунт, чтобы включить облачную резервную копию. Провайдер — Google LLC.</p>
-                    <p><strong>Что передаётся:</strong> email и имя вашего Google-аккаунта (чтобы привязать резервную копию), а также копия базы данных DiaPet, когда вы запускаете создание копии или восстановление. Резервные копии лежат в вашем собственном пространстве в Firestore.</p>
+                    <p style="margin-top:8px">Используются, <em>только если вы решили войти</em>, чтобы включить облачную резервную копию. Войти можно двумя способами: через Google-аккаунт либо по адресу электронной почты и паролю (вариант без Google — для регионов, где вход через Google недоступен). Провайдер — Google LLC.</p>
+                    <p><strong>Что передаётся (вход через Google):</strong> email и имя вашего Google-аккаунта (чтобы привязать резервную копию), а также копия базы данных DiaPet, когда вы запускаете создание копии или восстановление. Резервные копии лежат в вашем собственном пространстве в Firestore.</p>
+                    <p><strong>Что передаётся (вход по email):</strong> ваш адрес электронной почты и пароль, а также та же копия базы данных при бэкапе или восстановлении. Пароль обрабатывается сервисом Firebase Authentication и хранится только в хешированном виде — разработчику DiaPet он недоступен.</p>
                     <p><strong>Что НЕ передаётся, если вы не входите:</strong> ничего. Облачная копия — это опциональная функция.</p>
                 </div>
 
@@ -419,7 +421,7 @@
                 <h3>6. Хранение и удаление данных</h3>
                 <ul>
                     <li><strong>Локальные данные:</strong> остаются на устройстве, пока вы сами их не удалите (Настройки → Удалить все данные, либо удаление приложения).</li>
-                    <li><strong>Облачная копия (Firestore):</strong> остаётся в вашем Google-аккаунте, пока вы не удалите её из экрана резервной копии или не выйдете из аккаунта.</li>
+                    <li><strong>Облачная копия (Firestore):</strong> хранится, пока вы её не удалите. Выход из аккаунта копию <em>не</em> удаляет — она намеренно сохраняется, чтобы вы могли восстановить данные на новом устройстве. Чтобы удалить безвозвратно, используйте в приложении <strong>Аккаунт → Удалить аккаунт</strong> — удаляются и копия, и сам аккаунт; также можно запросить удаление на <a href="mailto:giwoder@gmail.com">giwoder@gmail.com</a> (обрабатывается в течение 30 дней).</li>
                     <li><strong>События аналитики (Firebase):</strong> хранятся согласно стандартной политике Firebase Analytics (на момент публикации до 14 месяцев для событий уровня сессии).</li>
                     <li><strong>AI-запросы (Anthropic):</strong> по политике Anthropic.</li>
                 </ul>
@@ -452,7 +454,7 @@
 
         <footer>
             <p><strong>DiaPet Privacy Policy</strong> — Protecting Your Pet's Health Data</p>
-            <p>Last Updated: April 2026 | Version 2.0</p>
+            <p>Last Updated: August 2026 | Version 2.1</p>
             <p>For questions, contact: <a href="mailto:giwoder@gmail.com">giwoder@gmail.com</a></p>
         </footer>
     </div>
