@@ -321,34 +321,47 @@ export default function DashboardScreen() {
       }[getGlucoseLevelFromRanges(latestGlucose.valueMmol, speciesRanges)]
     : undefined;
 
+  // Onboarding can be skipped to browse, so the dashboard can be open with no
+  // pet at all. Every logging screen already refuses to save without one
+  // (doSave bails on an empty targetPetId), which means the user would fill in
+  // a whole form and get a Save button that does nothing. Send them to create
+  // the pet first instead of into that dead end.
+  const requirePet = (go: () => void) => () => {
+    if (pets.length === 0) {
+      handleAddPetFromPicker();
+      return;
+    }
+    go();
+  };
+
   const quickActions = [
     {
       iconName: 'water' as const,
       iconColor: theme.colors.primary,
       label: t('dashboard.logGlucose'),
       color: theme.colors.primary,
-      onPress: () => navigation.navigate('LogGlucose', {}),
+      onPress: requirePet(() => navigation.navigate('LogGlucose', {})),
     },
     {
       iconName: 'medkit' as const,
       iconColor: theme.colors.secondary,
       label: t('dashboard.logInjection'),
       color: theme.colors.secondary,
-      onPress: () => navigation.navigate('LogInjection'),
+      onPress: requirePet(() => navigation.navigate('LogInjection')),
     },
     {
       iconName: 'restaurant' as const,
       iconColor: theme.colors.success,
       label: t('dashboard.logFeeding'),
       color: theme.colors.success,
-      onPress: () => navigation.navigate('LogFeeding'),
+      onPress: requirePet(() => navigation.navigate('LogFeeding')),
     },
     {
       iconName: 'paw' as const,
       iconColor: theme.colors.warning,
       label: t('dashboard.logSymptom'),
       color: theme.colors.warning,
-      onPress: () => navigation.navigate('AddSymptom', {}),
+      onPress: requirePet(() => navigation.navigate('AddSymptom', {})),
     },
     {
       iconName: 'calendar' as const,

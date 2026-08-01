@@ -17,6 +17,7 @@ import { useTheme } from '@shared/theme';
 import { Card } from '@shared/components/ui';
 import { storage, vetNameKey, vetPhoneKey } from '@storage/mmkv/storage';
 import { usePetStore } from '@shared/stores/petStore';
+import type { PetSpecies } from '@storage/domain/types';
 import * as Haptics from 'expo-haptics';
 
 type EmergencyType = 'hypoglycemia' | 'hyperglycemia';
@@ -43,7 +44,14 @@ export default function EmergencyScreen() {
   // are weight/species-specific (cat ml vs dog tsp/tbsp) — see hypoSteps_dog
   // in the locale files. i18next context falls back to the base key when no
   // _dog variant exists, so 'other' correctly reuses the cat numbers.
-  const speciesContext = activeSpecies === 'dog' ? 'dog' : undefined;
+  //
+  // Onboarding can now be skipped to browse, so this screen is reachable with
+  // NO pet at all. Falling through to `undefined` there would silently serve
+  // CAT doses to a dog owner who hasn't created a profile yet — under-treating
+  // a hypo. When there is no pet we ask instead of guessing.
+  const [fallbackSpecies, setFallbackSpecies] = useState<PetSpecies>('cat');
+  const species = activeSpecies ?? fallbackSpecies;
+  const speciesContext = species === 'dog' ? 'dog' : undefined;
 
   // A2 (audit): find the nearest clinic on the map. Opens an external maps app,
   // so the first-aid instructions on this screen are not lost.
@@ -216,6 +224,36 @@ export default function EmergencyScreen() {
             <Icon name="list" size={20} color={cardText} />
             <Text style={[styles.cardTitle, { color: cardText }]}>{t('emergency.steps')}</Text>
           </View>
+          {!activeSpecies && (
+            <View style={styles.speciesPickRow}>
+              <Text style={[styles.speciesPickLabel, { color: cardText }]}>
+                {t('emergency.whichPet')}
+              </Text>
+              <View style={styles.speciesPickBtns}>
+                {(['cat', 'dog'] as const).map(s => (
+                  <TouchableOpacity
+                    key={s}
+                    onPress={() => setFallbackSpecies(s)}
+                    accessibilityRole="button"
+                    accessibilityState={{ selected: species === s }}
+                    style={[
+                      styles.speciesPickBtn,
+                      {
+                        borderColor: species === s ? theme.colors.danger : theme.colors.border,
+                        backgroundColor: species === s ? theme.colors.danger : 'transparent',
+                      },
+                    ]}
+                  >
+                    <Text
+                      style={[styles.speciesPickText, { color: species === s ? '#fff' : cardText }]}
+                    >
+                      {t(`pets.${s}`)}
+                    </Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+            </View>
+          )}
           {steps.map((step, i) => (
             <View key={`step-${i}`} style={styles.stepItem}>
               <View style={[styles.stepNumber, { backgroundColor: theme.colors.danger }]}>
@@ -275,6 +313,17 @@ const styles = StyleSheet.create({
   scroll: { flex: 1 },
   scrollContent: { paddingHorizontal: 16, paddingBottom: 40, gap: 16 },
   card: { gap: 12, borderRadius: 16 },
+  speciesPickRow: { gap: 8 },
+  speciesPickLabel: { fontSize: 13, fontWeight: '600' },
+  speciesPickBtns: { flexDirection: 'row', gap: 8 },
+  speciesPickBtn: {
+    flex: 1,
+    paddingVertical: 10,
+    borderRadius: 10,
+    borderWidth: 1.5,
+    alignItems: 'center',
+  },
+  speciesPickText: { fontSize: 14, fontWeight: '700' },
   cardTitleRow: { flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 4 },
   cardTitle: { fontSize: 16, fontWeight: '800' },
   listItem: { flexDirection: 'row', alignItems: 'center', gap: 10 },

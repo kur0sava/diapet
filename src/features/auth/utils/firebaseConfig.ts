@@ -180,8 +180,12 @@ export const REAUTH_REQUIRED = 'REAUTH_REQUIRED';
  */
 export async function firebaseDeleteAccount(): Promise<void> {
   const current = auth.currentUser;
-  // Nothing to delete — treat as success so the caller still clears local state.
-  if (!current) return;
+  // No live Firebase session — happens when the UI was restored from the MMKV
+  // cache while the silent sign-in failed (offline). Returning quietly here
+  // would let the caller clear the session and report "account deleted" while
+  // the account and its cloud backup are still very much alive. Signing in
+  // again is exactly the remedy, so reuse that signal.
+  if (!current) throw new Error(REAUTH_REQUIRED);
   try {
     await deleteUser(current);
   } catch (e) {

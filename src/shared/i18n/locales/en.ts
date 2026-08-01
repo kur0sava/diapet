@@ -466,6 +466,7 @@ export const en = {
     disclaimer:
       'This information is for reference only. In any emergency, contact your veterinarian immediately.',
     emergencyMode: 'Emergency mode',
+    whichPet: 'Who is this first aid for? Doses differ:',
   },
 
   encyclopedia: {

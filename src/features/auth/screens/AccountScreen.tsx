@@ -181,6 +181,10 @@ export default function AccountScreen() {
   // user create. Two-step confirmation: this is irreversible and wipes the only
   // off-device copy of the pet's medical history.
   const handleDeleteAccount = () => {
+    // Same guard the backup/restore buttons use: without a live session the
+    // deletion cannot actually reach Firestore or Firebase Auth, and the user
+    // must not be told their data is gone when it isn't.
+    if (!requireSession()) return;
     Alert.alert(t('auth.deleteAccountConfirm'), t('auth.deleteAccountWarning'), [
       { text: t('common.cancel'), style: 'cancel' },
       {
