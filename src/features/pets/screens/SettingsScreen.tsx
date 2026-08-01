@@ -26,7 +26,12 @@ import { queryKeys } from '@shared/utils/queryKeys';
 import Constants from 'expo-constants';
 import { CommonActions } from '@react-navigation/native';
 import { isAnalyticsEnabled, setAnalyticsOptOut } from '@shared/analytics/analytics';
-import { PRIVACY_POLICY_URL, TERMS_OF_SERVICE_URL, SUPPORT_EMAIL } from '@shared/config/legal';
+import {
+  PRIVACY_POLICY_URL,
+  TERMS_OF_SERVICE_URL,
+  SUPPORT_EMAIL,
+  withAppLanguage,
+} from '@shared/config/legal';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import {
   useNotifications,
@@ -513,7 +518,7 @@ export default function SettingsScreen() {
           <View style={[styles.legalDivider, { backgroundColor: theme.colors.border }]} />
           <TouchableOpacity
             style={styles.legalRow}
-            onPress={() => Linking.openURL(PRIVACY_POLICY_URL).catch(() => {})}
+            onPress={() => Linking.openURL(withAppLanguage(PRIVACY_POLICY_URL)).catch(() => {})}
           >
             <Icon name="shield-checkmark-outline" size={18} color={theme.colors.textSecondary} />
             <Text style={[styles.legalLink, { color: theme.colors.primary }]}>
@@ -522,7 +527,7 @@ export default function SettingsScreen() {
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.legalRow}
-            onPress={() => Linking.openURL(TERMS_OF_SERVICE_URL).catch(() => {})}
+            onPress={() => Linking.openURL(withAppLanguage(TERMS_OF_SERVICE_URL)).catch(() => {})}
           >
             <Icon name="document-text-outline" size={18} color={theme.colors.textSecondary} />
             <Text style={[styles.legalLink, { color: theme.colors.primary }]}>

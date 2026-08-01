@@ -464,35 +464,45 @@
         const languageButtons = document.querySelectorAll('.lang-btn');
         const languageSections = document.querySelectorAll('.language-section');
 
+        function applyLanguage(lang) {
+            languageButtons.forEach(btn => {
+                btn.classList.toggle('active', btn.getAttribute('data-lang') === lang);
+            });
+            languageSections.forEach(section => {
+                section.classList.toggle('active', section.getAttribute('data-lang') === lang);
+            });
+            document.documentElement.lang = lang;
+        }
+
         languageButtons.forEach(button => {
             button.addEventListener('click', () => {
                 const selectedLang = button.getAttribute('data-lang');
-
-                // Update button active state
-                languageButtons.forEach(btn => btn.classList.remove('active'));
-                button.classList.add('active');
-
-                // Update visible section
-                languageSections.forEach(section => {
-                    section.classList.remove('active');
-                    if (section.getAttribute('data-lang') === selectedLang) {
-                        section.classList.add('active');
-                    }
-                });
-
-                // Save preference to localStorage
+                applyLanguage(selectedLang);
+                // Only an explicit click is remembered. Auto-detection must not
+                // write here, or opening the page from the app would overwrite
+                // a choice the reader made deliberately.
                 localStorage.setItem('preferredLanguage', selectedLang);
             });
         });
 
-        // Load saved language preference on page load
-        window.addEventListener('DOMContentLoaded', () => {
-            const savedLanguage = localStorage.getItem('preferredLanguage') || 'en';
-            const savedButton = document.querySelector(`[data-lang="${savedLanguage}"]`);
-            if (savedButton) {
-                savedButton.click();
-            }
-        });
+        // Pick the initial language. Priority:
+        //   1. ?lang= — the app passes its own UI language when opening this
+        //      page, which may differ from the device locale (the user can
+        //      switch language inside DiaPet).
+        //   2. a choice previously made with the buttons on this page
+        //   3. the browser/device locale
+        //   4. English
+        function initialLanguage() {
+            const supported = ['en', 'ru'];
+            const fromQuery = new URLSearchParams(location.search).get('lang');
+            if (supported.includes(fromQuery)) return fromQuery;
+            const saved = localStorage.getItem('preferredLanguage');
+            if (supported.includes(saved)) return saved;
+            const device = (navigator.language || 'en').toLowerCase();
+            return device.startsWith('ru') ? 'ru' : 'en';
+        }
+
+        applyLanguage(initialLanguage());
     </script>
 </body>
 </html>

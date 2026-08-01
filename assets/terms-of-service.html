@@ -21,7 +21,7 @@
             padding: 40px; color: white; text-align: center;
         }
         .header h1 { font-size: 2em; font-weight: 700; margin-bottom: 8px; }
-        .header p { opacity: .85; font-size: 1.05em; }
+        .header p { opacity: .85; font-size: 1.05em; color: #fff; margin-bottom: 0; }
         .content { padding: 40px; }
         h2 { color: #4F8EF7; font-size: 1.2em; margin: 28px 0 10px; }
         p, li { color: #555; margin-bottom: 10px; }
@@ -30,76 +30,240 @@
             background: #fff8e1; border-left: 4px solid #ffc107;
             padding: 16px 20px; border-radius: 4px; margin: 20px 0;
         }
+        .disclaimer p { color: #444; margin-bottom: 0; }
         .footer { text-align: center; padding: 24px; color: #999; font-size: .9em; border-top: 1px solid #eee; }
+        .language-toggle {
+            position: absolute; top: 20px; right: 20px;
+            display: flex; gap: 10px; z-index: 100;
+        }
+        .language-toggle button {
+            padding: 8px 16px; border: none; border-radius: 6px; cursor: pointer;
+            font-weight: 600; transition: all .3s ease; background: white; color: #4F8EF7;
+        }
+        .language-toggle button.active { background: #4F8EF7; color: white; }
+        .language-toggle button:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,.15); }
+        .language-section { display: none; }
+        .language-section.active { display: block; }
+        @media (max-width: 768px) {
+            .header { padding: 30px 20px; }
+            .header h1 { font-size: 1.5em; }
+            .content { padding: 25px 20px; }
+            .language-toggle { top: 10px; right: 10px; }
+            .language-toggle button { padding: 6px 12px; font-size: .9em; }
+        }
     </style>
 </head>
 <body>
+<div class="language-toggle">
+    <button class="lang-btn active" data-lang="en">English</button>
+    <button class="lang-btn" data-lang="ru">Русский</button>
+</div>
+
 <div class="container">
     <div class="header">
-        <h1>Terms of Service</h1>
-        <p>DiaPet — Diabetes Management for Cats &amp; Dogs</p>
+        <div class="language-section active" data-lang="en">
+            <h1>Terms of Service</h1>
+            <p>DiaPet — Diabetes Management for Cats &amp; Dogs</p>
+        </div>
+        <div class="language-section" data-lang="ru">
+            <h1>Пользовательское соглашение</h1>
+            <p>DiaPet — контроль диабета у кошек и собак</p>
+        </div>
     </div>
-    <div class="content">
-        <p><strong>Effective date:</strong> March 1, 2026 &nbsp;|&nbsp; <strong>Last updated:</strong> August 1, 2026</p>
 
-        <div class="disclaimer">
-            <strong>Medical disclaimer:</strong> DiaPet is an informational tool to help you track your pet's health data.
-            It is <strong>not a substitute for professional veterinary advice</strong>. Always consult a licensed veterinarian
-            for medical decisions regarding your pet's treatment.
+    <div class="content">
+        <!-- ENGLISH VERSION -->
+        <div class="language-section active" data-lang="en">
+            <p><strong>Effective date:</strong> March 1, 2026 &nbsp;|&nbsp; <strong>Last updated:</strong> August 1, 2026</p>
+
+            <div class="disclaimer">
+                <p><strong>Medical disclaimer:</strong> DiaPet is an informational tool to help you track your pet's health data.
+                It is <strong>not a substitute for professional veterinary advice</strong>. Always consult a licensed veterinarian
+                for medical decisions regarding your pet's treatment.</p>
+            </div>
+
+            <h2>1. Acceptance of Terms</h2>
+            <p>By downloading or using the DiaPet application ("the App"), you agree to be bound by these Terms of Service.
+               If you do not agree to these terms, please do not use the App.</p>
+
+            <h2>2. Description of Service</h2>
+            <p>DiaPet is a mobile application designed to help owners of diabetic cats and dogs:</p>
+            <ul>
+                <li>Log blood glucose readings and insulin injections</li>
+                <li>Track weight, feeding schedules, and symptoms</li>
+                <li>See charts and automated analysis of trends</li>
+                <li>Access educational content about diabetes in cats and dogs</li>
+                <li>Generate reports for veterinary consultations</li>
+            </ul>
+
+            <h2>3. Medical Disclaimer</h2>
+            <p>The content provided in DiaPet, including articles, calculators, glucose thresholds, and alerts, is for
+               informational and educational purposes only. It is not intended to constitute veterinary advice, diagnosis,
+               or treatment. The medical information is based on published ISFM/ACVIM guidelines but may not reflect the
+               most current research or apply to your pet's specific situation.</p>
+            <p>Never disregard professional veterinary advice or delay seeking it because of information you read in this App.</p>
+
+            <h2>4. Subscriptions and Payments</h2>
+            <p><strong>In the current version, every feature of DiaPet is free.</strong> There is no paid subscription,
+               no payment is collected, and there are no automatic charges of any kind.</p>
+            <p>If paid features are introduced in a future version, their scope, price, and payment terms will be shown
+               in the App before any payment is made, and features that are free today will remain free.</p>
+
+            <h2>5. Account</h2>
+            <p>The App can be used without an account. Signing in — with Google or with an email address and password —
+               is required only for optional Cloud Backup. You are responsible for keeping your account and password secure.</p>
+            <p>You can delete your account and its cloud backup at any time from <strong>Account → Delete account</strong> in
+               the App, or by writing to us from your registered address.</p>
+
+            <h2>6. Data and Privacy</h2>
+            <p>All health data you enter into DiaPet is stored locally on your device. It leaves the device only if you
+               explicitly turn on a feature that requires it — Cloud Backup (which stores a copy in Firebase Firestore under
+               your own account) or the AI features.
+               Please refer to our <a href="privacy-policy.html" style="color:#4F8EF7">Privacy Policy</a> for full details.</p>
+
+            <h2>7. Limitation of Liability</h2>
+            <p>To the maximum extent permitted by applicable law, the developers of DiaPet shall not be liable for any
+               indirect, incidental, special, consequential, or punitive damages resulting from your use of, or inability
+               to use, the App or any decisions made based on information provided by the App.</p>
+
+            <h2>8. Intellectual Property</h2>
+            <p>All rights to the App, including its design, source code, and educational content, belong to the developer.
+               Using the App does not transfer any intellectual property rights to you.</p>
+
+            <h2>9. Changes to Terms</h2>
+            <p>We reserve the right to update these Terms of Service at any time. We will notify you of significant changes
+               by updating the effective date at the top of this page. Continued use of the App after changes constitutes
+               acceptance of the new terms.</p>
+
+            <h2>10. Governing Law</h2>
+            <p>These Terms are governed by the laws of the Russian Federation.</p>
+
+            <h2>11. Contact</h2>
+            <p>If you have questions about these Terms of Service, please contact us at:
+               <a href="mailto:giwoder@gmail.com" style="color:#4F8EF7">giwoder@gmail.com</a></p>
         </div>
 
-        <h2>1. Acceptance of Terms</h2>
-        <p>By downloading or using the DiaPet application ("the App"), you agree to be bound by these Terms of Service.
-           If you do not agree to these terms, please do not use the App.</p>
+        <!-- RUSSIAN VERSION -->
+        <div class="language-section" data-lang="ru">
+            <p><strong>Дата вступления в силу:</strong> 1 марта 2026 г. &nbsp;|&nbsp; <strong>Последнее обновление:</strong> 1 августа 2026 г.</p>
 
-        <h2>2. Description of Service</h2>
-        <p>DiaPet is a mobile application designed to help owners of diabetic cats and dogs:</p>
-        <ul>
-            <li>Log blood glucose readings and insulin injections</li>
-            <li>Track weight, feeding schedules, and symptoms</li>
-            <li>See charts and automated analysis of trends</li>
-            <li>Access educational content about diabetes in cats and dogs</li>
-            <li>Generate reports for veterinary consultations</li>
-        </ul>
+            <div class="disclaimer">
+                <p><strong>Медицинская оговорка:</strong> DiaPet — информационный инструмент для ведения данных о здоровье
+                питомца. Приложение <strong>не заменяет консультацию ветеринарного врача</strong>. Решения о лечении
+                принимайте вместе с квалифицированным специалистом.</p>
+            </div>
 
-        <h2>3. Medical Disclaimer</h2>
-        <p>The content provided in DiaPet, including articles, calculators, glucose thresholds, and alerts, is for
-           informational and educational purposes only. It is not intended to constitute veterinary advice, diagnosis,
-           or treatment. The medical information is based on published ISFM/ACVIM guidelines but may not reflect the
-           most current research or apply to your pet's specific situation.</p>
-        <p>Never disregard professional veterinary advice or delay seeking it because of information you read in this App.</p>
+            <h2>1. Общие положения</h2>
+            <p>Устанавливая и используя приложение DiaPet («Приложение»), вы принимаете условия настоящего соглашения.
+               Если вы с ними не согласны, пожалуйста, не используйте Приложение.</p>
 
-        <h2>4. Subscriptions and Payments</h2>
-        <p><strong>In the current version, every feature of DiaPet is free.</strong> There is no paid subscription,
-           no payment is collected, and there are no automatic charges of any kind.</p>
-        <p>If paid features are introduced in a future version, their scope, price, and payment terms will be shown
-           in the App before any payment is made, and features that are free today will remain free.</p>
+            <h2>2. Описание сервиса</h2>
+            <p>DiaPet — мобильное приложение для владельцев кошек и собак с диабетом. Оно позволяет:</p>
+            <ul>
+                <li>вести дневник замеров глюкозы и инъекций инсулина;</li>
+                <li>отслеживать вес, кормление и симптомы;</li>
+                <li>смотреть графики и автоматический анализ динамики;</li>
+                <li>читать обучающие материалы о диабете у кошек и собак;</li>
+                <li>формировать отчёты для приёма у ветеринарного врача.</li>
+            </ul>
 
-        <h2>5. Data and Privacy</h2>
-        <p>All health data you enter into DiaPet is stored locally on your device. It leaves the device only if you
-           explicitly turn on a feature that requires it — Cloud Backup (which stores a copy in Firebase Firestore under
-           your own account) or the AI features. Signing in is optional, and the App is fully usable without an account.
-           You can delete your account and its cloud backup at any time from Account → Delete account in the App.
-           Please refer to our <a href="privacy-policy.html" style="color:#4F8EF7">Privacy Policy</a> for full details.</p>
+            <h2>3. Медицинская оговорка</h2>
+            <p>Материалы Приложения — статьи, калькуляторы, пороговые значения глюкозы и предупреждения — носят
+               исключительно информационный и образовательный характер. Они не являются ветеринарной консультацией,
+               диагнозом или назначением лечения. Медицинская информация опирается на опубликованные рекомендации
+               ISFM/ACVIM, но может не отражать новейших исследований и не учитывать особенности вашего питомца.</p>
+            <p>Никогда не пренебрегайте советом ветеринарного врача и не откладывайте обращение к нему из-за информации,
+               прочитанной в Приложении.</p>
 
-        <h2>6. Limitation of Liability</h2>
-        <p>To the maximum extent permitted by applicable law, the developers of DiaPet shall not be liable for any
-           indirect, incidental, special, consequential, or punitive damages resulting from your use of, or inability
-           to use, the App or any decisions made based on information provided by the App.</p>
+            <h2>4. Подписка и оплата</h2>
+            <p><strong>В текущей версии все функции Приложения предоставляются бесплатно.</strong> Платная подписка не
+               подключена, оплата не взимается, автоматических списаний нет.</p>
+            <p>Если в будущих версиях появятся платные функции, их состав, стоимость и порядок оплаты будут показаны в
+               Приложении до совершения платежа, а функции, доступные бесплатно сегодня, останутся бесплатными.</p>
 
-        <h2>7. Changes to Terms</h2>
-        <p>We reserve the right to update these Terms of Service at any time. We will notify you of significant changes
-           by updating the effective date at the top of this page. Continued use of the App after changes constitutes
-           acceptance of the new terms.</p>
+            <h2>5. Учётная запись</h2>
+            <p>Приложением можно пользоваться без учётной записи. Вход — через Google либо по адресу электронной почты и
+               паролю — нужен только для облачного резервного копирования. Вы отвечаете за безопасность своей учётной
+               записи и сохранность пароля.</p>
+            <p>Удалить учётную запись вместе с облачной копией можно в любой момент в Приложении:
+               <strong>Аккаунт → Удалить аккаунт</strong>, либо написав нам с адреса своей регистрации.</p>
 
-        <h2>8. Contact</h2>
-        <p>If you have questions about these Terms of Service, please contact us at:
-           <a href="mailto:giwoder@gmail.com" style="color:#4F8EF7">giwoder@gmail.com</a></p>
+            <h2>6. Данные и конфиденциальность</h2>
+            <p>Все данные о здоровье питомца хранятся локально на вашем устройстве. Они покидают устройство, только если
+               вы сами включите функцию, которой это требуется, — облачное резервное копирование (копия сохраняется в
+               Firebase Firestore в вашей собственной области) или функции AI.
+               Подробности — в <a href="privacy-policy.html" style="color:#4F8EF7">Политике конфиденциальности</a>.</p>
+
+            <h2>7. Ограничение ответственности</h2>
+            <p>В максимальной степени, допускаемой применимым законодательством, разработчик DiaPet не несёт
+               ответственности за косвенные, случайные, специальные, последующие или штрафные убытки, возникшие в
+               результате использования или невозможности использования Приложения, а также за решения, принятые на
+               основании представленной в нём информации.</p>
+
+            <h2>8. Интеллектуальная собственность</h2>
+            <p>Все права на Приложение, включая его дизайн, исходный код и обучающие материалы, принадлежат разработчику.
+               Использование Приложения не передаёт вам прав на интеллектуальную собственность.</p>
+
+            <h2>9. Изменения условий</h2>
+            <p>Мы вправе обновлять настоящее соглашение. О существенных изменениях мы сообщаем, обновляя дату в начале
+               страницы. Продолжая пользоваться Приложением после изменений, вы принимаете обновлённые условия.</p>
+
+            <h2>10. Применимое право</h2>
+            <p>Настоящее соглашение регулируется законодательством Российской Федерации.</p>
+
+            <h2>11. Контакты</h2>
+            <p>Вопросы по настоящему соглашению: <a href="mailto:giwoder@gmail.com" style="color:#4F8EF7">giwoder@gmail.com</a></p>
+        </div>
     </div>
+
     <div class="footer">
         &copy; 2026 DiaPet. All rights reserved.
         &nbsp;|&nbsp; <a href="privacy-policy.html" style="color:#4F8EF7">Privacy Policy</a>
     </div>
 </div>
+
+<script>
+    const languageButtons = document.querySelectorAll('.lang-btn');
+    const languageSections = document.querySelectorAll('.language-section');
+
+    function applyLanguage(lang) {
+        languageButtons.forEach(btn => {
+            btn.classList.toggle('active', btn.getAttribute('data-lang') === lang);
+        });
+        languageSections.forEach(section => {
+            section.classList.toggle('active', section.getAttribute('data-lang') === lang);
+        });
+        document.documentElement.lang = lang;
+    }
+
+    languageButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            const selectedLang = button.getAttribute('data-lang');
+            applyLanguage(selectedLang);
+            // Only an explicit click is remembered. Auto-detection must not
+            // write here, or opening the page from the app would overwrite
+            // a choice the reader made deliberately.
+            localStorage.setItem('preferredLanguage', selectedLang);
+        });
+    });
+
+    // Pick the initial language. Priority:
+    //   1. ?lang= — the app passes its own UI language, which may differ from
+    //      the device locale (the user can switch language inside DiaPet).
+    //   2. a choice previously made with the buttons on this page
+    //   3. the browser/device locale
+    //   4. English
+    function initialLanguage() {
+        const supported = ['en', 'ru'];
+        const fromQuery = new URLSearchParams(location.search).get('lang');
+        if (supported.includes(fromQuery)) return fromQuery;
+        const saved = localStorage.getItem('preferredLanguage');
+        if (supported.includes(saved)) return saved;
+        const device = (navigator.language || 'en').toLowerCase();
+        return device.startsWith('ru') ? 'ru' : 'en';
+    }
+
+    applyLanguage(initialLanguage());
+</script>
 </body>
 </html>

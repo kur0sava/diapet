@@ -29,10 +29,7 @@ import {
   trialDaysLeft,
   TRIAL_DURATION_DAYS,
 } from '../utils/trial';
-import { PRIVACY_POLICY_URL, TERMS_OF_SERVICE_URL } from '@shared/config/legal';
-
-const PRIVACY_URL = PRIVACY_POLICY_URL;
-const TERMS_URL = TERMS_OF_SERVICE_URL;
+import { PRIVACY_POLICY_URL, TERMS_OF_SERVICE_URL, withAppLanguage } from '@shared/config/legal';
 
 const FEATURES: { icon: IoniconName; titleKey: string; descKey: string }[] = [
   {
@@ -417,13 +414,17 @@ export default function PaywallScreen() {
 
         <View style={styles.legal}>
           <View style={styles.legalRow}>
-            <TouchableOpacity onPress={() => Linking.openURL(TERMS_URL).catch(() => {})}>
+            <TouchableOpacity
+              onPress={() => Linking.openURL(withAppLanguage(TERMS_OF_SERVICE_URL)).catch(() => {})}
+            >
               <Text style={[styles.legalLink, { color: theme.colors.primary }]}>
                 {t('subscription.terms')}
               </Text>
             </TouchableOpacity>
             <Text style={[styles.legalText, { color: theme.colors.textTertiary }]}> • </Text>
-            <TouchableOpacity onPress={() => Linking.openURL(PRIVACY_URL).catch(() => {})}>
+            <TouchableOpacity
+              onPress={() => Linking.openURL(withAppLanguage(PRIVACY_POLICY_URL)).catch(() => {})}
+            >
               <Text style={[styles.legalLink, { color: theme.colors.primary }]}>
                 {t('subscription.privacy')}
               </Text>
