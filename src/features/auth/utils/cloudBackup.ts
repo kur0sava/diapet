@@ -8,7 +8,7 @@
  * - Backup payload is checked against Firestore 1MB limit before upload
  */
 import { db } from './firebaseConfig';
-import { doc, setDoc, getDoc } from 'firebase/firestore';
+import { doc, setDoc, getDoc, deleteDoc } from 'firebase/firestore';
 import { getDatabase } from '@storage/database';
 import { storage, StorageKeys } from '@storage/mmkv/storage';
 import i18n from '@shared/i18n';
@@ -249,6 +249,18 @@ export async function restoreFromCloud(uid: string): Promise<boolean> {
   storage.delete(StorageKeys.ACTIVE_SPECIES);
 
   return true;
+}
+
+/**
+ * Permanently delete this user's cloud backup document.
+ *
+ * Signing out deliberately keeps the backup (so the user can restore later),
+ * so this is the only path that actually removes server-side data. Deleting a
+ * document that does not exist is a no-op in Firestore, so this is safe to call
+ * for users who never backed up.
+ */
+export async function deleteCloudBackup(uid: string): Promise<void> {
+  await deleteDoc(doc(db, 'users', uid));
 }
 
 /**

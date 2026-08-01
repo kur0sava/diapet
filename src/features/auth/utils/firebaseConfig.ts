@@ -11,6 +11,7 @@ import {
   sendPasswordResetEmail,
   onAuthStateChanged,
   signOut as firebaseSignOut,
+  deleteUser,
 } from 'firebase/auth';
 import { getStorage, initStorage } from '@storage/mmkv/storage';
 
@@ -162,5 +163,30 @@ export async function firebaseSignOutUser(): Promise<void> {
     await firebaseSignOut(auth);
   } catch {
     // Already signed out
+  }
+}
+
+/** Thrown when Firebase refuses deletion until the user signs in again. */
+export const REAUTH_REQUIRED = 'REAUTH_REQUIRED';
+
+/**
+ * Permanently delete the signed-in Firebase Auth user.
+ *
+ * Google Play requires apps that let users create an account to offer account
+ * deletion from inside the app. Firebase guards deletion behind a recent login:
+ * if the session is old it rejects with `auth/requires-recent-login`, which we
+ * surface as REAUTH_REQUIRED so the UI can ask the user to sign in again rather
+ * than showing a raw Firebase error.
+ */
+export async function firebaseDeleteAccount(): Promise<void> {
+  const current = auth.currentUser;
+  // Nothing to delete — treat as success so the caller still clears local state.
+  if (!current) return;
+  try {
+    await deleteUser(current);
+  } catch (e) {
+    const code = (e as { code?: string })?.code;
+    if (code === 'auth/requires-recent-login') throw new Error(REAUTH_REQUIRED);
+    throw e;
   }
 }

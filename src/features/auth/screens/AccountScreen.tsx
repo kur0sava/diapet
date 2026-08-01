@@ -20,6 +20,7 @@ import { Icon } from '@shared/components/ui/Icon';
 import { Card } from '@shared/components/ui';
 import { useMoreNavigation } from '@navigation/hooks';
 import { useAuthStore } from '../stores/authStore';
+import { REAUTH_REQUIRED } from '../utils/firebaseConfig';
 import { backupToCloud, restoreFromCloud, hasCloudBackup } from '../utils/cloudBackup';
 import { usePetStore } from '@shared/stores/petStore';
 import { useQueryClient } from '@tanstack/react-query';
@@ -79,6 +80,7 @@ export default function AccountScreen() {
     signUpWithEmail,
     resetPassword,
     signOut,
+    deleteAccount,
   } = useAuthStore();
   const loadPets = usePetStore(s => s.loadPets);
   const queryClient = useQueryClient();
@@ -171,6 +173,40 @@ export default function AccountScreen() {
         // catch: a network error inside Google/Firebase sign-out otherwise
         // surfaces as an unhandled promise rejection
         onPress: () => signOut().catch(() => {}),
+      },
+    ]);
+  };
+
+  // Google Play requires an in-app path to delete an account the app let the
+  // user create. Two-step confirmation: this is irreversible and wipes the only
+  // off-device copy of the pet's medical history.
+  const handleDeleteAccount = () => {
+    Alert.alert(t('auth.deleteAccountConfirm'), t('auth.deleteAccountWarning'), [
+      { text: t('common.cancel'), style: 'cancel' },
+      {
+        text: t('common.continue'),
+        style: 'destructive',
+        onPress: () => {
+          Alert.alert(t('auth.deleteAccountFinalTitle'), t('auth.deleteAccountFinalBody'), [
+            { text: t('common.cancel'), style: 'cancel' },
+            {
+              text: t('auth.deleteAccount'),
+              style: 'destructive',
+              onPress: async () => {
+                try {
+                  await deleteAccount();
+                  Alert.alert(t('auth.deleteAccountDone'), t('auth.deleteAccountDoneBody'));
+                } catch (error: unknown) {
+                  const msg =
+                    error instanceof Error && error.message === REAUTH_REQUIRED
+                      ? t('auth.deleteAccountReauth')
+                      : mapAuthError(error, t);
+                  Alert.alert(t('auth.deleteAccountError'), msg);
+                }
+              },
+            },
+          ]);
+        },
       },
     ]);
   };
@@ -357,6 +393,12 @@ export default function AccountScreen() {
                 ]}
               >
                 {t('auth.signOut')}
+              </Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity style={styles.deleteAccountBtn} onPress={handleDeleteAccount}>
+              <Text style={[styles.deleteAccountText, { color: theme.colors.textTertiary }]}>
+                {t('auth.deleteAccount')}
               </Text>
             </TouchableOpacity>
           </>
@@ -570,6 +612,8 @@ const styles = StyleSheet.create({
     borderWidth: 1.5,
   },
   signOutText: { fontSize: 15 },
+  deleteAccountBtn: { alignItems: 'center', paddingVertical: 16, marginTop: 4 },
+  deleteAccountText: { fontSize: 13, textDecorationLine: 'underline' },
   signInContainer: {
     flexGrow: 1,
     alignItems: 'center',

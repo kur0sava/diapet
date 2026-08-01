@@ -13,7 +13,14 @@ jest.mock('@features/auth/utils/firebaseConfig', () => ({
   firebaseSignUpWithEmail: jest.fn(),
   firebaseSendPasswordReset: jest.fn(),
   firebaseSignOutUser: jest.fn(),
+  firebaseDeleteAccount: jest.fn(),
   awaitFirebaseAuthReady: jest.fn(),
+  REAUTH_REQUIRED: 'REAUTH_REQUIRED',
+}));
+// cloudBackup pulls in firebase/firestore, which has no test double — the store
+// only needs the one deletion call from it.
+jest.mock('@features/auth/utils/cloudBackup', () => ({
+  deleteCloudBackup: jest.fn(),
 }));
 jest.mock('@features/auth/utils/googleAuth', () => ({
   signInWithGoogle: jest.fn(),
@@ -24,9 +31,11 @@ jest.mock('@features/auth/utils/googleAuth', () => ({
 import { useAuthStore } from '@features/auth/stores/authStore';
 import * as fb from '@features/auth/utils/firebaseConfig';
 import * as g from '@features/auth/utils/googleAuth';
+import * as cb from '@features/auth/utils/cloudBackup';
 
 const mockFb = fb as jest.Mocked<typeof fb>;
 const mockG = g as jest.Mocked<typeof g>;
+const mockCb = cb as jest.Mocked<typeof cb>;
 
 const authErr = (code: string) => Object.assign(new Error(code), { code });
 const readCache = () => {
@@ -326,5 +335,41 @@ describe('sign out and provider transitions', () => {
     expect(readCache().provider).toBe('email');
     expect(useAuthStore.getState().user?.id).toBe('u9');
     expect(useAuthStore.getState().firebaseUid).toBe('u9');
+  });
+
+  it('deleteAccount removes the cloud backup before the auth user, then clears the session', async () => {
+    mockFb.firebaseSignInWithEmail.mockResolvedValue({ uid: 'u1', email: 'a@b.com' });
+    await useAuthStore.getState().signInWithEmail('a@b.com', 'secret1');
+
+    await useAuthStore.getState().deleteAccount();
+
+    expect(mockCb.deleteCloudBackup).toHaveBeenCalledWith('u1');
+    // Order matters: deleting the auth user first would strip Firestore access
+    // and orphan the backup document forever.
+    expect(mockCb.deleteCloudBackup.mock.invocationCallOrder[0]).toBeLessThan(
+      mockFb.firebaseDeleteAccount.mock.invocationCallOrder[0]
+    );
+
+    const st = useAuthStore.getState();
+    expect(st.user).toBeNull();
+    expect(st.firebaseUid).toBeNull();
+    expect(readCache()).toBeNull();
+    expect(st.loading).toBe(false);
+  });
+
+  it('deleteAccount keeps the local session when Firebase demands a recent login', async () => {
+    mockFb.firebaseSignInWithEmail.mockResolvedValue({ uid: 'u1', email: 'a@b.com' });
+    await useAuthStore.getState().signInWithEmail('a@b.com', 'secret1');
+    mockFb.firebaseDeleteAccount.mockRejectedValue(new Error('REAUTH_REQUIRED'));
+
+    await expect(useAuthStore.getState().deleteAccount()).rejects.toThrow('REAUTH_REQUIRED');
+
+    // Signing the user out here would leave them locked out of an account that
+    // still exists, with no way to retry the deletion.
+    const st = useAuthStore.getState();
+    expect(st.user?.id).toBe('u1');
+    expect(st.firebaseUid).toBe('u1');
+    expect(readCache()).not.toBeNull();
+    expect(st.loading).toBe(false);
   });
 });

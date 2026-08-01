@@ -8,6 +8,7 @@ export const en = {
     add: 'Add',
     back: 'Back',
     next: 'Next',
+    continue: 'Continue',
     done: 'Done',
     loading: 'Loading...',
     error: 'An error occurred',
@@ -1139,6 +1140,18 @@ export const en = {
     signOut: 'Sign out',
     signOutConfirm: 'Sign out?',
     signOutWarning: 'Local data will remain on this device',
+    deleteAccount: 'Delete account',
+    deleteAccountConfirm: 'Delete account?',
+    deleteAccountWarning:
+      'Your account and cloud backup will be permanently deleted from the server. Data on this device stays — you can delete it separately in Settings.',
+    deleteAccountFinalTitle: 'This cannot be undone',
+    deleteAccountFinalBody:
+      'The cloud backup cannot be recovered after deletion. If the history matters, back it up or export a report first.',
+    deleteAccountDone: 'Account deleted',
+    deleteAccountDoneBody: 'Your account and cloud backup are gone. Data on this device is intact.',
+    deleteAccountError: 'Could not delete the account',
+    deleteAccountReauth:
+      'For security, you need to sign in again before deleting. Sign out, sign back in, and retry the deletion.',
     cloudBackup: 'Cloud backup',
     backup: 'Backup',
     restore: 'Restore',

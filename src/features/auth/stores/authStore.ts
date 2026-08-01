@@ -7,8 +7,10 @@ import {
   firebaseSignUpWithEmail,
   firebaseSendPasswordReset,
   firebaseSignOutUser,
+  firebaseDeleteAccount,
   awaitFirebaseAuthReady,
 } from '../utils/firebaseConfig';
+import { deleteCloudBackup } from '../utils/cloudBackup';
 
 /** How the current user authenticated. Google is unavailable in some regions
  *  (e.g. Russia), so email/password is offered as a Google-free alternative. */
@@ -45,6 +47,8 @@ interface AuthState {
   resetPassword: (email: string) => Promise<void>;
   /** Sign out and clear stored user */
   signOut: () => Promise<void>;
+  /** Permanently delete the account and its cloud backup (Google Play requirement) */
+  deleteAccount: () => Promise<void>;
 }
 
 export const useAuthStore = create<AuthState>(set => ({
@@ -182,6 +186,25 @@ export const useAuthStore = create<AuthState>(set => ({
       set({ user: null, firebaseUid: null });
       getStorage().delete(StorageKeys.AUTH_USER);
       await firebaseSignOutUser();
+      await signOutGoogle();
+    } finally {
+      set({ loading: false });
+    }
+  },
+
+  deleteAccount: async () => {
+    set({ loading: true });
+    try {
+      const uid = useAuthStore.getState().firebaseUid;
+      // Cloud data first: if the auth user were deleted first, its Firestore
+      // rules access would be gone and the backup would be orphaned forever.
+      if (uid) await deleteCloudBackup(uid);
+      // May throw REAUTH_REQUIRED — deliberately propagated so the UI can ask
+      // the user to sign in again. Local session is left intact in that case,
+      // otherwise they would be signed out with the account still alive.
+      await firebaseDeleteAccount();
+      set({ user: null, firebaseUid: null });
+      getStorage().delete(StorageKeys.AUTH_USER);
       await signOutGoogle();
     } finally {
       set({ loading: false });
