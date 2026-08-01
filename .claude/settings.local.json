@@ -243,7 +243,28 @@
       "Bash(awk '{print \"size=\"$5\" bytes, last-modified=\"$6}')",
       "Bash(echo \"COMMIT: $?\")",
       "Bash(echo \"---EXIT $?---\")",
-      "Bash(echo \"TSC_EXIT=$?\")"
+      "Bash(echo \"TSC_EXIT=$?\")",
+      "PowerShell(npx eslint . --ext .ts,.tsx --max-warnings 0)",
+      "PowerShell(npx expo-doctor 2>&1 | Select-Object -Last 20)",
+      "PowerShell(Get-ChildItem -Recurse assets\\\\images; Add-Type -AssemblyName System.Drawing; foreach \\($f in @\\('assets\\\\icon.png','assets\\\\adaptive-icon.png','assets\\\\splash-icon.png','assets\\\\favicon.png'\\)\\) { $img = [System.Drawing.Image]::FromFile\\(\\(Resolve-Path $f\\)\\); Write-Output \"$f : $\\($img.Width\\)x$\\($img.Height\\)\"; $img.Dispose\\(\\) })",
+      "PowerShell(node \"C:\\\\Users\\\\Admin\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--Users-Admin-DIAPET\\\\38a2f80e-baf4-49a2-9ccd-216adb5790e1\\\\scratchpad\\\\check-icons.js\")",
+      "PowerShell(node \"C:\\\\Users\\\\Admin\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--Users-Admin-DIAPET\\\\38a2f80e-baf4-49a2-9ccd-216adb5790e1\\\\scratchpad\\\\check-icons2.js\")",
+      "PowerShell(node \"C:\\\\Users\\\\Admin\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--Users-Admin-DIAPET\\\\38a2f80e-baf4-49a2-9ccd-216adb5790e1\\\\scratchpad\\\\check-articles.js\")",
+      "PowerShell(cd C:\\\\Users\\\\Admin\\\\DIAPET; Select-String -Path src\\\\features\\\\hints\\\\data\\\\hintsContent.ts,src\\\\features\\\\hints\\\\data\\\\eventHints.ts,src\\\\shared\\\\i18n\\\\locales\\\\ru.ts,src\\\\shared\\\\i18n\\\\locales\\\\en.ts -Pattern '^export' | Select-Object -First 30 | ForEach-Object { \"$\\($_.Filename\\):$\\($_.LineNumber\\): $\\($_.Line\\)\" })",
+      "PowerShell(node \"C:\\\\Users\\\\Admin\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--Users-Admin-DIAPET\\\\2ae6e558-495b-4bb0-85d9-64a3b51bd9cb\\\\scratchpad\\\\iconSweep.js\" 2>&1)",
+      "PowerShell(node \"C:\\\\Users\\\\Admin\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--Users-Admin-DIAPET\\\\2ae6e558-495b-4bb0-85d9-64a3b51bd9cb\\\\scratchpad\\\\i18nSweep.js\" 2>&1 | Select-Object -First 120)",
+      "PowerShell(cd C:\\\\Users\\\\Admin\\\\DIAPET; git diff --stat 41ec369..HEAD -- src | Where-Object { $_ -notmatch 'data/articles/' })",
+      "PowerShell(node \"C:\\\\Users\\\\Admin\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--Users-Admin-DIAPET\\\\2ae6e558-495b-4bb0-85d9-64a3b51bd9cb\\\\scratchpad\\\\cyrSweep.js\" 2>&1 | Select-Object -First 100)",
+      "PowerShell(cd C:\\\\Users\\\\Admin\\\\DIAPET; \\(Get-Content package.json | Select-String '\"firebase\"'\\).Line; Get-Content node_modules\\\\firebase\\\\package.json | Select-String '\"version\"' | Select-Object -First 1)",
+      "PowerShell(cd C:\\\\Users\\\\Admin\\\\DIAPET; Select-String -Path src\\\\features\\\\encyclopedia\\\\data\\\\articles\\\\comorbidities.ts,src\\\\features\\\\encyclopedia\\\\data\\\\articles\\\\neuropathy.ts -Pattern 'мочев|цистит|ИМП|инфекц' | Select-Object -First 12 | ForEach-Object { \"$\\($_.Filename\\):$\\($_.LineNumber\\): $\\($_.Line.Trim\\(\\).Substring\\(0,[Math]::Min\\(120,$_.Line.Trim\\(\\).Length\\)\\)\\)\" })",
+      "PowerShell(cd C:\\\\Users\\\\Admin\\\\DIAPET; foreach \\($f in 'src\\\\features\\\\pets\\\\screens\\\\AddPetScreen.tsx','src\\\\features\\\\pets\\\\screens\\\\EditPetScreen.tsx','src\\\\features\\\\onboarding\\\\screens\\\\PetInfoScreen.tsx','src\\\\features\\\\encyclopedia\\\\screens\\\\ArticleListScreen.tsx','src\\\\features\\\\encyclopedia\\\\screens\\\\FeedGuideRegionScreen.tsx'\\) { \"=== $f\"; Select-String -Path $f -Pattern \"dateUtils|toLocaleDateString\" | ForEach-Object { \"  $\\($_.LineNumber\\): $\\($_.Line.Trim\\(\\)\\)\" } })",
+      "PowerShell(cd C:\\\\Users\\\\Admin\\\\DIAPET; Select-String -Path src\\\\features\\\\encyclopedia\\\\screens\\\\FeedGuideRegionScreen.tsx,src\\\\features\\\\encyclopedia\\\\screens\\\\ArticleListScreen.tsx -Pattern \"^import|dateUtils\" | ForEach-Object { \"$\\($_.Filename\\):$\\($_.LineNumber\\): $\\($_.Line.Trim\\(\\)\\)\" } | Select-Object -First 40)",
+      "Bash(sed 's/=.*$/=<set>/')",
+      "Bash(awk 'NR>=455 && NR<=465' src/shared/i18n/locales/ru.ts)",
+      "Bash(awk 'NR>=1095 && NR<=1105' src/shared/i18n/locales/ru.ts)",
+      "Bash(awk 'NR>=670 && NR<=682' src/shared/i18n/locales/ru.ts)",
+      "Bash(awk 'NR>=674 && NR<=682' src/shared/i18n/locales/en.ts)",
+      "Bash(awk 'NR<=25' .claude/agents/diastore.md)"
     ]
   }
 }
