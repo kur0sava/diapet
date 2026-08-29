@@ -194,3 +194,39 @@ export async function firebaseDeleteAccount(): Promise<void> {
     throw e;
   }
 }
+
+/**
+ * Thrown when deletion failed for a stale session AFTER the cloud backup was
+ * already removed. Distinct from REAUTH_REQUIRED because the user must be told
+ * the truth: retrying will finish the job, but the backup is not coming back.
+ */
+export const REAUTH_REQUIRED_BACKUP_GONE = 'REAUTH_REQUIRED_BACKUP_GONE';
+
+/** Firebase refuses sensitive operations on a session older than a few minutes.
+ *  The exact window is not part of its public contract, so mirror it
+ *  conservatively: guessing low only costs the user one extra sign-in, while
+ *  guessing high costs them their cloud backup. */
+const RECENT_LOGIN_WINDOW_MS = 5 * 60 * 1000;
+
+/**
+ * Pre-flight check for account deletion.
+ *
+ * MUST be called BEFORE any irreversible cleanup. Deleting the Firestore backup
+ * has to happen first (once the auth user is gone, the client can no longer
+ * satisfy the security rules and the document would be orphaned forever) — but
+ * that ordering means a `requires-recent-login` rejection would otherwise
+ * destroy the only off-device copy of the pet's history while telling the user
+ * that nothing was deleted. Failing here instead leaves everything intact.
+ */
+export function assertRecentLogin(): void {
+  const current = auth.currentUser;
+  // No live session: the UI can be restored from the MMKV cache while the
+  // silent sign-in failed (offline), and firebaseUid alone is not proof of one.
+  if (!current) throw new Error(REAUTH_REQUIRED);
+  const lastSignIn = current.metadata?.lastSignInTime;
+  // No timestamp — let Firebase itself be the judge rather than blocking a
+  // legitimate deletion.
+  if (!lastSignIn) return;
+  const age = Date.now() - new Date(lastSignIn).getTime();
+  if (Number.isNaN(age) || age > RECENT_LOGIN_WINDOW_MS) throw new Error(REAUTH_REQUIRED);
+}

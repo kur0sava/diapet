@@ -15,7 +15,9 @@ jest.mock('@features/auth/utils/firebaseConfig', () => ({
   firebaseSignOutUser: jest.fn(),
   firebaseDeleteAccount: jest.fn(),
   awaitFirebaseAuthReady: jest.fn(),
+  assertRecentLogin: jest.fn(),
   REAUTH_REQUIRED: 'REAUTH_REQUIRED',
+  REAUTH_REQUIRED_BACKUP_GONE: 'REAUTH_REQUIRED_BACKUP_GONE',
 }));
 // cloudBackup pulls in firebase/firestore, which has no test double — the store
 // only needs the one deletion call from it.
@@ -357,12 +359,38 @@ describe('sign out and provider transitions', () => {
     expect(st.loading).toBe(false);
   });
 
-  it('deleteAccount keeps the local session when Firebase demands a recent login', async () => {
+  it('deleteAccount refuses a stale session BEFORE deleting the cloud backup', async () => {
+    mockFb.firebaseSignInWithEmail.mockResolvedValue({ uid: 'u1', email: 'a@b.com' });
+    await useAuthStore.getState().signInWithEmail('a@b.com', 'secret1');
+    // Firebase rejects sensitive operations on an old session. Discovering that
+    // only after the backup is gone destroys the user's only off-device copy
+    // while telling them the deletion failed.
+    mockFb.assertRecentLogin.mockImplementationOnce(() => {
+      throw new Error('REAUTH_REQUIRED');
+    });
+
+    await expect(useAuthStore.getState().deleteAccount()).rejects.toThrow('REAUTH_REQUIRED');
+
+    expect(mockCb.deleteCloudBackup).not.toHaveBeenCalled();
+    expect(mockFb.firebaseDeleteAccount).not.toHaveBeenCalled();
+    const st = useAuthStore.getState();
+    expect(st.user?.id).toBe('u1');
+    expect(st.firebaseUid).toBe('u1');
+    expect(readCache()).not.toBeNull();
+    expect(st.loading).toBe(false);
+  });
+
+  it('deleteAccount reports the backup as gone when Firebase refuses after the cleanup', async () => {
     mockFb.firebaseSignInWithEmail.mockResolvedValue({ uid: 'u1', email: 'a@b.com' });
     await useAuthStore.getState().signInWithEmail('a@b.com', 'secret1');
     mockFb.firebaseDeleteAccount.mockRejectedValue(new Error('REAUTH_REQUIRED'));
 
-    await expect(useAuthStore.getState().deleteAccount()).rejects.toThrow('REAUTH_REQUIRED');
+    // The pre-flight passed, so the backup really is deleted by this point:
+    // the error must say so rather than implying nothing happened.
+    await expect(useAuthStore.getState().deleteAccount()).rejects.toThrow(
+      'REAUTH_REQUIRED_BACKUP_GONE'
+    );
+    expect(mockCb.deleteCloudBackup).toHaveBeenCalledWith('u1');
 
     // Signing the user out here would leave them locked out of an account that
     // still exists, with no way to retry the deletion.

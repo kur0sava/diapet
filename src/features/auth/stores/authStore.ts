@@ -9,6 +9,9 @@ import {
   firebaseSignOutUser,
   firebaseDeleteAccount,
   awaitFirebaseAuthReady,
+  assertRecentLogin,
+  REAUTH_REQUIRED,
+  REAUTH_REQUIRED_BACKUP_GONE,
 } from '../utils/firebaseConfig';
 import { deleteCloudBackup } from '../utils/cloudBackup';
 
@@ -196,13 +199,25 @@ export const useAuthStore = create<AuthState>(set => ({
     set({ loading: true });
     try {
       const uid = useAuthStore.getState().firebaseUid;
+      // Confirm the session can actually finish the job BEFORE destroying
+      // anything. May throw REAUTH_REQUIRED — deliberately propagated so the UI
+      // can ask the user to sign in again. Local session is left intact in that
+      // case, otherwise they would be signed out with the account still alive.
+      assertRecentLogin();
       // Cloud data first: if the auth user were deleted first, its Firestore
       // rules access would be gone and the backup would be orphaned forever.
       if (uid) await deleteCloudBackup(uid);
-      // May throw REAUTH_REQUIRED — deliberately propagated so the UI can ask
-      // the user to sign in again. Local session is left intact in that case,
-      // otherwise they would be signed out with the account still alive.
-      await firebaseDeleteAccount();
+      try {
+        await firebaseDeleteAccount();
+      } catch (e) {
+        // Pre-flight passed but Firebase still refused (session went stale in
+        // between, or its window is tighter than ours). The backup is already
+        // gone at this point, so the UI must not imply nothing happened.
+        if (e instanceof Error && e.message === REAUTH_REQUIRED) {
+          throw new Error(REAUTH_REQUIRED_BACKUP_GONE);
+        }
+        throw e;
+      }
       set({ user: null, firebaseUid: null });
       getStorage().delete(StorageKeys.AUTH_USER);
       await signOutGoogle();

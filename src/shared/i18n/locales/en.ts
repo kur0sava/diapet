@@ -1160,6 +1160,8 @@ export const en = {
     deleteAccountDone: 'Account deleted',
     deleteAccountDoneBody: 'Your account and cloud backup are gone. Data on this device is intact.',
     deleteAccountError: 'Could not delete the account',
+    deleteAccountReauthBackupGone:
+      'The cloud backup was deleted, but the account itself remains: removing it needs a fresh sign-in. Sign out, sign in again and repeat — the cloud backup cannot be restored.',
     deleteAccountReauth:
       'For security, you need to sign in again before deleting. Sign out, sign back in, and retry the deletion.',
     cloudBackup: 'Cloud backup',

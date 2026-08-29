@@ -20,7 +20,7 @@ import { Icon } from '@shared/components/ui/Icon';
 import { Card } from '@shared/components/ui';
 import { useMoreNavigation } from '@navigation/hooks';
 import { useAuthStore } from '../stores/authStore';
-import { REAUTH_REQUIRED } from '../utils/firebaseConfig';
+import { REAUTH_REQUIRED, REAUTH_REQUIRED_BACKUP_GONE } from '../utils/firebaseConfig';
 import { backupToCloud, restoreFromCloud, hasCloudBackup } from '../utils/cloudBackup';
 import { usePetStore } from '@shared/stores/petStore';
 import { useQueryClient } from '@tanstack/react-query';
@@ -201,10 +201,13 @@ export default function AccountScreen() {
                   await deleteAccount();
                   Alert.alert(t('auth.deleteAccountDone'), t('auth.deleteAccountDoneBody'));
                 } catch (error: unknown) {
+                  const code = error instanceof Error ? error.message : '';
                   const msg =
-                    error instanceof Error && error.message === REAUTH_REQUIRED
+                    code === REAUTH_REQUIRED
                       ? t('auth.deleteAccountReauth')
-                      : mapAuthError(error, t);
+                      : code === REAUTH_REQUIRED_BACKUP_GONE
+                        ? t('auth.deleteAccountReauthBackupGone')
+                        : mapAuthError(error, t);
                   Alert.alert(t('auth.deleteAccountError'), msg);
                 }
               },
