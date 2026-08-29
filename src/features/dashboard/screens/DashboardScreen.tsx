@@ -368,7 +368,7 @@ export default function DashboardScreen() {
       iconColor: theme.colors.info ?? theme.colors.primary,
       label: t('dashboard.dailyDiary'),
       color: theme.colors.info ?? theme.colors.primary,
-      onPress: () => navigation.navigate('DailyDiary', {}),
+      onPress: requirePet(() => navigation.navigate('DailyDiary', {})),
     },
   ];
 
