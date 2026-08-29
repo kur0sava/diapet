@@ -1,154 +1,35 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>DiaPet — Privacy Policy</title>
-<style>
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    line-height: 1.6; color: #333; padding: 20px; max-width: 720px; margin: 0 auto;
-    background: #fff;
-  }
-  h1 { font-size: 24px; margin-bottom: 8px; color: #D42020; }
-  h2 { font-size: 18px; margin: 24px 0 8px; color: #222; }
-  p, li { font-size: 15px; margin-bottom: 8px; }
-  ul { padding-left: 20px; }
-  .updated { font-size: 13px; color: #888; margin-bottom: 24px; }
-  a { color: #D42020; }
-  @media (prefers-color-scheme: dark) {
-    body { background: #1a1a1a; color: #e0e0e0; }
-    h1 { color: #ff6b6b; }
-    h2 { color: #ddd; }
-    .updated { color: #888; }
-    a { color: #ff6b6b; }
-  }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DiaPet — Privacy Policy</title>
+    <!-- This path used to serve an OUTDATED duplicate of the privacy policy.
+         The canonical document lives at /diapet/assets/privacy-policy.html and
+         is the one the app links to (see src/shared/config/legal.ts). Two
+         published policies disagreeing about what data is collected is a
+         compliance hazard, so this copy now only forwards to the real one. -->
+    <link rel="canonical" href="https://kur0sava.github.io/diapet/assets/privacy-policy.html">
+    <meta name="robots" content="noindex">
+    <meta http-equiv="refresh" content="0; url=../../assets/privacy-policy.html">
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+            margin: 0;
+            padding: 40px 20px;
+            text-align: center;
+            color: #333;
+        }
+        a { color: #4F8EF7; }
+    </style>
 </head>
 <body>
-
-<!-- RU -->
-<div id="ru" style="display:none">
-<h1>Политика конфиденциальности</h1>
-<p class="updated">Последнее обновление: 1 августа 2026 г.</p>
-
-<h2>1. Какие данные мы собираем</h2>
-<p>DiaPet хранит все данные о питомцах, замерах глюкозы, инъекциях, симптомах и расходах <strong>локально на вашем устройстве</strong> в базе данных SQLite.</p>
-<p>Вход в аккаунт не обязателен — приложением можно пользоваться полностью без него.</p>
-<p>Если вы авторизуетесь через Google, мы получаем:</p>
-<ul>
-  <li>Имя и адрес электронной почты вашего аккаунта Google</li>
-  <li>URL фотографии профиля</li>
-  <li>Идентификатор Google (для привязки облачной копии)</li>
-</ul>
-<p>Если вы регистрируетесь по электронной почте и паролю, мы получаем:</p>
-<ul>
-  <li>Адрес вашей электронной почты</li>
-  <li>Идентификатор пользователя (для привязки облачной копии)</li>
-</ul>
-<p>Аутентификация выполняется сервисом Firebase Authentication (Google). Пароль обрабатывается и хранится в Firebase в защищённом (хешированном) виде; разработчику DiaPet ваш пароль не доступен.</p>
-<p>Мы <strong>не собираем</strong> данные геолокации, контактов, звонков, SMS или других личных данных с вашего устройства.</p>
-
-<h2>2. Облачное резервное копирование</h2>
-<p>Если вы включите облачное резервное копирование, данные о питомцах передаются в Firebase Firestore и привязываются к вашему аккаунту DiaPet (Google или email). Резервная копия зашифрована при передаче (TLS) и хранится на серверах Google (Firebase).</p>
-<p>Выход из аккаунта в приложении убирает доступ к копии с этого устройства, но <strong>не удаляет</strong> саму копию на сервере — она сохраняется, чтобы вы могли восстановить данные при повторном входе. Как удалить её полностью — см. раздел 6.</p>
-
-<h2>3. AI-ассистент</h2>
-<p><strong>В текущей версии приложения AI-ассистент отключён и никакие данные наружу для него не передаются.</strong></p>
-<p>Когда эта функция будет включена в одном из следующих обновлений, при использовании AI-чата или прогнозирования данные о глюкозе и инъекциях вашего питомца будут передаваться в Anthropic API для обработки запроса. Anthropic не использует эти данные для обучения моделей. Подробнее: <a href="https://www.anthropic.com/privacy" target="_blank">anthropic.com/privacy</a>.</p>
-
-<h2>4. Аналитика и реклама</h2>
-<p>DiaPet использует <strong>Firebase Analytics</strong> (Google) для сбора обезличенной статистики использования: какие экраны открываются, какие функции востребованы, как часто происходят сбои. Это помогает нам понимать, что улучшать.</p>
-<p>В аналитику <strong>не передаются</strong> клички питомцев, значения глюкозы, дозы инсулина, симптомы, заметки и любые другие медицинские данные — только факт события (например, «добавлен замер глюкозы») и технические характеристики устройства.</p>
-<p>Вы можете <strong>полностью отключить</strong> сбор статистики в приложении: Настройки → Конфиденциальность → «Анонимная статистика использования».</p>
-<p>Рекламу DiaPet <strong>не показывает</strong> и рекламных идентификаторов для таргетинга не использует.</p>
-
-<h2>5. Передача данных третьим лицам</h2>
-<p>Мы не продаём ваши персональные данные и не передаём их третьим лицам, кроме поставщиков услуг, описанных выше:</p>
-<ul>
-  <li><strong>Google Firebase</strong> — аутентификация, облачная резервная копия, аналитика</li>
-  <li><strong>Anthropic</strong> — обработка запросов AI-ассистента (в текущей версии функция отключена)</li>
-</ul>
-
-<h2>6. Хранение и удаление данных</h2>
-<p><strong>Локальные данные.</strong> Удаляются полностью при удалении приложения, а также в любой момент через Настройки → Опасная зона → «Удалить все данные».</p>
-<p><strong>Облачная копия и аккаунт.</strong> Хранятся, пока вы не запросите удаление. Чтобы удалить аккаунт и все связанные с ним данные на сервере, напишите с адреса своей регистрации на <a href="mailto:giwoder@gmail.com">giwoder@gmail.com</a> — запрос обрабатывается в течение 30 дней, после чего аккаунт и облачная копия удаляются безвозвратно.</p>
-
-<h2>7. Дети</h2>
-<p>DiaPet не предназначен для детей младше 16 лет и не собирает данные детей намеренно.</p>
-
-<h2>8. Изменения</h2>
-<p>Мы можем обновлять эту политику. Актуальная версия всегда доступна по этой ссылке.</p>
-
-<h2>9. Контакты</h2>
-<p>По вопросам конфиденциальности: <a href="mailto:giwoder@gmail.com">giwoder@gmail.com</a></p>
-</div>
-
-<!-- EN -->
-<div id="en" style="display:none">
-<h1>Privacy Policy</h1>
-<p class="updated">Last updated: August 1, 2026</p>
-
-<h2>1. What data we collect</h2>
-<p>DiaPet stores all pet data, glucose readings, injections, symptoms, and expenses <strong>locally on your device</strong> in an SQLite database.</p>
-<p>Signing in is optional — the app can be used entirely without an account.</p>
-<p>If you sign in with Google, we receive:</p>
-<ul>
-  <li>Your Google account name and email address</li>
-  <li>Profile photo URL</li>
-  <li>Google identifier (to link your cloud backup)</li>
-</ul>
-<p>If you register with an email address and password, we receive:</p>
-<ul>
-  <li>Your email address</li>
-  <li>A user identifier (to link your cloud backup)</li>
-</ul>
-<p>Authentication is handled by Firebase Authentication (Google). Your password is processed and stored by Firebase in hashed form; the DiaPet developer has no access to it.</p>
-<p>We do <strong>not collect</strong> location data, contacts, call logs, SMS, or other personal data from your device.</p>
-
-<h2>2. Cloud backup</h2>
-<p>If you enable cloud backup, pet data is sent to Firebase Firestore and linked to your DiaPet account (Google or email). The backup is encrypted in transit (TLS) and stored on Google (Firebase) servers.</p>
-<p>Signing out in the app removes access to the backup from that device but does <strong>not delete</strong> the backup itself on the server — it is kept so you can restore your data when you sign in again. See section 6 for how to delete it permanently.</p>
-
-<h2>3. AI assistant</h2>
-<p><strong>In the current version of the app the AI assistant is disabled, and no data is sent anywhere for it.</strong></p>
-<p>When this feature is enabled in a future update, using the AI chat or prediction features will send your pet's glucose and injection data to the Anthropic API for processing. Anthropic does not use this data to train models. Learn more: <a href="https://www.anthropic.com/privacy" target="_blank">anthropic.com/privacy</a>.</p>
-
-<h2>4. Analytics and advertising</h2>
-<p>DiaPet uses <strong>Firebase Analytics</strong> (Google) to collect anonymous usage statistics: which screens are opened, which features are used, and how often errors occur. This helps us decide what to improve.</p>
-<p>Analytics <strong>never receives</strong> pet names, glucose values, insulin doses, symptoms, notes, or any other medical data — only the fact that an event occurred (e.g. "glucose entry added") and technical device characteristics.</p>
-<p>You can <strong>fully disable</strong> analytics collection in the app: Settings → Privacy → "Anonymous usage statistics".</p>
-<p>DiaPet does <strong>not</strong> display ads and does not use advertising identifiers for targeting.</p>
-
-<h2>5. Sharing data with third parties</h2>
-<p>We do not sell your personal data and do not share it with third parties, except the service providers described above:</p>
-<ul>
-  <li><strong>Google Firebase</strong> — authentication, cloud backup, analytics</li>
-  <li><strong>Anthropic</strong> — AI assistant request processing (disabled in the current version)</li>
-</ul>
-
-<h2>6. Data retention and deletion</h2>
-<p><strong>Local data.</strong> Deleted entirely when you uninstall the app, and at any time via Settings → Danger zone → "Delete all data".</p>
-<p><strong>Cloud backup and account.</strong> Retained until you request deletion. To delete your account and all associated server-side data, email <a href="mailto:giwoder@gmail.com">giwoder@gmail.com</a> from your registered address — requests are processed within 30 days, after which the account and cloud backup are permanently deleted.</p>
-
-<h2>7. Children</h2>
-<p>DiaPet is not intended for children under 16 and does not knowingly collect data from children.</p>
-
-<h2>8. Changes</h2>
-<p>We may update this policy. The current version is always available at this link.</p>
-
-<h2>9. Contact</h2>
-<p>For privacy questions: <a href="mailto:giwoder@gmail.com">giwoder@gmail.com</a></p>
-</div>
-
-<script>
-(function() {
-  var lang = (navigator.language || navigator.userLanguage || 'en').toLowerCase();
-  var isRu = lang.startsWith('ru');
-  document.getElementById(isRu ? 'ru' : 'en').style.display = 'block';
-  document.documentElement.lang = isRu ? 'ru' : 'en';
-})();
-</script>
+    <p>Политика конфиденциальности переехала.
+       <a href="../../assets/privacy-policy.html">Открыть актуальную версию</a></p>
+    <p>The privacy policy has moved.
+       <a href="../../assets/privacy-policy.html">Open the current version</a></p>
+    <script>
+        location.replace('../../assets/privacy-policy.html');
+    </script>
 </body>
 </html>

@@ -468,8 +468,10 @@ function main(): void {
   // NB: the legal pages the APP links to are the ones at the REPO ROOT
   // (assets/privacy-policy.html, assets/terms-of-service.html) — verified by
   // fetching https://kur0sava.github.io/diapet/assets/privacy-policy.html.
-  // docs/assets/ holds an older, unserved duplicate; editing it changes
-  // nothing users see. See src/shared/config/legal.ts for the live URLs.
+  // docs/assets/ IS publicly reachable too (/diapet/docs/assets/...), so the
+  // stale duplicates that used to sit there published a second, contradicting
+  // privacy policy. They are now redirect stubs pointing at the canonical
+  // pages — keep it that way. See src/shared/config/legal.ts for the live URLs.
   for (const owned of ['a', 'en', 'index.html', 'style.css', 'sitemap.xml', 'robots.txt']) {
     fs.rmSync(path.join(OUT_DIR, owned), { recursive: true, force: true });
   }
