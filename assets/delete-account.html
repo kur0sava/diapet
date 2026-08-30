@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Delete your DiaPet account — Удаление аккаунта DiaPet</title>
+    <meta name="description" content="How to delete your DiaPet account and its data, in the app or by request. Как удалить аккаунт DiaPet и его данные.">
+    <link rel="canonical" href="https://kur0sava.github.io/diapet/assets/delete-account.html">
+<style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px 30px;
+            text-align: center;
+        }
+
+        header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        header p {
+            font-size: 1.1em;
+            opacity: 0.95;
+            font-weight: 300;
+        }
+
+        .language-toggle {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            gap: 10px;
+            z-index: 100;
+        }
+
+        .language-toggle button {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            background: white;
+            color: #667eea;
+        }
+
+        .language-toggle button.active {
+            background: #667eea;
+            color: white;
+        }
+
+        .language-toggle button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .content {
+            padding: 40px 30px;
+        }
+
+        .language-section {
+            display: none;
+        }
+
+        .language-section.active {
+            display: block;
+        }
+
+        h2 {
+            color: #667eea;
+            margin-top: 35px;
+            margin-bottom: 15px;
+            font-size: 1.5em;
+            border-bottom: 2px solid #e0e0e0;
+            padding-bottom: 10px;
+        }
+
+        h2:first-of-type {
+            margin-top: 0;
+        }
+
+        h3 {
+            color: #764ba2;
+            margin-top: 20px;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+
+        h4 {
+            color: #555;
+            margin-top: 14px;
+            margin-bottom: 8px;
+            font-size: 1.0em;
+        }
+
+        p {
+            margin-bottom: 15px;
+            text-align: justify;
+        }
+
+        ul, ol {
+            margin-left: 25px;
+            margin-bottom: 15px;
+        }
+
+        li {
+            margin-bottom: 10px;
+        }
+
+        .highlight {
+            background: #f0f4ff;
+            padding: 20px;
+            border-left: 4px solid #667eea;
+            margin: 20px 0;
+            border-radius: 6px;
+        }
+
+        .highlight strong {
+            color: #667eea;
+        }
+
+        .third-party {
+            background: #fff7e6;
+            padding: 16px 20px;
+            border-left: 4px solid #ffa726;
+            margin: 14px 0;
+            border-radius: 6px;
+        }
+
+        .third-party strong {
+            color: #b26a00;
+        }
+
+        footer {
+            background: #f8f9fa;
+            padding: 30px;
+            text-align: center;
+            border-top: 1px solid #e0e0e0;
+            color: #666;
+            font-size: 0.95em;
+        }
+
+        footer p {
+            margin-bottom: 10px;
+        }
+
+        .contact-info {
+            background: #fff3cd;
+            padding: 20px;
+            border-radius: 6px;
+            margin: 20px 0;
+            border-left: 4px solid #ffc107;
+        }
+
+        .contact-info strong {
+            color: #856404;
+        }
+
+        a {
+            color: #667eea;
+            text-decoration: none;
+            border-bottom: 1px solid #667eea;
+        }
+
+        a:hover {
+            color: #764ba2;
+            border-bottom-color: #764ba2;
+        }
+
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 1.8em;
+            }
+
+            .content {
+                padding: 25px 20px;
+            }
+
+            h2 {
+                font-size: 1.2em;
+            }
+
+            .language-toggle {
+                top: 10px;
+                right: 10px;
+            }
+
+            .language-toggle button {
+                padding: 6px 12px;
+                font-size: 0.9em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="language-toggle">
+        <button class="lang-btn active" data-lang="en">English</button>
+        <button class="lang-btn" data-lang="ru">Русский</button>
+    </div>
+
+    <div class="container">
+        <header>
+            <h1>Delete your account</h1>
+            <p>DiaPet — Cat &amp; Dog Diabetes Management</p>
+        </header>
+
+        <div class="content">
+            <!-- ENGLISH VERSION -->
+            <div class="language-section active" data-lang="en">
+                <h2>Delete your DiaPet account</h2>
+                <p><strong>Last Updated:</strong> August 2026</p>
+                <p>App: <strong>DiaPet — Cat &amp; Dog Diabetes Management</strong> (<code>com.diapet.app</code>)</p>
+
+                <p>You can delete your DiaPet account and its data at any time. There are two ways: from inside the app, or by sending us a request — use the request route if you have already uninstalled DiaPet or cannot sign in.</p>
+
+                <h3>Option 1 — Delete it yourself in the app</h3>
+                <ol>
+                    <li>Open DiaPet.</li>
+                    <li>Go to <strong>More → Account</strong>.</li>
+                    <li>Tap <strong>Delete account</strong> at the bottom of the screen.</li>
+                    <li>Confirm twice. If you signed in a while ago, the app will ask you to sign in again first — this protects the account from being deleted by someone else using your unlocked phone.</li>
+                </ol>
+                <p>This immediately deletes your account and your cloud backup. It cannot be undone.</p>
+
+                <h3>Option 2 — Ask us to delete it</h3>
+                <p>Send an email to <a href="mailto:giwoder@gmail.com?subject=Delete%20my%20DiaPet%20account">giwoder@gmail.com</a> with the subject <strong>“Delete my DiaPet account”</strong>, from the email address you used to sign in to DiaPet.</p>
+                <div class="highlight">
+                    <p>We need the sign-in email address to find the account. We will not ask you for your password, and we will never ask for it — no employee of DiaPet can read it.</p>
+                </div>
+                <p>Requests are completed <strong>within 30 days</strong>. We reply to confirm once the deletion is done. If the address you write from does not match any account, we will tell you that instead.</p>
+
+                <h3>What gets deleted</h3>
+                <ul>
+                    <li>Your account itself (the sign-in record: email address or the Google account link).</li>
+                    <li>Your <strong>cloud backup</strong>, if you ever enabled it — the copy of your pet profiles, glucose readings, insulin injections, feeding logs, symptom records and expenses stored on our side.</li>
+                </ul>
+                <p>Both are erased permanently. We keep no archived copy of them.</p>
+
+                <h3>What stays on your phone</h3>
+                <p>DiaPet stores your records on the device itself, and deleting the account does not touch that copy — otherwise deleting an account would wipe the history of a sick animal without warning. To remove the on-device data as well, do one of the following:</p>
+                <ul>
+                    <li>In the app: <strong>Settings → Danger zone → Delete all data</strong>.</li>
+                    <li>Or uninstall DiaPet — Android removes the app's storage with it.</li>
+                </ul>
+
+                <h3>What is not linked to your account</h3>
+                <p>DiaPet sends anonymous usage events (for example, “a screen was opened”) to Firebase Analytics to see which features are used. These events carry no medical values and are not tied to your account, so there is nothing in them to delete on request. You can switch them off at any time in <strong>Settings → Privacy</strong>.</p>
+
+                <div class="contact-info">
+                    <h3>Contact</h3>
+                    <p><strong>Email:</strong> <a href="mailto:giwoder@gmail.com">giwoder@gmail.com</a><br>
+                    <strong>Privacy Policy:</strong> <a href="privacy-policy.html">DiaPet Privacy Policy</a></p>
+                </div>
+            </div>
+
+            <!-- RUSSIAN VERSION -->
+            <div class="language-section" data-lang="ru">
+                <h2>Удаление аккаунта DiaPet</h2>
+                <p><strong>Обновлено:</strong> август 2026</p>
+                <p>Приложение: <strong>DiaPet — контроль диабета у кошек и собак</strong> (<code>com.diapet.app</code>)</p>
+
+                <p>Вы можете удалить аккаунт DiaPet и связанные с ним данные в любой момент. Есть два способа: прямо в приложении или по запросу — второй нужен, если приложение уже удалено с телефона или войти не получается.</p>
+
+                <h3>Способ 1 — удалить самостоятельно в приложении</h3>
+                <ol>
+                    <li>Откройте DiaPet.</li>
+                    <li>Перейдите в <strong>«Ещё» → «Аккаунт»</strong>.</li>
+                    <li>Нажмите <strong>«Удалить аккаунт»</strong> внизу экрана.</li>
+                    <li>Подтвердите дважды. Если вы входили давно, приложение сначала попросит войти заново — это защита от того, чтобы аккаунт удалил кто-то другой с вашего разблокированного телефона.</li>
+                </ol>
+                <p>Аккаунт и облачная копия удаляются сразу. Отменить это нельзя.</p>
+
+                <h3>Способ 2 — попросить нас удалить</h3>
+                <p>Напишите на <a href="mailto:giwoder@gmail.com?subject=%D0%A3%D0%B4%D0%B0%D0%BB%D0%B8%D1%82%D0%B5%20%D0%BC%D0%BE%D0%B9%20%D0%B0%D0%BA%D0%BA%D0%B0%D1%83%D0%BD%D1%82%20DiaPet">giwoder@gmail.com</a> с темой <strong>«Удалите мой аккаунт DiaPet»</strong> — с того адреса, под которым вы входили в DiaPet.</p>
+                <div class="highlight">
+                    <p>Адрес входа нужен, чтобы найти аккаунт. Пароль мы не спрашиваем и не спросим никогда — прочитать его не может никто со стороны DiaPet.</p>
+                </div>
+                <p>Запросы выполняются <strong>в течение 30 дней</strong>. Когда удаление завершено, мы отвечаем письмом. Если под адресом, с которого вы написали, аккаунта нет, мы так и напишем.</p>
+
+                <h3>Что именно удаляется</h3>
+                <ul>
+                    <li>Сам аккаунт — запись входа: адрес электронной почты или привязка к аккаунту Google.</li>
+                    <li><strong>Облачная копия</strong>, если вы её включали: хранящиеся на нашей стороне профили питомцев, замеры глюкозы, инъекции инсулина, записи о кормлении, симптомы и расходы.</li>
+                </ul>
+                <p>И то и другое стирается безвозвратно. Архивных копий мы не храним.</p>
+
+                <h3>Что остаётся на телефоне</h3>
+                <p>DiaPet хранит записи на самом устройстве, и удаление аккаунта эту копию не трогает — иначе удаление аккаунта без предупреждения стирало бы историю болезни живого животного. Чтобы убрать и данные на устройстве, сделайте одно из двух:</p>
+                <ul>
+                    <li>В приложении: <strong>«Настройки» → «Опасная зона» → «Удалить все данные»</strong>.</li>
+                    <li>Либо удалите DiaPet с телефона — Android сотрёт его хранилище вместе с приложением.</li>
+                </ul>
+
+                <h3>Что с аккаунтом не связано</h3>
+                <p>DiaPet отправляет в Firebase Analytics обезличенные события использования (например, «открыт экран»), чтобы понимать, какими функциями пользуются. Медицинских значений в них нет, с аккаунтом они не связаны, поэтому удалять по запросу в них нечего. Отключить их можно в любой момент: <strong>«Настройки» → «Конфиденциальность»</strong>.</p>
+
+                <div class="contact-info">
+                    <h3>Контакты</h3>
+                    <p><strong>Электронная почта:</strong> <a href="mailto:giwoder@gmail.com">giwoder@gmail.com</a><br>
+                    <strong>Политика конфиденциальности:</strong> <a href="privacy-policy.html">Политика конфиденциальности DiaPet</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<script>
+        // Language toggle functionality
+        const languageButtons = document.querySelectorAll('.lang-btn');
+        const languageSections = document.querySelectorAll('.language-section');
+
+        function applyLanguage(lang) {
+            languageButtons.forEach(btn => {
+                btn.classList.toggle('active', btn.getAttribute('data-lang') === lang);
+            });
+            languageSections.forEach(section => {
+                section.classList.toggle('active', section.getAttribute('data-lang') === lang);
+            });
+            document.documentElement.lang = lang;
+        }
+
+        languageButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const selectedLang = button.getAttribute('data-lang');
+                applyLanguage(selectedLang);
+                // Only an explicit click is remembered. Auto-detection must not
+                // write here, or opening the page from the app would overwrite
+                // a choice the reader made deliberately.
+                localStorage.setItem('preferredLanguage', selectedLang);
+            });
+        });
+
+        // Pick the initial language. Priority:
+        //   1. ?lang= — the app passes its own UI language when opening this
+        //      page, which may differ from the device locale (the user can
+        //      switch language inside DiaPet).
+        //   2. a choice previously made with the buttons on this page
+        //   3. the browser/device locale
+        //   4. English
+        function initialLanguage() {
+            const supported = ['en', 'ru'];
+            const fromQuery = new URLSearchParams(location.search).get('lang');
+            if (supported.includes(fromQuery)) return fromQuery;
+            const saved = localStorage.getItem('preferredLanguage');
+            if (supported.includes(saved)) return saved;
+            const device = (navigator.language || 'en').toLowerCase();
+            return device.startsWith('ru') ? 'ru' : 'en';
+        }
+
+        applyLanguage(initialLanguage());
+    </script>
+</body>
+</html>
