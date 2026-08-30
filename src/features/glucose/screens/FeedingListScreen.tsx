@@ -98,7 +98,11 @@ export default function FeedingListScreen() {
 
   const renderItem = ({ item, index }: { item: FeedingLog; index: number }) => (
     <AnimatedListItem index={index}>
-      <TouchableOpacity onLongPress={() => handleDelete(item.id)} activeOpacity={0.8}>
+      <TouchableOpacity
+        onPress={() => navigation.navigate('LogFeeding', { editId: item.id })}
+        onLongPress={() => handleDelete(item.id)}
+        activeOpacity={0.8}
+      >
         <Card style={styles.card} shadow>
           <View style={[styles.colorBar, { backgroundColor: theme.colors.success }]} />
           <View style={styles.cardContent}>

@@ -1001,8 +1001,34 @@ export default function DashboardScreen() {
           </TouchableOpacity>
         )}
 
-        {/* H1: History Links row removed — Last Injection card already links to InjectionList;
-            Feeding history available from Daily Diary / QuickAction */}
+        {/* Feeding history. H1 (5e3dbae) dropped this link as a duplicate on the
+            assumption that the Daily Diary covered it — it did not, and FeedingList
+            became unreachable: no way to review or delete a feeding at all.
+            Glucose and injections reach their lists from their own cards above. */}
+        <TouchableOpacity
+          style={[
+            styles.historyLink,
+            { backgroundColor: theme.colors.surface, ...theme.shadows.sm },
+          ]}
+          onPress={() => navigation.navigate('FeedingList')}
+          activeOpacity={0.8}
+          accessibilityRole="button"
+        >
+          <View
+            style={[styles.historyIconCircle, { backgroundColor: `${theme.colors.success}15` }]}
+          >
+            <Icon name="restaurant-outline" size={16} color={theme.colors.success} />
+          </View>
+          <Text
+            style={[
+              styles.historyText,
+              { color: theme.colors.text, fontFamily: theme.fonts.semibold },
+            ]}
+          >
+            {t('feeding.history')}
+          </Text>
+          <Icon name="chevron-forward" size={16} color={theme.colors.textTertiary} />
+        </TouchableOpacity>
       </ScrollView>
       <PetPickerSheet
         visible={pickerVisible}
@@ -1138,6 +1164,23 @@ const styles = StyleSheet.create({
   },
   injectionDose: { fontSize: 16 },
   injectionTime: { fontSize: 13, marginTop: 2 },
+  historyLink: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    marginHorizontal: 20,
+    marginTop: 20,
+    padding: 14,
+    borderRadius: 16,
+  },
+  historyIconCircle: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  historyText: { flex: 1, fontSize: 13 },
   upgradeCard: {
     flexDirection: 'row',
     alignItems: 'center',
