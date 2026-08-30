@@ -264,7 +264,10 @@
       "Bash(awk 'NR>=1095 && NR<=1105' src/shared/i18n/locales/ru.ts)",
       "Bash(awk 'NR>=670 && NR<=682' src/shared/i18n/locales/ru.ts)",
       "Bash(awk 'NR>=674 && NR<=682' src/shared/i18n/locales/en.ts)",
-      "Bash(awk 'NR<=25' .claude/agents/diastore.md)"
+      "Bash(awk 'NR<=25' .claude/agents/diastore.md)",
+      "Bash(sort -u -t: -k3)",
+      "PowerShell($p=\"C:\\\\Users\\\\Admin\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--Users-Admin-DIAPET\\\\d7b16c61-c216-484c-8482-47cc44169c58\\\\scratchpad\\\\desc.txt\"; $t=Get-Content $p -Raw -Encoding UTF8; \"FULL RU chars: \" + $t.Length; \"short1: \" + \"Дневник диабета кошки и собаки: глюкоза, инсулин, корма, напоминания\".Length; \"short2: \" + \"Диабет у кошек и собак: глюкоза, инсулин, корма и здоровье в одном месте\".Length)",
+      "Bash(echo \"---exit:$?\")"
     ]
   }
 }
