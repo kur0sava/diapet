@@ -14,7 +14,7 @@ import { useMoreNavigation } from '@navigation/hooks';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '@shared/theme';
 import { Button, Input, PetAvatar, ScreenHeader } from '@shared/components/ui';
-import { pickPetPhoto, deletePetPhotoFile } from '../utils/petPhoto';
+import { pickPetPhoto, deletePetPhotoFile, recoverPendingPetPhoto } from '../utils/petPhoto';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { petRepository, scheduleRepository, getDatabase } from '@storage/database';
 import { usePetStore } from '@shared/stores/petStore';
@@ -76,6 +76,21 @@ export default function EditPetScreen() {
     if (photoUri && photoUri !== originalPhotoUri.current) void deletePetPhotoFile(photoUri);
     setPhotoUri(uri);
   };
+  // Android may destroy the app while the system photo picker is in front (low
+  // memory). The picked asset survives in the native module but the promise that
+  // was awaiting it does not, so recover it on mount rather than losing the pick.
+  useEffect(() => {
+    let cancelled = false;
+    void (async () => {
+      const recovered = await recoverPendingPetPhoto();
+      if (recovered && !cancelled) {
+        setPhotoUri(prev => (prev ? prev : recovered));
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
   const [vetName, setVetName] = useState('');
   const [vetPhone, setVetPhone] = useState('');
   const [injectionTimes, setInjectionTimes] = useState<string[]>([]);

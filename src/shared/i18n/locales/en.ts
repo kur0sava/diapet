@@ -363,6 +363,7 @@ export const en = {
     gallery: 'Gallery',
     noGalleryAccess: 'No gallery access',
     noCameraAccess: 'No camera access',
+    photoPickFailed: 'Could not load the photo. Please try again.',
     selectAtLeastOne: 'Select at least one symptom',
     saveError: 'Failed to save',
     noSymptoms: 'No symptom records',

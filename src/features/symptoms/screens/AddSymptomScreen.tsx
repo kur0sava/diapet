@@ -103,30 +103,29 @@ export default function AddSymptomScreen() {
   }, []);
 
   const pickPhoto = useCallback(async () => {
-    const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    if (!permission.granted) {
-      Alert.alert(t('common.error'), t('symptoms.noGalleryAccess'));
-      return;
-    }
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ['images'],
-      allowsMultipleSelection: true,
-      selectionLimit: 5,
-      quality: 0.6,
-      exif: false,
-    });
-    if (!result.canceled && result.assets) {
-      const validAssets = result.assets.filter(a => !a.fileSize || a.fileSize < 5_000_000);
-      const dir = `${FileSystem.documentDirectory}symptom_photos/`;
-      await FileSystem.makeDirectoryAsync(dir, { intermediates: true });
-      const savedUris = await Promise.all(
-        validAssets.map(async a => {
-          const dest = `${dir}${Date.now()}_${Math.random().toString(36).slice(2)}.jpg`;
-          await FileSystem.copyAsync({ from: a.uri, to: dest });
-          return dest;
-        })
-      );
-      setPhotos(prev => [...prev, ...savedUris].slice(0, 10));
+    try {
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ['images'],
+        allowsMultipleSelection: true,
+        selectionLimit: 5,
+        quality: 0.6,
+        exif: false,
+      });
+      if (!result.canceled && result.assets) {
+        const validAssets = result.assets.filter(a => !a.fileSize || a.fileSize < 5_000_000);
+        const dir = `${FileSystem.documentDirectory}symptom_photos/`;
+        await FileSystem.makeDirectoryAsync(dir, { intermediates: true });
+        const savedUris = await Promise.all(
+          validAssets.map(async a => {
+            const dest = `${dir}${Date.now()}_${Math.random().toString(36).slice(2)}.jpg`;
+            await FileSystem.copyAsync({ from: a.uri, to: dest });
+            return dest;
+          })
+        );
+        setPhotos(prev => [...prev, ...savedUris].slice(0, 10));
+      }
+    } catch {
+      Alert.alert(t('common.error'), t('symptoms.photoPickFailed'));
     }
   }, [t]);
 
@@ -136,13 +135,17 @@ export default function AddSymptomScreen() {
       Alert.alert(t('common.error'), t('symptoms.noCameraAccess'));
       return;
     }
-    const result = await ImagePicker.launchCameraAsync({ quality: 0.6, exif: false });
-    if (!result.canceled && result.assets && result.assets.length > 0) {
-      const dir = `${FileSystem.documentDirectory}symptom_photos/`;
-      await FileSystem.makeDirectoryAsync(dir, { intermediates: true });
-      const dest = `${dir}${Date.now()}_${Math.random().toString(36).slice(2)}.jpg`;
-      await FileSystem.copyAsync({ from: result.assets[0].uri, to: dest });
-      setPhotos(prev => [...prev, dest].slice(0, 10));
+    try {
+      const result = await ImagePicker.launchCameraAsync({ quality: 0.6, exif: false });
+      if (!result.canceled && result.assets && result.assets.length > 0) {
+        const dir = `${FileSystem.documentDirectory}symptom_photos/`;
+        await FileSystem.makeDirectoryAsync(dir, { intermediates: true });
+        const dest = `${dir}${Date.now()}_${Math.random().toString(36).slice(2)}.jpg`;
+        await FileSystem.copyAsync({ from: result.assets[0].uri, to: dest });
+        setPhotos(prev => [...prev, dest].slice(0, 10));
+      }
+    } catch {
+      Alert.alert(t('common.error'), t('symptoms.photoPickFailed'));
     }
   }, [t]);
 
