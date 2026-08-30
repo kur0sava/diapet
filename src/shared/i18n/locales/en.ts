@@ -364,7 +364,6 @@ export const en = {
     severe: 'Severe',
     camera: 'Camera',
     gallery: 'Gallery',
-    noGalleryAccess: 'No gallery access',
     noCameraAccess: 'No camera access',
     photoPickFailed: 'Could not load the photo. Please try again.',
     selectAtLeastOne: 'Select at least one symptom',

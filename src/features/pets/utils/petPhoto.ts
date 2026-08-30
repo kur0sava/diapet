@@ -48,28 +48,18 @@ export async function pickPetPhoto(source: 'gallery' | 'camera'): Promise<string
 
     if (result.canceled || !result.assets || result.assets.length === 0) return null;
     return await persistAsset(result.assets[0].uri);
-  } catch {
+  } catch (e) {
     // Native picker/crop can reject (unreadable asset, cropper failure, OOM).
     // Without this the promise rejected unhandled and the tap looked like a no-op.
-    Alert.alert(i18n.t('common.error'), i18n.t('symptoms.photoPickFailed'));
-    return null;
-  }
-}
-
-/**
- * Recover a photo picked right before Android destroyed the app to reclaim
- * memory — the picker result survives, the pending promise does not.
- * Returns null when there is nothing pending.
- */
-export async function recoverPendingPetPhoto(): Promise<string | null> {
-  try {
-    const pending = await ImagePicker.getPendingResultAsync();
-    const asset = Array.isArray(pending)
-      ? pending.find(r => !('canceled' in r) || !r.canceled)
-      : pending;
-    if (!asset || !('assets' in asset) || !asset.assets?.length) return null;
-    return await persistAsset(asset.assets[0].uri);
-  } catch {
+    //
+    // Below API 29 the native camera path also demands WRITE_EXTERNAL_STORAGE on
+    // top of the CAMERA grant checked above, so a denial can still land here —
+    // say so plainly instead of blaming a failed load.
+    const denied = (e as { code?: string })?.code === 'ERR_USER_REJECTED_PERMISSIONS';
+    Alert.alert(
+      i18n.t('common.error'),
+      denied ? i18n.t('symptoms.noCameraAccess') : i18n.t('symptoms.photoPickFailed')
+    );
     return null;
   }
 }

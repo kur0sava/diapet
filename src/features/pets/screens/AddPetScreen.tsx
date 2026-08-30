@@ -14,7 +14,7 @@ import { useTranslation } from 'react-i18next';
 import { useTheme } from '@shared/theme';
 import { useMoreNavigation } from '@navigation/hooks';
 import { Button, Input, PetFace, PetAvatar, ScreenHeader } from '@shared/components/ui';
-import { pickPetPhoto, deletePetPhotoFile, recoverPendingPetPhoto } from '../utils/petPhoto';
+import { pickPetPhoto, deletePetPhotoFile } from '../utils/petPhoto';
 import { Icon } from '@shared/components/ui/Icon';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { petRepository, scheduleRepository } from '@storage/database';
@@ -75,21 +75,6 @@ export default function AddPetScreen() {
     if (photoUri) void deletePetPhotoFile(photoUri);
     setPhotoUri(uri);
   };
-  // Android may destroy the app while the system photo picker is in front (low
-  // memory). The picked asset survives in the native module but the promise that
-  // was awaiting it does not, so recover it on mount rather than losing the pick.
-  useEffect(() => {
-    let cancelled = false;
-    void (async () => {
-      const recovered = await recoverPendingPetPhoto();
-      if (recovered && !cancelled) {
-        setPhotoUri(prev => (prev ? prev : recovered));
-      }
-    })();
-    return () => {
-      cancelled = true;
-    };
-  }, []);
   // Batch7: clean up a picked-but-never-saved photo when the user abandons
   // AddPet (back / gesture). savedRef flips true once the pet is committed so we
   // never delete a photo that a real pet row now references. photoUriRef mirrors

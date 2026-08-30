@@ -72,8 +72,10 @@ export default function LogFeedingScreen() {
   );
   const initialFedAt = useRef(fedAt.getTime());
   // Edit mode fills the form from storage, which would otherwise read as
-  // unsaved user input; this baseline is re-pointed once the record lands.
-  const editBaseline = useRef<string | null>(null);
+  // unsaved user input; this baseline is set once the record lands. State, not
+  // a ref: the dirty check runs during render, and a ref written inside the
+  // load callback would only be seen if a re-render happened to follow.
+  const [editBaseline, setEditBaseline] = useState<string | null>(null);
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [showTimePicker, setShowTimePicker] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -109,7 +111,7 @@ export default function LogFeedingScreen() {
     moisture,
   ].join('|');
   const isDirty = editId
-    ? editBaseline.current !== null && formSignature !== editBaseline.current
+    ? editBaseline !== null && formSignature !== editBaseline
     : !!amount ||
       !!notes ||
       dateChanged ||
@@ -189,19 +191,21 @@ export default function LogFeedingScreen() {
         setMoisture(nums.moisture);
       }
 
-      editBaseline.current = [
-        loadedType,
-        loadedAmount,
-        loadedNotes,
-        loadedFedAt.getTime(),
-        brand,
-        product,
-        log.foodBrand || log.foodProduct ? '' : nums.protein,
-        log.foodBrand || log.foodProduct ? '' : nums.fat,
-        log.foodBrand || log.foodProduct ? '' : nums.fiber,
-        log.foodBrand || log.foodProduct ? '' : nums.ash,
-        log.foodBrand || log.foodProduct ? '' : nums.moisture,
-      ].join('|');
+      setEditBaseline(
+        [
+          loadedType,
+          loadedAmount,
+          loadedNotes,
+          loadedFedAt.getTime(),
+          brand,
+          product,
+          log.foodBrand || log.foodProduct ? '' : nums.protein,
+          log.foodBrand || log.foodProduct ? '' : nums.fat,
+          log.foodBrand || log.foodProduct ? '' : nums.fiber,
+          log.foodBrand || log.foodProduct ? '' : nums.ash,
+          log.foodBrand || log.foodProduct ? '' : nums.moisture,
+        ].join('|')
+      );
     });
     return () => {
       cancelled = true;

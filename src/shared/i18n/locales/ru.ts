@@ -365,7 +365,6 @@ export const ru = {
     severe: 'Тяжёлая',
     camera: 'Камера',
     gallery: 'Галерея',
-    noGalleryAccess: 'Нет доступа к галерее',
     noCameraAccess: 'Нет доступа к камере',
     photoPickFailed: 'Не удалось загрузить фото. Попробуйте ещё раз.',
     selectAtLeastOne: 'Выберите хотя бы один симптом',
