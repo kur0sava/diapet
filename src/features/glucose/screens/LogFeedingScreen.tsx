@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useRef, useMemo } from 'react';
+import React, { useState, useCallback, useRef, useMemo, useEffect } from 'react';
 import {
   View,
   Text,
@@ -59,6 +59,7 @@ export default function LogFeedingScreen() {
   const highCarbsThreshold = getSpeciesConfig(activePet?.species ?? 'cat').nutrition
     .highCarbsThreshold;
   const queryClient = useQueryClient();
+  const editId = route.params?.editId;
   // UX-C2 (audit): pin pet at mount — feeding misattribution still distorts
   // analytics for the wrong pet.
   const petIdRef = useRef<string | undefined>(activePet?.id);
@@ -70,6 +71,9 @@ export default function LogFeedingScreen() {
     route.params?.presetDate ? new Date(route.params.presetDate) : new Date()
   );
   const initialFedAt = useRef(fedAt.getTime());
+  // Edit mode fills the form from storage, which would otherwise read as
+  // unsaved user input; this baseline is re-pointed once the record lands.
+  const editBaseline = useRef<string | null>(null);
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [showTimePicker, setShowTimePicker] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -89,8 +93,24 @@ export default function LogFeedingScreen() {
   const [moisture, setMoisture] = useState('');
 
   const dateChanged = fedAt.getTime() !== initialFedAt.current;
-  const disableGuard = useUnsavedChangesGuard(
-    !!amount ||
+  // Signature of everything the user can change, so edit mode can compare
+  // against what was loaded instead of against an empty form.
+  const formSignature = [
+    foodType,
+    amount,
+    notes,
+    fedAt.getTime(),
+    selectedFood?.foodBrand ?? '',
+    selectedFood?.foodProduct ?? '',
+    protein,
+    fat,
+    fiber,
+    ash,
+    moisture,
+  ].join('|');
+  const isDirty = editId
+    ? editBaseline.current !== null && formSignature !== editBaseline.current
+    : !!amount ||
       !!notes ||
       dateChanged ||
       foodType !== 'dry' ||
@@ -100,8 +120,8 @@ export default function LogFeedingScreen() {
       !!fat ||
       !!fiber ||
       !!ash ||
-      !!moisture
-  );
+      !!moisture;
+  const disableGuard = useUnsavedChangesGuard(isDirty);
 
   // Calculate DMB from manual inputs
   const manualResult = useMemo(() => {
@@ -117,6 +137,76 @@ export default function LogFeedingScreen() {
       nutritionThresholds
     );
   }, [protein, fat, fiber, ash, moisture, activePet?.species]);
+
+  // Edit mode: fill the form from the stored feeding. Runs once per id.
+  useEffect(() => {
+    if (!editId) return;
+    let cancelled = false;
+    feedingRepository.findById(editId).then(log => {
+      if (cancelled || !log) return;
+      const loadedType = log.foodType ?? 'dry';
+      const loadedAmount = log.amountGrams != null ? log.amountGrams.toString() : '';
+      const loadedNotes = log.notes ?? '';
+      const loadedFedAt = new Date(log.fedAt);
+      setFoodType(loadedType);
+      setAmount(loadedAmount);
+      setNotes(loadedNotes);
+      setFedAt(loadedFedAt);
+      initialFedAt.current = loadedFedAt.getTime();
+
+      // A saved feeding carries either a picked food (brand/product) or plain
+      // nutrition numbers typed by hand; restore whichever it was so re-saving
+      // doesn't silently drop the DMB verdict.
+      let brand = '';
+      let product = '';
+      const nums = {
+        protein: log.protein != null ? log.protein.toString() : '',
+        fat: log.fat != null ? log.fat.toString() : '',
+        fiber: log.fiber != null ? log.fiber.toString() : '',
+        ash: log.ash != null ? log.ash.toString() : '',
+        moisture: log.moisture != null ? log.moisture.toString() : '',
+      };
+      if (log.foodBrand || log.foodProduct) {
+        brand = log.foodBrand ?? '';
+        product = log.foodProduct ?? '';
+        setSelectedFood({
+          foodBrand: brand,
+          foodProduct: product,
+          protein: log.protein,
+          fat: log.fat,
+          fiber: log.fiber,
+          ash: log.ash,
+          moisture: log.moisture,
+          carbsDM: log.carbsDM,
+          verdict: log.verdict,
+        });
+      } else if (log.protein != null) {
+        setShowManualNutrition(true);
+        setProtein(nums.protein);
+        setFat(nums.fat);
+        setFiber(nums.fiber);
+        setAsh(nums.ash);
+        setMoisture(nums.moisture);
+      }
+
+      editBaseline.current = [
+        loadedType,
+        loadedAmount,
+        loadedNotes,
+        loadedFedAt.getTime(),
+        brand,
+        product,
+        log.foodBrand || log.foodProduct ? '' : nums.protein,
+        log.foodBrand || log.foodProduct ? '' : nums.fat,
+        log.foodBrand || log.foodProduct ? '' : nums.fiber,
+        log.foodBrand || log.foodProduct ? '' : nums.ash,
+        log.foodBrand || log.foodProduct ? '' : nums.moisture,
+      ].join('|');
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [editId]);
 
   const handleFoodSelected = useCallback((data: SelectedFoodData) => {
     if (!data.foodBrand && !data.foodProduct) {
@@ -175,8 +265,7 @@ export default function LogFeedingScreen() {
     savingRef.current = true;
     setLoading(true);
     try {
-      await feedingRepository.create({
-        petId: targetPetId,
+      const payload = {
         foodType: foodType || undefined,
         amountGrams: amount ? parseFloat(amount.replace(',', '.')) : undefined,
         notes: notes || undefined,
@@ -190,7 +279,12 @@ export default function LogFeedingScreen() {
         moisture: nutritionData.moisture,
         carbsDM: nutritionData.carbsDM,
         verdict: nutritionData.verdict,
-      });
+      };
+      if (editId) {
+        await feedingRepository.update(editId, payload);
+      } else {
+        await feedingRepository.create({ petId: targetPetId, ...payload });
+      }
       await queryClient.invalidateQueries({ queryKey: queryKeys.feedings.all });
       await queryClient.invalidateQueries({ queryKey: queryKeys.diary.all });
       disableGuard();
@@ -202,7 +296,9 @@ export default function LogFeedingScreen() {
         nutritionData.foodBrand || nutritionData.foodProduct
           ? `${nutritionData.foodBrand ?? ''} · ${nutritionData.foodProduct ?? ''}`
           : undefined;
-      triggerAfterAction('feeding', foodKey ? { foodKey } : undefined);
+      // Hints celebrate a NEW food being introduced; correcting a typo in an
+      // existing record is not a diet change and must not re-fire them.
+      if (!editId) triggerAfterAction('feeding', foodKey ? { foodKey } : undefined);
       navigation.goBack();
     } catch {
       Alert.alert(t('common.error'), t('feeding.saveError'));
@@ -228,6 +324,57 @@ export default function LogFeedingScreen() {
     ash,
     moisture,
     disableGuard,
+    editId,
+  ]);
+
+  // Deleting lives next to editing: the user found the wrong entry in the
+  // diary, tapped it, and should not have to hunt for another screen to remove
+  // it. Guarded by the same savingRef so it cannot race a save in flight.
+  const handleDelete = useCallback(() => {
+    if (!editId) return;
+    const label = [
+      FOOD_TYPE_OPTIONS.find(o => o.value === foodType)?.label,
+      amount ? `${amount} ${t('common.grams')}` : null,
+      format(fedAt, 'dd.MM.yyyy HH:mm'),
+    ]
+      .filter(Boolean)
+      .join(' · ');
+    Alert.alert(t('feeding.deleteConfirm'), label || undefined, [
+      { text: t('common.cancel'), style: 'cancel' },
+      {
+        text: t('common.delete'),
+        style: 'destructive',
+        onPress: async () => {
+          if (savingRef.current) return;
+          savingRef.current = true;
+          setLoading(true);
+          try {
+            await feedingRepository.delete(editId);
+            await queryClient.invalidateQueries({ queryKey: queryKeys.feedings.all });
+            await queryClient.invalidateQueries({ queryKey: queryKeys.diary.all });
+            disableGuard();
+            Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+            useSuccessToast.getState().show(t('common.deleted'));
+            navigation.goBack();
+          } catch {
+            Alert.alert(t('common.error'), t('feeding.saveError'));
+          } finally {
+            savingRef.current = false;
+            setLoading(false);
+          }
+        },
+      },
+    ]);
+  }, [
+    editId,
+    queryClient,
+    disableGuard,
+    navigation,
+    t,
+    FOOD_TYPE_OPTIONS,
+    foodType,
+    amount,
+    fedAt,
   ]);
 
   const verdictColor = (v?: string) => {
@@ -250,7 +397,10 @@ export default function LogFeedingScreen() {
       <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.background }]}>
         {/* Header */}
         <View>
-          <ScreenHeader title={t('feeding.title')} onBack={() => navigation.goBack()} />
+          <ScreenHeader
+            title={editId ? t('feeding.editEntry') : t('feeding.title')}
+            onBack={() => navigation.goBack()}
+          />
           <LinearGradient
             colors={[...theme.gradients.success] as [string, string]}
             start={{ x: 0, y: 0 }}
@@ -571,6 +721,20 @@ export default function LogFeedingScreen() {
             loading={loading}
             style={{ marginTop: 24 }}
           />
+
+          {editId && (
+            <TouchableOpacity
+              onPress={handleDelete}
+              disabled={loading}
+              accessibilityRole="button"
+              style={styles.deleteBtn}
+            >
+              <Icon name="trash-outline" size={18} color={theme.colors.danger} />
+              <Text style={[styles.deleteText, { color: theme.colors.danger }]}>
+                {t('common.delete')}
+              </Text>
+            </TouchableOpacity>
+          )}
         </ScrollView>
 
         <FoodSelector
@@ -587,6 +751,15 @@ export default function LogFeedingScreen() {
 const styles = StyleSheet.create({
   container: { flex: 1 },
   content: { padding: 20, gap: 16, paddingBottom: 40 },
+  deleteBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+    paddingVertical: 14,
+    marginTop: 4,
+  },
+  deleteText: { fontSize: 15 },
   sectionTitle: { fontSize: 16, fontWeight: '700', marginTop: 4 },
   chipGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 10 },
   chip: { paddingHorizontal: 18, paddingVertical: 12, borderRadius: 20, alignItems: 'center' },

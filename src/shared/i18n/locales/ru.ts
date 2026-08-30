@@ -4,6 +4,7 @@ export const ru = {
     saved: 'Сохранено',
     cancel: 'Отмена',
     delete: 'Удалить',
+    deleted: 'Запись удалена',
     edit: 'Редактировать',
     add: 'Добавить',
     back: 'Назад',
@@ -160,6 +161,7 @@ export const ru = {
   },
 
   diary: {
+    editEntry: 'Изменить запись',
     title: 'Дневник дня',
     timeline: 'Хронология',
     addEntry: 'Добавить запись',
@@ -319,6 +321,7 @@ export const ru = {
 
   feeding: {
     title: 'Кормление',
+    editEntry: 'Изменить кормление',
     foodType: 'Тип корма',
     amountGrams: 'Количество (г)',
     optional: 'Необязательно',

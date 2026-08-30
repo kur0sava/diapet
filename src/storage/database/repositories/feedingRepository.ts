@@ -61,6 +61,50 @@ export const feedingRepository = {
     return row ? mapRow(row) : null;
   },
 
+  /**
+   * Patch an existing feeding. Only the keys present in `dto` are written, so
+   * clearing a field is expressed by passing it explicitly as undefined
+   * (`'notes' in dto`) rather than omitting it. There is no updated_at column
+   * on feedings — see schema.ts — so nothing is stamped here.
+   */
+  async update(id: string, dto: Partial<CreateFeedingDTO>): Promise<FeedingLog | null> {
+    const db = await getDatabase();
+    const sets: string[] = [];
+    const params: (string | number | null)[] = [];
+
+    const columns: [keyof CreateFeedingDTO, string][] = [
+      ['foodType', 'food_type'],
+      ['amountGrams', 'amount_grams'],
+      ['notes', 'notes'],
+      ['foodBrand', 'food_brand'],
+      ['foodProduct', 'food_product'],
+      ['protein', 'protein'],
+      ['fat', 'fat'],
+      ['fiber', 'fiber'],
+      ['ash', 'ash'],
+      ['moisture', 'moisture'],
+      ['carbsDM', 'carbs_dm'],
+      ['verdict', 'verdict'],
+    ];
+    for (const [key, column] of columns) {
+      if (key in dto) {
+        sets.push(`${column}=?`);
+        params.push((dto[key] as string | number | undefined) ?? null);
+      }
+    }
+    // fed_at is NOT NULL, so an explicit undefined must not blank it out.
+    if (dto.fedAt !== undefined) {
+      sets.push('fed_at=?');
+      params.push(dto.fedAt);
+    }
+
+    if (sets.length > 0) {
+      params.push(id);
+      await db.runAsync(`UPDATE feedings SET ${sets.join(', ')} WHERE id=?`, params);
+    }
+    return this.findById(id);
+  },
+
   async findByPetId(
     petId: string,
     limit = 50,

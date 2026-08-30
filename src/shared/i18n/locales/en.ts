@@ -4,6 +4,7 @@ export const en = {
     saved: 'Saved',
     cancel: 'Cancel',
     delete: 'Delete',
+    deleted: 'Entry deleted',
     edit: 'Edit',
     add: 'Add',
     back: 'Back',
@@ -160,6 +161,7 @@ export const en = {
   },
 
   diary: {
+    editEntry: 'Edit entry',
     title: 'Day Diary',
     timeline: 'Timeline',
     addEntry: 'Add Entry',
@@ -318,6 +320,7 @@ export const en = {
 
   feeding: {
     title: 'Feeding',
+    editEntry: 'Edit feeding',
     foodType: 'Food type',
     amountGrams: 'Amount (g)',
     optional: 'Optional',

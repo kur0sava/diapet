@@ -48,6 +48,10 @@ type TimelineEvent = {
   title: string;
   subtitle?: string;
   color: string;
+  // Where a tap goes to correct this entry. Kept separate from `type` and
+  // `id` because an insulin dose logged inside a glucose reading shows as an
+  // injection but is edited on the glucose screen, under the reading's id.
+  edit: { screen: 'LogGlucose' | 'LogInjection' | 'LogFeeding'; id: string };
 };
 
 function formatDayHeader(date: Date, t: (k: string) => string): string {
@@ -177,6 +181,7 @@ export default function DailyDiaryScreen() {
                 ? t('glucose.fasting')
                 : undefined,
         color: getGlucoseColorFromRanges(g.valueMmol, speciesConfig.glucose.ranges),
+        edit: { screen: 'LogGlucose', id: g.id },
       });
     }
 
@@ -188,6 +193,7 @@ export default function DailyDiaryScreen() {
         title: `${inj.doseUnits} ${t('common.units')} ${inj.insulinType}`,
         subtitle: inj.notes ?? undefined,
         color: theme.colors.secondary,
+        edit: { screen: 'LogInjection', id: inj.id },
       });
     }
 
@@ -203,6 +209,8 @@ export default function DailyDiaryScreen() {
           title: `${g.insulinDose} ${t('common.units')}${g.insulinType ? ` ${g.insulinType}` : ''}`,
           subtitle: t('diary.inlineInsulinNote'),
           color: theme.colors.secondary,
+          // Not an InjectionLog row — correcting it means editing the reading.
+          edit: { screen: 'LogGlucose', id: g.id },
         });
       }
     }
@@ -221,6 +229,7 @@ export default function DailyDiaryScreen() {
         title: parts.length > 0 ? parts.join(' · ') : t('diary.feeding'),
         subtitle: subtitleParts.length > 0 ? subtitleParts.join(' — ') : undefined,
         color: theme.colors.success,
+        edit: { screen: 'LogFeeding', id: feed.id },
       });
     }
 
@@ -513,8 +522,12 @@ export default function DailyDiaryScreen() {
                     />
                   )}
                 </View>
-                {/* Content */}
-                <View
+                {/* Content — tapping opens the entry for correction */}
+                <TouchableOpacity
+                  activeOpacity={0.7}
+                  accessibilityRole="button"
+                  accessibilityLabel={`${t('diary.editEntry')}: ${event.title}`}
+                  onPress={() => navigation.navigate(event.edit.screen, { editId: event.edit.id })}
                   style={[
                     styles.timelineCard,
                     { backgroundColor: theme.colors.surface, ...theme.shadows.sm },
@@ -541,7 +554,13 @@ export default function DailyDiaryScreen() {
                       {event.subtitle}
                     </Text>
                   )}
-                </View>
+                  <Icon
+                    name="chevron-forward"
+                    size={16}
+                    color={theme.colors.textTertiary}
+                    style={styles.timelineChevron}
+                  />
+                </TouchableOpacity>
               </View>
             ))}
         </View>
@@ -689,8 +708,11 @@ const styles = StyleSheet.create({
     flex: 1,
     borderRadius: 12,
     padding: 12,
+    // room for the chevron so a long title never runs underneath it
+    paddingRight: 30,
     marginBottom: 4,
   },
+  timelineChevron: { position: 'absolute', right: 10, top: 13 },
   timelineCardTop: { flexDirection: 'row', alignItems: 'center', gap: 8 },
   timelineTime: { fontSize: 12, width: 40 },
   timelineTitle: { flex: 1, fontSize: 14 },
